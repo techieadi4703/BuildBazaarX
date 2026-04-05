@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { 
   Phone, 
@@ -90,6 +91,11 @@ export const Footer = () => {
                   {service}
                 </li>
               ))}
+              <li>
+                <Link to="/professional/auth" className="text-background/70 hover:text-accent transition-colors text-sm">
+                  Join as Professional
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -15,6 +15,9 @@ import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
 import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
+import ProfessionalAuth from "./pages/ProfessionalAuth";
+import ProfessionalDashboard from "./pages/ProfessionalDashboard";
+import ProfessionalSetup from "./pages/ProfessionalSetup";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { CartProvider } from "./contexts/CartContext";
 
@@ -51,6 +54,9 @@ const App = () => (
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/professional/auth" element={<ProfessionalAuth />} />
+            <Route path="/professional/dashboard" element={<ProfessionalDashboard />} />
+            <Route path="/professional/setup" element={<ProfessionalSetup />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

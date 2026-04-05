@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Layout } from "@/components/layout/Layout";
 import logo from "@/assets/logo.png";
 
 const Auth = () => {
@@ -210,7 +211,8 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary flex flex-col items-center justify-center p-4">
+    <Layout>
+      <div className="min-h-screen bg-secondary flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -416,6 +418,7 @@ const Auth = () => {
         </p>
       </div>
     </div>
+    </Layout>
   );
 };
 
