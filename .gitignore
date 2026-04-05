@@ -1,0 +1,85 @@
+# =========================
+# 🔐 Environment Variables
+# =========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+!.env.example
+
+# Supabase
+supabase/.env
+
+# =========================
+# 📦 Dependencies
+# =========================
+node_modules/
+
+# =========================
+# 🏗 Build Outputs (Vite)
+# =========================
+dist/
+build/
+
+# =========================
+# 🧾 Logs
+# =========================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =========================
+# 🧪 Testing
+# =========================
+coverage/
+*.lcov
+
+# =========================
+# ⚙️ Cache / Temp
+# =========================
+.cache/
+.tmp/
+.temp/
+
+# =========================
+# 🧠 OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# 🧑‍💻 IDE / Editor
+# =========================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# =========================
+# 🚀 Deployment
+# =========================
+.vercel
+.netlify
+
+# =========================
+# 🔑 Secrets / Keys
+# =========================
+*.pem
+*.key
+*.crt
+
+# =========================
+# 📁 Misc
+# =========================
+*.local
