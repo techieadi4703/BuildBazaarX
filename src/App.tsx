@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
+import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { CartProvider } from "./contexts/CartContext";
@@ -37,6 +38,11 @@ const App = () => (
             <Route path="/profile" element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/orders" element={
+              <ProtectedRoute>
+                <Orders />
               </ProtectedRoute>
             } />
             <Route path="/checkout" element={

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, LogOut, User } from "lucide-react";
+import { Menu, X, LogIn, LogOut, User, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -78,8 +78,15 @@ export const Header = () => {
             {user ? (
               <>
                 <Link 
-                  to="/profile" 
+                  to="/orders" 
                   className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
+                >
+                  <Package className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span className="hidden lg:inline font-medium">Orders</span>
+                </Link>
+                <Link 
+                  to="/profile" 
+                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group ml-2 border-l pl-4"
                 >
                   <User className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   <span className="max-w-[120px] truncate font-medium">
@@ -142,17 +149,27 @@ export const Header = () => {
                 </Link>
               ))}
               {user ? (
-                <Button
-                  variant="outline"
-                  className="mt-2 rounded-full"
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </Button>
+                <>
+                  <Link
+                    to="/orders"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-sm font-medium transition-colors text-foreground hover:text-primary flex items-center gap-2"
+                  >
+                    <Package className="w-4 h-4" />
+                    My Orders
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="mt-2 rounded-full"
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </Button>
+                </>
               ) : (
                 <Button asChild className="mt-2 rounded-full">
                   <Link to="/auth" onClick={() => setIsMenuOpen(false)}>

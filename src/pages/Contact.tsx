@@ -110,23 +110,41 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Request Submitted Successfully!",
-      description: "Our team will contact you shortly.",
-    });
-    
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      city: "",
-      service: "",
-      budget: "",
-      message: "",
-    });
-    setIsSubmitting(false);
+    try {
+      const { error } = await supabase.from("leads").insert({
+        name: formData.name,
+        phone: formData.phone,
+        city: formData.city,
+        service: formData.service,
+        budget: formData.budget,
+        message: formData.message || "Contact Form Submission",
+      });
+
+      if (error) throw error;
+      
+      toast({
+        title: "Request Submitted Successfully!",
+        description: "Our team will contact you shortly.",
+      });
+      
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        city: "",
+        service: "",
+        budget: "",
+        message: "",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Submission Failed",
+        description: error.message || "Something went wrong while submitting your request.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

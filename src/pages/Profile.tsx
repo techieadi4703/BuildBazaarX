@@ -7,8 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, MapPin, Mail, Save, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { User, Phone, MapPin, Mail, Save, Loader2, Package } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 
 const Profile = () => {
   const { toast } = useToast();
@@ -105,7 +105,15 @@ const Profile = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">My Profile</h1>
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
+            <h1 className="text-3xl font-bold">My Profile</h1>
+            <Button variant="outline" asChild className="shrink-0">
+              <Link to="/orders">
+                <Package className="w-4 h-4 mr-2" />
+                View Order History
+              </Link>
+            </Button>
+          </div>
           
           <div className="grid gap-8">
             {/* Account Info */}

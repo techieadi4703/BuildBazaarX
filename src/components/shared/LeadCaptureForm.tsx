@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,16 +64,32 @@ export const LeadCaptureForm = ({
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Thank you for your interest!",
-      description: "Our team will contact you within 24 hours.",
-    });
-    
-    setFormData({ name: "", phone: "", city: "", budget: "" });
-    setIsSubmitting(false);
+    try {
+      const { error } = await supabase.from("leads").insert({
+        name: formData.name,
+        phone: formData.phone,
+        city: formData.city,
+        budget: formData.budget,
+        message: `Consultation Request (Variant: ${variant})`,
+      });
+
+      if (error) throw error;
+      
+      toast({
+        title: "Thank you for your interest!",
+        description: "Our team will contact you within 24 hours.",
+      });
+      
+      setFormData({ name: "", phone: "", city: "", budget: "" });
+    } catch (error: any) {
+      toast({
+        title: "Submission Failed",
+        description: error.message || "Something went wrong while submitting your request.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const isCompact = variant === "compact";
