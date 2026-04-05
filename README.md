@@ -7,7 +7,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-181818?style=for-the-badge&logo=supabase&logoColor=3ECF8E)](https://supabase.io/)
 [![Razorpay](https://img.shields.io/badge/Razorpay-02042B?style=for-the-badge&logo=razorpay&logoColor=3399FF)](https://razorpay.com/)
 
-![BuildBazaarX Hero](branding_hero.png)
+![BuildBazaarX Hero](public/branding_hero.png)
 
 **BuildBazaarX-v2** is a cutting-edge, all-in-one digital ecosystem for interior design and construction. From browsing premium designs to purchasing raw materials and calculating precise execution costs, BuildBazaarX streamlines the entire building process.
 
