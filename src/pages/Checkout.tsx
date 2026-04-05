@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { useCart } from "@/contexts/CartContext";
@@ -52,8 +52,28 @@ const Checkout = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUserId(session?.user?.id ?? null);
       setUserEmail(session?.user?.email ?? "");
-      if (session?.user?.email) {
-        setForm((f) => ({ ...f, email: session.user.email ?? "" }));
+      
+      if (session?.user) {
+        // Pre-fill from profile
+        supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single()
+          .then(({ data: profile }) => {
+            if (profile) {
+              setForm((f) => ({
+                ...f,
+                name: profile.full_name || "",
+                phone: profile.phone || "",
+                email: session.user.email || "",
+                address: profile.address || "",
+                city: profile.city || "",
+                state: profile.state || "",
+                pincode: profile.pincode || "",
+              }));
+            }
+          });
       }
     });
     // Preload Razorpay script

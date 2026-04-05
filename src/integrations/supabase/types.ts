@@ -21,6 +21,10 @@ export type Database = {
           phone: string | null
           role: string
           created_at: string
+          address: string | null
+          city: string | null
+          state: string | null
+          pincode: string | null
         }
         Insert: {
           id: string
@@ -28,6 +32,10 @@ export type Database = {
           phone?: string | null
           role?: string
           created_at?: string
+          address?: string | null
+          city?: string | null
+          state?: string | null
+          pincode?: string | null
         }
         Update: {
           id?: string
@@ -35,6 +43,10 @@ export type Database = {
           phone?: string | null
           role?: string
           created_at?: string
+          address?: string | null
+          city?: string | null
+          state?: string | null
+          pincode?: string | null
         }
         Relationships: []
       }

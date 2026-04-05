@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LogIn, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -77,12 +77,15 @@ export const Header = () => {
             <CartSheet />
             {user ? (
               <>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <User className="w-4 h-4" />
-                  <span className="max-w-[120px] truncate">
+                <Link 
+                  to="/profile" 
+                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
+                >
+                  <User className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span className="max-w-[120px] truncate font-medium">
                     {user.user_metadata?.full_name || user.email?.split("@")[0]}
                   </span>
-                </div>
+                </Link>
                 <Button variant="outline" size="sm" className="rounded-full" onClick={handleLogout}>
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout

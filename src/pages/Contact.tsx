@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Phone, 
   Mail, 
@@ -75,6 +76,35 @@ const Contact = () => {
     budget: "",
     message: "",
   });
+
+  useEffect(() => {
+    const prefillData = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setFormData(prev => ({
+          ...prev,
+          email: session.user.email || prev.email,
+          name: session.user.user_metadata?.full_name || prev.name,
+        }));
+
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+
+        if (profile) {
+          setFormData(prev => ({
+            ...prev,
+            name: profile.full_name || prev.name,
+            phone: profile.phone || prev.phone,
+            city: profile.city || prev.city,
+          }));
+        }
+      }
+    };
+    prefillData();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
