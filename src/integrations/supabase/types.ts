@@ -546,6 +546,282 @@ export type Database = {
           }
         ]
       }
+      suppliers: {
+        Row: {
+          id: string
+          business_name: string
+          owner_name: string
+          phone: string
+          email: string
+          city: string
+          address: string | null
+          pincode: string | null
+          gst_number: string | null
+          pan_number: string | null
+          business_type: string | null
+          logo_url: string | null
+          is_verified: boolean | null
+          rating: number | null
+          total_reviews: number | null
+          total_products: number | null
+          bank_account_name: string | null
+          bank_account_number: string | null
+          bank_ifsc: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id: string
+          business_name: string
+          owner_name: string
+          phone: string
+          email: string
+          city: string
+          address?: string | null
+          pincode?: string | null
+          gst_number?: string | null
+          pan_number?: string | null
+          business_type?: string | null
+          logo_url?: string | null
+          is_verified?: boolean | null
+          rating?: number | null
+          total_reviews?: number | null
+          total_products?: number | null
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_ifsc?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          business_name?: string
+          owner_name?: string
+          phone?: string
+          email?: string
+          city?: string
+          address?: string | null
+          pincode?: string | null
+          gst_number?: string | null
+          pan_number?: string | null
+          business_type?: string | null
+          logo_url?: string | null
+          is_verified?: boolean | null
+          rating?: number | null
+          total_reviews?: number | null
+          total_products?: number | null
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_ifsc?: string | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
+      supplier_products: {
+        Row: {
+          id: string
+          supplier_id: string | null
+          name: string
+          brand: string
+          category: string
+          sub_category: string | null
+          specs: string | null
+          description: string | null
+          price: number
+          original_price: number | null
+          discount: number | null
+          bulk_price: number | null
+          bulk_min_qty: number | null
+          unit: string | null
+          min_order_qty: number | null
+          stock_qty: number | null
+          in_stock: boolean | null
+          delivery_info: string | null
+          delivery_days: number | null
+          images: string[] | null
+          tags: string[] | null
+          rating: number | null
+          total_reviews: number | null
+          total_sold: number | null
+          is_published: boolean | null
+          is_featured: boolean | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          supplier_id?: string | null
+          name: string
+          brand: string
+          category: string
+          sub_category?: string | null
+          specs?: string | null
+          description?: string | null
+          price: number
+          original_price?: number | null
+          discount?: number | null
+          bulk_price?: number | null
+          bulk_min_qty?: number | null
+          unit?: string | null
+          min_order_qty?: number | null
+          stock_qty?: number | null
+          in_stock?: boolean | null
+          delivery_info?: string | null
+          delivery_days?: number | null
+          images?: string[] | null
+          tags?: string[] | null
+          rating?: number | null
+          total_reviews?: number | null
+          total_sold?: number | null
+          is_published?: boolean | null
+          is_featured?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          supplier_id?: string | null
+          name?: string
+          brand?: string
+          category?: string
+          sub_category?: string | null
+          specs?: string | null
+          description?: string | null
+          price?: number
+          original_price?: number | null
+          discount?: number | null
+          bulk_price?: number | null
+          bulk_min_qty?: number | null
+          unit?: string | null
+          min_order_qty?: number | null
+          stock_qty?: number | null
+          in_stock?: boolean | null
+          delivery_info?: string | null
+          delivery_days?: number | null
+          images?: string[] | null
+          tags?: string[] | null
+          rating?: number | null
+          total_reviews?: number | null
+          total_sold?: number | null
+          is_published?: boolean | null
+          is_featured?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      supplier_product_reviews: {
+        Row: {
+          id: number
+          product_id: string | null
+          user_id: string | null
+          rating: number | null
+          review: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: number
+          product_id?: string | null
+          user_id?: string | null
+          rating?: number | null
+          review?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: number
+          product_id?: string | null
+          user_id?: string | null
+          rating?: number | null
+          review?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_product_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      bulk_inquiries: {
+        Row: {
+          id: number
+          supplier_id: string | null
+          product_id: string | null
+          user_id: string | null
+          name: string | null
+          phone: string | null
+          city: string | null
+          quantity: number | null
+          message: string | null
+          status: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: number
+          supplier_id?: string | null
+          product_id?: string | null
+          user_id?: string | null
+          name?: string | null
+          phone?: string | null
+          city?: string | null
+          quantity?: number | null
+          message?: string | null
+          status?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: number
+          supplier_id?: string | null
+          product_id?: string | null
+          user_id?: string | null
+          name?: string | null
+          phone?: string | null
+          city?: string | null
+          quantity?: number | null
+          message?: string | null
+          status?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bulk_inquiries_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bulk_inquiries_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bulk_inquiries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

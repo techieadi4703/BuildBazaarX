@@ -101,6 +101,11 @@ export const Footer = () => {
                   Join as Designer
                 </Link>
               </li>
+              <li>
+                <Link to="/supplier/auth" className="text-background/70 hover:text-accent transition-colors text-sm">
+                  Join as Supplier
+                </Link>
+              </li>
             </ul>
           </div>
 

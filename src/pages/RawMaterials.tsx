@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useQuery } from "@tanstack/react-query";
@@ -191,7 +191,7 @@ const RawMaterials = () => {
   }, []);
 
   // ── Fetch products from Supabase ──────────────────────────────────────────
-  const { data: products = [], isLoading, isError } = useQuery({
+  const { data: regularProducts = [], isLoading: isLoadingRegular, isError: isErrorRegular } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const { data, error } = await supabase.from("products").select("*");
@@ -200,7 +200,50 @@ const RawMaterials = () => {
     },
   });
 
-  const filteredProducts = products.filter((product) => {
+  const { data: supplierProducts = [], isLoading: isLoadingSupplier, isError: isErrorSupplier } = useQuery({
+    queryKey: ["supplier-products"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('supplier_products')
+        .select(`*, suppliers(business_name)`)
+        .eq('is_published', true)
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      
+      const hashCode = (str: string) => {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          const char = str.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash; // Convert to 32bit integer
+        }
+        return Math.abs(hash);
+      };
+
+      return (data || []).map((dbProd: any) => ({
+        id: hashCode(dbProd.id),
+        name: dbProd.name,
+        brand: dbProd.brand || (dbProd.suppliers ? dbProd.suppliers.business_name : null),
+        category: dbProd.category,
+        price: dbProd.price,
+        original_price: dbProd.original_price,
+        discount: dbProd.discount,
+        rating: dbProd.rating,
+        reviews: dbProd.total_reviews,
+        specs: dbProd.specs,
+        in_stock: dbProd.in_stock,
+        image_url: dbProd.images && dbProd.images.length > 0 ? dbProd.images[0] : null,
+      })) as Product[];
+    }
+  });
+
+  const isLoading = isLoadingRegular || isLoadingSupplier;
+  const isError = isErrorRegular || isErrorSupplier;
+  
+  const allProducts = [...regularProducts, ...supplierProducts];
+
+  const filteredProducts = allProducts.filter((product) => {
     const matchesCategory = !selectedCategory || product.category === selectedCategory;
     const matchesSearch =
       (product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||

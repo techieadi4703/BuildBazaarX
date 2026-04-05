@@ -21,6 +21,9 @@ import ProfessionalSetup from "./pages/ProfessionalSetup";
 import DesignerAuth from "./pages/DesignerAuth";
 import DesignerDashboard from "./pages/DesignerDashboard";
 import DesignerSetup from "./pages/DesignerSetup";
+import SupplierAuth from "./pages/SupplierAuth";
+import SupplierDashboard from "./pages/SupplierDashboard";
+import SupplierSetup from "./pages/SupplierSetup";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { CartProvider } from "./contexts/CartContext";
 
@@ -63,6 +66,9 @@ const App = () => (
             <Route path="/designer/auth" element={<DesignerAuth />} />
             <Route path="/designer/dashboard" element={<DesignerDashboard />} />
             <Route path="/designer/setup" element={<DesignerSetup />} />
+            <Route path="/supplier/auth" element={<SupplierAuth />} />
+            <Route path="/supplier/dashboard" element={<SupplierDashboard />} />
+            <Route path="/supplier/setup" element={<SupplierSetup />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

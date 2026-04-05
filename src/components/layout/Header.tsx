@@ -41,7 +41,8 @@ export const Header = () => {
 
   const isProfessionalRoute = location.pathname.startsWith("/professional");
   const isDesignerRoute = location.pathname.startsWith("/designer");
-  const isNonUserRoute = isProfessionalRoute || isDesignerRoute;
+  const isSupplierRoute = location.pathname.startsWith("/supplier");
+  const isNonUserRoute = isProfessionalRoute || isDesignerRoute || isSupplierRoute;
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm">
@@ -120,6 +121,7 @@ export const Header = () => {
                       <Link to="/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground">As User</Link>
                       <Link to="/professional/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Professional</Link>
                       <Link to="/designer/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Designer</Link>
+                      <Link to="/supplier/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Supplier</Link>
                     </div>
                   </div>
                 </div>
@@ -133,6 +135,7 @@ export const Header = () => {
                       <Link to="/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground">As User</Link>
                       <Link to="/professional/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Professional</Link>
                       <Link to="/designer/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Designer</Link>
+                      <Link to="/supplier/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Supplier</Link>
                     </div>
                   </div>
                 </div>
@@ -213,9 +216,14 @@ export const Header = () => {
                         As Professional
                       </Link>
                     </Button>
-                    <Button asChild className="rounded-full w-full">
+                    <Button asChild variant="outline" className="rounded-full text-foreground w-full">
                       <Link to="/designer/auth" onClick={() => setIsMenuOpen(false)}>
                         As Designer
+                      </Link>
+                    </Button>
+                    <Button asChild variant="outline" className="rounded-full text-foreground w-full">
+                      <Link to="/supplier/auth" onClick={() => setIsMenuOpen(false)}>
+                        As Supplier
                       </Link>
                     </Button>
                   </div>
