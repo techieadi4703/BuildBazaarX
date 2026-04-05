@@ -96,6 +96,11 @@ export const Footer = () => {
                   Join as Professional
                 </Link>
               </li>
+              <li>
+                <Link to="/designer/auth" className="text-background/70 hover:text-accent transition-colors text-sm">
+                  Join as Designer
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -18,6 +18,9 @@ import NotFound from "./pages/NotFound";
 import ProfessionalAuth from "./pages/ProfessionalAuth";
 import ProfessionalDashboard from "./pages/ProfessionalDashboard";
 import ProfessionalSetup from "./pages/ProfessionalSetup";
+import DesignerAuth from "./pages/DesignerAuth";
+import DesignerDashboard from "./pages/DesignerDashboard";
+import DesignerSetup from "./pages/DesignerSetup";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { CartProvider } from "./contexts/CartContext";
 
@@ -57,6 +60,9 @@ const App = () => (
             <Route path="/professional/auth" element={<ProfessionalAuth />} />
             <Route path="/professional/dashboard" element={<ProfessionalDashboard />} />
             <Route path="/professional/setup" element={<ProfessionalSetup />} />
+            <Route path="/designer/auth" element={<DesignerAuth />} />
+            <Route path="/designer/dashboard" element={<DesignerDashboard />} />
+            <Route path="/designer/setup" element={<DesignerSetup />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

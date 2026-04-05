@@ -320,6 +320,232 @@ export type Database = {
           }
         ]
       }
+      designers: {
+        Row: {
+          id: string
+          full_name: string
+          phone: string
+          email: string
+          city: string
+          bio: string | null
+          years_experience: number | null
+          profile_photo_url: string | null
+          portfolio_website: string | null
+          instagram_url: string | null
+          specializations: string[] | null
+          is_verified: boolean | null
+          rating: number | null
+          total_reviews: number | null
+          total_designs: number | null
+          created_at: string | null
+        }
+        Insert: {
+          id: string
+          full_name: string
+          phone: string
+          email: string
+          city: string
+          bio?: string | null
+          years_experience?: number | null
+          profile_photo_url?: string | null
+          portfolio_website?: string | null
+          instagram_url?: string | null
+          specializations?: string[] | null
+          is_verified?: boolean | null
+          rating?: number | null
+          total_reviews?: number | null
+          total_designs?: number | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          full_name?: string
+          phone?: string
+          email?: string
+          city?: string
+          bio?: string | null
+          years_experience?: number | null
+          profile_photo_url?: string | null
+          portfolio_website?: string | null
+          instagram_url?: string | null
+          specializations?: string[] | null
+          is_verified?: boolean | null
+          rating?: number | null
+          total_reviews?: number | null
+          total_designs?: number | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
+      designs: {
+        Row: {
+          id: string
+          designer_id: string | null
+          name: string
+          category: string
+          style: string
+          room_size: string | null
+          description: string
+          features: string[] | null
+          tags: string[] | null
+          execution_cost: number
+          materials_cost: number
+          customize_cost: number | null
+          total_cost: number
+          timeline: string | null
+          warranty: string | null
+          images: string[] | null
+          is_published: boolean | null
+          is_trending: boolean | null
+          rating: number | null
+          total_reviews: number | null
+          view_count: number | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          designer_id?: string | null
+          name: string
+          category: string
+          style: string
+          room_size?: string | null
+          description: string
+          features?: string[] | null
+          tags?: string[] | null
+          execution_cost: number
+          materials_cost: number
+          customize_cost?: number | null
+          total_cost: number
+          timeline?: string | null
+          warranty?: string | null
+          images?: string[] | null
+          is_published?: boolean | null
+          is_trending?: boolean | null
+          rating?: number | null
+          total_reviews?: number | null
+          view_count?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          designer_id?: string | null
+          name?: string
+          category?: string
+          style?: string
+          room_size?: string | null
+          description?: string
+          features?: string[] | null
+          tags?: string[] | null
+          execution_cost?: number
+          materials_cost?: number
+          customize_cost?: number | null
+          total_cost?: number
+          timeline?: string | null
+          warranty?: string | null
+          images?: string[] | null
+          is_published?: boolean | null
+          is_trending?: boolean | null
+          rating?: number | null
+          total_reviews?: number | null
+          view_count?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "designs_designer_id_fkey"
+            columns: ["designer_id"]
+            isOneToOne: false
+            referencedRelation: "designers"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      design_materials: {
+        Row: {
+          id: number
+          design_id: string | null
+          material_name: string
+          quantity: number
+          unit: string
+          estimated_cost: number | null
+          category: string | null
+          notes: string | null
+        }
+        Insert: {
+          id?: number
+          design_id?: string | null
+          material_name: string
+          quantity: number
+          unit: string
+          estimated_cost?: number | null
+          category?: string | null
+          notes?: string | null
+        }
+        Update: {
+          id?: number
+          design_id?: string | null
+          material_name?: string
+          quantity?: number
+          unit?: string
+          estimated_cost?: number | null
+          category?: string | null
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "design_materials_design_id_fkey"
+            columns: ["design_id"]
+            isOneToOne: false
+            referencedRelation: "designs"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      design_reviews: {
+        Row: {
+          id: number
+          design_id: string | null
+          user_id: string | null
+          rating: number | null
+          review: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: number
+          design_id?: string | null
+          user_id?: string | null
+          rating?: number | null
+          review?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: number
+          design_id?: string | null
+          user_id?: string | null
+          rating?: number | null
+          review?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "design_reviews_design_id_fkey"
+            columns: ["design_id"]
+            isOneToOne: false
+            referencedRelation: "designs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "design_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

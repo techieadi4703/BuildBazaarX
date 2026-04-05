@@ -1,5 +1,7 @@
-import { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -119,14 +121,43 @@ const DesignsCatalog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
-  const filteredDesigns = designs.filter((design) => {
+  const { data: dbDesigns } = useQuery({
+    queryKey: ['designs'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('designs')
+        .select('*, designers(full_name)')
+        .eq('is_published', true)
+        .order('created_at', { ascending: false });
+      return data || [];
+    }
+  });
+
+  const allDesigns = useMemo(() => {
+    const mappedDbDesigns = (dbDesigns || []).map((dbD) => ({
+      id: `db-${dbD.id}`,
+      name: dbD.name,
+      category: dbD.category.toLowerCase().replace(" ", "-"),
+      image: (dbD.images && dbD.images.length > 0) ? dbD.images[0] : "",
+      size: dbD.room_size || "",
+      style: dbD.style,
+      executionCost: `₹${(dbD.execution_cost || 0).toLocaleString('en-IN')}`,
+      materialsCost: `₹${(dbD.materials_cost || 0).toLocaleString('en-IN')}`,
+      customizeCost: `₹${(dbD.customize_cost || 0).toLocaleString('en-IN')}`,
+      totalCost: `₹${(dbD.total_cost || 0).toLocaleString('en-IN')}`,
+      trending: dbD.is_trending || false,
+    }));
+    return [...designs, ...mappedDbDesigns];
+  }, [dbDesigns]);
+
+  const filteredDesigns = allDesigns.filter((design) => {
     const matchesCategory = selectedCategory === "all" || design.category === selectedCategory;
     const matchesStyle = selectedStyle === "all" || design.style === selectedStyle;
     const matchesSearch = design.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesStyle && matchesSearch;
   });
 
-  const trendingDesigns = designs.filter((d) => d.trending);
+  const trendingDesigns = allDesigns.filter((d) => d.trending);
 
   return (
     <Layout>
@@ -290,7 +321,19 @@ const DesignsCatalog = () => {
 };
 
 interface DesignCardProps {
-  design: typeof designs[0];
+  design: {
+    id: number | string;
+    name: string;
+    category: string;
+    image: string;
+    size: string;
+    style: string;
+    executionCost: string;
+    materialsCost: string;
+    customizeCost: string;
+    totalCost: string;
+    trending: boolean;
+  };
 }
 
 const DesignCard = ({ design }: DesignCardProps) => {

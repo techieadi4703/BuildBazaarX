@@ -199,6 +199,11 @@ const designsData = {
 const DesignDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
+  
+  const [dbDesign, setDbDesign] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(id?.startsWith("db-") ? true : false);
+  const [dbMaterials, setDbMaterials] = useState<any[]>([]);
+  
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
@@ -236,7 +241,62 @@ const DesignDetail = () => {
     prefillData();
   }, []);
 
-  const design = id ? designsData[id as keyof typeof designsData] : null;
+  useEffect(() => {
+    const fetchDbDesign = async () => {
+      if (!id?.startsWith("db-")) return;
+      
+      const actualId = id.replace("db-", "");
+      
+      try {
+        const { data, error } = await supabase
+          .from('designs')
+          .select('*, design_materials(*), designers(full_name, city, rating)')
+          .eq('id', actualId)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          // Increment view count
+          await supabase.from('designs').update({ view_count: (data.view_count || 0) + 1 }).eq('id', actualId);
+          
+          setDbDesign({
+            id: actualId,
+            name: data.name,
+            category: data.category,
+            style: data.style,
+            size: data.room_size || "N/A",
+            images: data.images || [],
+            description: data.description,
+            features: data.features || [],
+            executionCost: data.execution_cost,
+            materialsCost: data.materials_cost,
+            customizeCost: data.customize_cost || 0,
+            totalCost: data.total_cost,
+            timeline: data.timeline || "N/A",
+            warranty: data.warranty || "N/A",
+            rating: data.rating || 0,
+            reviews: data.total_reviews || 0,
+            trending: data.is_trending || false,
+            designer: data.designers
+          });
+          setDbMaterials(data.design_materials || []);
+        }
+      } catch (err) {
+        console.error("Error fetching design:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchDbDesign();
+  }, [id]);
+
+  if (isLoading) {
+    return <Layout><div className="flex justify-center py-20">Loading...</div></Layout>;
+  }
+
+  const hardcodedDesign = id && !id.startsWith("db-") ? designsData[id as keyof typeof designsData] : null;
+  const design = dbDesign || hardcodedDesign;
 
   if (!design) {
     return (
@@ -470,7 +530,39 @@ const DesignDetail = () => {
       <ExecutionCostBreakdown />
 
       {/* ── Raw Materials Required (full width) ── */}
-      <DesignPricingCalculator />
+      {id?.startsWith("db-") && dbMaterials.length > 0 ? (
+        <section className="py-12 bg-secondary/20">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <h2 className="text-2xl font-bold mb-6">Raw Materials Required</h2>
+            <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-primary/5 text-muted-foreground border-b border-primary/10">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Material</th>
+                    <th className="px-4 py-3 font-medium">Category</th>
+                    <th className="px-4 py-3 font-medium">Quantity</th>
+                    <th className="px-4 py-3 font-medium">Est. Cost</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {dbMaterials.map((mat) => (
+                    <tr key={mat.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-4 py-3 font-medium text-foreground">{mat.material_name}</td>
+                      <td className="px-4 py-3">{mat.category || '-'}</td>
+                      <td className="px-4 py-3">{mat.quantity} {mat.unit}</td>
+                      <td className="px-4 py-3 text-primary">
+                        {mat.estimated_cost ? `₹${mat.estimated_cost.toLocaleString('en-IN')}` : '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <DesignPricingCalculator />
+      )}
 
       {/* ── Free Consultation Form ── */}
       <section id="consultation-form" className="py-12 md:py-16 bg-secondary/30">

@@ -40,6 +40,8 @@ export const Header = () => {
   };
 
   const isProfessionalRoute = location.pathname.startsWith("/professional");
+  const isDesignerRoute = location.pathname.startsWith("/designer");
+  const isNonUserRoute = isProfessionalRoute || isDesignerRoute;
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm">
@@ -58,7 +60,7 @@ export const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          {!isProfessionalRoute && (
+          {!isNonUserRoute && (
             <nav className="hidden md:flex items-center gap-8">
               {navLinks.map((link) => (
                 <Link
@@ -78,10 +80,10 @@ export const Header = () => {
 
           {/* Cart + Auth Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            {!isProfessionalRoute && <CartSheet />}
+            {!isNonUserRoute && <CartSheet />}
             {user ? (
               <>
-                {!isProfessionalRoute && (
+                {!isNonUserRoute && (
                   <>
                     <Link 
                       to="/orders" 
@@ -117,6 +119,7 @@ export const Header = () => {
                     <div className="bg-background border shadow-md rounded-lg overflow-hidden flex flex-col w-36">
                       <Link to="/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground">As User</Link>
                       <Link to="/professional/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Professional</Link>
+                      <Link to="/designer/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Designer</Link>
                     </div>
                   </div>
                 </div>
@@ -129,6 +132,7 @@ export const Header = () => {
                     <div className="bg-background border shadow-md rounded-lg overflow-hidden flex flex-col w-36">
                       <Link to="/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground">As User</Link>
                       <Link to="/professional/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Professional</Link>
+                      <Link to="/designer/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Designer</Link>
                     </div>
                   </div>
                 </div>
@@ -138,7 +142,7 @@ export const Header = () => {
 
           {/* Mobile Cart + Menu */}
           <div className="md:hidden flex items-center gap-1">
-            {!isProfessionalRoute && <CartSheet />}
+            {!isNonUserRoute && <CartSheet />}
             <button
               className="p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -157,7 +161,7 @@ export const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <nav className="flex flex-col gap-4">
-              {!isProfessionalRoute && navLinks.map((link) => (
+              {!isNonUserRoute && navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -173,7 +177,7 @@ export const Header = () => {
               ))}
               {user ? (
                 <>
-                  {!isProfessionalRoute && (
+                  {!isNonUserRoute && (
                     <Link
                       to="/orders"
                       onClick={() => setIsMenuOpen(false)}
@@ -198,15 +202,20 @@ export const Header = () => {
               ) : (
                 <div className="mt-2 space-y-2 border-t pt-4">
                   <p className="text-sm font-medium text-muted-foreground">Login or Sign Up</p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2">
                     <Button asChild variant="outline" className="rounded-full text-foreground w-full">
                       <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
                         As User
                       </Link>
                     </Button>
-                    <Button asChild className="rounded-full w-full">
+                    <Button asChild variant="outline" className="rounded-full text-foreground w-full">
                       <Link to="/professional/auth" onClick={() => setIsMenuOpen(false)}>
                         As Professional
+                      </Link>
+                    </Button>
+                    <Button asChild className="rounded-full w-full">
+                      <Link to="/designer/auth" onClick={() => setIsMenuOpen(false)}>
+                        As Designer
                       </Link>
                     </Button>
                   </div>
