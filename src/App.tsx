@@ -11,6 +11,7 @@ import RawMaterials from "./pages/RawMaterials";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
+import AuthRoleSelect from "./pages/AuthRoleSelect";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
 import Orders from "./pages/Orders";
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/select-role" element={<AuthRoleSelect />} />
             <Route path="/profile" element={
               <ProtectedRoute>
                 <Profile />

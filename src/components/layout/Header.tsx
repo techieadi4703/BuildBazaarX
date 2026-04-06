@@ -111,34 +111,17 @@ export const Header = () => {
               </>
             ) : (
               <>
-                <div className="relative group">
-                  <Button variant="ghost" size="sm" className="rounded-full cursor-default">
+                <Button asChild variant="ghost" size="sm" className="rounded-full">
+                  <Link to="/auth/select-role?mode=login">
                     <LogIn className="w-4 h-4 mr-2" />
                     Login
-                  </Button>
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <div className="bg-background border shadow-md rounded-lg overflow-hidden flex flex-col w-36">
-                      <Link to="/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground">As User</Link>
-                      <Link to="/professional/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Professional</Link>
-                      <Link to="/designer/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Designer</Link>
-                      <Link to="/supplier/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Supplier</Link>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="relative group">
-                  <Button size="sm" className="rounded-full px-6 cursor-default">
+                  </Link>
+                </Button>
+                <Button asChild size="sm" className="rounded-full px-6">
+                  <Link to="/auth/select-role">
                     Sign Up
-                  </Button>
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <div className="bg-background border shadow-md rounded-lg overflow-hidden flex flex-col w-36">
-                      <Link to="/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground">As User</Link>
-                      <Link to="/professional/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Professional</Link>
-                      <Link to="/designer/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Designer</Link>
-                      <Link to="/supplier/auth" className="px-4 py-3 hover:bg-muted text-sm font-medium transition-colors text-center text-foreground border-t">As Supplier</Link>
-                    </div>
-                  </div>
-                </div>
+                  </Link>
+                </Button>
               </>
             )}
           </div>
@@ -204,26 +187,16 @@ export const Header = () => {
                 </>
               ) : (
                 <div className="mt-2 space-y-2 border-t pt-4">
-                  <p className="text-sm font-medium text-muted-foreground">Login or Sign Up</p>
                   <div className="grid grid-cols-1 gap-2">
                     <Button asChild variant="outline" className="rounded-full text-foreground w-full">
-                      <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
-                        As User
+                      <Link to="/auth/select-role?mode=login" onClick={() => setIsMenuOpen(false)}>
+                        <LogIn className="w-4 h-4 mr-2" />
+                        Login
                       </Link>
                     </Button>
-                    <Button asChild variant="outline" className="rounded-full text-foreground w-full">
-                      <Link to="/professional/auth" onClick={() => setIsMenuOpen(false)}>
-                        As Professional
-                      </Link>
-                    </Button>
-                    <Button asChild variant="outline" className="rounded-full text-foreground w-full">
-                      <Link to="/designer/auth" onClick={() => setIsMenuOpen(false)}>
-                        As Designer
-                      </Link>
-                    </Button>
-                    <Button asChild variant="outline" className="rounded-full text-foreground w-full">
-                      <Link to="/supplier/auth" onClick={() => setIsMenuOpen(false)}>
-                        As Supplier
+                    <Button asChild className="rounded-full w-full">
+                      <Link to="/auth/select-role" onClick={() => setIsMenuOpen(false)}>
+                        Sign Up
                       </Link>
                     </Button>
                   </div>

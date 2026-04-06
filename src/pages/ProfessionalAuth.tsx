@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,10 @@ const PROFESSIONS = [
 export default function ProfessionalAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const defaultTab = searchParams.get("mode") === "register" ? "register" : "login";
+
 
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
@@ -144,7 +147,7 @@ export default function ProfessionalAuth() {
             <CardDescription>Join our network of skilled professionals</CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="login" className="w-full">
+            <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="register">Register</TabsTrigger>
