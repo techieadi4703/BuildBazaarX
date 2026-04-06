@@ -324,25 +324,28 @@ const RawMaterials = () => {
       {/* Categories Horizontal Scroll */}
       <section className="py-8 bg-background border-b border-border/50">
         <div className="container mx-auto px-4">
-          <Reveal width="100%" direction="up" distance={20}>
+          <Reveal width="100%" direction="up" distance={20} staggerChildren={0.05}>
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide no-scrollbar">
-              <Button 
-                variant={selectedCategory === null ? "default" : "outline"}
-                className="rounded-full px-8 shrink-0 h-11 font-bold"
-                onClick={() => setSelectedCategory(null)}
-              >
-                All Materials
-              </Button>
-              {categories.map((cat) => (
+              <RevealItem>
                 <Button 
-                  key={cat.id}
-                  variant={selectedCategory === cat.id ? "default" : "outline"}
-                  className="rounded-full px-8 shrink-0 h-11 font-bold flex items-center gap-2"
-                  onClick={() => setSelectedCategory(cat.id)}
+                  variant={selectedCategory === null ? "default" : "outline"}
+                  className="rounded-full px-8 shrink-0 h-11 font-bold"
+                  onClick={() => setSelectedCategory(null)}
                 >
-                  <span>{cat.icon}</span>
-                  {cat.name}
+                  All Materials
                 </Button>
+              </RevealItem>
+              {categories.map((cat) => (
+                <RevealItem key={cat.id}>
+                  <Button 
+                    variant={selectedCategory === cat.id ? "default" : "outline"}
+                    className="rounded-full px-8 shrink-0 h-11 font-bold flex items-center gap-2"
+                    onClick={() => setSelectedCategory(cat.id)}
+                  >
+                    <span>{cat.icon}</span>
+                    {cat.name}
+                  </Button>
+                </RevealItem>
               ))}
             </div>
           </Reveal>

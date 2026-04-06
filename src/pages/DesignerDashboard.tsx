@@ -37,6 +37,7 @@ export default function DesignerDashboard() {
   const [activeTab, setActiveTab] = useState("designs");
   const [editingDesign, setEditingDesign] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
+  const [isDesignerValid, setIsDesignerValid] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -48,11 +49,23 @@ export default function DesignerDashboard() {
         return;
       }
       setUser(session.user);
+      
+      const { data: designerData } = await supabase
+        .from('designers')
+        .select('id')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+      if (!designerData) {
+        navigate("/designer/setup"); // Redirect if profile doesn't exist
+        return;
+      }
+      setIsDesignerValid(true);
     };
     init();
   }, [navigate]);
 
-  if (!user) {
+  if (!user || isDesignerValid === null) {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6">
@@ -496,6 +509,17 @@ function UploadDesignSection({ userId, editingDesign, onSuccess }: { userId: str
 
     setIsUploading(true);
     try {
+      // Check if designer profile exists
+      const { data: designerCheck, error: designerCheckError } = await supabase
+        .from('designers')
+        .select('id')
+        .eq('id', userId)
+        .maybeSingle();
+      
+      if (designerCheckError || !designerCheck) {
+        throw new Error("Designer profile not found. Please complete your 'Identity' setup before publishing.");
+      }
+
       const uploadedImageUrls: string[] = [...existingImages];
       for (const file of files) {
         const fileExt = file.name.split('.').pop();
@@ -547,7 +571,16 @@ function UploadDesignSection({ userId, editingDesign, onSuccess }: { userId: str
           .insert(designPayload)
           .select()
           .single();
-        if (designError || !designData) throw designError || new Error("Sync Failed");
+        
+        if (designError) {
+          console.error("Design insertion error:", designError);
+          if (designError.code === '42501') {
+            throw new Error("Permission Denied: Your account doesn't have designer privileges or your profile is incomplete.");
+          }
+          throw designError;
+        }
+        
+        if (!designData) throw new Error("Sync Failed: Record was not created.");
         designId = designData.id;
       }
 

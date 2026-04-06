@@ -132,7 +132,7 @@ export default function DesignerAuth() {
 
   return (
     <Layout>
-      <div className="min-h-[90vh] flex flex-col items-center justify-center py-16 px-4 relative overflow-hidden bg-secondary/20">
+      <div className="min-h-[90vh] flex flex-col items-center justify-center py-16 px-4 relative overflow-hidden bg-gradient-to-br from-secondary/40 via-background to-primary/5">
         <FloatingBubbles count={14} palette="brand" />
         
         <Reveal width="100%" direction="up" distance={40}>
