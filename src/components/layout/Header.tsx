@@ -19,16 +19,38 @@ const navLinks = [
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [userDashboardPath, setUserDashboardPath] = useState<string>("/");
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchUserRole = async (userId: string) => {
+      const { data: designer } = await supabase.from('designers').select('id').eq('id', userId).maybeSingle();
+      if (designer) { setUserDashboardPath('/designer/dashboard'); return; }
+      
+      const { data: professional } = await supabase.from('professionals').select('id').eq('id', userId).maybeSingle();
+      if (professional) { setUserDashboardPath('/professional/dashboard'); return; }
+      
+      const { data: supplier } = await supabase.from('suppliers').select('id').eq('id', userId).maybeSingle();
+      if (supplier) { setUserDashboardPath('/supplier/dashboard'); return; }
+
+      setUserDashboardPath('/');
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchUserRole(session.user.id);
+      } else {
+        setUserDashboardPath('/');
+      }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchUserRole(session.user.id);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -59,7 +81,7 @@ export const Header = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <Link to="/" className="flex items-center gap-3 group">
+            <Link to={userDashboardPath} className="flex items-center gap-3 group">
               <motion.img
                 src={logoIcon}
                 alt="BuildBazaarX Logo"
