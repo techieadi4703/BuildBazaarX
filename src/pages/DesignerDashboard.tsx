@@ -509,17 +509,26 @@ function UploadDesignSection({ userId, editingDesign, onSuccess }: { userId: str
 
     setIsUploading(true);
     try {
-      // Check if designer profile exists
+      // Step 1: Check if designer profile exists
+      console.log("[PUBLISH DEBUG] Step 1: Checking designer profile for userId:", userId);
       const { data: designerCheck, error: designerCheckError } = await supabase
         .from('designers')
         .select('id')
         .eq('id', userId)
         .maybeSingle();
       
-      if (designerCheckError || !designerCheck) {
+      if (designerCheckError) {
+        console.error("[PUBLISH DEBUG] Step 1 FAILED - designers SELECT error:", designerCheckError);
         throw new Error("Designer profile not found. Please complete your 'Identity' setup before publishing.");
       }
+      if (!designerCheck) {
+        console.error("[PUBLISH DEBUG] Step 1 FAILED - No designer row found for userId:", userId);
+        throw new Error("Designer profile not found. Please complete your 'Identity' setup before publishing.");
+      }
+      console.log("[PUBLISH DEBUG] Step 1 PASSED - Designer found:", designerCheck);
 
+      // Step 2: Upload images
+      console.log("[PUBLISH DEBUG] Step 2: Uploading", files.length, "images...");
       const uploadedImageUrls: string[] = [...existingImages];
       for (const file of files) {
         const fileExt = file.name.split('.').pop();
@@ -530,7 +539,10 @@ function UploadDesignSection({ userId, editingDesign, onSuccess }: { userId: str
           .from('design-images')
           .upload(filePath, file);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error("[PUBLISH DEBUG] Step 2 FAILED - Storage upload error:", uploadError);
+          throw uploadError;
+        }
 
         const { data: { publicUrl } } = supabase.storage
           .from('design-images')
@@ -538,6 +550,7 @@ function UploadDesignSection({ userId, editingDesign, onSuccess }: { userId: str
         
         uploadedImageUrls.push(publicUrl);
       }
+      console.log("[PUBLISH DEBUG] Step 2 PASSED - Images uploaded:", uploadedImageUrls.length);
 
       const designPayload = {
         designer_id: userId,
@@ -560,12 +573,20 @@ function UploadDesignSection({ userId, editingDesign, onSuccess }: { userId: str
       let designId = editingDesign?.id;
 
       if (editingDesign) {
+        // Step 3a: Update existing design
+        console.log("[PUBLISH DEBUG] Step 3a: Updating design:", editingDesign.id);
         const { error: updateError } = await supabase
           .from('designs')
           .update(designPayload)
           .eq('id', editingDesign.id);
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error("[PUBLISH DEBUG] Step 3a FAILED - designs UPDATE error:", updateError);
+          throw updateError;
+        }
+        console.log("[PUBLISH DEBUG] Step 3a PASSED - Design updated");
       } else {
+        // Step 3b: Insert new design
+        console.log("[PUBLISH DEBUG] Step 3b: Inserting new design with payload:", JSON.stringify(designPayload, null, 2));
         const { data: designData, error: designError } = await supabase
           .from('designs')
           .insert(designPayload)
@@ -573,20 +594,28 @@ function UploadDesignSection({ userId, editingDesign, onSuccess }: { userId: str
           .single();
         
         if (designError) {
-          console.error("Design insertion error:", designError);
-          if (designError.code === '42501') {
-            throw new Error("Permission Denied: Your account doesn't have designer privileges or your profile is incomplete.");
-          }
-          throw designError;
+          console.error("[PUBLISH DEBUG] Step 3b FAILED - designs INSERT error:", JSON.stringify(designError));
+          console.error("[PUBLISH DEBUG] Error code:", designError.code, "| Message:", designError.message, "| Details:", designError.details, "| Hint:", designError.hint);
+          throw new Error(`designs INSERT failed: ${designError.message} (code: ${designError.code})`);
         }
         
-        if (!designData) throw new Error("Sync Failed: Record was not created.");
+        if (!designData) {
+          console.error("[PUBLISH DEBUG] Step 3b FAILED - No data returned from insert");
+          throw new Error("Sync Failed: Record was not created.");
+        }
         designId = designData.id;
+        console.log("[PUBLISH DEBUG] Step 3b PASSED - Design created with id:", designId);
       }
 
+      // Step 4: Handle materials
       if (designId && materials.length > 0) {
-        // Delete old materials and insert new ones
-        await supabase.from('design_materials').delete().eq('design_id', designId);
+        console.log("[PUBLISH DEBUG] Step 4a: Deleting old materials for design:", designId);
+        const { error: deleteMatError } = await supabase.from('design_materials').delete().eq('design_id', designId);
+        if (deleteMatError) {
+          console.error("[PUBLISH DEBUG] Step 4a FAILED - design_materials DELETE error:", deleteMatError);
+          throw new Error(`design_materials DELETE failed: ${deleteMatError.message}`);
+        }
+        console.log("[PUBLISH DEBUG] Step 4a PASSED - Old materials deleted");
         
         const materialRows = materials.map(m => ({
           design_id: designId,
@@ -599,22 +628,39 @@ function UploadDesignSection({ userId, editingDesign, onSuccess }: { userId: str
         })).filter(m => m.material_name && m.quantity > 0);
 
         if (materialRows.length > 0) {
+          console.log("[PUBLISH DEBUG] Step 4b: Inserting", materialRows.length, "materials:", JSON.stringify(materialRows));
           const { error: matError } = await supabase.from('design_materials').insert(materialRows);
-          if (matError) throw matError;
+          if (matError) {
+            console.error("[PUBLISH DEBUG] Step 4b FAILED - design_materials INSERT error:", matError);
+            throw new Error(`design_materials INSERT failed: ${matError.message}`);
+          }
+          console.log("[PUBLISH DEBUG] Step 4b PASSED - Materials inserted");
         }
       }
 
+      // Step 5: Update designer total
       if (!editingDesign) {
-        const { data: designerData } = await supabase.from('designers').select('total_designs').eq('id', userId).single();
+        console.log("[PUBLISH DEBUG] Step 5: Updating designer total_designs");
+        const { data: designerData, error: designerReadErr } = await supabase.from('designers').select('total_designs').eq('id', userId).single();
+        if (designerReadErr) {
+          console.error("[PUBLISH DEBUG] Step 5 read FAILED:", designerReadErr);
+        }
         const currentTotal = designerData?.total_designs || 0;
-        await supabase.from('designers').update({ total_designs: currentTotal + 1 }).eq('id', userId);
+        const { error: designerUpdateErr } = await supabase.from('designers').update({ total_designs: currentTotal + 1 }).eq('id', userId);
+        if (designerUpdateErr) {
+          console.error("[PUBLISH DEBUG] Step 5 update FAILED - designers UPDATE error:", designerUpdateErr);
+          // Don't throw here, design was already created successfully
+        }
+        console.log("[PUBLISH DEBUG] Step 5 PASSED - Designer total updated");
         toast({ title: isPublished ? "Published to Marketplace! 🚀" : "Archived in Drafts." });
       } else {
         toast({ title: "Design Updated! ✨" });
       }
       
+      console.log("[PUBLISH DEBUG] ✅ ALL STEPS COMPLETED SUCCESSFULLY");
       onSuccess();
     } catch (error: any) {
+      console.error("[PUBLISH DEBUG] ❌ FINAL ERROR:", error);
       toast({ variant: "destructive", title: "Publish Error", description: error.message });
     } finally {
       setIsUploading(false);
