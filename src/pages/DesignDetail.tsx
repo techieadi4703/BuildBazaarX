@@ -12,6 +12,8 @@ import {
   Ruler,
   Phone,
   MessageCircle,
+  Sparkles,
+  Zap,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -24,6 +26,8 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { DesignPricingCalculator } from "@/components/design-detail/DesignPricingCalculator";
 import { ExecutionCostBreakdown } from "@/components/design-detail/ExecutionCostBreakdown";
+import { Reveal, RevealItem } from "@/components/shared/Reveal";
+import { motion, AnimatePresence } from "framer-motion";
 
 import kitchenImage from "@/assets/kitchen-design.jpg";
 import bedroomImage from "@/assets/bedroom-design.jpg";
@@ -257,7 +261,6 @@ const DesignDetail = () => {
         if (error) throw error;
 
         if (data) {
-          // Increment view count
           await supabase.from('designs').update({ view_count: (data.view_count || 0) + 1 }).eq('id', actualId);
           
           setDbDesign({
@@ -292,7 +295,7 @@ const DesignDetail = () => {
   }, [id]);
 
   if (isLoading) {
-    return <Layout><div className="flex justify-center py-20">Loading...</div></Layout>;
+    return <Layout><div className="flex justify-center items-center h-[70vh]"><Zap className="w-8 h-8 animate-pulse text-primary" /></div></Layout>;
   }
 
   const hardcodedDesign = id && !id.startsWith("db-") ? designsData[id as keyof typeof designsData] : null;
@@ -302,11 +305,13 @@ const DesignDetail = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Design Not Found</h1>
-          <p className="text-muted-foreground mb-6">The design you're looking for doesn't exist.</p>
-          <Button asChild>
-            <Link to="/designs">Browse All Designs</Link>
-          </Button>
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+            <h1 className="text-4xl font-black text-foreground mb-4">Design Not Found</h1>
+            <p className="text-muted-foreground mb-10 text-lg">We couldn't track down the design you're looking for.</p>
+            <Button asChild size="lg" className="rounded-2xl">
+              <Link to="/designs">Explore All Designs</Link>
+            </Button>
+          </motion.div>
         </div>
       </Layout>
     );
@@ -322,8 +327,8 @@ const DesignDetail = () => {
       return;
     }
     toast({
-      title: "Consultation Request Sent!",
-      description: "Our team will reach out within 24 hours.",
+      title: "Consultation Request Sent! ✨",
+      description: "Our high-end experts will reach out within 24 hours.",
     });
     setFormData({ name: "", phone: "", city: "", projectType: "", message: "" });
   };
@@ -335,338 +340,449 @@ const DesignDetail = () => {
 
   return (
     <Layout>
-      {/* Breadcrumb */}
-      <div className="bg-secondary/50 border-b border-border">
-        <div className="container mx-auto px-4 py-3">
+      {/* Breadcrumb Header */}
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="bg-secondary/30 border-b border-border/50 py-4"
+      >
+        <div className="container mx-auto px-4">
           <Link
             to="/designs"
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
+            className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-primary transition-colors group"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Designs
+            <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
+              <ArrowLeft className="w-4 h-4" />
+            </div>
+            Back to Catalog
           </Link>
         </div>
-      </div>
+      </motion.div>
 
-      {/* ── Two-column hero ── */}
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+      <div className="container mx-auto px-4 py-12 md:py-20">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
 
-          {/* ── LEFT: Image Gallery ── */}
-          <div className="space-y-4">
-            {/* Main Image */}
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-muted shadow-md">
-              <img
-                src={design.images[currentImageIndex]}
-                alt={design.name}
-                className="w-full h-full object-cover transition-all duration-300"
-              />
-              {design.trending && (
-                <Badge className="absolute top-4 left-4 bg-destructive text-destructive-foreground">
-                  🔥 Trending
-                </Badge>
-              )}
-              {/* Arrows */}
-              {design.images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background shadow transition-colors"
-                  >
-                    <ChevronLeft className="w-5 h-5 text-foreground" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background shadow transition-colors"
-                  >
-                    <ChevronRight className="w-5 h-5 text-foreground" />
-                  </button>
-                </>
-              )}
-              {/* Dot indicator */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-                {design.images.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentImageIndex(i)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      i === currentImageIndex ? "bg-primary w-4" : "bg-background/70"
-                    }`}
+          {/* LEFT: Image Gallery */}
+          <Reveal width="100%" direction="up">
+            <div className="space-y-6">
+              {/* Main Image Slider */}
+              <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-secondary shadow-2xl group">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentImageIndex}
+                    src={design.images[currentImageIndex]}
+                    alt={design.name}
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.6, ease: "circOut" }}
+                    className="w-full h-full object-cover"
                   />
+                </AnimatePresence>
+                
+                {design.trending && (
+                  <Badge className="absolute top-6 left-6 bg-destructive text-white px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-lg">
+                    🔥 Hottest Trend
+                  </Badge>
+                )}
+
+                {/* Navigation Arrows */}
+                {design.images.length > 1 && (
+                  <div className="absolute inset-x-6 top-1/2 -translate-y-1/2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={prevImage}
+                      className="w-12 h-12 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center shadow-xl text-foreground hover:bg-primary hover:text-white transition-all"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={nextImage}
+                      className="w-12 h-12 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center shadow-xl text-foreground hover:bg-primary hover:text-white transition-all"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </motion.button>
+                  </div>
+                )}
+
+                {/* Dots indicator */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                  {design.images.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentImageIndex(i)}
+                      className={`h-2.5 rounded-full transition-all duration-500 bg-white shadow-lg ${
+                        i === currentImageIndex ? "w-8 opacity-100" : "w-2.5 opacity-40 hover:opacity-100"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Thumbnails grid */}
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-4">
+                {design.images.map((img, index) => (
+                  <motion.button
+                    key={index}
+                    whileHover={{ y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`relative aspect-square rounded-2xl overflow-hidden border-4 transition-all ${
+                      index === currentImageIndex
+                        ? "border-primary shadow-xl ring-4 ring-primary/20"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                    }`}
+                  >
+                    <img src={img} alt={`View ${index + 1}`} className="w-full h-full object-cover" />
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+
+          {/* RIGHT: Design Details */}
+          <div className="space-y-10">
+            <Reveal width="100%" direction="up">
+              <div>
+                <div className="flex flex-wrap items-center gap-3 mb-6">
+                  <Badge variant="outline" className="px-4 py-1 rounded-full border-primary/20 text-primary font-black uppercase tracking-widest text-[10px]">
+                    {design.category}
+                  </Badge>
+                  <Badge variant="outline" className="px-4 py-1 rounded-full border-accent/20 text-accent font-black uppercase tracking-widest text-[10px]">
+                    {design.style} Style
+                  </Badge>
+                </div>
+                <h1 className="text-4xl md:text-5xl font-black text-foreground mb-6 leading-tight tracking-tight">
+                  {design.name}
+                </h1>
+                <div className="flex flex-wrap items-center gap-8 text-sm font-bold">
+                  <div className="flex items-center gap-2 bg-accent/5 px-4 py-2 rounded-2xl border border-accent/10">
+                    <Star className="w-5 h-5 fill-accent text-accent" />
+                    <span className="text-foreground text-lg">{design.rating}</span>
+                    <span className="text-muted-foreground font-medium">({design.reviews} Reviews)</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-secondary/30 px-4 py-2 rounded-2xl border border-border/50">
+                    <Ruler className="w-5 h-5 text-primary" />
+                    <span className="text-foreground">{design.size} Area</span>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal width="100%" direction="up" delay={0.1}>
+              <p className="text-muted-foreground text-lg leading-relaxed font-medium">
+                {design.description}
+              </p>
+            </Reveal>
+
+            {/* Quick Metrics Grid */}
+            <Reveal width="100%" staggerChildren={0.1} delay={0.2}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {[
+                  { icon: Clock, label: "Est. Timeline", value: design.timeline },
+                  { icon: Shield, label: "Brand Warranty", value: design.warranty },
+                  { icon: Check, label: "Material Grade", value: "Premium Plus" }
+                ].map((item, idx) => (
+                  <RevealItem key={idx}>
+                    <div className="p-6 bg-secondary/20 rounded-[2rem] border border-border/50 hover:border-primary/20 transition-all text-center">
+                      <div className="w-12 h-12 bg-background rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                        <item.icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{item.label}</p>
+                      <p className="font-black text-foreground text-sm">{item.value}</p>
+                    </div>
+                  </RevealItem>
+                ))}
+              </div>
+            </Reveal>
+
+            {/* Features list interactive */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-black uppercase tracking-[0.25em] text-primary/80 mb-6">Execution Features</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {design.features.map((feat, idx) => (
+                  <motion.div 
+                    key={feat} 
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 * idx }}
+                    className="flex items-center gap-4 p-4 rounded-2xl bg-background border border-border/40 hover:border-primary/20 transition-all group"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all">
+                      <Check className="w-4 h-4" />
+                    </div>
+                    <span className="text-sm font-bold text-muted-foreground group-hover:text-foreground transition-colors">{feat}</span>
+                  </motion.div>
                 ))}
               </div>
             </div>
 
-            {/* Thumbnails */}
-            <div className="flex gap-3 overflow-x-auto pb-1">
-              {design.images.map((img, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                    index === currentImageIndex
-                      ? "border-primary shadow-md"
-                      : "border-transparent opacity-55 hover:opacity-90"
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`View ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* ── RIGHT: Design Info + Cost Summary ── */}
-          <div className="space-y-6">
-            {/* Tags + Title + Rating */}
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Badge variant="secondary">{design.category}</Badge>
-                <Badge variant="outline">{design.style}</Badge>
-              </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-3 leading-tight">
-                {design.name}
-              </h1>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Star className="w-4 h-4 fill-accent text-accent" />
-                  <span className="font-medium text-foreground">{design.rating}</span>
-                  &nbsp;({design.reviews} reviews)
-                </span>
-                <span className="flex items-center gap-1">
-                  <Ruler className="w-4 h-4" />
-                  {design.size}
-                </span>
-              </div>
-            </div>
-
-            {/* Description */}
-            <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-              {design.description}
-            </p>
-
-            {/* Info Cards */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="flex flex-col items-center text-center p-4 bg-secondary rounded-2xl">
-                <Clock className="w-5 h-5 mb-2 text-primary" />
-                <p className="text-xs text-muted-foreground mb-1">Timeline</p>
-                <p className="font-semibold text-foreground text-xs md:text-sm leading-tight">
-                  {design.timeline}
-                </p>
-              </div>
-              <div className="flex flex-col items-center text-center p-4 bg-secondary rounded-2xl">
-                <Shield className="w-5 h-5 mb-2 text-primary" />
-                <p className="text-xs text-muted-foreground mb-1">Warranty</p>
-                <p className="font-semibold text-foreground text-xs md:text-sm">
-                  {design.warranty}
-                </p>
-              </div>
-              <div className="flex flex-col items-center text-center p-4 bg-secondary rounded-2xl">
-                <Check className="w-5 h-5 mb-2 text-primary" />
-                <p className="text-xs text-muted-foreground mb-1">Quality</p>
-                <p className="font-semibold text-foreground text-xs md:text-sm">Premium</p>
-              </div>
-            </div>
-
-            {/* Features list */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {design.features.map((feat) => (
-                <div key={feat} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <span className="mt-0.5 w-4 h-4 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-                    <Check className="w-2.5 h-2.5 text-primary" />
-                  </span>
-                  {feat}
+            {/* Cost Summary Card Premium */}
+            <Reveal width="100%" direction="up" delay={0.3}>
+              <Card className="border-border/50 shadow-2xl rounded-[3rem] overflow-hidden bg-background">
+                <div className="bg-primary px-8 py-6 flex items-center gap-3">
+                  <Sparkles className="w-6 h-6 text-white" />
+                  <h3 className="font-black text-white text-lg uppercase tracking-tight">Investment Summary</h3>
                 </div>
-              ))}
-            </div>
-
-            {/* ── Cost Summary Card ── */}
-            <Card className="border border-primary/20 shadow-md rounded-2xl overflow-hidden">
-              <div className="bg-primary/5 px-5 py-3 border-b border-primary/10">
-                <h3 className="font-bold text-foreground text-base">Cost Summary</h3>
-              </div>
-              <CardContent className="p-5 space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Execution Cost</span>
-                  <span className="font-medium text-foreground">
-                    ₹{design.executionCost.toLocaleString("en-IN")}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Materials Cost</span>
-                  <span className="font-medium text-foreground">
-                    ₹{design.materialsCost.toLocaleString("en-IN")}
-                  </span>
-                </div>
-                <Separator />
-                <div className="flex justify-between items-center pt-1">
-                  <span className="font-bold text-foreground text-base">Total Cost</span>
-                  <span className="font-bold text-primary text-xl">
-                    ₹{design.totalCost.toLocaleString("en-IN")}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
+                <CardContent className="p-8 space-y-6">
+                  <div className="flex justify-between items-center group">
+                    <span className="text-muted-foreground font-bold uppercase tracking-widest text-xs">Standard Execution</span>
+                    <span className="font-black text-foreground text-lg group-hover:text-primary transition-colors">
+                      ₹{design.executionCost.toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center group">
+                    <span className="text-muted-foreground font-bold uppercase tracking-widest text-xs">Standard Materials</span>
+                    <span className="font-black text-foreground text-lg group-hover:text-primary transition-colors">
+                      ₹{design.materialsCost.toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                  <Separator className="bg-border/50" />
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Estimated Total Price</p>
+                      <p className="font-black text-primary text-4xl tracking-tighter">
+                        ₹{design.totalCost.toLocaleString("en-IN")}
+                      </p>
+                    </div>
+                    <div className="bg-green-50 px-4 py-2 rounded-2xl border border-green-100 hidden sm:block">
+                      <p className="text-[10px] font-black text-green-700 uppercase tracking-tighter">EMI Starting at</p>
+                      <p className="font-black text-green-800">₹{(Math.round(design.totalCost / 24)).toLocaleString()} / mo</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Reveal>
 
             {/* CTA Button */}
-            <Button
-              className="w-full rounded-full text-base py-6 shadow-md"
-              onClick={() => {
-                const el = document.getElementById("consultation-form");
-                el?.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              <Phone className="w-4 h-4 mr-2" />
-              Get Free Consultation
-            </Button>
+            <Reveal width="100%" direction="up" delay={0.4}>
+              <Button
+                size="lg"
+                className="w-full h-20 rounded-[2rem] text-xl font-black shadow-2xl shadow-primary/20 group relative overflow-hidden"
+                onClick={() => {
+                  const el = document.getElementById("consultation-form");
+                  el?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                <div className="relative z-10 flex items-center justify-center gap-3">
+                  <Phone className="w-6 h-6 animate-pulse" />
+                  Request Free Expert Consultation
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                </div>
+                <motion.div 
+                  className="absolute inset-0 bg-primary-foreground/10"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.5 }}
+                />
+              </Button>
+            </Reveal>
           </div>
         </div>
       </div>
 
-      {/* ── Execution Cost Breakdown (full width) ── */}
-      <ExecutionCostBreakdown />
+      {/* Breakdowns & Lists */}
+      <section className="py-20 bg-secondary/10">
+        <Reveal width="100%" direction="up">
+          <ExecutionCostBreakdown />
+        </Reveal>
+      </section>
 
-      {/* ── Raw Materials Required (full width) ── */}
-      {id?.startsWith("db-") && dbMaterials.length > 0 ? (
-        <section className="py-12 bg-secondary/20">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-2xl font-bold mb-6">Raw Materials Required</h2>
-            <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-primary/5 text-muted-foreground border-b border-primary/10">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Material</th>
-                    <th className="px-4 py-3 font-medium">Category</th>
-                    <th className="px-4 py-3 font-medium">Quantity</th>
-                    <th className="px-4 py-3 font-medium">Est. Cost</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {dbMaterials.map((mat) => (
-                    <tr key={mat.id} className="hover:bg-muted/50 transition-colors">
-                      <td className="px-4 py-3 font-medium text-foreground">{mat.material_name}</td>
-                      <td className="px-4 py-3">{mat.category || '-'}</td>
-                      <td className="px-4 py-3">{mat.quantity} {mat.unit}</td>
-                      <td className="px-4 py-3 text-primary">
-                        {mat.estimated_cost ? `₹${mat.estimated_cost.toLocaleString('en-IN')}` : '-'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-      ) : (
-        <DesignPricingCalculator />
-      )}
-
-      {/* ── Free Consultation Form ── */}
-      <section id="consultation-form" className="py-12 md:py-16 bg-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-                Get Free Consultation
-              </h2>
-              <p className="text-muted-foreground text-sm">
-                Share your requirements and our design experts will reach out within 24 hours.
-              </p>
-            </div>
-
-            <Card className="shadow-lg border-0 rounded-2xl overflow-hidden">
-              <div className="bg-primary px-6 py-4 flex items-center gap-3">
-                <MessageCircle className="w-5 h-5 text-primary-foreground" />
-                <span className="font-semibold text-primary-foreground">Tell Us About Your Project</span>
+      {/* Raw Materials Required */}
+      <AnimatePresence>
+        {id?.startsWith("db-") && dbMaterials.length > 0 && (
+          <motion.section 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="py-24 bg-background"
+          >
+            <div className="container mx-auto px-4 max-w-5xl">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <div>
+                  <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-4">Inside the Build</h2>
+                  <h3 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">Bill of Materials</h3>
+                </div>
+                <Badge variant="secondary" className="px-6 py-2 rounded-full font-bold h-fit border border-border">
+                  {dbMaterials.length} Standard Items Required
+                </Badge>
               </div>
-              <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="consult-name" className="text-sm font-medium">
-                      Full Name <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="consult-name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Enter your full name"
-                      className="rounded-lg"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="consult-phone" className="text-sm font-medium">
-                      Phone Number <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="consult-phone"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="+91 XXXXX XXXXX"
-                      className="rounded-lg"
-                    />
-                  </div>
-                </div>
+              
+              <div className="overflow-hidden rounded-[3rem] border border-border/50 bg-background shadow-2xl">
+                <table className="w-full text-left">
+                  <thead className="bg-primary/5 text-muted-foreground border-b border-primary/10">
+                    <tr>
+                      <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px]">Material Name</th>
+                      <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px]">Category</th>
+                      <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px]">Quantity</th>
+                      <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px] text-right">Est. Market Price</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/50">
+                    {dbMaterials.map((mat, idx) => (
+                      <motion.tr 
+                        key={mat.id} 
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 * idx }}
+                        className="hover:bg-secondary/20 transition-all group"
+                      >
+                        <td className="px-10 py-6 font-bold text-foreground group-hover:text-primary transition-colors">{mat.material_name}</td>
+                        <td className="px-10 py-6 font-medium text-muted-foreground italic text-sm">{mat.category || '-'}</td>
+                        <td className="px-10 py-6">
+                           <Badge variant="outline" className="rounded-full px-4 py-1 border-primary/10 font-bold bg-primary/5 text-primary">{mat.quantity} {mat.unit}</Badge>
+                        </td>
+                        <td className="px-10 py-6 text-right font-black text-foreground">
+                          {mat.estimated_cost ? `₹${mat.estimated_cost.toLocaleString('en-IN')}` : 'Market Rates'}
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="consult-city" className="text-sm font-medium">City</Label>
-                    <Input
-                      id="consult-city"
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      placeholder="Your city"
-                      className="rounded-lg"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="consult-project" className="text-sm font-medium">Project Type</Label>
-                    <select
-                      id="consult-project"
-                      value={formData.projectType}
-                      onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    >
-                      <option value="">Select project type</option>
-                      <option value="Kitchen">Kitchen</option>
-                      <option value="Bedroom">Bedroom</option>
-                      <option value="Living Room">Living Room</option>
-                      <option value="Full Home">Full Home</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                </div>
+      {!id?.startsWith("db-") && <DesignPricingCalculator />}
 
-                <div className="space-y-1.5">
-                  <Label htmlFor="consult-message" className="text-sm font-medium">
-                    Message / Requirement
-                  </Label>
-                  <Textarea
-                    id="consult-message"
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Describe your vision, budget expectations, or any specific requirements..."
-                    rows={4}
-                    className="rounded-lg resize-none"
-                  />
-                </div>
-
-                <Button
-                  className="w-full rounded-full text-base py-6 shadow-sm"
-                  onClick={handleSubmit}
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Get Free Consultation
-                </Button>
-                <p className="text-xs text-muted-foreground text-center">
-                  By submitting, you agree to be contacted by our design team. No spam, ever.
+      {/* Consultation Form Form Section */}
+      <section id="consultation-form" className="py-24 bg-secondary/20 relative overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-3xl mx-auto">
+            <Reveal width="100%" direction="up">
+              <div className="text-center mb-16">
+                <h2 className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4">Final Step</h2>
+                <h3 className="text-4xl md:text-6xl font-black text-foreground mb-6 tracking-tight">Your Dream, Crafted.</h3>
+                <p className="text-muted-foreground text-xl font-medium max-w-2xl mx-auto">
+                  Share your vision with us and let our expert team bring it to life with precision and luxury.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </Reveal>
+
+            <motion.div 
+              whileHover={{ y: -5 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="shadow-[0_40px_100px_rgba(0,0,0,0.15)] border-none rounded-[4rem] overflow-hidden bg-background">
+                <div className="bg-primary p-12 flex flex-col items-center text-center text-white relative overflow-hidden">
+                  <div className="relative z-10">
+                    <MessageCircle className="w-16 h-16 mb-6 opacity-80" />
+                    <h3 className="text-2xl font-black tracking-tight mb-2">Technical Feasibility Brief</h3>
+                    <p className="text-white/60 font-bold uppercase tracking-widest text-[10px]">No commitment consultation call</p>
+                  </div>
+                  <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/5 rounded-full" />
+                  <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-white/5 rounded-full" />
+                </div>
+                <CardContent className="p-12 space-y-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    <RevealItem>
+                      <div className="space-y-3">
+                        <Label htmlFor="consult-name" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Full Name</Label>
+                        <Input
+                          id="consult-name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          placeholder="Your preferred name"
+                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                        />
+                      </div>
+                    </RevealItem>
+                    <RevealItem>
+                      <div className="space-y-3">
+                        <Label htmlFor="consult-phone" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Mobile Access</Label>
+                        <Input
+                          id="consult-phone"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          placeholder="+91"
+                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                        />
+                      </div>
+                    </RevealItem>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    <RevealItem>
+                      <div className="space-y-3">
+                        <Label htmlFor="consult-city" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Site Location</Label>
+                        <Input
+                          id="consult-city"
+                          value={formData.city}
+                          onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                          placeholder="Project city"
+                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                        />
+                      </div>
+                    </RevealItem>
+                    <RevealItem>
+                      <div className="space-y-3">
+                        <Label htmlFor="consult-project" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Configuration</Label>
+                        <select
+                          id="consult-project"
+                          value={formData.projectType}
+                          onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
+                          className="flex h-14 w-full rounded-2xl bg-secondary/30 border-transparent px-4 py-2 text-sm font-bold focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none cursor-pointer"
+                        >
+                          <option value="">Specific Category</option>
+                          <option value="Kitchen">Modern Kitchen</option>
+                          <option value="Bedroom">Bespoke Bedroom</option>
+                          <option value="Living Room">Premium Living Lounge</option>
+                          <option value="Full Home">End-to-End Home</option>
+                          <option value="Other">Custom Project</option>
+                        </select>
+                      </div>
+                    </RevealItem>
+                  </div>
+
+                  <RevealItem>
+                    <div className="space-y-3">
+                      <Label htmlFor="consult-message" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Design Aspirations</Label>
+                      <Textarea
+                        id="consult-message"
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        placeholder="Tell us everything — materials preferences, timeline constraints, or aesthetic inspiration..."
+                        rows={4}
+                        className="rounded-3xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold pt-4 px-4"
+                      />
+                    </div>
+                  </RevealItem>
+
+                  <RevealItem>
+                    <Button
+                      size="lg"
+                      className="w-full h-20 rounded-[2rem] font-black text-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] group relative overflow-hidden"
+                      onClick={handleSubmit}
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-3">
+                        <MessageCircle className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                        Initiate Free Consultation
+                      </span>
+                      <motion.div 
+                        className="absolute inset-0 bg-primary-foreground/10"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: "100%" }}
+                        transition={{ duration: 0.5 }}
+                      />
+                    </Button>
+                    <p className="text-[10px] text-muted-foreground font-black text-center mt-6 uppercase tracking-widest opacity-50">
+                      Standard response time: &lt; 4 business hours
+                    </p>
+                  </RevealItem>
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
         </div>
+        
+        {/* Background Decorative patterns */}
+        <div className="absolute top-1/2 left-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -translate-x-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-[120px] translate-x-1/2" />
       </section>
     </Layout>
   );

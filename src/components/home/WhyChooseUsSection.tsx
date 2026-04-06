@@ -1,3 +1,4 @@
+import React from "react";
 import { 
   Home, 
   DollarSign, 
@@ -6,6 +7,8 @@ import {
   Zap, 
   Shield 
 } from "lucide-react";
+import { Reveal, RevealItem } from "@/components/shared/Reveal";
+import { motion } from "framer-motion";
 
 const features = [
   {
@@ -42,40 +45,62 @@ const features = [
 
 export const WhyChooseUsSection = () => {
   return (
-    <section className="py-16 md:py-24 bg-secondary">
-      <div className="container mx-auto px-4">
+    <section className="py-24 md:py-32 bg-secondary/50 relative overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-primary font-medium text-sm uppercase tracking-wider">
-            Our Advantage
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-secondary-foreground mt-2 mb-4">
-            Why Choose BuildBazaarX?
-          </h2>
-          <p className="text-secondary-foreground/80">
-            We bring together everything you need to build or renovate your home with confidence.
-          </p>
-        </div>
+        <Reveal width="100%" direction="up" distance={30}>
+          <div className="text-center max-w-2xl mx-auto mb-20">
+            <motion.span 
+              className="text-primary font-bold text-sm uppercase tracking-widest bg-primary/5 px-4 py-1.5 rounded-full"
+              whileHover={{ scale: 1.05 }}
+            >
+              Our Advantage
+            </motion.span>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mt-6 mb-4 tracking-tight">
+              Why Choose BuildBazaarX?
+            </h2>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              We bring together everything you need to build or renovate your home with confidence.
+            </p>
+          </div>
+        </Reveal>
 
         {/* Features Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="group p-6 bg-card rounded-2xl border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl"
-            >
-              <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all">
-                <feature.icon className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                {feature.title}
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
+        <Reveal width="100%" staggerChildren={0.1}>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <RevealItem key={index}>
+                <motion.div
+                  className="group p-8 bg-background rounded-3xl border border-border/50 hover:border-primary/50 transition-all duration-500 hover:shadow-2xl h-full flex flex-col"
+                  whileHover={{ y: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <motion.div 
+                    className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-500"
+                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.1 }}
+                  >
+                    <feature.icon className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-500" />
+                  </motion.div>
+                  <h3 className="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground text-lg leading-relaxed mb-6 flex-grow">
+                    {feature.description}
+                  </p>
+                  
+                  {/* Subtle arrow pointer */}
+                  <div className="w-8 h-0.5 bg-primary/20 group-hover:w-full transition-all duration-500" />
+                </motion.div>
+              </RevealItem>
+            ))}
+          </div>
+        </Reveal>
+      </div>
+
+      {/* Background design */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
+        <div className="absolute top-20 right-10 w-96 h-96 border border-primary/10 rounded-full" />
+        <div className="absolute bottom-20 left-10 w-64 h-64 border border-accent/10 rounded-full" />
       </div>
     </section>
   );

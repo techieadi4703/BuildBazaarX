@@ -5,17 +5,19 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X, UploadCloud, FileImage, Trash2, Edit2, CheckCircle, Mail, MoreVertical } from "lucide-react";
+import { Plus, X, UploadCloud, FileImage, Trash2, Edit2, CheckCircle, Mail, MoreVertical, Sparkles, LayoutDashboard, Palette, CloudUpload, User, MessageSquare, LogOut, ArrowRight, Star, Eye, Zap, ListTodo, MapPin } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { motion, AnimatePresence } from "framer-motion";
+import { Reveal, RevealItem } from "@/components/shared/Reveal";
+import { Separator } from "@/components/ui/separator";
 
 const CATEGORIES = [
   "Modular Kitchen", "Bedroom", "Living Room", "Bathroom",
@@ -33,10 +35,10 @@ const SPECIALIZATIONS = [
 
 export default function DesignerDashboard() {
   const [activeTab, setActiveTab] = useState("designs");
+  const [editingDesign, setEditingDesign] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   useEffect(() => {
     const init = async () => {
@@ -51,62 +53,169 @@ export default function DesignerDashboard() {
   }, [navigate]);
 
   if (!user) {
-    return <Layout><div className="flex justify-center p-12">Loading...</div></Layout>;
+    return (
+      <Layout>
+        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6">
+          <motion.div
+            animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+            transition={{ rotate: { duration: 2, repeat: Infinity, ease: "linear" }, scale: { duration: 1, repeat: Infinity } }}
+          >
+            <Palette className="w-12 h-12 text-primary" />
+          </motion.div>
+          <p className="text-xl font-bold text-muted-foreground animate-pulse">Entering the creative suite...</p>
+        </div>
+      </Layout>
+    );
   }
 
   return (
     <Layout>
-      <div className="container mx-auto py-8 px-4">
-        <h1 className="text-3xl font-bold mb-8">Designer Dashboard</h1>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full h-auto gap-2 p-1">
-            <TabsTrigger value="designs">My Designs</TabsTrigger>
-            <TabsTrigger value="upload">Upload Design</TabsTrigger>
-            <TabsTrigger value="profile">My Profile</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews</TabsTrigger>
-            <TabsTrigger value="account">Account</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="designs">
-            <MyDesignsSection userId={user.id} onGoToUpload={() => setActiveTab("upload")} />
-          </TabsContent>
-
-          <TabsContent value="upload">
-            <UploadDesignSection userId={user.id} onSuccess={() => setActiveTab("designs")} />
-          </TabsContent>
-
-          <TabsContent value="profile">
-            <DesignerProfileSection userId={user.id} />
-          </TabsContent>
-
-          <TabsContent value="reviews">
-            <DesignerReviewsSection userId={user.id} />
-          </TabsContent>
-
-          <TabsContent value="account">
-            <Card className="max-w-md">
-              <CardHeader>
-                <CardTitle>Account</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3 border p-4 rounded-md">
-                  <Mail className="w-5 h-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">Email Address</p>
-                    <p className="text-sm text-muted-foreground">{user?.email}</p>
-                  </div>
+      <div className="min-h-screen bg-secondary/10 py-12 md:py-20">
+        <div className="container mx-auto px-4">
+          
+          {/* Header */}
+          <div className="mb-12">
+            <Reveal width="100%" direction="up">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+                <div>
+                  <h1 className="text-4xl md:text-6xl font-black tracking-tight text-foreground mb-4">
+                    Designer <span className="text-primary tracking-tighter">Studio</span>
+                  </h1>
+                  <p className="text-muted-foreground text-xl font-medium max-w-2xl">Create, showcase, and manage your high-end architectural visions.</p>
                 </div>
-                <Button variant="destructive" className="w-full" onClick={async () => {
-                  await supabase.auth.signOut();
-                  navigate("/designer/auth");
-                }}>
-                  Logout
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                <div className="flex gap-4">
+                  <Badge variant="outline" className="px-6 py-2 rounded-full border-primary/20 bg-primary/5 text-primary font-black uppercase tracking-widest text-[10px]">
+                    Elite Designer
+                  </Badge>
+                  <Button size="lg" className="rounded-2xl font-black shadow-lg shadow-primary/20 group" onClick={() => setActiveTab("upload")}>
+                    <Plus className="w-5 h-5 mr-3 group-hover:rotate-90 transition-transform" />
+                    New Creation
+                  </Button>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-12">
+            <Reveal width="100%" direction="up" delay={0.1}>
+              <TabsList className="flex flex-wrap h-auto p-2 bg-background/50 backdrop-blur-xl border border-border/50 rounded-[2rem] gap-2">
+                {[
+                  { value: "designs", label: "My Gallery", icon: Palette },
+                  { value: "upload", label: "Publish", icon: CloudUpload },
+                  { value: "profile", label: "Identity", icon: User },
+                  { value: "reviews", label: "Critique", icon: MessageSquare },
+                  { value: "account", label: "Portal", icon: LayoutDashboard },
+                ].map((tab) => (
+                  <TabsTrigger 
+                    key={tab.value} 
+                    value={tab.value} 
+                    className="flex-1 min-w-[120px] rounded-2xl py-4 font-black uppercase tracking-[0.2em] text-[10px] data-[state=active]:bg-primary data-[state=active]:text-white transition-all"
+                  >
+                    <tab.icon className="w-4 h-4 mr-3" />
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Reveal>
+
+            <AnimatePresence mode="wait">
+              <TabsContent value="designs" className="focus-visible:outline-none">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                >
+                  <MyDesignsSection 
+                    userId={user.id} 
+                    onGoToUpload={() => {
+                      setEditingDesign(null);
+                      setActiveTab("upload");
+                    }} 
+                    onEdit={(design) => {
+                      setEditingDesign(design);
+                      setActiveTab("upload");
+                    }}
+                  />
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="upload" className="focus-visible:outline-none">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                >
+                  <UploadDesignSection 
+                    userId={user.id} 
+                    editingDesign={editingDesign}
+                    onSuccess={() => {
+                      setEditingDesign(null);
+                      setActiveTab("designs");
+                    }} 
+                  />
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="profile" className="focus-visible:outline-none">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <DesignerProfileSection userId={user.id} />
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="reviews" className="focus-visible:outline-none">
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                >
+                  <DesignerReviewsSection userId={user.id} />
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="account" className="focus-visible:outline-none">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="max-w-2xl mx-auto"
+                >
+                  <Card className="border-border/50 shadow-2xl bg-background rounded-[3rem] overflow-hidden">
+                    <div className="bg-destructive/10 px-8 py-6 border-b border-border/50 flex items-center gap-3">
+                      <LogOut className="w-6 h-6 text-destructive" />
+                      <h3 className="font-black text-destructive text-lg uppercase tracking-tight">Security & Session</h3>
+                    </div>
+                    <CardContent className="p-12 space-y-10">
+                      <div className="flex items-center gap-6 border-2 border-dashed border-border/50 p-8 rounded-[2rem] bg-secondary/10">
+                        <div className="w-16 h-16 bg-background rounded-2xl flex items-center justify-center shadow-sm">
+                          <Mail className="w-8 h-8 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1">Session Identity</p>
+                          <p className="text-xl font-black text-foreground">{user?.email}</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <Button variant="outline" className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-[10px] border-2">Request Vault Access</Button>
+                        <Button variant="destructive" className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-destructive/20 group" onClick={async () => {
+                          await supabase.auth.signOut();
+                          navigate("/designer/auth");
+                        }}>
+                          Logout of Creative Studio
+                          <LogOut className="ml-3 w-4 h-4 group-hover:translate-x-2 transition-transform" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </TabsContent>
+            </AnimatePresence>
+          </Tabs>
+        </div>
       </div>
     </Layout>
   );
@@ -115,9 +224,10 @@ export default function DesignerDashboard() {
 // ---------------------------------------------------------------------------
 // SECTION: My Designs
 // ---------------------------------------------------------------------------
-function MyDesignsSection({ userId, onGoToUpload }: { userId: string, onGoToUpload: () => void }) {
+function MyDesignsSection({ userId, onGoToUpload, onEdit }: { userId: string, onGoToUpload: () => void, onEdit: (design: any) => void }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: designs, isLoading } = useQuery({
     queryKey: ['designer-designs', userId],
@@ -140,79 +250,123 @@ function MyDesignsSection({ userId, onGoToUpload }: { userId: string, onGoToUplo
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['designer-designs', userId] });
-      toast({ title: "Status updated" });
+      toast({ title: "Status Synchronized! ✨" });
     },
     onError: (err) => {
-      toast({ variant: "destructive", title: "Update failed", description: err.message });
+      toast({ variant: "destructive", title: "Sync failed", description: err.message });
     }
   });
 
-  if (isLoading) return <div>Loading designs...</div>;
+  if (isLoading) return <div className="flex justify-center py-20 animate-pulse font-bold text-muted-foreground uppercase tracking-widest text-xs">Curating Gallery...</div>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">Manage Designs</h2>
-        <Button onClick={onGoToUpload}><Plus className="w-4 h-4 mr-2"/> Upload New Design</Button>
-      </div>
-
+    <div className="space-y-10">
       {!designs || designs.length === 0 ? (
-        <Card className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
-          <FileImage className="w-12 h-12 mb-4 opacity-50" />
-          <p className="mb-4">You haven't uploaded any designs yet.</p>
-          <Button onClick={onGoToUpload} variant="outline">Create Your First Design</Button>
+        <Card className="flex flex-col items-center justify-center p-24 text-center rounded-[4rem] border-2 border-dashed border-border/50 bg-background/50 backdrop-blur-xl">
+          <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-8">
+            <FileImage className="w-12 h-12 text-primary opacity-50" />
+          </div>
+          <h3 className="text-2xl font-black text-foreground mb-4">No Creations Yet</h3>
+          <p className="text-muted-foreground mb-10 max-w-sm font-medium">Your design legacy starts here. Upload your first masterpiece to the catalog.</p>
+          <Button onClick={onGoToUpload} size="lg" className="rounded-2xl font-black px-12 group">
+            Start First Project
+            <Plus className="ml-3 w-5 h-5 group-hover:rotate-90 transition-transform" />
+          </Button>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {designs.map(design => (
-            <Card key={design.id} className="overflow-hidden group">
-              <div className="relative aspect-video bg-muted border-b">
-                {design.images && design.images.length > 0 ? (
-                  <img src={design.images[0]} alt={design.name} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">No Image</div>
-                )}
-                <div className="absolute top-2 right-2">
-                  <Badge variant={design.is_published ? "default" : "secondary"}>
-                    {design.is_published ? "Published" : "Draft"}
-                  </Badge>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {designs.map((design, idx) => (
+            <motion.div
+              key={design.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              whileHover={{ y: -8 }}
+            >
+              <Card className="overflow-hidden group border-border/50 shadow-xl bg-background rounded-[2.5rem] hover:border-primary/30 transition-all">
+                <div className="relative aspect-[16/10] bg-secondary overflow-hidden">
+                  {design.images && design.images.length > 0 ? (
+                    <img 
+                      src={design.images[0]} 
+                      alt={design.name} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[10px] font-black uppercase tracking-widest opacity-20">Preview Missing</div>
+                  )}
+                  <div className="absolute top-4 right-4">
+                    <Badge className={`${design.is_published ? "bg-primary text-white" : "bg-background/80 backdrop-blur-md text-foreground"} px-4 py-1.5 rounded-full font-black uppercase tracking-widest text-[9px] shadow-lg`}>
+                      {design.is_published ? "Published" : "Draft"}
+                    </Badge>
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+                    <p className="text-white font-black text-xl tracking-tight leading-tight line-clamp-1">{design.name}</p>
+                  </div>
                 </div>
-              </div>
-              <CardHeader className="p-4 pb-2">
-                <CardTitle className="text-lg line-clamp-1">{design.name}</CardTitle>
-                <CardDescription>{design.category}</CardDescription>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-muted-foreground">Total Cost</span>
-                  <span className="font-semibold">₹{design.total_cost.toLocaleString()}</span>
+                <CardContent className="p-8 space-y-6">
+                  <div className="flex items-center gap-3">
+                    <Badge variant="outline" className="rounded-full border-primary/20 text-primary font-black uppercase text-[9px] px-3">
+                      {design.category}
+                    </Badge>
+                    {design.style && (
+                       <Badge variant="outline" className="rounded-full border-accent/20 text-accent font-black uppercase text-[9px] px-3">
+                        {design.style}
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-4 border-t border-border/30 pt-6">
+                    <div className="text-center">
+                      <p className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Impact</p>
+                      <p className="text-lg font-black text-primary flex items-center justify-center gap-1">
+                        <Eye className="w-4 h-4" /> {design.view_count || 0}
+                      </p>
+                    </div>
+                    <div className="text-center border-x border-border/30">
+                      <p className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Reputation</p>
+                      <p className="text-lg font-black text-accent flex items-center justify-center gap-1">
+                        <Star className="w-4 h-4 fill-current" /> {design.rating || "-"}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground mb-1">Est. Value</p>
+                      <p className="text-sm font-black text-foreground">₹{(design.total_cost / 1000).toFixed(0)}K</p>
+                    </div>
+                  </div>
+                </CardContent>
+                <div className="p-6 pt-0 flex gap-3">
+                  <Button 
+                    variant={design.is_published ? "outline" : "default"} 
+                    className="flex-1 rounded-2xl font-black h-12 uppercase tracking-widest text-[10px]" 
+                    size="sm" 
+                    onClick={() => {
+                      togglePublishMutation.mutate({ designId: design.id, isPublished: !design.is_published });
+                    }}
+                  >
+                    {design.is_published ? "Unpublish" : "Go Public"}
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="rounded-2xl w-12 h-12 p-0 bg-secondary/30" size="icon">
+                        <MoreVertical className="w-5 h-5"/>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="rounded-2xl p-2 min-w-[180px]">
+                      <DropdownMenuItem className="rounded-xl p-3 font-bold cursor-pointer" onClick={() => navigate(`/designs/db-${design.id}`)}>
+                        <Eye className="w-4 h-4 mr-3" /> View Public
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="rounded-xl p-3 font-bold cursor-pointer" onClick={() => onEdit(design)}>
+                        <Edit2 className="w-4 h-4 mr-3" /> Edit Studio
+                      </DropdownMenuItem>
+                      <Separator className="my-2" />
+                      <DropdownMenuItem className="rounded-xl p-3 font-bold text-destructive hover:bg-destructive/10 cursor-pointer">
+                        <Trash2 className="w-4 h-4 mr-3" /> Archive Design
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-muted-foreground">Views</span>
-                  <span>{design.view_count || 0}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Rating</span>
-                  <span>{design.rating || 0} ⭐ ({design.total_reviews || 0})</span>
-                </div>
-              </CardContent>
-              <CardFooter className="p-4 pt-0 gap-2">
-                <Button variant="outline" className="flex-1" size="sm" onClick={() => {
-                  togglePublishMutation.mutate({ designId: design.id, isPublished: !design.is_published });
-                }}>
-                  {design.is_published ? "Unpublish" : "Publish"}
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon"><MoreVertical className="w-4 h-4"/></Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem disabled><Edit2 className="w-4 h-4 mr-2"/> Edit (Coming Soon)</DropdownMenuItem>
-                    {/* Add delete when ready */}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </CardFooter>
-            </Card>
+              </Card>
+            </motion.div>
           ))}
         </div>
       )}
@@ -223,7 +377,7 @@ function MyDesignsSection({ userId, onGoToUpload }: { userId: string, onGoToUplo
 // ---------------------------------------------------------------------------
 // SECTION: Upload Design
 // ---------------------------------------------------------------------------
-function UploadDesignSection({ userId, onSuccess }: { userId: string, onSuccess: () => void }) {
+function UploadDesignSection({ userId, editingDesign, onSuccess }: { userId: string, editingDesign?: any, onSuccess: () => void }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isUploading, setIsUploading] = useState(false);
@@ -247,9 +401,50 @@ function UploadDesignSection({ userId, onSuccess }: { userId: string, onSuccess:
   
   const [timeline, setTimeline] = useState("");
   const [files, setFiles] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   
   // Materials list
   const [materials, setMaterials] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (editingDesign) {
+      setName(editingDesign.name || "");
+      setCategory(editingDesign.category || "");
+      setStyle(editingDesign.style || "");
+      setRoomSize(editingDesign.room_size || "");
+      setDescription(editingDesign.description || "");
+      setFeatures(editingDesign.features || []);
+      setTags(editingDesign.tags || []);
+      setExecutionCost(editingDesign.execution_cost?.toString() || "");
+      setMaterialsCost(editingDesign.materials_cost?.toString() || "");
+      setCustomizeCost(editingDesign.customize_cost?.toString() || "");
+      setTimeline(editingDesign.timeline || "");
+      setExistingImages(editingDesign.images || []);
+      
+      // Fetch materials for this design
+      const fetchMats = async () => {
+        const { data } = await supabase.from('design_materials').select('*').eq('design_id', editingDesign.id);
+        if (data) setMaterials(data.map(m => ({ ...m, id: m.id })));
+      };
+      fetchMats();
+    } else {
+      // Reset form for new upload
+      setName("");
+      setCategory("");
+      setStyle("");
+      setRoomSize("");
+      setDescription("");
+      setFeatures([]);
+      setTags([]);
+      setExecutionCost("");
+      setMaterialsCost("");
+      setCustomizeCost("");
+      setTimeline("");
+      setFiles([]);
+      setExistingImages([]);
+      setMaterials([]);
+    }
+  }, [editingDesign]);
 
   const totalCost = (parseInt(executionCost)||0) + (parseInt(materialsCost)||0) + (parseInt(customizeCost)||0);
 
@@ -271,7 +466,7 @@ function UploadDesignSection({ userId, onSuccess }: { userId: string, onSuccess:
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
       if (files.length + newFiles.length > 5) {
-        toast({ variant: "destructive", title: "Max 5 images allowed" });
+        toast({ variant: "destructive", title: "Max 5 Images" });
         return;
       }
       setFiles([...files, ...newFiles]);
@@ -295,20 +490,19 @@ function UploadDesignSection({ userId, onSuccess }: { userId: string, onSuccess:
 
   const handleSubmit = async (isPublished: boolean) => {
     if (!name || !category || !style || !description || !executionCost || !materialsCost) {
-       toast({ variant: "destructive", title: "Missing fields", description: "Please fill all required primary details." });
+       toast({ variant: "destructive", title: "Submission Blocked", description: "All required creative fields must be populated." });
        return;
     }
 
     setIsUploading(true);
     try {
-      // 1. Upload Images
-      const uploadedImageUrls: string[] = [];
+      const uploadedImageUrls: string[] = [...existingImages];
       for (const file of files) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
         const filePath = `designs/${userId}/${fileName}`;
 
-        const { error: uploadError, data } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('design-images')
           .upload(filePath, file);
 
@@ -321,35 +515,48 @@ function UploadDesignSection({ userId, onSuccess }: { userId: string, onSuccess:
         uploadedImageUrls.push(publicUrl);
       }
 
-      // 2. Insert Design
-      const { data: designData, error: designError } = await supabase
-        .from('designs')
-        .insert({
-          designer_id: userId,
-          name,
-          category,
-          style,
-          room_size: roomSize || null,
-          description,
-          features,
-          tags,
-          execution_cost: parseInt(executionCost),
-          materials_cost: parseInt(materialsCost),
-          customize_cost: parseInt(customizeCost) || 0,
-          total_cost: totalCost,
-          timeline: timeline || null,
-          images: uploadedImageUrls,
-          is_published: isPublished
-        })
-        .select()
-        .single();
+      const designPayload = {
+        designer_id: userId,
+        name,
+        category,
+        style,
+        room_size: roomSize || null,
+        description,
+        features,
+        tags,
+        execution_cost: parseInt(executionCost),
+        materials_cost: parseInt(materialsCost),
+        customize_cost: parseInt(customizeCost) || 0,
+        total_cost: totalCost,
+        timeline: timeline || null,
+        images: uploadedImageUrls,
+        is_published: isPublished
+      };
 
-      if (designError || !designData) throw designError || new Error("Failed to create design");
+      let designId = editingDesign?.id;
 
-      // 3. Insert Materials
-      if (materials.length > 0) {
+      if (editingDesign) {
+        const { error: updateError } = await supabase
+          .from('designs')
+          .update(designPayload)
+          .eq('id', editingDesign.id);
+        if (updateError) throw updateError;
+      } else {
+        const { data: designData, error: designError } = await supabase
+          .from('designs')
+          .insert(designPayload)
+          .select()
+          .single();
+        if (designError || !designData) throw designError || new Error("Sync Failed");
+        designId = designData.id;
+      }
+
+      if (designId && materials.length > 0) {
+        // Delete old materials and insert new ones
+        await supabase.from('design_materials').delete().eq('design_id', designId);
+        
         const materialRows = materials.map(m => ({
-          design_id: designData.id,
+          design_id: designId,
           material_name: m.material_name,
           quantity: parseFloat(m.quantity) || 0,
           unit: m.unit,
@@ -364,237 +571,349 @@ function UploadDesignSection({ userId, onSuccess }: { userId: string, onSuccess:
         }
       }
 
-      // 4. Update total_designs on designer
-      const { data: designerData } = await supabase.from('designers').select('total_designs').eq('id', userId).single();
-      const currentTotal = designerData?.total_designs || 0;
-      await supabase.from('designers').update({ total_designs: currentTotal + 1 }).eq('id', userId);
-
-      toast({ title: isPublished ? "Design published successfully!" : "Design saved as draft." });
+      if (!editingDesign) {
+        const { data: designerData } = await supabase.from('designers').select('total_designs').eq('id', userId).single();
+        const currentTotal = designerData?.total_designs || 0;
+        await supabase.from('designers').update({ total_designs: currentTotal + 1 }).eq('id', userId);
+        toast({ title: isPublished ? "Published to Marketplace! 🚀" : "Archived in Drafts." });
+      } else {
+        toast({ title: "Design Updated! ✨" });
+      }
       
-      // Reset form
-      setName(""); setCategory(""); setStyle(""); setRoomSize(""); setDescription("");
-      setFeatures([]); setTags([]); setExecutionCost(""); setMaterialsCost(""); setCustomizeCost("");
-      setTimeline(""); setFiles([]); setMaterials([]);
-      
-      queryClient.invalidateQueries({ queryKey: ['designer-designs', userId] });
       onSuccess();
-
     } catch (error: any) {
-      toast({ variant: "destructive", title: "Error uploading", description: error.message });
+      toast({ variant: "destructive", title: "Publish Error", description: error.message });
     } finally {
       setIsUploading(false);
     }
   };
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle>Design Details</CardTitle>
-          <CardDescription>Basic information about your design.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Design Name *</Label>
-              <Input required value={name} onChange={e => setName(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <Label>Category *</Label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger><SelectValue placeholder="Select Category" /></SelectTrigger>
-                <SelectContent>
-                  {CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Style *</Label>
-              <Select value={style} onValueChange={setStyle}>
-                <SelectTrigger><SelectValue placeholder="Select Style" /></SelectTrigger>
-                <SelectContent>
-                  {STYLES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Room Size (e.g. 10x12 ft)</Label>
-              <Input value={roomSize} onChange={e => setRoomSize(e.target.value)} />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label>Description *</Label>
-              <Textarea 
-                required 
-                maxLength={1000} 
-                rows={4} 
-                value={description} 
-                onChange={e => setDescription(e.target.value)} 
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Features</Label>
-              <div className="flex gap-2">
-                <Input 
-                  value={featureInput} 
-                  onChange={e => setFeatureInput(e.target.value)} 
-                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddFeature())}
-                />
-                <Button type="button" onClick={handleAddFeature}>Add</Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {features.map((f, i) => (
-                  <Badge key={i} variant="secondary" className="pl-2 pr-1 py-1">
-                    {f}
-                    <X className="w-3 h-3 ml-1 cursor-pointer" onClick={() => setFeatures(features.filter(_f => _f !== f))}/>
-                  </Badge>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Tags</Label>
-              <div className="flex gap-2">
-                <Input 
-                  value={tagInput} 
-                  onChange={e => setTagInput(e.target.value)} 
-                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-                />
-                <Button type="button" onClick={handleAddTag}>Add</Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {tags.map((t, i) => (
-                  <Badge key={i} variant="outline" className="pl-2 pr-1 py-1">
-                    #{t}
-                    <X className="w-3 h-3 ml-1 cursor-pointer" onClick={() => setTags(tags.filter(_t => _t !== t))}/>
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-12 max-w-5xl mx-auto pb-20">
+      <div className="flex items-center justify-end">
+         {editingDesign && (
+           <Button variant="ghost" onClick={() => onSuccess()} className="font-bold text-muted-foreground hover:text-foreground">
+             <X className="w-4 h-4 mr-2" /> Cancel Editing
+           </Button>
+         )}
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Pricing & Images</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label>Execution Cost (₹) *</Label>
-              <Input type="number" required value={executionCost} onChange={e => setExecutionCost(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <Label>Materials Cost (₹) *</Label>
-              <Input type="number" required value={materialsCost} onChange={e => setMaterialsCost(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <Label>Customization Cost (₹)</Label>
-              <Input type="number" value={customizeCost} onChange={e => setCustomizeCost(e.target.value)} placeholder="0" />
-            </div>
-            <div className="space-y-2 md:col-span-3 border-t pt-4">
-              <div className="flex justify-between items-center text-lg">
-                <span className="font-semibold">Calculated Total Cost:</span>
-                <span className="font-bold text-primary">₹{totalCost.toLocaleString()}</span>
+      <Reveal width="100%" direction="up">
+        <Card className="border-border/50 shadow-2xl bg-background rounded-[3.5rem] overflow-hidden group">
+          <div className="bg-primary/5 px-12 py-10 border-b border-border/50 flex items-center justify-between">
+            <div className="flex items-center gap-5">
+              <div className="w-16 h-16 bg-primary rounded-[1.5rem] flex items-center justify-center shadow-lg shadow-primary/20">
+                <CloudUpload className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-black tracking-tight text-foreground">{editingDesign ? "Update Studio Masterpiece" : "Creative Brief"}</h3>
+                <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-1">{editingDesign ? "Refining Architectural Vision" : "Foundational Details"}</p>
               </div>
             </div>
+            <Zap className="w-10 h-10 text-primary opacity-20" />
           </div>
-          
-          <div className="space-y-2 w-full md:w-1/3">
-            <Label>Estimated Timeline</Label>
-            <Input value={timeline} onChange={e => setTimeline(e.target.value)} placeholder="e.g. 25-30 days" />
-          </div>
+          <CardContent className="p-12 space-y-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="space-y-3">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Creation Name *</Label>
+                <Input required value={name} onChange={e => setName(e.target.value)} placeholder="E.g. Penthouse Azure Kitchen" className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold" />
+              </div>
+              <div className="space-y-3">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Architectural Category *</Label>
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger className="h-14 rounded-2xl bg-secondary/30 border-transparent font-bold"><SelectValue placeholder="Select Category" /></SelectTrigger>
+                  <SelectContent className="rounded-2xl">
+                    {CATEGORIES.map(c => <SelectItem key={c} value={c} className="rounded-xl">{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-3">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Aesthetic Style *</Label>
+                <Select value={style} onValueChange={setStyle}>
+                  <SelectTrigger className="h-14 rounded-2xl bg-secondary/30 border-transparent font-bold"><SelectValue placeholder="Select Style" /></SelectTrigger>
+                  <SelectContent className="rounded-2xl">
+                    {STYLES.map(s => <SelectItem key={s} value={s} className="rounded-xl">{s}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-3">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Deployment Area (Room Size)</Label>
+                <Input value={roomSize} onChange={e => setRoomSize(e.target.value)} placeholder="12 x 15 ft" className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold" />
+              </div>
+              <div className="space-y-3 md:col-span-2">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Narrative Description *</Label>
+                <Textarea 
+                  required 
+                  maxLength={1000} 
+                  rows={5} 
+                  value={description} 
+                  onChange={e => setDescription(e.target.value)} 
+                  placeholder="The artistic vision and technical nuance behind this masterpiece..."
+                  className="rounded-[2.5rem] bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold p-8"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 border-t border-border/30 pt-10">
+              <div className="space-y-4">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">High-Impact Features</Label>
+                <div className="flex gap-4">
+                  <Input 
+                    value={featureInput} 
+                    onChange={e => setFeatureInput(e.target.value)} 
+                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddFeature())}
+                    placeholder="E.g. Soft-close Veneer"
+                    className="h-14 rounded-2l bg-secondary/30 border-transparent font-bold"
+                  />
+                  <Button type="button" onClick={handleAddFeature} className="h-14 w-20 rounded-2xl">Add</Button>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <AnimatePresence>
+                    {features.map((f, i) => (
+                      <motion.div key={i} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}>
+                        <Badge variant="secondary" className="pl-4 pr-2 py-2 rounded-full border-primary/10 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                          {f}
+                          <motion.button whileHover={{ scale: 1.2 }} onClick={() => setFeatures(features.filter(_f => _f !== f))} className="bg-primary/20 rounded-full p-0.5"><X className="w-3 h-3" /></motion.button>
+                        </Badge>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Discovery Tags</Label>
+                <div className="flex gap-4">
+                  <Input 
+                    value={tagInput} 
+                    onChange={e => setTagInput(e.target.value)} 
+                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                    placeholder="E.g. luxury, nordic"
+                    className="h-14 rounded-2xl bg-secondary/30 border-transparent font-bold"
+                  />
+                  <Button type="button" onClick={handleAddTag} className="h-14 w-20 rounded-2xl">Tag</Button>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <AnimatePresence>
+                    {tags.map((t, i) => (
+                      <motion.div key={i} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}>
+                        <Badge variant="outline" className="pl-4 pr-2 py-2 rounded-full border-border bg-background text-foreground text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                          #{t}
+                          <motion.button whileHover={{ scale: 1.2 }} onClick={() => setTags(tags.filter(_t => _t !== t))} className="bg-secondary p-0.5 rounded-full"><X className="w-3 h-3" /></motion.button>
+                        </Badge>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </Reveal>
 
-          <div className="space-y-2">
-            <Label>Gallery Images (Max 5)</Label>
-            <Input type="file" accept="image/*" multiple onChange={handleFileChange} disabled={files.length >= 5} />
-            {files.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {files.map((file, i) => (
-                  <div key={i} className="relative w-20 h-20 border rounded overflow-hidden">
-                    <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" alt="preview" />
-                    <button 
-                      type="button"
-                      className="absolute top-0 right-0 bg-destructive text-destructive-foreground w-5 h-5 flex items-center justify-center text-xs"
-                      onClick={() => setFiles(files.filter((_, idx) => idx !== i))}
+      <Reveal width="100%" direction="up" delay={0.1}>
+        <Card className="border-border/50 shadow-2xl bg-background rounded-[3.5rem] overflow-hidden">
+          <div className="bg-secondary/30 px-12 py-10 border-b border-border/50 flex items-center gap-5">
+             <div className="w-16 h-16 bg-background rounded-[1.5rem] flex items-center justify-center shadow-sm">
+                <FileImage className="w-8 h-8 text-primary" />
+             </div>
+             <div>
+                <h3 className="text-2xl font-black tracking-tight text-foreground">Economic Suite & Imagery</h3>
+                <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-1">Value Proposition</p>
+             </div>
+          </div>
+          <CardContent className="p-12 space-y-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              <div className="p-8 rounded-[2.5rem] bg-secondary/20 border border-border/50 group hover:border-primary/30 transition-all">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4 block">Execution Cost (₹) *</Label>
+                <Input type="number" required value={executionCost} onChange={e => setExecutionCost(e.target.value)} className="h-14 rounded-2xl bg-background border-transparent font-black text-xl" />
+              </div>
+              <div className="p-8 rounded-[2.5rem] bg-secondary/20 border border-border/50 group hover:border-primary/30 transition-all">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4 block">Materials Cost (₹) *</Label>
+                <Input type="number" required value={materialsCost} onChange={e => setMaterialsCost(e.target.value)} className="h-14 rounded-2xl bg-background border-transparent font-black text-xl" />
+              </div>
+              <div className="p-8 rounded-[2.5rem] bg-secondary/20 border border-border/50 group hover:border-primary/30 transition-all">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4 block">Finesse Cost (₹)</Label>
+                <Input type="number" value={customizeCost} onChange={e => setCustomizeCost(e.target.value)} placeholder="0" className="h-14 rounded-2xl bg-background border-transparent font-black text-xl" />
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center justify-between p-10 rounded-[3rem] bg-primary/5 border border-primary/20">
+               <div>
+                 <p className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-2">Total Project Valuation</p>
+                 <div className="text-5xl font-black tracking-tighter text-foreground">₹{totalCost.toLocaleString()}</div>
+               </div>
+               <div className="space-y-3 w-full md:w-1/3 mt-8 md:mt-0">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Standard Delivery Timeline</Label>
+                  <Input value={timeline} onChange={e => setTimeline(e.target.value)} placeholder="e.g. 25-30 days" className="h-14 rounded-2xl bg-background border-transparent font-bold" />
+               </div>
+            </div>
+
+            <div className="space-y-6 pt-6">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Studio Gallery (Max 5 Renderings)</Label>
+                <Badge className="bg-secondary text-foreground text-[9px] font-black uppercase px-4">{files.length} / 5 Selected</Badge>
+              </div>
+              <div className="relative group">
+                <div className="border-4 border-dashed border-border/50 rounded-[3rem] bg-secondary/10 group-hover:bg-primary/5 group-hover:border-primary/30 transition-all flex flex-col items-center justify-center p-16 text-center space-y-6">
+                   <div className="w-20 h-20 bg-background rounded-[1.5rem] flex items-center justify-center shadow-xl shadow-primary/5 group-hover:scale-110 transition-transform duration-500">
+                      <UploadCloud className="w-10 h-10 text-primary" />
+                   </div>
+                   <div className="space-y-2">
+                     <p className="font-black text-foreground uppercase text-sm tracking-widest">Drop Masterpieces Here</p>
+                     <p className="text-muted-foreground font-bold text-[10px] uppercase tracking-widest">PNG, JPG, WEBP (Max 5MB each)</p>
+                   </div>
+                   <Button type="button" variant="outline" className="rounded-2xl px-10 h-12 font-black uppercase tracking-widest text-[10px] bg-background border-2 hover:bg-primary hover:text-white transition-all pointer-events-none">
+                     Select Masterpieces
+                   </Button>
+                </div>
+                <Input 
+                  type="file" 
+                  accept="image/*" 
+                  multiple 
+                  onChange={handleFileChange} 
+                  disabled={files.length >= 5} 
+                  className="absolute inset-0 opacity-0 cursor-pointer z-10 h-full w-full" 
+                  title=""
+                  value=""
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-6">
+                <AnimatePresence>
+                  {/* Existing Images */}
+                  {existingImages.map((url, i) => (
+                    <motion.div key={`existing-${i}`} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} className="relative aspect-square rounded-[1.5rem] border-2 border-primary/20 shadow-xl overflow-hidden group/img">
+                      <img src={url} className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-500" alt="existing" />
+                      <button 
+                        type="button"
+                        className="absolute top-2 right-2 bg-destructive text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 opacity-0 group-hover/img:opacity-100"
+                        onClick={() => setExistingImages(existingImages.filter((_, idx) => idx !== i))}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </motion.div>
+                  ))}
+                  {/* New Files */}
+                  {files.map((file, i) => (
+                    <motion.div key={`new-${i}`} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} className="relative aspect-square rounded-[1.5rem] border-2 border-border shadow-xl overflow-hidden group/img">
+                      <img src={URL.createObjectURL(file)} className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-500" alt="preview" />
+                      <button 
+                        type="button"
+                        className="absolute top-2 right-2 bg-destructive text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 opacity-0 group-hover/img:opacity-100"
+                        onClick={() => setFiles(files.filter((_, idx) => idx !== i))}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </Reveal>
+
+      <Reveal width="100%" direction="up" delay={0.2}>
+        <Card className="border-border/50 shadow-2xl bg-background rounded-[3.5rem] overflow-hidden">
+          <CardHeader className="px-12 py-10 border-b border-border/50 flex flex-row items-center justify-between">
+            <div className="flex items-center gap-5">
+               <div className="w-16 h-16 bg-secondary/50 rounded-[1.5rem] flex items-center justify-center shadow-sm">
+                  <ListTodo className="w-8 h-8 text-primary" />
+               </div>
+               <div>
+                  <h3 className="text-2xl font-black tracking-tight text-foreground">Bill of Materials</h3>
+                  <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-1">Technical Specification</p>
+               </div>
+            </div>
+            <Button variant="outline" className="rounded-2xl h-14 px-8 border-2 font-black transition-all hover:bg-primary hover:text-white hover:border-primary" onClick={addMaterialRow}>
+              <Plus className="w-5 h-5 mr-3" /> Append Material
+            </Button>
+          </CardHeader>
+          <CardContent className="p-12">
+            {!materials || materials.length === 0 ? (
+              <div className="text-center py-24 bg-secondary/10 rounded-[3rem] border-2 border-dashed border-border/50 group">
+                <Sparkles className="w-12 h-12 text-muted-foreground/20 mx-auto mb-6 group-hover:rotate-12 transition-transform" />
+                <p className="text-muted-foreground/60 font-black text-sm uppercase tracking-widest">Detail the exact components required to execute this vision.</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <AnimatePresence mode="popLayout">
+                  {materials.map((mat, index) => (
+                    <motion.div 
+                      key={mat.id} 
+                      initial={{ opacity: 0, scale: 0.95 }} 
+                      animate={{ opacity: 1, scale: 1 }} 
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className="grid grid-cols-12 gap-6 items-end p-8 rounded-[2rem] bg-secondary/20 border border-border/30 hover:border-primary/20 hover:bg-background transition-all group"
                     >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
+                      <div className="col-span-12 lg:col-span-4 space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Component Name *</Label>
+                        <Input value={mat.material_name} onChange={e => updateMaterial(mat.id, 'material_name', e.target.value)} className="h-12 bg-background/50 border-transparent rounded-xl font-bold" />
+                      </div>
+                      <div className="col-span-6 lg:col-span-2 space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Unit Count *</Label>
+                        <Input type="number" value={mat.quantity} onChange={e => updateMaterial(mat.id, 'quantity', e.target.value)} className="h-12 bg-background/50 border-transparent rounded-xl font-bold" />
+                      </div>
+                      <div className="col-span-6 lg:col-span-2 space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Metric</Label>
+                        <Select value={mat.unit} onValueChange={val => updateMaterial(mat.id, 'unit', val)}>
+                          <SelectTrigger className="h-12 bg-background/50 border-transparent rounded-xl font-bold"><SelectValue /></SelectTrigger>
+                          <SelectContent className="rounded-xl">{UNITS.map(u => <SelectItem key={u} value={u} className="rounded-lg">{u}</SelectItem>)}</SelectContent>
+                        </Select>
+                      </div>
+                      <div className="col-span-10 lg:col-span-3 space-y-2">
+                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Market Notes</Label>
+                         <Input value={mat.notes} onChange={e => updateMaterial(mat.id, 'notes', e.target.value)} placeholder="Grade, Finish, Brand..." className="h-12 bg-background/50 border-transparent rounded-xl font-bold" />
+                      </div>
+                      <div className="col-span-2 lg:col-span-1 flex justify-end">
+                        <motion.button 
+                          whileHover={{ scale: 1.2, rotate: 5 }}
+                          onClick={() => removeMaterial(mat.id)}
+                          className="w-12 h-12 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center transition-all shadow-sm"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
             )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <div className="space-y-1">
-            <CardTitle>Raw Materials List</CardTitle>
-            <CardDescription>Optional: List the materials required for this design.</CardDescription>
-          </div>
-          <Button variant="outline" size="sm" onClick={addMaterialRow}>
-            <Plus className="w-4 h-4 mr-2" /> Add Material
-          </Button>
-        </CardHeader>
-        <CardContent>
-          {materials.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">No materials added.</p>
-          ) : (
-            <div className="space-y-4">
-              {materials.map((mat, index) => (
-                <div key={mat.id} className="grid grid-cols-12 gap-2 items-end border p-3 rounded-md bg-muted/20">
-                  <div className="col-span-12 md:col-span-3 space-y-1">
-                    <Label className="text-xs">Name *</Label>
-                    <Input size={1} value={mat.material_name} onChange={e => updateMaterial(mat.id, 'material_name', e.target.value)} />
-                  </div>
-                  <div className="col-span-6 md:col-span-2 space-y-1">
-                    <Label className="text-xs">Qty *</Label>
-                    <Input type="number" value={mat.quantity} onChange={e => updateMaterial(mat.id, 'quantity', e.target.value)} />
-                  </div>
-                  <div className="col-span-6 md:col-span-2 space-y-1">
-                    <Label className="text-xs">Unit</Label>
-                    <Select value={mat.unit} onValueChange={val => updateMaterial(mat.id, 'unit', val)}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>{UNITS.map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
-                    </Select>
-                  </div>
-                  <div className="col-span-12 md:col-span-2 space-y-1">
-                    <Label className="text-xs">Est. Cost (₹)</Label>
-                    <Input type="number" value={mat.estimated_cost} onChange={e => updateMaterial(mat.id, 'estimated_cost', e.target.value)} />
-                  </div>
-                  <div className="col-span-10 md:col-span-2 space-y-1">
-                    <Label className="text-xs">Notes</Label>
-                    <Input value={mat.notes} onChange={e => updateMaterial(mat.id, 'notes', e.target.value)} />
-                  </div>
-                  <div className="col-span-2 md:col-span-1 flex justify-end">
-                    <Button variant="ghost" size="icon" onClick={() => removeMaterial(mat.id)}>
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-end gap-4 border-t pt-4 bg-muted/10">
-          <Button variant="outline" onClick={() => handleSubmit(false)} disabled={isUploading}>
-            Save as Draft
-          </Button>
-          <Button onClick={() => handleSubmit(true)} disabled={isUploading}>
-            {isUploading ? "Publishing..." : "Publish Design"}
-          </Button>
-        </CardFooter>
-      </Card>
+          </CardContent>
+          <CardFooter className="flex flex-col sm:flex-row justify-end gap-6 p-12 bg-secondary/30 border-t border-border/50">
+            <Button variant="outline" className="h-16 px-12 rounded-2xl font-black uppercase tracking-widest text-xs border-2 shadow-sm" onClick={() => handleSubmit(false)} disabled={isUploading}>
+              {isUploading ? "..." : "Archive as Draft"}
+            </Button>
+            <Button size="lg" className="h-16 px-12 rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/20 group relative overflow-hidden" onClick={() => handleSubmit(true)} disabled={isUploading}>
+              <span className="relative z-10 flex items-center gap-3">
+                {isUploading ? (
+                  <>
+                    <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                    Synchronizing...
+                  </>
+                ) : (
+                  <>
+                    Publish Architecture
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                  </>
+                )}
+              </span>
+              <motion.div 
+                className="absolute inset-0 bg-primary-foreground/10"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "100%" }}
+                transition={{ duration: 0.5 }}
+              />
+            </Button>
+          </CardFooter>
+        </Card>
+      </Reveal>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// SECTION: My Profile
+// SECTION: Designer Profile
 // ---------------------------------------------------------------------------
 function DesignerProfileSection({ userId }: { userId: string }) {
   const { toast } = useToast();
@@ -613,7 +932,7 @@ function DesignerProfileSection({ userId }: { userId: string }) {
       const { error } = await supabase.from('designers').update(updates).eq('id', userId);
       if (error) throw error;
     },
-    onSuccess: () => toast({ title: "Profile updated" })
+    onSuccess: () => toast({ title: "Profile Synchronized! ✨" })
   });
   
   const [formData, setFormData] = useState<any>({});
@@ -622,7 +941,7 @@ function DesignerProfileSection({ userId }: { userId: string }) {
     if (profile) setFormData(profile);
   }, [profile]);
 
-  if (isLoading || !formData.id) return <div>Loading profile...</div>;
+  if (isLoading || !formData.id) return <div className="flex justify-center p-20 animate-pulse font-bold tracking-widest text-[10px] uppercase">Retrieving Identity...</div>;
 
   const handleSpecializationToggle = (spec: string) => {
     const current = formData.specializations || [];
@@ -634,64 +953,96 @@ function DesignerProfileSection({ userId }: { userId: string }) {
   };
 
   return (
-    <Card className="max-w-3xl">
-      <CardHeader>
-        <CardTitle>Edit Profile</CardTitle>
-        <CardDescription>Update your public designer profile.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={e => { e.preventDefault(); updateMutation.mutate(formData); }} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Full Name</Label>
-              <Input value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} />
+    <Card className="max-w-4xl mx-auto border-border/50 shadow-2xl bg-background rounded-[4rem] overflow-hidden">
+      <div className="bg-primary/5 px-12 py-10 border-b border-border/50 flex items-center justify-between">
+         <div className="flex items-center gap-5">
+            <div className="w-16 h-16 bg-background rounded-[1.5rem] flex items-center justify-center shadow-sm">
+               <User className="w-8 h-8 text-primary" />
             </div>
-            <div className="space-y-2">
-              <Label>Phone</Label>
-              <Input value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+            <div>
+               <h3 className="text-2xl font-black tracking-tight text-foreground">Global Identity</h3>
+               <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-1">Profile Configuration</p>
             </div>
-            <div className="space-y-2">
-              <Label>City</Label>
-              <Input value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} />
+         </div>
+         <Star className="w-10 h-10 text-yellow-500/20" />
+      </div>
+      <CardContent className="p-12 space-y-12">
+        <form onSubmit={e => { e.preventDefault(); updateMutation.mutate(formData); }} className="space-y-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="space-y-3">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Creative Handle</Label>
+              <Input value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
             </div>
-            <div className="space-y-2">
-              <Label>Years of Experience</Label>
-              <Input type="number" value={formData.years_experience} onChange={e => setFormData({...formData, years_experience: parseInt(e.target.value)})} />
+            <div className="space-y-3">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Direct Line</Label>
+              <Input value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
             </div>
-            <div className="space-y-2">
-              <Label>Portfolio Website</Label>
-              <Input value={formData.portfolio_website || ""} onChange={e => setFormData({...formData, portfolio_website: e.target.value})} />
+            <div className="space-y-3">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Headquarters (City)</Label>
+              <div className="relative">
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>Instagram URL</Label>
-              <Input value={formData.instagram_url || ""} onChange={e => setFormData({...formData, instagram_url: e.target.value})} />
+            <div className="space-y-3">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Design Tenure (Years)</Label>
+              <Input type="number" value={formData.years_experience} onChange={e => setFormData({...formData, years_experience: parseInt(e.target.value)})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
+            </div>
+            <div className="space-y-3">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Studio Portfolio (Link)</Label>
+              <Input value={formData.portfolio_website || ""} onChange={e => setFormData({...formData, portfolio_website: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold" />
+            </div>
+            <div className="space-y-3">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Instagram Identity</Label>
+              <Input value={formData.instagram_url || ""} onChange={e => setFormData({...formData, instagram_url: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold" />
             </div>
           </div>
           
-          <div className="space-y-2">
-            <Label>Specializations</Label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+          <div className="space-y-6 pt-6 border-t border-border/30">
+            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Areas of Expertise</Label>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
               {SPECIALIZATIONS.map(spec => (
-                <div key={spec} className="flex items-center space-x-2">
+                <motion.div key={spec} whileHover={{ x: 5 }} className="flex items-center space-x-4 p-4 rounded-2xl bg-secondary/20 hover:bg-primary/5 transition-colors cursor-pointer" onClick={() => handleSpecializationToggle(spec)}>
                   <Checkbox 
                     id={`prof-spec-${spec}`} 
                     checked={(formData.specializations || []).includes(spec)}
                     onCheckedChange={() => handleSpecializationToggle(spec)}
+                    className="scale-125 rounded-lg border-2"
                   />
-                  <Label htmlFor={`prof-spec-${spec}`} className="font-normal text-sm">{spec}</Label>
-                </div>
+                  <Label htmlFor={`prof-spec-${spec}`} className="font-bold text-sm text-foreground cursor-pointer tracking-tight">{spec}</Label>
+                </motion.div>
               ))}
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Bio</Label>
-            <Textarea rows={4} value={formData.bio || ""} onChange={e => setFormData({...formData, bio: e.target.value})} />
+          <div className="space-y-3 pt-6 border-t border-border/30">
+            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Professional Narrative</Label>
+            <Textarea rows={6} value={formData.bio || ""} onChange={e => setFormData({...formData, bio: e.target.value})} placeholder="Your architectural philosophy and mission..." className="rounded-[2.5rem] bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold p-8" />
           </div>
 
-          <Button type="submit" disabled={updateMutation.isPending}>
-            {updateMutation.isPending ? "Saving..." : "Save Changes"}
-          </Button>
+          <div className="flex justify-end pt-10">
+            <Button size="lg" disabled={updateMutation.isPending} className="h-16 px-12 rounded-2xl font-black shadow-xl shadow-primary/20 group relative overflow-hidden">
+               <span className="relative z-10 flex items-center gap-3">
+                 {updateMutation.isPending ? (
+                   <>
+                    <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                    Saving...
+                   </>
+                 ) : (
+                   <>
+                    Save Identity Changes
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                   </>
+                 )}
+               </span>
+               <motion.div 
+                  className="absolute inset-0 bg-primary-foreground/10"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.5 }}
+                />
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
@@ -715,31 +1066,51 @@ function DesignerReviewsSection({ userId }: { userId: string }) {
     }
   });
 
-  if (isLoading) return <div>Loading reviews...</div>;
+  if (isLoading) return <div className="flex justify-center p-20 animate-pulse font-bold tracking-widest text-[10px] uppercase">Retrieving Critiques...</div>;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Design Reviews</CardTitle>
-        <CardDescription>Feedback on your uploaded designs.</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card className="max-w-4xl mx-auto border-border/50 shadow-2xl bg-background rounded-[4rem] overflow-hidden">
+      <div className="bg-primary/5 px-12 py-10 border-b border-border/50 flex items-center gap-5">
+         <div className="w-16 h-16 bg-background rounded-[1.5rem] flex items-center justify-center shadow-sm">
+            <MessageSquare className="w-8 h-8 text-primary" />
+         </div>
+         <div>
+            <h3 className="text-2xl font-black tracking-tight text-foreground">Marketplace Critique</h3>
+            <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-1">Reputation Engine</p>
+         </div>
+      </div>
+      <CardContent className="p-12">
         {!reviews || reviews.length === 0 ? (
-          <p className="text-muted-foreground py-4">No reviews yet.</p>
+          <div className="text-center py-24 bg-secondary/10 rounded-[3rem] border-2 border-dashed border-border/50">
+             <Star className="w-12 h-12 text-muted-foreground/10 mx-auto mb-6" />
+             <p className="text-muted-foreground/60 font-black text-sm uppercase tracking-widest">No marketplace feedback has been recorded yet.</p>
+          </div>
         ) : (
-          <div className="space-y-4">
-             {/* Note: This is an inner join scenario depending on PostgREST, but assuming it works or we filter if null */}
-             {reviews.filter(r => r.designs).map(review => (
-                <div key={review.id} className="border p-4 rounded-md">
-                   <div className="flex justify-between mb-2">
-                      <span className="font-semibold text-sm">Design: {review.designs?.name}</span>
-                      <span className="text-xs text-muted-foreground">{new Date(review.created_at).toLocaleDateString()}</span>
+          <div className="grid grid-cols-1 gap-8">
+             {reviews.filter(r => r.designs).map((review, idx) => (
+                <motion.div 
+                   key={review.id} 
+                   initial={{ opacity: 0, y: 20 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   transition={{ delay: idx * 0.1 }}
+                   className="p-10 border border-border/50 rounded-[3rem] bg-secondary/10 hover:bg-background hover:shadow-xl transition-all group"
+                >
+                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary">Creation Subject</p>
+                        <h4 className="font-black text-xl text-foreground tracking-tight">{review.designs?.name}</h4>
+                      </div>
+                      <Badge className="bg-background text-foreground border shadow-sm px-4 py-2 rounded-full font-black uppercase text-[10px] tracking-widest">
+                        {new Date(review.created_at).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                      </Badge>
                    </div>
-                   <div className="flex mb-2">
-                      {"⭐".repeat(review.rating || 0)}
+                   <div className="flex gap-1 mb-8">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className={`w-6 h-6 ${i < (review.rating || 0) ? "text-yellow-500 fill-current" : "text-muted-foreground/20"}`} />
+                      ))}
                    </div>
-                   <p className="italic text-sm text-foreground">"{review.review}"</p>
-                </div>
+                   <p className="text-xl font-bold italic text-foreground/80 leading-relaxed group-hover:text-foreground transition-colors">"{review.review}"</p>
+                </motion.div>
              ))}
           </div>
         )}

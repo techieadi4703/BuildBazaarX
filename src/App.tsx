@@ -3,7 +3,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import { PageTransition } from "./components/shared/PageTransition";
 import Index from "./pages/Index";
 import DesignsCatalog from "./pages/DesignsCatalog";
 import DesignDetail from "./pages/DesignDetail";
@@ -30,6 +32,50 @@ import { CartProvider } from "./contexts/CartContext";
 
 const queryClient = new QueryClient();
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/designs" element={<PageTransition><DesignsCatalog /></PageTransition>} />
+        <Route path="/designs/:id" element={<PageTransition><DesignDetail /></PageTransition>} />
+        <Route path="/materials" element={<PageTransition><RawMaterials /></PageTransition>} />
+        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/auth/select-role" element={<PageTransition><AuthRoleSelect /></PageTransition>} />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <PageTransition><Profile /></PageTransition>
+          </ProtectedRoute>
+        } />
+        <Route path="/orders" element={
+          <ProtectedRoute>
+            <PageTransition><Orders /></PageTransition>
+          </ProtectedRoute>
+        } />
+        <Route path="/checkout" element={
+          <ProtectedRoute>
+            <PageTransition><Checkout /></PageTransition>
+          </ProtectedRoute>
+        } />
+        <Route path="/professional/auth" element={<PageTransition><ProfessionalAuth /></PageTransition>} />
+        <Route path="/professional/dashboard" element={<PageTransition><ProfessionalDashboard /></PageTransition>} />
+        <Route path="/professional/setup" element={<PageTransition><ProfessionalSetup /></PageTransition>} />
+        <Route path="/designer/auth" element={<PageTransition><DesignerAuth /></PageTransition>} />
+        <Route path="/designer/dashboard" element={<PageTransition><DesignerDashboard /></PageTransition>} />
+        <Route path="/designer/setup" element={<PageTransition><DesignerSetup /></PageTransition>} />
+        <Route path="/supplier/auth" element={<PageTransition><SupplierAuth /></PageTransition>} />
+        <Route path="/supplier/dashboard" element={<PageTransition><SupplierDashboard /></PageTransition>} />
+        <Route path="/supplier/setup" element={<PageTransition><SupplierSetup /></PageTransition>} />
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <CartProvider>
@@ -37,42 +83,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/designs" element={<DesignsCatalog />} />
-            <Route path="/designs/:id" element={<DesignDetail />} />
-            <Route path="/materials" element={<RawMaterials />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/auth/select-role" element={<AuthRoleSelect />} />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/orders" element={
-              <ProtectedRoute>
-                <Orders />
-              </ProtectedRoute>
-            } />
-            <Route path="/checkout" element={
-              <ProtectedRoute>
-                <Checkout />
-              </ProtectedRoute>
-            } />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="/professional/auth" element={<ProfessionalAuth />} />
-            <Route path="/professional/dashboard" element={<ProfessionalDashboard />} />
-            <Route path="/professional/setup" element={<ProfessionalSetup />} />
-            <Route path="/designer/auth" element={<DesignerAuth />} />
-            <Route path="/designer/dashboard" element={<DesignerDashboard />} />
-            <Route path="/designer/setup" element={<DesignerSetup />} />
-            <Route path="/supplier/auth" element={<SupplierAuth />} />
-            <Route path="/supplier/dashboard" element={<SupplierDashboard />} />
-            <Route path="/supplier/setup" element={<SupplierSetup />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AnimatedRoutes />
         </BrowserRouter>
       </TooltipProvider>
     </CartProvider>

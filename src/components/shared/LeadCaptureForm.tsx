@@ -11,6 +11,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { FloatingBubbles } from "@/components/ui/FloatingBubbles";
+import { motion } from "framer-motion";
+import { Reveal, RevealItem } from "./Reveal";
 
 interface LeadCaptureFormProps {
   variant?: "default" | "compact" | "hero";
@@ -96,84 +99,115 @@ export const LeadCaptureForm = ({
   const isHero = variant === "hero";
 
   return (
-    <section className={`${isHero ? "py-16 md:py-24 bg-primary" : isCompact ? "py-12 bg-secondary" : "py-16 md:py-24 bg-secondary"}`}>
-      <div className="container mx-auto px-4">
+    <section className={`relative overflow-hidden ${isHero ? "py-24 md:py-32 bg-primary" : "py-20 md:py-28 bg-secondary/30"}`}>
+      {/* Bubbles */}
+      <FloatingBubbles count={isHero ? 20 : 12} palette={isHero ? "neutral" : "brand"} className="opacity-40" />
+
+      <div className="container mx-auto px-4 relative z-10">
         <div className={`${isHero ? "max-w-4xl" : "max-w-2xl"} mx-auto`}>
           {/* Header */}
-          <div className="text-center mb-8">
-            <h2 className={`text-2xl md:text-3xl font-bold mb-2 ${isHero ? "text-primary-foreground" : "text-foreground"}`}>
-              {title}
-            </h2>
-            <p className={isHero ? "text-primary-foreground/80" : "text-muted-foreground"}>
-              {subtitle}
-            </p>
-          </div>
+          <Reveal width="100%" direction="up">
+            <div className="text-center mb-12">
+              <h2 className={`text-3xl md:text-5xl font-bold mb-4 tracking-tight ${isHero ? "text-primary-foreground" : "text-foreground"}`}>
+                {title}
+              </h2>
+              <p className={`text-lg ${isHero ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                {subtitle}
+              </p>
+            </div>
+          </Reveal>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className={`${isHero ? "bg-card p-6 md:p-8 rounded-2xl shadow-2xl" : "bg-card p-6 md:p-8 rounded-2xl shadow-lg"}`}>
-            <div className={`grid ${isCompact ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-2"} gap-4 mb-6`}>
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  placeholder="Enter your name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                  className="rounded-lg"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="+91 XXXXX XXXXX"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  required
-                  className="rounded-lg"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input
-                  id="city"
-                  placeholder="Your city"
-                  value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  required
-                  className="rounded-lg"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="budget">Budget Range</Label>
-                <Select
-                  value={formData.budget}
-                  onValueChange={(value) => setFormData({ ...formData, budget: value })}
-                >
-                  <SelectTrigger id="budget" className="rounded-lg">
-                    <SelectValue placeholder="Select budget" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="under-2l">Under ₹2 Lakh</SelectItem>
-                    <SelectItem value="2-5l">₹2 - 5 Lakh</SelectItem>
-                    <SelectItem value="5-10l">₹5 - 10 Lakh</SelectItem>
-                    <SelectItem value="10-20l">₹10 - 20 Lakh</SelectItem>
-                    <SelectItem value="above-20l">Above ₹20 Lakh</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <Button 
-              type="submit" 
-              size="lg" 
-              className="w-full sm:w-auto rounded-full px-8 shadow-lg"
-              disabled={isSubmitting}
+          <Reveal width="100%" direction="up" delay={0.2}>
+            <motion.form
+              onSubmit={handleSubmit}
+              className={`${isHero ? "bg-background p-8 md:p-12 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.2)]" : "bg-background p-8 md:p-12 rounded-3xl shadow-xl"} border border-border/50`}
+              whileHover={{ y: -5 }}
+              transition={{ duration: 0.5 }}
             >
-              {isSubmitting ? "Submitting..." : "Get Free Consultation"}
-            </Button>
-          </form>
+              <div className={`grid ${isCompact ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-2"} gap-6 mb-8`}>
+                <RevealItem>
+                  <div className="space-y-3">
+                    <Label htmlFor="name" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Full Name</Label>
+                    <Input
+                      id="name"
+                      placeholder="Enter your name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                      className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all duration-300"
+                    />
+                  </div>
+                </RevealItem>
+                <RevealItem>
+                  <div className="space-y-3">
+                    <Label htmlFor="phone" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Phone Number</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+91 XXXXX XXXXX"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      required
+                      className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all duration-300"
+                    />
+                  </div>
+                </RevealItem>
+                <RevealItem>
+                  <div className="space-y-3">
+                    <Label htmlFor="city" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">City</Label>
+                    <Input
+                      id="city"
+                      placeholder="Your city"
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      required
+                      className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all duration-300"
+                    />
+                  </div>
+                </RevealItem>
+                <RevealItem>
+                  <div className="space-y-3">
+                    <Label htmlFor="budget" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Budget Range</Label>
+                    <Select
+                      value={formData.budget}
+                      onValueChange={(value) => setFormData({ ...formData, budget: value })}
+                    >
+                      <SelectTrigger id="budget" className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all duration-300">
+                        <SelectValue placeholder="Select budget" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="under-2l">Under ₹2 Lakh</SelectItem>
+                        <SelectItem value="2-5l">₹2 - 5 Lakh</SelectItem>
+                        <SelectItem value="5-10l">₹5 - 10 Lakh</SelectItem>
+                        <SelectItem value="10-20l">₹10 - 20 Lakh</SelectItem>
+                        <SelectItem value="above-20l">Above ₹20 Lakh</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </RevealItem>
+              </div>
+              
+              <RevealItem>
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  className="w-full sm:w-auto rounded-full px-12 h-14 text-lg font-bold shadow-2xl group relative overflow-hidden transition-all duration-500"
+                  disabled={isSubmitting}
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    {isSubmitting ? "Submitting..." : "Get Free Consultation"}
+                  </span>
+                  <motion.div 
+                    className="absolute inset-0 bg-primary-foreground/10"
+                    initial={{ x: "-100%" }}
+                    whileHover={{ x: "100%" }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </Button>
+              </RevealItem>
+            </motion.form>
+          </Reveal>
         </div>
       </div>
     </section>
