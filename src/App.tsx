@@ -29,6 +29,20 @@ import SupplierDashboard from "./pages/SupplierDashboard";
 import SupplierSetup from "./pages/SupplierSetup";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { CartProvider } from "./contexts/CartContext";
+import { AdminRoute } from "./components/admin/AdminRoute";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminUsers from "./pages/admin/Users";
+import AdminProfessionals from "./pages/admin/Professionals";
+import AdminDesigners from "./pages/admin/Designers";
+import AdminSuppliers from "./pages/admin/Suppliers";
+import AdminDesigns from "./pages/admin/Designs";
+import AdminProducts from "./pages/admin/Products";
+import AdminOrders from "./pages/admin/Orders";
+import AdminTickets from "./pages/admin/Tickets";
+import AdminCoupons from "./pages/admin/Coupons";
+import AdminBanners from "./pages/admin/Banners";
+import AdminSettings from "./pages/admin/Settings";
+import AdminReports from "./pages/admin/Reports";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +84,22 @@ const AnimatedRoutes = () => {
         <Route path="/supplier/auth" element={<PageTransition><SupplierAuth /></PageTransition>} />
         <Route path="/supplier/dashboard" element={<PageTransition><SupplierDashboard /></PageTransition>} />
         <Route path="/supplier/setup" element={<PageTransition><SupplierSetup /></PageTransition>} />
+        
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+        <Route path="/admin/professionals" element={<AdminRoute><AdminProfessionals /></AdminRoute>} />
+        <Route path="/admin/designers" element={<AdminRoute><AdminDesigners /></AdminRoute>} />
+        <Route path="/admin/suppliers" element={<AdminRoute><AdminSuppliers /></AdminRoute>} />
+        <Route path="/admin/designs" element={<AdminRoute><AdminDesigns /></AdminRoute>} />
+        <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+        <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+        <Route path="/admin/tickets" element={<AdminRoute><AdminTickets /></AdminRoute>} />
+        <Route path="/admin/coupons" element={<AdminRoute><AdminCoupons /></AdminRoute>} />
+        <Route path="/admin/banners" element={<AdminRoute><AdminBanners /></AdminRoute>} />
+        <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
+        <Route path="/admin/reports" element={<AdminRoute><AdminReports /></AdminRoute>} />
+
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>
