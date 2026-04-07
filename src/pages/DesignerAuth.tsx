@@ -29,7 +29,7 @@ export default function DesignerAuth() {
   const defaultTab = searchParams.get("mode") === "register" ? "register" : "login";
 
   // Login state
-  const [loginEmail, setLoginEmail] = useState("");
+  const [loginIdentifier, setLoginIdentifier] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
   // Register state
@@ -59,10 +59,12 @@ export default function DesignerAuth() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginEmail,
-        password: loginPassword,
-      });
+      const isEmail = loginIdentifier.includes('@');
+      const credentials = isEmail 
+        ? { email: loginIdentifier, password: loginPassword }
+        : { phone: loginIdentifier, password: loginPassword };
+
+      const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
       if (error) throw error;
 
@@ -97,9 +99,19 @@ export default function DesignerAuth() {
     
     setIsLoading(true);
     try {
+      const authData = registerForm.email 
+        ? { email: registerForm.email, password: registerForm.password }
+        : { phone: registerForm.phone, password: registerForm.password };
+
       const { data, error } = await supabase.auth.signUp({
-        email: registerForm.email,
-        password: registerForm.password,
+        ...authData,
+        options: {
+          data: {
+            full_name: registerForm.fullName,
+            phone: registerForm.phone,
+            role: 'designer',
+          }
+        }
       });
 
       if (error) throw error;
@@ -111,7 +123,7 @@ export default function DesignerAuth() {
             id: data.user.id,
             full_name: registerForm.fullName,
             phone: registerForm.phone,
-            email: registerForm.email,
+            email: registerForm.email || null,
             city: registerForm.city,
             years_experience: parseInt(registerForm.yearsOfExperience) || 0,
             bio: registerForm.bio || null,
@@ -119,6 +131,18 @@ export default function DesignerAuth() {
           });
 
         if (insertError) throw insertError;
+
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .upsert({
+            id: data.user.id,
+            full_name: registerForm.fullName,
+            phone: registerForm.phone,
+            email: registerForm.email || null,
+            role: "designer",
+          } as any);
+
+        if (profileError) throw profileError;
 
         toast({ title: "Registration successful!", description: "Welcome to BuildBazaarX Designers." });
         navigate("/designer/dashboard");
@@ -192,14 +216,14 @@ export default function DesignerAuth() {
                           className="space-y-6"
                         >
                           <div className="space-y-2">
-                            <Label htmlFor="login-email">Email</Label>
+                            <Label htmlFor="login-id">Email or Mobile Number</Label>
                             <Input 
-                              id="login-email" 
-                              type="email" 
-                              placeholder="you@example.com" 
+                              id="login-id" 
+                              type="text" 
+                              placeholder="email@example.com or 9876543210" 
                               required 
-                              value={loginEmail}
-                              onChange={(e) => setLoginEmail(e.target.value)}
+                              value={loginIdentifier}
+                              onChange={(e) => setLoginIdentifier(e.target.value)}
                               className="rounded-xl h-12 bg-secondary/20 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all"
                             />
                           </div>
@@ -258,11 +282,10 @@ export default function DesignerAuth() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <RevealItem>
                               <div className="space-y-2">
-                                <Label htmlFor="reg-email">Email</Label>
+                                <Label htmlFor="reg-email">Email (Optional)</Label>
                                 <Input 
                                   id="reg-email" 
                                   type="email" 
-                                  required 
                                   value={registerForm.email}
                                   onChange={(e) => setRegisterForm({...registerForm, email: e.target.value})}
                                   className="rounded-xl bg-secondary/20 border-transparent h-11"
@@ -317,19 +340,19 @@ export default function DesignerAuth() {
                           <RevealItem>
                             <div className="space-y-4 bg-secondary/20 p-6 rounded-2xl border border-transparent hover:border-primary/20 transition-all">
                               <Label className="font-bold text-sm uppercase tracking-wider text-muted-foreground">Specializations</Label>
-                              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-                                {SPECIALIZATIONS.map(spec => (
-                                  <div key={spec} className="flex items-center space-x-3 group cursor-pointer" onClick={() => handleSpecializationToggle(spec)}>
-                                    <Checkbox 
-                                      id={`spec-${spec}`} 
-                                      checked={registerForm.specializations.includes(spec)}
-                                      onCheckedChange={() => handleSpecializationToggle(spec)}
-                                      className="rounded-md border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                                    />
-                                    <Label htmlFor={`spec-${spec}`} className="font-medium text-sm cursor-pointer group-hover:text-primary transition-colors">{spec}</Label>
-                                  </div>
-                                ))}
-                              </div>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                                  {SPECIALIZATIONS.map(spec => (
+                                    <div key={spec} className="flex items-center space-x-3 group">
+                                      <Checkbox 
+                                        id={`spec-${spec}`} 
+                                        checked={registerForm.specializations.includes(spec)}
+                                        onCheckedChange={() => handleSpecializationToggle(spec)}
+                                        className="rounded-md border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                      />
+                                      <Label htmlFor={`spec-${spec}`} className="font-medium text-sm cursor-pointer group-hover:text-primary transition-colors">{spec}</Label>
+                                    </div>
+                                  ))}
+                                </div>
                             </div>
                           </RevealItem>
 

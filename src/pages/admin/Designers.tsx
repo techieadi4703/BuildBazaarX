@@ -142,7 +142,7 @@ export default function AdminDesigners() {
                 filteredData?.map((designer: any) => (
                   <TableRow key={designer.id}>
                     <TableCell className="font-medium">
-                      {designer.profiles?.full_name || 'Unknown'}
+                      {(designer.full_name || designer.profiles?.full_name) || 'Unknown'}
                       {designer.profiles?.is_blocked && <Badge variant="destructive" className="ml-2 text-[10px]">Blocked</Badge>}
                     </TableCell>
                     <TableCell>{designer.city || '—'}</TableCell>

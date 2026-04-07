@@ -150,7 +150,7 @@ export default function AdminProfessionals() {
                 filteredData?.map((pro: any) => (
                   <TableRow key={pro.id}>
                     <TableCell className="font-medium">
-                      {pro.profiles?.full_name || 'Unknown'}
+                      {(pro.full_name || pro.profiles?.full_name) || 'Unknown'}
                       {pro.profiles?.is_blocked && <Badge variant="destructive" className="ml-2 text-[10px]">Blocked</Badge>}
                     </TableCell>
                     <TableCell>
@@ -206,7 +206,7 @@ export default function AdminProfessionals() {
                               {selectedPro && (
                                 <div className="mt-6 space-y-6">
                                   <div>
-                                    <h3 className="font-medium text-lg">{selectedPro.profiles?.full_name}</h3>
+                                    <h3 className="font-medium text-lg">{selectedPro.full_name || selectedPro.profiles?.full_name}</h3>
                                     <p className="text-muted-foreground">{selectedPro.profession} • {selectedPro.city}</p>
                                   </div>
                                   

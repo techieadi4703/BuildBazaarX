@@ -145,7 +145,7 @@ export default function SupplierDashboard() {
   const handleUpdateProfile = async () => {
     if (!user) return;
     try {
-      const { error } = await supabase
+      const { error: supplierError } = await supabase
         .from("suppliers")
         .update({
           business_name: profileForm.business_name,
@@ -158,7 +158,16 @@ export default function SupplierDashboard() {
           business_type: profileForm.business_type
         })
         .eq("id", user.id);
-      if (error) throw error;
+      if (supplierError) throw supplierError;
+
+      // Sync with profiles table
+      if (profileForm.owner_name) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ full_name: profileForm.owner_name })
+          .eq('id', user.id);
+        if (profileError) throw profileError;
+      }
       toast({ title: "Profile Synchronized! ✨", description: "Your business identity has been updated." });
       fetchData();
     } catch (err: any) {
@@ -829,12 +838,17 @@ export default function SupplierDashboard() {
                               <Input value={profileForm.business_name} onChange={e => setProfileForm({...profileForm, business_name: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
                             </div>
                             <div className="space-y-3">
-                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Authorized Signatory</Label>
-                              <Input value={profileForm.owner_name} onChange={e => setProfileForm({...profileForm, owner_name: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
+                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Verified Email (Primary)</Label>
+                              <Input value={user?.email || ""} readOnly className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed" />
                             </div>
                             <div className="space-y-3">
-                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Commercial Hotline</Label>
-                              <Input value={profileForm.phone} onChange={e => setProfileForm({...profileForm, phone: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
+                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Authorized Signatory (Locked)</Label>
+                              <Input value={profileForm.owner_name} readOnly className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed" />
+                            </div>
+                            <div className="space-y-3">
+                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Commercial Hotline (Locked)</Label>
+                              <Input value={profileForm.phone} readOnly className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed" />
+                              <p className="text-[10px] text-muted-foreground ml-1">Contact support to update verified identity details.</p>
                             </div>
                             <div className="space-y-3">
                               <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Logistics Hub (City)</Label>

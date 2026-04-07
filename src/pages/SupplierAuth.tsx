@@ -27,7 +27,7 @@ export default function SupplierAuth() {
   const defaultTab = searchParams.get("mode") === "register" ? "register" : "login";
 
   // Login state
-  const [loginEmail, setLoginEmail] = useState("");
+  const [loginIdentifier, setLoginIdentifier] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
   // Register state
@@ -46,10 +46,12 @@ export default function SupplierAuth() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginEmail,
-        password: loginPassword,
-      });
+      const isEmail = loginIdentifier.includes('@');
+      const credentials = isEmail 
+        ? { email: loginIdentifier, password: loginPassword }
+        : { phone: loginIdentifier, password: loginPassword };
+
+      const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
       if (error) throw error;
 
@@ -84,9 +86,19 @@ export default function SupplierAuth() {
     
     setIsLoading(true);
     try {
+      const authData = registerForm.email 
+        ? { email: registerForm.email, password: registerForm.password }
+        : { phone: registerForm.phone, password: registerForm.password };
+
       const { data, error } = await supabase.auth.signUp({
-        email: registerForm.email,
-        password: registerForm.password,
+        ...authData,
+        options: {
+          data: {
+            full_name: registerForm.ownerName,
+            phone: registerForm.phone,
+            role: 'supplier',
+          }
+        }
       });
 
       if (error) throw error;
@@ -99,13 +111,25 @@ export default function SupplierAuth() {
             business_name: registerForm.businessName,
             owner_name: registerForm.ownerName,
             phone: registerForm.phone,
-            email: registerForm.email,
+            email: registerForm.email || null,
             city: registerForm.city,
             gst_number: registerForm.gstNumber || null,
             business_type: registerForm.businessType
           });
 
         if (insertError) throw insertError;
+
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .upsert({
+            id: data.user.id,
+            full_name: registerForm.ownerName,
+            phone: registerForm.phone,
+            email: registerForm.email || null,
+            role: "supplier",
+          } as any);
+
+        if (profileError) throw profileError;
 
         toast({ title: "Registration successful!", description: "Welcome to BuildBazaarX Suppliers Portal." });
         navigate("/supplier/dashboard");
@@ -178,18 +202,18 @@ export default function SupplierAuth() {
                           onSubmit={handleLogin} 
                           className="space-y-6"
                         >
-                          <div className="space-y-2">
-                            <Label htmlFor="login-email">Email</Label>
-                            <Input 
-                              id="login-email" 
-                              type="email" 
-                              placeholder="you@business.com" 
-                              required 
-                              value={loginEmail}
-                              onChange={(e) => setLoginEmail(e.target.value)}
-                              className="rounded-xl h-12 bg-secondary/20 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all"
-                            />
-                          </div>
+                           <div className="space-y-2">
+                             <Label htmlFor="login-id">Email or Mobile Number</Label>
+                             <Input 
+                               id="login-id" 
+                               type="text" 
+                               placeholder="email@business.com or 9876543210" 
+                               required 
+                               value={loginIdentifier}
+                               onChange={(e) => setLoginIdentifier(e.target.value)}
+                               className="rounded-xl h-12 bg-secondary/20 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                             />
+                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="login-password">Password</Label>
                             <Input 
@@ -255,19 +279,19 @@ export default function SupplierAuth() {
                                 />
                               </div>
                             </RevealItem>
-                            <RevealItem>
-                              <div className="space-y-2">
-                                <Label htmlFor="reg-email">Email</Label>
-                                <Input 
-                                  id="reg-email" 
-                                  type="email" 
-                                  required 
-                                  value={registerForm.email}
-                                  onChange={(e) => setRegisterForm({...registerForm, email: e.target.value})}
-                                  className="rounded-xl bg-secondary/20 border-transparent h-11"
-                                />
-                              </div>
-                            </RevealItem>
+                             <RevealItem>
+                               <div className="space-y-2">
+                                 <Label htmlFor="reg-email">Email (Optional)</Label>
+                                 <Input 
+                                   id="reg-email" 
+                                   type="email" 
+                                   placeholder="optional@business.com"
+                                   value={registerForm.email}
+                                   onChange={(e) => setRegisterForm({...registerForm, email: e.target.value})}
+                                   className="rounded-xl bg-secondary/20 border-transparent h-11"
+                                 />
+                               </div>
+                             </RevealItem>
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

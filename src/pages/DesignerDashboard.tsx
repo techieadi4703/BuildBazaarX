@@ -132,7 +132,7 @@ export default function DesignerDashboard() {
             </Reveal>
 
             <AnimatePresence mode="wait">
-              <TabsContent value="designs" className="focus-visible:outline-none">
+              <TabsContent key="designs" value="designs" className="focus-visible:outline-none">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -152,7 +152,7 @@ export default function DesignerDashboard() {
                 </motion.div>
               </TabsContent>
 
-              <TabsContent value="upload" className="focus-visible:outline-none">
+              <TabsContent key="upload" value="upload" className="focus-visible:outline-none">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -169,17 +169,17 @@ export default function DesignerDashboard() {
                 </motion.div>
               </TabsContent>
 
-              <TabsContent value="profile" className="focus-visible:outline-none">
+              <TabsContent key="profile" value="profile" className="focus-visible:outline-none">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <DesignerProfileSection userId={user.id} />
+                  <DesignerProfileSection userId={user.id} user={user} />
                 </motion.div>
               </TabsContent>
 
-              <TabsContent value="reviews" className="focus-visible:outline-none">
+              <TabsContent key="reviews" value="reviews" className="focus-visible:outline-none">
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -189,7 +189,7 @@ export default function DesignerDashboard() {
                 </motion.div>
               </TabsContent>
 
-              <TabsContent value="account" className="focus-visible:outline-none">
+              <TabsContent key="account" value="account" className="focus-visible:outline-none">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -994,7 +994,7 @@ function UploadDesignSection({ userId, editingDesign, onSuccess }: { userId: str
 // ---------------------------------------------------------------------------
 // SECTION: Designer Profile
 // ---------------------------------------------------------------------------
-function DesignerProfileSection({ userId }: { userId: string }) {
+function DesignerProfileSection({ userId, user }: { userId: string, user: any }) {
   const { toast } = useToast();
   
   const { data: profile, isLoading } = useQuery({
@@ -1008,8 +1008,17 @@ function DesignerProfileSection({ userId }: { userId: string }) {
 
   const updateMutation = useMutation({
     mutationFn: async (updates: any) => {
-      const { error } = await supabase.from('designers').update(updates).eq('id', userId);
-      if (error) throw error;
+      const { error: designerError } = await supabase.from('designers').update(updates).eq('id', userId);
+      if (designerError) throw designerError;
+
+      // Sync with profiles table
+      if (updates.full_name) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ full_name: updates.full_name })
+          .eq('id', userId);
+        if (profileError) throw profileError;
+      }
     },
     onSuccess: () => toast({ title: "Profile Synchronized! ✨" })
   });
@@ -1049,12 +1058,17 @@ function DesignerProfileSection({ userId }: { userId: string }) {
         <form onSubmit={e => { e.preventDefault(); updateMutation.mutate(formData); }} className="space-y-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div className="space-y-3">
-              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Creative Handle</Label>
-              <Input value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Verified Identity (Full Name)</Label>
+              <Input value={formData.full_name} readOnly className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed" />
             </div>
             <div className="space-y-3">
-              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Direct Line</Label>
-              <Input value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Secure Email (Primary)</Label>
+              <Input value={user?.email || ""} readOnly className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed" />
+            </div>
+            <div className="space-y-3">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Mobile Access (Locked)</Label>
+              <Input value={formData.phone} readOnly className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed" />
+              <p className="text-[10px] text-muted-foreground ml-1">Contact support to update verified identity details.</p>
             </div>
             <div className="space-y-3">
               <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Headquarters (City)</Label>

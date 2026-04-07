@@ -32,6 +32,7 @@ import { CartProvider } from "./contexts/CartContext";
 import { AdminRoute } from "./components/admin/AdminRoute";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminUsers from "./pages/admin/Users";
+import AdminCustomers from "./pages/admin/Customers";
 import AdminProfessionals from "./pages/admin/Professionals";
 import AdminDesigners from "./pages/admin/Designers";
 import AdminSuppliers from "./pages/admin/Suppliers";
@@ -88,6 +89,7 @@ const AnimatedRoutes = () => {
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+        <Route path="/admin/customers" element={<AdminRoute><AdminCustomers /></AdminRoute>} />
         <Route path="/admin/professionals" element={<AdminRoute><AdminProfessionals /></AdminRoute>} />
         <Route path="/admin/designers" element={<AdminRoute><AdminDesigners /></AdminRoute>} />
         <Route path="/admin/suppliers" element={<AdminRoute><AdminSuppliers /></AdminRoute>} />

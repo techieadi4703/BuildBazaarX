@@ -13,7 +13,9 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import {
   ShoppingBag, CreditCard, Smartphone, Banknote,
-  ArrowLeft, Minus, Plus, Trash2, CheckCircle2, Lock, Sparkles, ShieldCheck
+  ArrowLeft, Minus, Plus, Trash2, CheckCircle2, Lock, Sparkles, ShieldCheck,
+  MapPin,
+  Badge
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";

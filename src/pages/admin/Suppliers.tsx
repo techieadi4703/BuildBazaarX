@@ -19,9 +19,10 @@ export default function AdminSuppliers() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: suppliers, isLoading } = useQuery({
+  const { data: suppliers, isLoading, error } = useQuery({
     queryKey: ['admin-suppliers'],
     queryFn: async () => {
+      console.log('Fetching suppliers...');
       const { data, error } = await supabase
         .from('suppliers')
         .select(`
@@ -30,7 +31,10 @@ export default function AdminSuppliers() {
         `)
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Suppliers Fetch Error:', error);
+        throw error;
+      }
       return data;
     }
   });
@@ -135,9 +139,11 @@ export default function AdminSuppliers() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-8">Loading...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center py-8">Loading suppliers...</TableCell></TableRow>
+              ) : error ? (
+                <TableRow><TableCell colSpan={8} className="text-center py-8 text-destructive">Error: {(error as any).message}</TableCell></TableRow>
               ) : filteredData?.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-8">No suppliers found.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center py-8">No suppliers found.</TableCell></TableRow>
               ) : (
                 filteredData?.map((supplier: any) => (
                   <TableRow key={supplier.id}>
@@ -145,7 +151,7 @@ export default function AdminSuppliers() {
                       {supplier.business_name || 'Unnamed Business'}
                       {supplier.profiles?.is_blocked && <Badge variant="destructive" className="ml-2 text-[10px]">Blocked</Badge>}
                     </TableCell>
-                    <TableCell>{supplier.profiles?.full_name || 'Unknown'}</TableCell>
+                    <TableCell>{supplier.owner_name || supplier.profiles?.full_name || 'Unknown'}</TableCell>
                     <TableCell>
                       <div className="flex flex-col">
                         <span>{supplier.city || '—'}</span>

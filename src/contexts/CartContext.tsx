@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface CartItem {
   id: number;
@@ -35,10 +36,50 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return [];
     }
   });
+  const [userId, setUserId] = useState<string | null>(null);
+  const lastSyncedCart = useRef<string>('');
 
   useEffect(() => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (mounted) setUserId(session?.user?.id ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id ?? null);
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const serialized = JSON.stringify(items);
+    if (serialized === lastSyncedCart.current) return;
+    lastSyncedCart.current = serialized;
+
+    supabase
+      .from('profiles')
+      .update({
+        last_cart_snapshot: items as any,
+        last_cart_updated_at: new Date().toISOString(),
+      } as any)
+      .eq('id', userId)
+      .then(({ error }) => {
+        if (error) {
+          console.warn('Cart sync failed:', error.message);
+        }
+      });
+  }, [items, userId]);
 
   const addToCart = (item: Omit<CartItem, "quantity">) => {
     setItems((prev) => {

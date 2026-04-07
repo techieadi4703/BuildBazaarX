@@ -20,8 +20,8 @@ const Auth = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [loginData, setLoginData] = useState({ email: "", password: "" });
-  const [signupData, setSignupData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+  const [loginData, setLoginData] = useState({ identifier: "", password: "" });
+  const [signupData, setSignupData] = useState({ name: "", email: "", phone: "", password: "", confirmPassword: "" });
 
   const mode = searchParams.get("mode");
   const defaultTab = mode === "register" ? "signup" : "login";
@@ -49,8 +49,8 @@ const Auth = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateEmail(loginData.email)) {
-      toast({ title: "Invalid Email", description: "Please enter a valid email address.", variant: "destructive" });
+    if (!loginData.identifier.trim()) {
+      toast({ title: "Identifier Required", description: "Please enter your email or mobile number.", variant: "destructive" });
       return;
     }
     if (loginData.password.length < 6) {
@@ -59,10 +59,13 @@ const Auth = () => {
     }
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: loginData.email,
-        password: loginData.password,
-      });
+      const isEmail = loginData.identifier.includes('@');
+      const credentials = isEmail 
+        ? { email: loginData.identifier, password: loginData.password }
+        : { phone: loginData.identifier, password: loginData.password };
+
+      const { error } = await supabase.auth.signInWithPassword(credentials);
+      
       if (error) {
         toast({ title: "Login Failed", description: error.message, variant: "destructive" });
       } else {
@@ -86,6 +89,10 @@ const Auth = () => {
       toast({ title: "Invalid Email", description: "Please enter a valid email address.", variant: "destructive" });
       return;
     }
+    if (!signupData.phone.trim()) {
+      toast({ title: "Mobile Required", description: "Please enter your mobile number.", variant: "destructive" });
+      return;
+    }
     if (signupData.password.length < 6) {
       toast({ title: "Weak Password", description: "Password must be at least 6 characters.", variant: "destructive" });
       return;
@@ -96,16 +103,36 @@ const Auth = () => {
     }
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: signupData.email,
         password: signupData.password,
         options: {
-          data: { full_name: signupData.name }
+          data: {
+            full_name: signupData.name,
+            phone: signupData.phone,
+            role: 'customer',
+          }
         }
       });
       if (error) {
         toast({ title: "Signup Failed", description: error.message, variant: "destructive" });
       } else {
+        // Manually ensure the profile and customer records are synchronized
+        if (data?.user) {
+          await supabase.from('profiles').upsert({
+            id: data.user.id,
+            full_name: signupData.name,
+            email: signupData.email,
+            role: 'customer',
+            phone: signupData.phone 
+          } as any);
+          await supabase.from('customers').upsert({
+            id: data.user.id,
+            full_name: signupData.name,
+            email: signupData.email,
+            phone: signupData.phone
+          } as any);
+        }
         toast({ title: "Account Created!", description: "Please check your email to verify your account." });
       }
     } catch {
@@ -181,16 +208,16 @@ const Auth = () => {
                           className="space-y-6"
                         >
                           <div className="space-y-2">
-                            <Label htmlFor="login-email">Email</Label>
+                            <Label htmlFor="login-id">Email or Mobile Number</Label>
                             <div className="relative group">
                               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                               <Input
-                                id="login-email"
-                                type="email"
-                                placeholder="you@example.com"
-                                className="pl-12 h-12 rounded-xl bg-secondary/20 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all"
-                                value={loginData.email}
-                                onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                                id="login-id"
+                                type="text"
+                                placeholder="email@example.com or 9876543210"
+                                className="pl-12 h-12 rounded-xl bg-secondary/20 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                                value={loginData.identifier}
+                                onChange={(e) => setLoginData({ ...loginData, identifier: e.target.value })}
                                 disabled={isLoading}
                               />
                             </div>
@@ -260,6 +287,22 @@ const Auth = () => {
                                 className="pl-12 h-12 rounded-xl bg-secondary/20 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all"
                                 value={signupData.email}
                                 onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                                disabled={isLoading}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="signup-phone">Mobile Number</Label>
+                            <div className="relative group">
+                              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                              <Input
+                                id="signup-phone"
+                                type="tel"
+                                placeholder="9876543210"
+                                className="pl-12 h-12 rounded-xl bg-secondary/20 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all"
+                                value={signupData.phone}
+                                onChange={(e) => setSignupData({ ...signupData, phone: e.target.value })}
                                 disabled={isLoading}
                               />
                             </div>

@@ -17,7 +17,7 @@ export const AdminRoute = ({ children }: { children: React.ReactNode }) => {
       console.log('Admin Check - Session User ID:', session.user.id);
       console.log('Admin Check - Profile Data:', profile);
       console.log('Admin Check - Error if any:', error);
-
+      
       setStatus(profile?.role === 'admin' ? 'allowed' : 'denied');
     };
     check();

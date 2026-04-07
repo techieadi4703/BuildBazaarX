@@ -94,9 +94,11 @@ export default function ProfessionalDashboard() {
       const languages = languagesInput.split(",").map(l => l.trim()).filter(l => l);
       const portfolio_urls = portfolioInput.split(",").map(p => p.trim()).filter(p => p);
 
-      const { error } = await supabase
+      const { error: professionalError } = await supabase
         .from("professionals")
         .update({
+          full_name: profile.full_name,
+          phone: profile.phone,
           profession: profile.profession,
           bio: profile.bio,
           city: profile.city,
@@ -112,7 +114,16 @@ export default function ProfessionalDashboard() {
         })
         .eq("id", profile.id);
 
-      if (error) throw error;
+      if (professionalError) throw professionalError;
+
+      // Sync with profiles table
+      if (profile.full_name) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ full_name: profile.full_name })
+          .eq('id', profile.id);
+        if (profileError) throw profileError;
+      }
       toast({ title: "Profile updated successfully! ✨" });
       fetchData();
     } catch (error: any) {
@@ -229,7 +240,7 @@ export default function ProfessionalDashboard() {
             </Reveal>
 
             <AnimatePresence mode="wait">
-              <TabsContent value="profile" className="focus-visible:outline-none">
+              <TabsContent key="profile" value="profile" className="focus-visible:outline-none">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -256,6 +267,38 @@ export default function ProfessionalDashboard() {
                         </RevealItem>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                          <RevealItem>
+                            <div className="space-y-3">
+                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Verified Identity (Full Name)</Label>
+                              <Input 
+                                value={profile.full_name || ""}
+                                readOnly
+                                className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed"
+                              />
+                            </div>
+                          </RevealItem>
+                          <RevealItem>
+                            <div className="space-y-3">
+                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Secure Email (Primary)</Label>
+                              <Input 
+                                value={user?.email || ""}
+                                readOnly
+                                className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed"
+                              />
+                            </div>
+                          </RevealItem>
+                          <RevealItem>
+                            <div className="space-y-3">
+                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Mobile Access (Locked)</Label>
+                              <Input 
+                                value={profile.phone || ""}
+                                readOnly
+                                className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed"
+                              />
+                              <p className="text-[10px] text-muted-foreground ml-1">Contact support to update verified identity details.</p>
+                            </div>
+                          </RevealItem>
+
                           <RevealItem>
                             <div className="space-y-3">
                               <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Current Profession</Label>
@@ -396,7 +439,7 @@ export default function ProfessionalDashboard() {
                 </motion.div>
               </TabsContent>
 
-              <TabsContent value="slots" className="focus-visible:outline-none">
+              <TabsContent key="slots" value="slots" className="focus-visible:outline-none">
                  <motion.div 
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -525,7 +568,7 @@ export default function ProfessionalDashboard() {
                  </motion.div>
               </TabsContent>
 
-              <TabsContent value="earnings" className="focus-visible:outline-none">
+              <TabsContent key="earnings" value="earnings" className="focus-visible:outline-none">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -572,7 +615,7 @@ export default function ProfessionalDashboard() {
                 </motion.div>
               </TabsContent>
 
-              <TabsContent value="reviews" className="focus-visible:outline-none">
+              <TabsContent key="reviews" value="reviews" className="focus-visible:outline-none">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -626,7 +669,7 @@ export default function ProfessionalDashboard() {
                 </motion.div>
               </TabsContent>
 
-              <TabsContent value="account" className="focus-visible:outline-none">
+              <TabsContent key="account" value="account" className="focus-visible:outline-none">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}

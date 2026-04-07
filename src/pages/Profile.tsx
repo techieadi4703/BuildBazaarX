@@ -18,6 +18,7 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [currentRole, setCurrentRole] = useState("customer");
   const [profile, setProfile] = useState({
     full_name: "",
     phone: "",
@@ -45,6 +46,7 @@ const Profile = () => {
       if (error) {
         console.error("Error fetching profile:", error);
       } else if (data) {
+        setCurrentRole(data.role || "customer");
         setProfile({
           full_name: data.full_name || "",
           phone: data.phone || "",
@@ -74,7 +76,7 @@ const Profile = () => {
         city: profile.city,
         state: profile.state,
         pincode: profile.pincode,
-        role: "user",
+        role: currentRole || "customer",
       });
 
     if (error) {

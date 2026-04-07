@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import {
   LayoutDashboard,
   Users,
+  User,
   Wrench,
   Palette,
   Package,
@@ -25,6 +26,7 @@ import { useToast } from '@/hooks/use-toast';
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
   { icon: Users, label: 'Users', path: '/admin/users' },
+  { icon: User, label: 'Customers', path: '/admin/customers' },
   { icon: Wrench, label: 'Professionals', path: '/admin/professionals' },
   { icon: Palette, label: 'Designers', path: '/admin/designers' },
   { icon: Package, label: 'Suppliers', path: '/admin/suppliers' },

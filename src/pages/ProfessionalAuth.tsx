@@ -38,7 +38,7 @@ export default function ProfessionalAuth() {
   const defaultTab = searchParams.get("mode") === "register" ? "register" : "login";
 
   // Login state
-  const [loginEmail, setLoginEmail] = useState("");
+  const [loginIdentifier, setLoginIdentifier] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
   // Register state
@@ -57,10 +57,12 @@ export default function ProfessionalAuth() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginEmail,
-        password: loginPassword,
-      });
+      const isEmail = loginIdentifier.includes('@');
+      const credentials = isEmail 
+        ? { email: loginIdentifier, password: loginPassword }
+        : { phone: loginIdentifier, password: loginPassword };
+
+      const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
       if (error) throw error;
 
@@ -90,9 +92,19 @@ export default function ProfessionalAuth() {
     e.preventDefault();
     setIsLoading(true);
     try {
+      const authData = registerForm.email 
+        ? { email: registerForm.email, password: registerForm.password }
+        : { phone: registerForm.phone, password: registerForm.password };
+
       const { data, error } = await supabase.auth.signUp({
-        email: registerForm.email,
-        password: registerForm.password,
+        ...authData,
+        options: {
+          data: {
+            full_name: registerForm.fullName,
+            phone: registerForm.phone,
+            role: 'professional',
+          }
+        }
       });
 
       if (error) throw error;
@@ -105,12 +117,25 @@ export default function ProfessionalAuth() {
             full_name: registerForm.fullName,
             phone: registerForm.phone,
             profession: registerForm.profession,
+            email: registerForm.email || null,
             city: registerForm.city,
             years_experience: parseInt(registerForm.yearsOfExperience) || 0,
             bio: registerForm.bio || null,
           });
 
         if (insertError) throw insertError;
+
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .upsert({
+            id: data.user.id,
+            full_name: registerForm.fullName,
+            phone: registerForm.phone,
+            email: registerForm.email || null,
+            role: "professional",
+          } as any);
+
+        if (profileError) throw profileError;
 
         toast({ title: "Registration successful!", description: "Welcome to BuildBazaarX Professionals." });
         navigate("/professional/dashboard");
@@ -184,15 +209,15 @@ export default function ProfessionalAuth() {
                           className="space-y-6"
                         >
                           <div className="space-y-2">
-                            <Label htmlFor="login-email">Email</Label>
+                            <Label htmlFor="login-id">Email or Mobile Number</Label>
                             <Input 
-                              id="login-email" 
-                              type="email" 
-                              placeholder="you@example.com" 
+                              id="login-id" 
+                              type="text" 
+                              placeholder="email@example.com or 9876543210" 
                               required 
-                              value={loginEmail}
-                              onChange={(e) => setLoginEmail(e.target.value)}
-                              className="rounded-xl h-12 bg-secondary/20 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all"
+                              value={loginIdentifier}
+                              onChange={(e) => setLoginIdentifier(e.target.value)}
+                              className="rounded-xl h-12 bg-secondary/20 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium"
                             />
                           </div>
                           <div className="space-y-2">
@@ -249,11 +274,11 @@ export default function ProfessionalAuth() {
 
                           <RevealItem>
                             <div className="space-y-2">
-                              <Label htmlFor="reg-email">Email</Label>
+                              <Label htmlFor="reg-email">Email (Optional)</Label>
                               <Input 
                                 id="reg-email" 
                                 type="email" 
-                                required 
+                                placeholder="optional@example.com"
                                 value={registerForm.email}
                                 onChange={(e) => setRegisterForm({...registerForm, email: e.target.value})}
                                 className="rounded-xl bg-secondary/20 border-transparent"
