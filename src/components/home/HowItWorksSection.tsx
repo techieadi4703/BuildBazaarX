@@ -32,7 +32,7 @@ export const HowItWorksSection = () => {
         <Reveal width="100%" direction="up" distance={30}>
           <div className="text-center max-w-2xl mx-auto mb-20">
             <motion.span 
-              className="text-primary font-bold text-sm uppercase tracking-widest bg-primary/5 px-4 py-1.5 rounded-full"
+              className="text-primary-container font-bold text-sm uppercase tracking-widest bg-primary-container/5 px-4 py-1.5 rounded-full"
               whileHover={{ scale: 1.05 }}
             >
               Simple Process
@@ -49,9 +49,9 @@ export const HowItWorksSection = () => {
         {/* Steps */}
         <div className="relative">
           {/* Connection Line — draws on scroll */}
-          <div className="hidden md:block absolute top-[48px] left-[15%] right-[15%] h-0.5 bg-border -z-10">
+          <div className="hidden md:block absolute top-[48px] left-[15%] right-[15%] h-0.5 bg-outline-variant/20 -z-10">
             <motion.div
-              className="h-full bg-primary"
+              className="h-full bg-secondary"
               initial={{ width: 0 }}
               whileInView={{ width: "100%" }}
               viewport={{ once: true, margin: "-100px" }}
@@ -70,14 +70,14 @@ export const HowItWorksSection = () => {
                     {/* Icon Container */}
                     <div className="relative inline-flex mb-8">
                       <motion.div 
-                        className="w-24 h-24 bg-background rounded-full flex items-center justify-center border-4 border-primary/20 shadow-xl relative z-10 group-hover:border-primary transition-colors duration-500"
+                        className="w-24 h-24 bg-surface-container-lowest rounded-full flex items-center justify-center border-4 border-primary-container/20 shadow-ambient relative z-10 group-hover:border-secondary transition-colors duration-500"
                         whileHover={{ rotate: [0, -10, 10, 0] }}
                       >
-                        <step.icon className="w-10 h-10 text-primary" />
+                        <step.icon className="w-10 h-10 text-primary-container" />
                       </motion.div>
                       
                       <motion.span 
-                        className="absolute -top-2 -right-2 w-10 h-10 bg-accent rounded-full flex items-center justify-center text-accent-foreground font-bold text-lg shadow-lg z-20"
+                        className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-br from-secondary to-secondary-container rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg z-20"
                         animate={{ y: [0, -4, 0] }}
                         transition={{ duration: 2, repeat: Infinity, delay: index * 0.5 }}
                       >
@@ -86,14 +86,14 @@ export const HowItWorksSection = () => {
 
                       {/* Ripple effect */}
                       <motion.div 
-                        className="absolute inset-0 bg-primary/10 rounded-full -z-10"
+                        className="absolute inset-0 bg-secondary/10 rounded-full -z-10"
                         animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
                         transition={{ duration: 3, repeat: Infinity, delay: index * 1 }}
                       />
                     </div>
 
                     {/* Content */}
-                    <h3 className="text-2xl font-bold text-foreground mb-4 tracking-tight group-hover:text-primary transition-colors duration-300">
+                    <h3 className="text-2xl font-bold text-on-surface mb-4 tracking-tight group-hover:text-secondary transition-colors duration-300">
                       {step.title}
                     </h3>
                     <p className="text-muted-foreground text-lg max-w-sm mx-auto leading-relaxed">

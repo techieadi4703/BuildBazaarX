@@ -84,7 +84,7 @@ const usps = [
 
 export const MaterialsSection = () => {
   return (
-    <section className="py-16 md:py-24 bg-secondary">
+    <section className="py-16 md:py-24 bg-surface-container-low">
       <div className="container mx-auto px-4">
         {/* Header */}
         <Reveal width="100%" direction="up" distance={30}>

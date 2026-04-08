@@ -38,7 +38,7 @@ const imageVariants = {
 
 export const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-secondary min-h-[90vh] flex items-center">
+    <section className="relative overflow-hidden bg-primary-container min-h-[90vh] flex items-center">
       {/* Floating Bubbles */}
       <FloatingBubbles count={16} palette="brand" />
 
@@ -53,7 +53,7 @@ export const HeroSection = () => {
           >
             <motion.span
               variants={itemVariants}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-surface/10 text-surface border border-surface/20 rounded-full text-sm font-medium mb-6"
             >
               <motion.div
                 animate={{ y: [0, -4, 0] }}
@@ -66,23 +66,23 @@ export const HeroSection = () => {
             
             <motion.h1
               variants={itemVariants}
-              className="text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-6 leading-tight tracking-tight"
+              className="text-display-lg text-on-primary-container mb-6 leading-tight tracking-tight"
             >
               Build Your{" "}
-              <span className="text-shimmer">Dream Home</span>{" "}
+              <span className="text-secondary-container">Dream Home</span>{" "}
               With Confidence
             </motion.h1>
             
             <motion.p
               variants={itemVariants}
-              className="text-lg md:text-xl text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed"
+              className="text-body-lg text-white/70 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
               All-in-one platform for home designs, skilled workers, and quality raw materials. 
               From concept to completion, we've got you covered.
             </motion.p>
 
             <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button size="lg" asChild className="rounded-full text-base px-8 shadow-lg group">
+              <Button size="lg" variant="action" asChild className="group">
                 <Link to="/designs">
                   Explore Designs
                   <motion.span
@@ -93,23 +93,23 @@ export const HeroSection = () => {
                   </motion.span>
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="rounded-full text-base px-8 border-2 transition-all duration-300">
-                <Play className="mr-2 w-5 h-5 fill-primary text-primary" />
+              <Button size="lg" variant="ghost" className="text-white hover:text-primary-container transition-all duration-300">
+                <Play className="mr-2 w-5 h-5 fill-current" />
                 Watch How It Works
               </Button>
             </motion.div>
 
             {/* Trust Badges */}
             <motion.div variants={itemVariants} className="flex flex-wrap gap-6 mt-10 justify-center lg:justify-start">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+              <div className="flex items-center gap-2 text-label-md text-white/80 uppercase tracking-widest font-medium">
                 <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
-                  <ShieldCheck className="w-5 h-5 text-primary" />
+                  <ShieldCheck className="w-5 h-5 text-secondary-container" />
                 </motion.div>
                 Verified Workers
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+              <div className="flex items-center gap-2 text-label-md text-white/80 uppercase tracking-widest font-medium">
                 <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}>
-                  <Wrench className="w-5 h-5 text-accent" />
+                  <Wrench className="w-5 h-5 text-secondary-container" />
                 </motion.div>
                 Quality Materials
               </div>
@@ -144,14 +144,14 @@ export const HeroSection = () => {
               initial={{ opacity: 0, scale: 0.8, x: -20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={{ delay: 1, duration: 0.6 }}
-              className="absolute -bottom-6 -left-6 bg-card rounded-xl shadow-xl p-6 border border-border z-20"
+              className="absolute -bottom-6 -left-6 bg-surface-container-lowest/10 backdrop-blur-md rounded-xl shadow-ambient p-6 border border-white/20 z-20"
             >
               <motion.div
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               >
-                <p className="text-4xl font-bold text-primary mb-1">500+</p>
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Design Templates</p>
+                <p className="text-4xl font-bold text-white mb-1">500+</p>
+                <p className="text-label-md text-white/70 uppercase tracking-wider">Design Templates</p>
               </motion.div>
             </motion.div>
 
@@ -159,20 +159,20 @@ export const HeroSection = () => {
               initial={{ opacity: 0, scale: 0.8, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={{ delay: 1.2, duration: 0.6 }}
-              className="absolute -top-6 -right-6 bg-card rounded-xl shadow-xl p-6 border border-border z-20"
+              className="absolute -top-6 -right-6 bg-surface-container-lowest/10 backdrop-blur-md rounded-xl shadow-ambient p-6 border border-white/20 z-20"
             >
               <motion.div
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               >
-                <p className="text-4xl font-bold text-accent mb-1">200+</p>
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Verified Workers</p>
+                <p className="text-4xl font-bold text-secondary-container mb-1">200+</p>
+                <p className="text-label-md text-white/70 uppercase tracking-wider">Verified Workers</p>
               </motion.div>
             </motion.div>
 
             {/* Decorative background shape */}
             <motion.div 
-              className="absolute -inset-4 bg-primary/5 rounded-3xl -z-10"
+              className="absolute -inset-4 bg-tertiary-container/30 blur-3xl -z-10"
               animate={{ rotate: [0, 5, 0] }}
               transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
             />

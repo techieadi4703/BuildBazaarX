@@ -56,12 +56,32 @@ export default {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+  			},
+  			'primary-container': 'hsl(var(--primary-container))',
+  			'on-primary-container': 'hsl(var(--on-primary-container))',
+  			'secondary-container': 'hsl(var(--secondary-container))',
+  			'tertiary-container': 'hsl(var(--tertiary-container))',
+  			'tertiary-fixed': 'hsl(var(--tertiary-fixed))',
+  			surface: 'hsl(var(--surface))',
+  			'surface-container-low': 'hsl(var(--surface-container-low))',
+  			'surface-container': 'hsl(var(--surface-container))',
+  			'surface-container-highest': 'hsl(var(--surface-container-highest))',
+  			'surface-container-lowest': 'hsl(var(--surface-container-lowest))',
+  			'outline-variant': 'hsl(var(--outline-variant))',
+  			'on-surface': 'hsl(var(--on-surface))',
+  			'on-surface-variant': 'hsl(var(--on-surface-variant))'
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		fontSize: {
+  			'display-lg': ['3.5rem', { letterSpacing: '-0.02em', fontWeight: '700' }],
+  			'headline-lg': ['2rem', { fontWeight: '700' }],
+  			'title-lg': ['1.375rem', { fontWeight: '600' }],
+  			'body-lg': ['1rem', { fontWeight: '400' }],
+  			'label-md': ['0.75rem', { fontWeight: '500' }],
   		},
   		keyframes: {
   			'accordion-down': {
@@ -178,7 +198,8 @@ export default {
   			md: 'var(--shadow-md)',
   			lg: 'var(--shadow-lg)',
   			xl: 'var(--shadow-xl)',
-  			'2xl': 'var(--shadow-2xl)'
+  			'2xl': 'var(--shadow-2xl)',
+  			ambient: 'var(--shadow-xl)'
   		}
   	}
   },

@@ -267,22 +267,22 @@ const RawMaterials = () => {
       <motion.section 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="py-12 bg-secondary/50 backdrop-blur-md"
+        className="py-12 bg-primary-container"
       >
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto space-y-6">
-            <h1 className="text-3xl md:text-5xl font-extrabold text-center tracking-tight">Search Quality Materials</h1>
+            <h1 className="text-3xl md:text-5xl font-extrabold text-center text-white tracking-tight">Search Quality Materials</h1>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <div className="relative flex-1 group">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input
                   placeholder="Search for plywood, tiles, paints..."
-                  className="pl-12 bg-background h-14 rounded-2xl border-none shadow-lg focus:ring-2 focus:ring-primary/20 transition-all text-lg"
+                  className="pl-12 bg-white/10 border border-white/20 text-white placeholder:text-white/60 h-14 rounded-2xl shadow-lg focus:ring-2 focus:ring-secondary-container/40 transition-all text-lg"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Button size="lg" className="h-14 px-10 rounded-2xl shadow-xl font-bold text-lg">
+              <Button size="lg" variant="action" className="h-14 px-10 rounded-2xl shadow-xl font-bold text-lg">
                 Search
               </Button>
             </div>
@@ -418,7 +418,7 @@ const RawMaterials = () => {
                   ))}
                   {filteredProducts.length === 0 && (
                     <motion.div 
-                      className="col-span-full text-center py-24 bg-secondary/20 rounded-[3rem] border-2 border-dashed border-border"
+                      className="col-span-full text-center py-24 bg-surface-container rounded-[3rem] border-2 border-dashed border-outline-variant/30"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                     >
@@ -501,7 +501,7 @@ const RawMaterials = () => {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all"
+                      className="rounded-xl h-12 bg-surface-container border-transparent focus:bg-surface-container-lowest focus:border-secondary transition-all"
                     />
                   </div>
                 </RevealItem>
@@ -515,7 +515,7 @@ const RawMaterials = () => {
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all"
+                      className="rounded-xl h-12 bg-surface-container border-transparent focus:bg-surface-container-lowest focus:border-secondary transition-all"
                     />
                   </div>
                 </RevealItem>
@@ -528,7 +528,7 @@ const RawMaterials = () => {
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all"
+                      className="rounded-xl h-12 bg-surface-container border-transparent focus:bg-surface-container-lowest focus:border-secondary transition-all"
                     />
                   </div>
                 </RevealItem>
@@ -539,7 +539,7 @@ const RawMaterials = () => {
                       value={formData.material}
                       onValueChange={(value) => setFormData({ ...formData, material: value })}
                     >
-                      <SelectTrigger id="material" className="rounded-xl h-12 bg-secondary/30 border-transparent">
+                      <SelectTrigger id="material" className="rounded-xl h-12 bg-surface-container border-transparent">
                         <SelectValue placeholder="Select material" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
@@ -562,7 +562,7 @@ const RawMaterials = () => {
                     value={formData.quantity}
                     onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                     rows={4}
-                    className="rounded-xl bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all"
+                    className="rounded-xl bg-surface-container border-transparent focus:bg-surface-container-lowest focus:border-secondary transition-all"
                   />
                 </div>
               </RevealItem>
@@ -603,7 +603,7 @@ const ProductCard = ({ product, onAddToCart, onBuyNow }: ProductCardProps) => {
     >
       <Card className="group overflow-hidden border-border/50 hover:border-primary/50 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[2rem] bg-background h-full flex flex-col">
         {/* Image */}
-        <div className="relative aspect-square overflow-hidden bg-secondary/30">
+        <div className="relative aspect-square overflow-hidden bg-surface-container">
           <motion.img
             src={getProductImage(product)}
             alt={product.name ?? "Product"}

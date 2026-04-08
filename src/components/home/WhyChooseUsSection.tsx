@@ -45,13 +45,13 @@ const features = [
 
 export const WhyChooseUsSection = () => {
   return (
-    <section className="py-24 md:py-32 bg-secondary/50 relative overflow-hidden">
+    <section className="py-24 md:py-32 bg-surface-container relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <Reveal width="100%" direction="up" distance={30}>
           <div className="text-center max-w-2xl mx-auto mb-20">
             <motion.span 
-              className="text-primary font-bold text-sm uppercase tracking-widest bg-primary/5 px-4 py-1.5 rounded-full"
+              className="text-primary-container font-bold text-sm uppercase tracking-widest bg-primary-container/5 px-4 py-1.5 rounded-full"
               whileHover={{ scale: 1.05 }}
             >
               Our Advantage
@@ -71,17 +71,17 @@ export const WhyChooseUsSection = () => {
             {features.map((feature, index) => (
               <RevealItem key={index}>
                 <motion.div
-                  className="group p-8 bg-background rounded-3xl border border-border/50 hover:border-primary/50 transition-all duration-500 hover:shadow-2xl h-full flex flex-col"
+                  className="group p-8 bg-surface-container-lowest rounded-3xl border border-outline-variant/10 hover:border-secondary/40 transition-all duration-500 hover:shadow-ambient h-full flex flex-col"
                   whileHover={{ y: -10 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                   <motion.div 
-                    className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-500"
+                    className="w-16 h-16 bg-primary-container/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-container group-hover:text-white transition-colors duration-500"
                     whileHover={{ rotate: [0, -5, 5, 0], scale: 1.1 }}
                   >
-                    <feature.icon className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-500" />
+                    <feature.icon className="w-8 h-8 text-primary-container group-hover:text-white transition-colors duration-500" />
                   </motion.div>
-                  <h3 className="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-on-surface mb-3 group-hover:text-secondary transition-colors duration-300">
                     {feature.title}
                   </h3>
                   <p className="text-muted-foreground text-lg leading-relaxed mb-6 flex-grow">
@@ -89,7 +89,7 @@ export const WhyChooseUsSection = () => {
                   </p>
                   
                   {/* Subtle arrow pointer */}
-                  <div className="w-8 h-0.5 bg-primary/20 group-hover:w-full transition-all duration-500" />
+                  <div className="w-8 h-0.5 bg-secondary/40 group-hover:w-full transition-all duration-500" />
                 </motion.div>
               </RevealItem>
             ))}
