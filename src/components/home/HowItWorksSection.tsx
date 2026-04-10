@@ -27,21 +27,24 @@ const steps = [
 export const HowItWorksSection = () => {
   return (
     <section className="py-24 md:py-32 bg-background relative overflow-hidden">
+      {/* Background technical dots */}
+      <div className="absolute inset-0 bg-dot-grid opacity-[0.1] pointer-events-none" />
+
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <Reveal width="100%" direction="up" distance={30}>
-          <div className="text-center max-w-2xl mx-auto mb-20">
+          <div className="text-center max-w-3xl mx-auto mb-24">
             <motion.span 
-              className="text-primary-container font-bold text-sm uppercase tracking-widest bg-primary-container/5 px-4 py-1.5 rounded-full"
+              className="text-primary font-mono text-[10px] uppercase tracking-[0.4em] bg-on-surface/5 px-6 py-2 rounded-full mb-8 inline-block"
               whileHover={{ scale: 1.05 }}
             >
-              Simple Process
+              Operational Workflow
             </motion.span>
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mt-6 mb-4 tracking-tight">
-              How It Works
+            <h2 className="text-5xl md:text-6xl font-serif text-on-surface mt-4 mb-6 tracking-tight">
+              The <span className="italic">Process</span> of Progress.
             </h2>
-            <p className="text-muted-foreground text-lg">
-              From design selection to project completion in 3 simple steps
+            <p className="text-on-surface-variant text-xl">
+              Execution excellence through a streamlined 3-phase framework.
             </p>
           </div>
         </Reveal>
@@ -49,56 +52,67 @@ export const HowItWorksSection = () => {
         {/* Steps */}
         <div className="relative">
           {/* Connection Line — draws on scroll */}
-          <div className="hidden md:block absolute top-[48px] left-[15%] right-[15%] h-0.5 bg-outline-variant/20 -z-10">
+          <div className="hidden md:block absolute top-[60px] left-[15%] right-[15%] h-[1px] bg-on-surface/5 -z-10">
             <motion.div
-              className="h-full bg-secondary"
+              className="h-full bg-secondary glow-secondary"
               initial={{ width: 0 }}
               whileInView={{ width: "100%" }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 1.5, ease: "easeInOut", delay: 0.5 }}
+              transition={{ duration: 2, ease: "easeInOut", delay: 0.5 }}
             />
           </div>
           
-          <Reveal width="100%" staggerChildren={0.3}>
-            <div className="grid md:grid-cols-3 gap-12 relative">
+          <Reveal width="100%" staggerChildren={0.2}>
+            <div className="grid md:grid-cols-3 gap-16 md:gap-12 relative">
               {steps.map((step, index) => (
                 <RevealItem key={index}>
                   <motion.div 
                     className="relative text-center group"
-                    whileHover={{ y: -5 }}
+                    whileHover={{ y: -8 }}
                   >
                     {/* Icon Container */}
-                    <div className="relative inline-flex mb-8">
+                    <div className="relative inline-flex mb-10">
                       <motion.div 
-                        className="w-24 h-24 bg-surface-container-lowest rounded-full flex items-center justify-center border-4 border-primary-container/20 shadow-ambient relative z-10 group-hover:border-secondary transition-colors duration-500"
-                        whileHover={{ rotate: [0, -10, 10, 0] }}
+                        className="w-28 h-28 bg-surface border border-on-surface/5 rounded-2xl flex items-center justify-center shadow-xl relative z-10 group-hover:border-secondary transition-all duration-700 hover:rotate-6 bg-white"
                       >
-                        <step.icon className="w-10 h-10 text-primary-container" />
+                        <step.icon className="w-10 h-10 text-on-surface group-hover:text-secondary group-hover:scale-110 transition-all duration-500" />
                       </motion.div>
                       
                       <motion.span 
-                        className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-br from-secondary to-secondary-container rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg z-20"
+                        className="absolute -top-4 -right-4 w-12 h-12 secondary-gradient rounded-xl flex items-center justify-center text-white font-mono font-bold text-lg shadow-xl z-20"
                         animate={{ y: [0, -4, 0] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: index * 0.5 }}
+                        transition={{ duration: 4, repeat: Infinity, delay: index * 0.8 }}
                       >
                         {step.step}
                       </motion.span>
 
                       {/* Ripple effect */}
                       <motion.div 
-                        className="absolute inset-0 bg-secondary/10 rounded-full -z-10"
-                        animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
-                        transition={{ duration: 3, repeat: Infinity, delay: index * 1 }}
+                        className="absolute inset-0 bg-secondary/5 rounded-2xl -z-10"
+                        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+                        transition={{ duration: 4, repeat: Infinity, delay: index * 1.5 }}
                       />
                     </div>
 
                     {/* Content */}
-                    <h3 className="text-2xl font-bold text-on-surface mb-4 tracking-tight group-hover:text-secondary transition-colors duration-300">
-                      {step.title}
-                    </h3>
-                    <p className="text-muted-foreground text-lg max-w-sm mx-auto leading-relaxed">
+                    <div className="flex flex-col gap-2 mb-4">
+                      <span className="text-[10px] uppercase tracking-[0.3em] text-on-surface/30 font-mono">Phase_0{index + 1}</span>
+                      <h3 className="text-2xl font-bold text-on-surface tracking-tight group-hover:text-secondary transition-colors duration-300">
+                        {step.title}
+                      </h3>
+                    </div>
+                    <p className="text-on-surface-variant text-lg max-w-[280px] mx-auto leading-relaxed">
                       {step.description}
                     </p>
+
+                    {/* Technical footer decoration */}
+                    <div className="mt-10 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                      <div className="flex gap-1.5">
+                        <div className="w-1 h-1 rounded-full bg-secondary" />
+                        <div className="w-8 h-[1px] bg-secondary self-center" />
+                        <div className="w-1 h-1 rounded-full bg-secondary" />
+                      </div>
+                    </div>
                   </motion.div>
                 </RevealItem>
               ))}
@@ -108,8 +122,8 @@ export const HowItWorksSection = () => {
       </div>
 
       {/* Background decorative elements */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10" />
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl -z-10" />
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/3 rounded-full blur-[120px] -z-10" />
+      <div className="absolute bottom-0 right-0 translate-y-1/4 translate-x-1/4 w-[500px] h-[500px] bg-secondary/3 rounded-full blur-[100px] -z-10" />
     </section>
   );
 };

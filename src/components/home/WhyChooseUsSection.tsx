@@ -45,62 +45,73 @@ const features = [
 
 export const WhyChooseUsSection = () => {
   return (
-    <section className="py-24 md:py-32 bg-surface-container relative overflow-hidden">
+    <section className="py-24 md:py-32 bg-surface relative overflow-hidden">
+      {/* Blueprint Grid Overlay */}
+      <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />
+
+      {/* Mesh Gradient Blobs */}
+      <div className="absolute top-0 right-[-10%] w-[500px] h-[500px] bg-secondary/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
+
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <Reveal width="100%" direction="up" distance={30}>
-          <div className="text-center max-w-2xl mx-auto mb-20">
-            <motion.span 
-              className="text-primary-container font-bold text-sm uppercase tracking-widest bg-primary-container/5 px-4 py-1.5 rounded-full"
+          <div className="text-center max-w-3xl mx-auto mb-20">
+            <motion.div 
+              className="inline-flex items-center gap-2 px-4 py-1.5 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-8"
               whileHover={{ scale: 1.05 }}
             >
-              Our Advantage
-            </motion.span>
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mt-6 mb-4 tracking-tight">
-              Why Choose BuildBazaarX?
+              <Zap className="w-3 h-3 fill-secondary" />
+              The BuildBazaar Advantage
+            </motion.div>
+            <h2 className="text-5xl md:text-6xl font-serif text-on-surface mb-6 tracking-tight">
+              Standardized <span className="italic text-secondary">Excellence</span>.
             </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              We bring together everything you need to build or renovate your home with confidence.
+            <p className="text-on-surface-variant text-xl leading-relaxed max-w-2xl mx-auto">
+              We've engineered a platform that eliminates the chaos of home building through 
+              rigorous verification and architectural precision.
             </p>
           </div>
         </Reveal>
 
         {/* Features Grid */}
-        <Reveal width="100%" staggerChildren={0.1}>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <Reveal width="100%" staggerChildren={0.08}>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {features.map((feature, index) => (
               <RevealItem key={index}>
                 <motion.div
-                  className="group p-8 bg-surface-container-lowest rounded-3xl border border-outline-variant/10 hover:border-secondary/40 transition-all duration-500 hover:shadow-ambient h-full flex flex-col"
-                  whileHover={{ y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="group relative p-10 glass-morphism rounded-[2rem] hover:border-secondary/30 transition-all duration-700 hover:shadow-2xl hover:shadow-secondary/5 flex flex-col h-full bg-white/40"
+                  whileHover={{ y: -8 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
+                  {/* Technical Index Label */}
+                  <div className="absolute top-8 right-10 font-mono text-[10px] text-on-surface/20 group-hover:text-secondary/40 transition-colors">
+                    REF_ID: 0{index + 1}X
+                  </div>
+
                   <motion.div 
-                    className="w-16 h-16 bg-primary-container/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-container group-hover:text-white transition-colors duration-500"
-                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.1 }}
+                    className="w-14 h-14 bg-on-surface/5 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-secondary group-hover:glow-secondary transition-all duration-500"
+                    whileHover={{ rotate: 10, scale: 1.1 }}
                   >
-                    <feature.icon className="w-8 h-8 text-primary-container group-hover:text-white transition-colors duration-500" />
+                    <feature.icon className="w-6 h-6 text-on-surface group-hover:text-white transition-colors duration-500" />
                   </motion.div>
-                  <h3 className="text-2xl font-bold text-on-surface mb-3 group-hover:text-secondary transition-colors duration-300">
+                  
+                  <h3 className="text-2xl font-bold text-on-surface mb-4 group-hover:text-secondary transition-colors duration-300">
                     {feature.title}
                   </h3>
-                  <p className="text-muted-foreground text-lg leading-relaxed mb-6 flex-grow">
+                  <p className="text-on-surface-variant/80 text-lg leading-relaxed mb-8 flex-grow group-hover:text-on-surface transition-colors">
                     {feature.description}
                   </p>
                   
-                  {/* Subtle arrow pointer */}
-                  <div className="w-8 h-0.5 bg-secondary/40 group-hover:w-full transition-all duration-500" />
+                  <div className="flex items-center gap-4">
+                    <div className="h-[1px] bg-on-surface/10 flex-grow group-hover:bg-secondary/20 transition-colors" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-on-surface/10 group-hover:bg-secondary animate-pulse" />
+                  </div>
                 </motion.div>
               </RevealItem>
             ))}
           </div>
         </Reveal>
-      </div>
-
-      {/* Background design */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
-        <div className="absolute top-20 right-10 w-96 h-96 border border-primary/10 rounded-full" />
-        <div className="absolute bottom-20 left-10 w-64 h-64 border border-accent/10 rounded-full" />
       </div>
     </section>
   );

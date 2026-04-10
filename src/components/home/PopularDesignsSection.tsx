@@ -51,44 +51,62 @@ const designCategories = [
 
 export const PopularDesignsSection = () => {
   return (
-    <section className="py-16 md:py-24 bg-background">
-      <div className="container mx-auto px-4">
+    <section className="py-20 md:py-28 bg-background relative overflow-hidden">
+      {/* Background technical dots */}
+      <div className="absolute inset-0 bg-dot-grid opacity-[0.05] pointer-events-none" />
+
+      <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <Reveal width="100%" direction="up" distance={30}>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Popular Design Categories</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Explore our most loved interior design styles crafted by top designers.
+          <div className="text-center mb-16 px-4">
+            <motion.div 
+              className="inline-flex items-center gap-2 px-3 py-1 bg-on-surface/5 text-on-surface/60 rounded-full text-[10px] font-mono uppercase tracking-[0.3em] mb-6"
+              whileHover={{ scale: 1.05 }}
+            >
+              Category_Index
+            </motion.div>
+            <h2 className="text-4xl md:text-5xl font-serif text-on-surface mb-6 tracking-tight">
+              Popular Design <span className="italic text-secondary">Archetypes</span>.
+            </h2>
+            <p className="text-on-surface-variant text-lg max-w-2xl mx-auto">
+              Systematic design solutions crafted for modern Indian living.
             </p>
           </div>
         </Reveal>
 
         {/* Design Grid */}
-        <Reveal width="100%" staggerChildren={0.1}>
+        <Reveal width="100%" staggerChildren={0.08}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {designCategories.map((category) => (
+            {designCategories.map((category, index) => (
               <RevealItem key={category.id}>
                 <Link key={category.id} to="/designs">
                   <motion.div
                     whileHover={{ y: -10 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    className="h-full"
                   >
-                    <Card className="group overflow-hidden border-border hover:border-primary/50 transition-all duration-300 hover:shadow-2xl rounded-2xl">
+                    <Card className="group overflow-hidden border-on-surface/5 hover:border-secondary/40 transition-all duration-500 hover:shadow-2xl rounded-2xl h-full bg-surface">
                       <div className="relative aspect-[4/5] overflow-hidden">
                         <motion.img
                           src={category.image}
                           alt={category.title}
                           className="w-full h-full object-cover"
-                          whileHover={{ scale: 1.1 }}
-                          transition={{ duration: 0.6 }}
+                          whileHover={{ scale: 1.08 }}
+                          transition={{ duration: 0.8, ease: "easeOut" }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                          <h3 className="font-bold text-xl mb-1">{category.title}</h3>
-                          <div className="flex justify-between items-center text-sm font-medium text-white/90">
+                        <div className="absolute inset-0 bg-gradient-to-t from-on-surface/90 via-on-surface/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+                        
+                        {/* Technical Step Label */}
+                        <div className="absolute top-4 left-4 font-mono text-[9px] text-white/40 tracking-widest bg-black/40 backdrop-blur-md px-2 py-1 rounded">
+                          CAT_0{index + 1}
+                        </div>
+
+                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                          <h3 className="font-serif text-2xl mb-2 italic tracking-tight">{category.title}</h3>
+                          <div className="flex justify-between items-center text-xs font-mono tracking-wider text-white/70">
                             <span>{category.designs}</span>
-                            <span className="text-accent-foreground bg-accent/90 px-2 py-0.5 rounded text-xs">
-                              From {category.startingPrice}
+                            <span className="text-secondary-container font-bold">
+                              {category.startingPrice}+
                             </span>
                           </div>
                         </div>
@@ -103,19 +121,13 @@ export const PopularDesignsSection = () => {
 
         {/* CTA */}
         <Reveal width="100%" direction="up" delay={0.3}>
-          <div className="text-center mt-12">
-            <Button asChild size="lg" className="rounded-full px-10 shadow-xl group overflow-hidden relative">
+          <div className="text-center mt-16">
+            <Button asChild size="lg" className="rounded-xl px-12 group secondary-gradient glow-secondary border-none h-16 text-lg tracking-wide">
               <Link to="/designs">
-                <span className="relative z-10 flex items-center">
-                  View All Designs
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <span className="relative z-10 flex items-center gap-3">
+                  Explore Full Catalog
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </span>
-                <motion.div 
-                  className="absolute inset-0 bg-primary-foreground/10"
-                  initial={{ x: "-100%" }}
-                  whileHover={{ x: "100%" }}
-                  transition={{ duration: 0.5 }}
-                />
               </Link>
             </Button>
           </div>
