@@ -1,127 +1,80 @@
 import React from "react";
-import { Star, Quote } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion } from "framer-motion";
 
 const testimonials = [
   {
-    id: 1,
-    name: "Rajesh Sharma",
-    location: "Jaipur",
-    rating: 5,
-    review: "BuildBazaarX made my home renovation incredibly smooth. The design options were amazing and the workers were professional. Highly recommend!",
-    project: "3BHK Interior",
+    quote: "BuildBazaarX provided unparalleled clarity in construction. Their technical approach and transparent reporting are unmatched.",
+    author: "Rajesh Sharma, Mumbai",
+    projectId: "B2X-MUM-422",
+    status: "Completed",
   },
   {
-    id: 2,
-    name: "Priya Gupta",
-    location: "Jodhpur",
-    rating: 5,
-    review: "Got my modular kitchen done through BuildBazaarX. The quality of materials and workmanship exceeded my expectations. Great value for money!",
-    project: "Modular Kitchen",
-  },
-  {
-    id: 3,
-    name: "Amit Verma",
-    location: "Udaipur",
-    rating: 5,
-    review: "Transparent pricing and verified workers gave me peace of mind. The entire process from design to execution was seamless.",
-    project: "Full Home Interior",
+    quote: "The platform's data-driven process made customizing our interior design seamless and predictable.",
+    author: "Priya Patel, Bengaluru",
+    projectId: "B2X-BLR-733",
+    status: "In Progress",
   },
 ];
 
 export const TestimonialsSection = () => {
   return (
-    <section className="py-24 md:py-32 bg-background relative overflow-hidden">
+    <section className="py-24 bg-[#0B132B] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
-        {/* Header */}
-        <Reveal width="100%" direction="up" distance={30}>
-          <div className="text-center max-w-2xl mx-auto mb-20">
-            <motion.span 
-              className="text-primary font-bold text-sm uppercase tracking-widest bg-primary/5 px-4 py-1.5 rounded-full"
-              whileHover={{ scale: 1.05 }}
-            >
-              Customer Stories
-            </motion.span>
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mt-6 mb-4 tracking-tight">
-              What Our Customers Say
+        
+        {/* Section Header */}
+        <Reveal width="100%" direction="up">
+          <div className="text-center mb-20">
+            <h2 className="text-xl md:text-2xl font-black text-white tracking-widest uppercase">
+              VERIFIED <span className="text-[#C5A572] font-serif italic font-normal">TESTIMONY</span>
             </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              Real stories from homeowners who trusted BuildBazaarX for their dream homes.
-            </p>
           </div>
         </Reveal>
 
-        {/* Testimonials Grid */}
-        <Reveal width="100%" staggerChildren={0.15}>
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial) => (
-              <RevealItem key={testimonial.id}>
-                <motion.div
-                  whileHover={{ y: -10 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="h-full"
-                >
-                  <Card className="border-border/50 hover:border-primary/30 transition-all duration-500 rounded-3xl shadow-xl hover:shadow-2xl bg-card h-full group">
-                    <CardContent className="p-8 h-full flex flex-col">
-                      {/* Quote Icon */}
-                      <motion.div 
-                        initial={{ rotate: 0 }}
-                        whileHover={{ rotate: 15, scale: 1.1 }}
-                        className="mb-6 inline-block"
-                      >
-                        <Quote className="w-12 h-12 text-primary/20" />
-                      </motion.div>
-                      
-                      {/* Rating */}
-                      <div className="flex gap-1 mb-6">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, scale: 0 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: i * 0.1 }}
-                            viewport={{ once: true }}
-                          >
-                            <Star className="w-5 h-5 fill-accent text-accent" />
-                          </motion.div>
-                        ))}
-                      </div>
+        {/* Testimonial List */}
+        <div className="max-w-4xl mx-auto flex flex-col gap-16">
+          <Reveal width="100%" staggerChildren={0.15}>
+            {testimonials.map((testimonial, index) => (
+              <RevealItem key={index}>
+                <div className="flex flex-col items-center text-center px-4">
+                  
+                  {/* Gold Quote Mark */}
+                  <div className="text-[#C5A572] text-6xl md:text-8xl font-serif leading-none mb-6 h-12 md:h-16 flex items-center justify-center">
+                    “
+                  </div>
+                  
+                  {/* Quote Text */}
+                  <p className="text-white/90 text-xl md:text-3xl font-serif italic leading-relaxed mb-8 max-w-3xl">
+                    "{testimonial.quote}"
+                  </p>
+                  
+                  {/* Author Name */}
+                  <div className="text-white/70 text-sm md:text-base font-medium tracking-wide mb-2">
+                    — {testimonial.author}
+                  </div>
+                  
+                  {/* Monospace Tech Footer */}
+                  <div className="text-[#C5A572]/70 text-[10px] md:text-xs font-mono uppercase tracking-widest">
+                    Project ID: {testimonial.projectId}, Status: {testimonial.status}.
+                  </div>
 
-                      {/* Review */}
-                      <p className="text-foreground text-lg italic leading-relaxed mb-8 flex-grow">
-                        "{testimonial.review}"
-                      </p>
+                  {/* Divider (except last item) */}
+                  {index < testimonials.length - 1 && (
+                    <motion.div 
+                      className="w-full max-w-md h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mt-16" 
+                      initial={{ scaleX: 0 }}
+                      whileInView={{ scaleX: 1 }}
+                      transition={{ duration: 1, delay: 0.5 }}
+                    />
+                  )}
 
-                      {/* Customer Info */}
-                      <div className="flex items-center gap-4 pt-6 border-t border-border/50">
-                        <motion.div 
-                          className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center border-2 border-primary/20 group-hover:border-primary transition-colors duration-500"
-                          whileHover={{ scale: 1.1 }}
-                        >
-                          <span className="text-primary font-bold text-xl uppercase">
-                            {testimonial.name.charAt(0)}
-                          </span>
-                        </motion.div>
-                        <div>
-                          <p className="font-bold text-lg text-foreground">{testimonial.name}</p>
-                          <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                            {testimonial.project} • {testimonial.location}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                </div>
               </RevealItem>
             ))}
-          </div>
-        </Reveal>
-      </div>
+          </Reveal>
+        </div>
 
-      {/* Decorative background shape */}
-      <div className="absolute top-1/2 left-0 -translate-x-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10" />
+      </div>
     </section>
   );
 };
