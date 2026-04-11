@@ -2,15 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, MapPin, Mail, Save, Loader2, Package, Sparkles, Badge } from "lucide-react";
+import { User, Phone, MapPin, Mail, Save, Loader2, Package, ArrowRight } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Reveal, RevealItem } from "@/components/shared/Reveal";
+import { motion } from "framer-motion";
 
 const Profile = () => {
   const { toast } = useToast();
@@ -98,20 +93,9 @@ const Profile = () => {
   if (isLoading) {
     return (
       <Layout>
-        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6">
-          <motion.div
-            animate={{ 
-              rotate: 360,
-              scale: [1, 1.2, 1],
-            }}
-            transition={{ 
-              rotate: { duration: 2, repeat: Infinity, ease: "linear" },
-              scale: { duration: 1, repeat: Infinity, ease: "easeInOut" }
-            }}
-          >
-            <Loader2 className="w-12 h-12 text-primary" />
-          </motion.div>
-          <p className="text-xl font-medium text-muted-foreground animate-pulse">Loading your profile...</p>
+        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 bg-[#fcf9f6]">
+          <Loader2 className="w-8 h-8 text-[#735c00] animate-spin" />
+          <p className="font-body text-sm text-[#44474c] tracking-widest uppercase">Initializing Registry...</p>
         </div>
       </Layout>
     );
@@ -119,205 +103,194 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-secondary/10 py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            {/* Header Area */}
-            <div className="mb-12">
-              <Reveal width="100%" direction="up">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                  <div>
-                    <h1 className="text-4xl md:text-5xl font-black tracking-tight flex items-center gap-4 mb-4">
-                      <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary/20">
-                        <User className="w-8 h-8" />
-                      </div>
-                      My Profile
-                    </h1>
-                    <p className="text-muted-foreground text-lg font-medium">Manage your personal and shipping details</p>
-                  </div>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button variant="outline" asChild className="h-12 rounded-2xl px-6 font-bold border-2 shadow-sm bg-background">
-                      <Link to="/orders">
-                        <Package className="w-5 h-5 mr-3" />
-                        Order History
-                      </Link>
-                    </Button>
-                  </motion.div>
-                </div>
-              </Reveal>
-            </div>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');
+        .font-headline { font-family: 'Newsreader', serif; }
+        .font-body { font-family: 'Manrope', sans-serif; }
+      `}</style>
+      
+      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-24 relative overflow-hidden">
+        {/* Subtle grid background */}
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e5e2df 1px, transparent 1px), linear-gradient(90deg, #e5e2df 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.3 }} />
+        
+        <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
+          <div className="flex flex-col md:flex-row gap-16 md:gap-24 items-start">
             
-            <Reveal width="100%" direction="up" delay={0.2}>
-              <Card className="border-border/50 shadow-[0_20px_60px_rgba(0,0,0,0.05)] bg-background/80 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
-                <CardContent className="p-10">
-                  <form onSubmit={handleUpdate} className="space-y-10">
-                    {/* Section 1: Basic Info */}
-                    <div className="space-y-6">
-                      <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.25em] flex items-center gap-2 mb-8">
-                        <Sparkles className="w-4 h-4 text-primary" />
-                        Account Details
-                      </h3>
-                      
-                      <div className="grid sm:grid-cols-2 gap-8">
-                        <RevealItem>
-                          <div className="space-y-3">
-                            <Label htmlFor="full_name" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Full Name</Label>
-                            <div className="relative group">
-                              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                              <Input
-                                id="full_name"
-                                value={profile.full_name}
-                                onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                                placeholder="E.g. Aditya Srivastava"
-                                className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                              />
-                            </div>
-                          </div>
-                        </RevealItem>
-                        
-                        <RevealItem>
-                          <div className="space-y-3">
-                            <Label htmlFor="phone" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Phone Number</Label>
-                            <div className="relative group">
-                              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                              <Input
-                                id="phone"
-                                value={profile.phone}
-                                onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                                placeholder="+91 XXXXX XXXXX"
-                                className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                              />
-                            </div>
-                          </div>
-                        </RevealItem>
-                      </div>
+            {/* Sidebar / Header */}
+            <div className="w-full md:w-1/3 shrink-0 sticky top-32">
+              <span className="font-headline italic text-2xl text-[#735c00] mb-4 block underline underline-offset-8 decoration-1 decoration-[#c4c6cc]">Control Center.</span>
+              <h1 className="text-6xl md:text-7xl font-headline tracking-tight leading-none mb-8">
+                Client <br/> <span className="italic">Monograph.</span>
+              </h1>
+              <div className="w-12 h-[1px] bg-[#c4c6cc] mb-8"></div>
+              <p className="text-lg font-body text-[#44474c] leading-relaxed max-w-sm mb-12">
+                Manage your identity and logistical requisitions within the BuildBazaarX network.
+              </p>
+              
+              <Link to="/orders" className="group flex items-center justify-between p-6 bg-white border border-[#e5e2df] hover:border-[#735c00] transition-colors rounded-sm shadow-sm max-w-sm">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-[#f6f3f0] flex items-center justify-center">
+                    <Package className="w-5 h-5 text-[#1c1c1a]" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] block mb-1">Logistics</span>
+                    <span className="text-sm font-semibold">Active Requisitions</span>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-[#74777d] group-hover:text-[#735c00] group-hover:translate-x-1 transition-all" />
+              </Link>
+            </div>
 
-                      <RevealItem>
-                        <div className="space-y-3">
-                          <Label className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Email Address (Read-only)</Label>
-                          <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                            <Input
-                              value={user?.email || ""}
-                              disabled
-                              className="pl-12 h-14 rounded-2xl bg-muted/40 cursor-not-allowed border-none font-medium opacity-60"
-                            />
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                              <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-tighter rounded-full border-muted-foreground/20">Verified</Badge>
-                            </div>
-                          </div>
-                        </div>
-                      </RevealItem>
-                    </div>
+            {/* Main Form Area */}
+            <div className="w-full md:w-2/3">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white border border-[#e5e2df] p-8 md:p-12 rounded-sm shadow-sm relative overflow-hidden"
+              >
+                <form onSubmit={handleUpdate} className="space-y-12">
+                  
+                  {/* Account Matrix */}
+                  <section className="space-y-8">
+                    <header className="flex items-center gap-4 border-b border-[#e5e2df] pb-4">
+                      <div className="w-2 h-2 rounded-full bg-[#735c00]"></div>
+                      <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#735c00]">Operational Sector: {currentRole.toUpperCase()}</h3>
+                    </header>
 
-                    {/* Section 2: Address Info */}
-                    <div className="space-y-6 pt-10 border-t border-border/50">
-                      <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.25em] flex items-center gap-2 mb-8">
-                        <MapPin className="w-4 h-4 text-primary" />
-                        Shipping Destination
-                      </h3>
-                      
-                      <RevealItem>
-                        <div className="space-y-3">
-                          <Label htmlFor="address" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Street Address</Label>
-                          <div className="relative group">
-                            <MapPin className="absolute left-4 top-5 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                            <Textarea
-                              id="address"
-                              value={profile.address}
-                              onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-                              placeholder="House No, Street Name, Area / Landmark..."
-                              rows={3}
-                              className="pl-12 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium min-h-[120px] pt-4"
-                            />
-                          </div>
-                        </div>
-                      </RevealItem>
-
-                      <div className="grid sm:grid-cols-2 gap-8">
-                        <RevealItem>
-                          <div className="space-y-3">
-                            <Label htmlFor="city" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">City</Label>
-                            <Input
-                              id="city"
-                              value={profile.city}
-                              onChange={(e) => setProfile({ ...profile, city: e.target.value })}
-                              placeholder="Your City"
-                              className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                            />
-                          </div>
-                        </RevealItem>
-                        <RevealItem>
-                          <div className="space-y-3">
-                            <Label htmlFor="state" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">State</Label>
-                            <Input
-                              id="state"
-                              value={profile.state}
-                              onChange={(e) => setProfile({ ...profile, state: e.target.value })}
-                              placeholder="State / Region"
-                              className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                            />
-                          </div>
-                        </RevealItem>
-                      </div>
-
-                      <RevealItem>
-                        <div className="space-y-3 sm:max-w-md">
-                          <Label htmlFor="pincode" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Pincode</Label>
-                          <Input
-                            id="pincode"
-                            value={profile.pincode}
-                            onChange={(e) => setProfile({ ...profile, pincode: e.target.value })}
-                            placeholder="6-Digit Code"
-                            maxLength={6}
-                            className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Full Nomenclature</label>
+                        <div className="relative">
+                          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#74777d]" />
+                          <input
+                            required
+                            type="text"
+                            value={profile.full_name}
+                            onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
+                            placeholder="Your Name"
+                            className="w-full pl-10 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
                           />
                         </div>
-                      </RevealItem>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Telecom Sequence</label>
+                        <div className="relative">
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#74777d]" />
+                          <input
+                            required
+                            type="tel"
+                            value={profile.phone}
+                            onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                            placeholder="+91 XXXXX XXXXX"
+                            className="w-full pl-10 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                          />
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Submit Bar */}
-                    <motion.div 
-                      className="pt-10 flex justify-end"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                    >
-                      <Button 
-                        type="submit" 
-                        size="lg" 
-                        className="h-16 px-10 rounded-2xl font-black text-lg shadow-xl shadow-primary/20 min-w-[200px] overflow-hidden group relative" 
-                        disabled={isSaving}
-                      >
-                        <span className="relative z-10 flex items-center justify-center">
-                          {isSaving ? (
-                            <>
-                              <Loader2 className="w-5 h-5 mr-3 animate-spin" />
-                              Saving...
-                            </>
-                          ) : (
-                            <>
-                              <Save className="w-5 h-5 mr-3" />
-                              Update Profile
-                            </>
-                          )}
-                        </span>
-                        <motion.div 
-                          className="absolute inset-0 bg-primary-foreground/10"
-                          initial={{ x: "-100%" }}
-                          whileHover={{ x: "100%" }}
-                          transition={{ duration: 0.5 }}
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Verified Credentials</label>
+                      <div className="relative">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                        <input
+                          value={user?.email || ""}
+                          disabled
+                          className="w-full pl-10 pr-4 py-4 bg-[#fcf9f6] border border-[#e5e2df] text-[#74777d] rounded-sm text-sm font-body cursor-not-allowed opacity-60"
                         />
-                      </Button>
-                    </motion.div>
-                  </form>
-                </CardContent>
-              </Card>
-            </Reveal>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                          <span className="text-[10px] uppercase font-bold tracking-tighter text-[#735c00]">Verified Identity</span>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Logistical Vector */}
+                  <section className="space-y-8 pt-6">
+                    <header className="flex items-center gap-4 border-b border-[#e5e2df] pb-4">
+                      <div className="w-2 h-2 rounded-full bg-[#1c1c1a]"></div>
+                      <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#1c1c1a]">Logistical Vector</h3>
+                    </header>
+                    
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Structural Address</label>
+                      <div className="relative">
+                        <MapPin className="absolute left-4 top-5 w-4 h-4 text-[#74777d]" />
+                        <textarea
+                          value={profile.address}
+                          onChange={(e) => setProfile({ ...profile, address: e.target.value })}
+                          placeholder="House No, Street Name, Area / Landmark..."
+                          rows={3}
+                          className="w-full pl-10 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors min-h-[120px] resize-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Operational City</label>
+                        <input
+                          type="text"
+                          value={profile.city}
+                          onChange={(e) => setProfile({ ...profile, city: e.target.value })}
+                          placeholder="Your City"
+                          className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Federal State</label>
+                        <input
+                          type="text"
+                          value={profile.state}
+                          onChange={(e) => setProfile({ ...profile, state: e.target.value })}
+                          placeholder="State / Region"
+                          className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 max-w-xs">
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Postal Code索引</label>
+                      <input
+                        type="text"
+                        value={profile.pincode}
+                        onChange={(e) => setProfile({ ...profile, pincode: e.target.value })}
+                        placeholder="6-Digit Register"
+                        maxLength={6}
+                        className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                      />
+                    </div>
+                  </section>
+
+                  {/* Submission Flow */}
+                  <div className="pt-12 border-t border-[#e5e2df] flex justify-end">
+                    <button 
+                      type="submit" 
+                      className="group relative h-14 px-12 bg-[#1c1c1a] text-white overflow-hidden shadow-lg hover:shadow-2xl transition-all rounded-sm disabled:opacity-50"
+                      disabled={isSaving}
+                    >
+                      <span className="relative z-10 font-body text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-3">
+                        {isSaving ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Synchronizing...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4" />
+                            Update Registry
+                          </>
+                        )}
+                      </span>
+                      <div className="absolute inset-x-0 bottom-0 h-0 bg-[#735c00] group-hover:h-full transition-all duration-300" />
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+
           </div>
-        </div>
+        </main>
       </div>
     </Layout>
   );

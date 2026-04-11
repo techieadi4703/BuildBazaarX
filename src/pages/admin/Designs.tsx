@@ -103,7 +103,7 @@ export default function AdminDesigns() {
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      const matchName = d.title?.toLowerCase().includes(term);
+      const matchName = d.name?.toLowerCase().includes(term);
       // Depending on structure, `designers.profiles.full_name` 
       // Supabase nested joins result in objects or arrays. Assuming singular relation:
       const designerName = d.designers?.profiles?.full_name?.toLowerCase() || '';
@@ -167,9 +167,9 @@ export default function AdminDesigns() {
                   return (
                     <TableRow key={design.id}>
                       <TableCell>
-                        <img src={thumbnail} alt={design.title} className="w-12 h-12 rounded object-cover border" />
+                        <img src={thumbnail} alt={design.name} className="w-12 h-12 rounded object-cover border" />
                       </TableCell>
-                      <TableCell className="font-medium max-w-xs truncate" title={design.title}>{design.title}</TableCell>
+                      <TableCell className="font-medium max-w-xs truncate" title={design.name}>{design.name}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="capitalize">{design.category}</span>
@@ -177,7 +177,7 @@ export default function AdminDesigns() {
                         </div>
                       </TableCell>
                       <TableCell>{design.designers?.profiles?.full_name || '—'}</TableCell>
-                      <TableCell>{design.estimated_cost?.toLocaleString() || '—'}</TableCell>
+                      <TableCell>{design.total_cost?.toLocaleString() || '—'}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="text-xs">👁 {design.view_count || 0} views</span>
@@ -243,7 +243,7 @@ export default function AdminDesigns() {
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    This will permanently delete the design "{design.title}". This action cannot be undone.
+                                    This will permanently delete the design "{design.name}". This action cannot be undone.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>

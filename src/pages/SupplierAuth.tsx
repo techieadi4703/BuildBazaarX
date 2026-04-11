@@ -1,0 +1,183 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { Layout } from "@/components/layout/Layout";
+import { ArrowRight, Mail, Lock, Store, ShieldCheck, MapPin, Phone, User } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function SupplierAuth() {
+  const [searchParams] = useSearchParams();
+  const isLoginParam = searchParams.get("mode") === "login";
+  const [isLogin, setIsLogin] = useState(isLoginParam);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [city, setCity] = useState("");
+  const [phone, setPhone] = useState("");
+  const [ownerName, setOwnerName] = useState("");
+  
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session) navigate("/supplier/dashboard");
+    });
+  }, [navigate]);
+
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast({ title: "Authorized", description: "Accessing Logistics Dashboard..." });
+        navigate("/supplier/dashboard");
+      } else {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: ownerName,
+              role: "supplier",
+            },
+          },
+        });
+
+        if (error) throw error;
+
+        if (data.user) {
+          const { error: supplierError } = await supabase.from("suppliers").insert({
+            id: data.user.id,
+            business_name: businessName,
+            owner_name: ownerName,
+            city,
+            phone,
+            is_verified: false,
+          });
+
+          if (supplierError) throw supplierError;
+
+          toast({ title: "Registry Created", description: "Your logistics profile is now active." });
+          navigate("/supplier/dashboard");
+        }
+      }
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Access Denied", description: error.message });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Layout>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');
+        .font-headline { font-family: 'Newsreader', serif; }
+        .font-body { font-family: 'Manrope', sans-serif; }
+      `}</style>
+      
+      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e5e2df 1px, transparent 1px), linear-gradient(90deg, #e5e2df 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.3 }} />
+        
+        <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
+          <div className="flex flex-col md:flex-row gap-16 md:gap-24 items-start">
+            
+            <div className="w-full md:w-1/3 shrink-0 sticky top-32">
+               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[#735c00] mb-4 block font-bold">Logistics & Supply</span>
+               <h1 className="text-6xl md:text-7xl font-headline tracking-tight leading-none mb-6">
+                Supplier <br/><span className="italic">{isLogin ? "Access." : "Registry."}</span>
+              </h1>
+               <div className="w-12 h-[1px] bg-[#c4c6cc] mb-6"></div>
+              <p className="text-lg font-body text-[#44474c] leading-relaxed max-w-sm">
+                {isLogin 
+                  ? "Re-authenticate to manage inventory and fulfill premium material requisitions." 
+                  : "Register your corporate entity as a verified provider of high-end raw materials."}
+              </p>
+            </div>
+
+            <div className="w-full md:w-2/3 max-w-2xl">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white border border-[#e5e2df] p-8 md:p-12 rounded-sm shadow-sm"
+              >
+                <form onSubmit={handleAuth} className="space-y-8">
+                  {!isLogin && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Company Title *</label>
+                        <div className="relative">
+                          <Store className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                          <input required value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="E.g. Sterling Timber" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Authorized Director *</label>
+                        <div className="relative">
+                          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                          <input required value={ownerName} onChange={(e) => setOwnerName(e.target.value)} placeholder="Full Name" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Strategic City *</label>
+                        <div className="relative">
+                          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                          <input required value={city} onChange={(e) => setCity(e.target.value)} placeholder="Mumbai, Delhi..." className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Contact Line *</label>
+                        <div className="relative">
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                          <input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 00000 00000" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Corporate Email</label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                      <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="logistics@entity.com" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Authentication Key</label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                      <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••••••" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                    </div>
+                  </div>
+
+                  <button type="submit" disabled={isLoading} className="w-full h-14 bg-[#1c1c1a] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#735c00] transition-all flex items-center justify-center gap-3">
+                    {isLoading ? "Validating Credentials..." : isLogin ? "Authenticate to Warehouse" : "Registry Corporate Profile"}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </form>
+
+                <div className="mt-12 pt-8 border-t border-[#e5e2df] flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#74777d]">
+                    {isLogin ? "New provider?" : "Existing entity?"}
+                  </span>
+                  <button onClick={() => setIsLogin(!isLogin)} className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4 font-black">
+                    {isLogin ? "Apply for License" : "Credential Access"}
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+
+          </div>
+        </main>
+      </div>
+    </Layout>
+  );
+}

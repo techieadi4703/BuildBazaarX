@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Filter, Truck, Palette, Plus, Zap, ArrowUpRight } from "lucide-react";
+import { Search, Filter, Truck, Palette, Plus, Minus, Zap, ArrowUpRight } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -61,7 +61,7 @@ type Product = {
 
 const RawMaterials = () => {
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addToCart, items, updateQuantity } = useCart();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
@@ -281,14 +281,49 @@ const RawMaterials = () => {
                               {product.in_stock ? 'In Stock' : 'Pre-Order'}
                             </span>
                           </div>
-                          {/* Hover FAB - Add to Cart */}
+                          {/* Hover FAB - Add to Cart / Quantity Controller */}
                           <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
-                            <button 
-                              onClick={(e) => handleAddToCart(e, product)}
-                              className="w-12 h-12 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
-                            >
-                              <Plus className="w-5 h-5" />
-                            </button>
+                            {(() => {
+                              const cartItem = items.find(i => i.id === product.id);
+                              if (cartItem) {
+                                return (
+                                  <motion.div 
+                                    layout
+                                    className="bg-[#1c1c1a] text-white rounded-full flex items-center gap-4 p-1 shadow-lg border border-white/10"
+                                  >
+                                    <button 
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        updateQuantity(product.id, cartItem.quantity - 1);
+                                      }}
+                                      className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
+                                    >
+                                      <Minus className="w-4 h-4" />
+                                    </button>
+                                    <span className="text-[10px] font-black uppercase tracking-widest">{cartItem.quantity}</span>
+                                    <button 
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        updateQuantity(product.id, cartItem.quantity + 1);
+                                      }}
+                                      className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
+                                    >
+                                      <Plus className="w-4 h-4" />
+                                    </button>
+                                  </motion.div>
+                                );
+                              }
+                              return (
+                                <button 
+                                  onClick={(e) => handleAddToCart(e, product)}
+                                  className="w-12 h-12 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
+                                >
+                                  <Plus className="w-5 h-5" />
+                                </button>
+                              );
+                            })()}
                           </div>
                         </div>
 
@@ -296,7 +331,7 @@ const RawMaterials = () => {
                         <div className="flex justify-between items-start mb-2 gap-4">
                           <h3 className="text-xl font-headline font-semibold leading-tight text-[#1c1c1a]">{product.name}</h3>
                           <span className="font-body font-medium text-[#1c1c1a] text-lg whitespace-nowrap pt-1">
-                            ₹{product.price} <span className="text-[10px] text-[#74777d] font-normal">/unit</span>
+                            ₹{product.price?.toLocaleString() || "0"} <span className="text-[10px] text-[#74777d] font-normal">/unit</span>
                           </span>
                         </div>
 

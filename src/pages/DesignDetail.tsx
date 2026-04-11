@@ -532,13 +532,13 @@ const DesignDetail = () => {
                   <div className="flex justify-between items-center group">
                     <span className="text-muted-foreground font-bold uppercase tracking-widest text-xs">Standard Execution</span>
                     <span className="font-black text-foreground text-lg group-hover:text-primary transition-colors">
-                      ₹{design.executionCost.toLocaleString("en-IN")}
+                      ₹{design.executionCost?.toLocaleString("en-IN") || "0"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center group">
                     <span className="text-muted-foreground font-bold uppercase tracking-widest text-xs">Standard Materials</span>
                     <span className="font-black text-foreground text-lg group-hover:text-primary transition-colors">
-                      ₹{design.materialsCost.toLocaleString("en-IN")}
+                      ₹{design.materialsCost?.toLocaleString("en-IN") || "0"}
                     </span>
                   </div>
                   <Separator className="bg-border/50" />
@@ -546,12 +546,12 @@ const DesignDetail = () => {
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Estimated Total Price</p>
                       <p className="font-black text-primary text-4xl tracking-tighter">
-                        ₹{design.totalCost.toLocaleString("en-IN")}
+                        ₹{design.totalCost?.toLocaleString("en-IN") || "0"}
                       </p>
                     </div>
                     <div className="bg-green-50 px-4 py-2 rounded-2xl border border-green-100 hidden sm:block">
                       <p className="text-[10px] font-black text-green-700 uppercase tracking-tighter">EMI Starting at</p>
-                      <p className="font-black text-green-800">₹{(Math.round(design.totalCost / 24)).toLocaleString()} / mo</p>
+                      <p className="font-black text-green-800">₹{(Math.round((design.totalCost || 0) / 24)).toLocaleString() || "0"} / mo</p>
                     </div>
                   </div>
                 </CardContent>

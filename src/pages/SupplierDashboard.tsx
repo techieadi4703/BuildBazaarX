@@ -2,21 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Textarea } from "@/components/ui/textarea";
 import { Layout } from "@/components/layout/Layout";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { User } from "@supabase/supabase-js";
 import { Badge } from "@/components/ui/badge";
-import { Upload, PackageOpen, LayoutGrid, UserCircle, Settings, Store, Search, LogOut, CheckCircle2, Package, Pencil, Trash, Sparkles, Zap, ArrowRight, Mail, Phone, MapPin, ClipboardList, TrendingUp, ShieldCheck, Plus, X } from "lucide-react";
+import { 
+  Upload, LayoutGrid, Store, LogOut, Package, Pencil, Trash, 
+  ArrowRight, Mail, Phone, MapPin, ClipboardList, TrendingUp, 
+  ShieldCheck, Plus, X, ArrowLeft, ArrowUpRight
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Reveal, RevealItem } from "@/components/shared/Reveal";
-import { Separator } from "@/components/ui/separator";
 
 const CATEGORIES = [
   { id: "wood", label: "Wood & Boards" },
@@ -44,7 +39,7 @@ export default function SupplierDashboard() {
   
   const [productForm, setProductForm] = useState({
     name: "", brand: "", category: "", sub_category: "", specs: "", description: "",
-    price: "", original_price: "", discount: "", bulk_price: "", bulk_min_qty: "",
+    price: "", original_price: "", discount: "0", bulk_price: "", bulk_min_qty: "",
     unit: "piece", min_order_qty: "1", stock_qty: "0", delivery_info: "Free Delivery", 
     delivery_days: "5", tags: ""
   });
@@ -142,7 +137,8 @@ export default function SupplierDashboard() {
     }
   };
 
-  const handleUpdateProfile = async () => {
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!user) return;
     try {
       const { error: supplierError } = await supabase
@@ -160,7 +156,6 @@ export default function SupplierDashboard() {
         .eq("id", user.id);
       if (supplierError) throw supplierError;
 
-      // Sync with profiles table
       if (profileForm.owner_name) {
         const { error: profileError } = await supabase
           .from('profiles')
@@ -305,14 +300,9 @@ export default function SupplierDashboard() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6">
-          <motion.div
-            animate={{ rotate: 360, scale: [1, 1.1, 1] }}
-            transition={{ rotate: { duration: 2, repeat: Infinity, ease: "linear" }, scale: { duration: 1, repeat: Infinity } }}
-          >
-            <Store className="w-12 h-12 text-primary" />
-          </motion.div>
-          <p className="text-xl font-black text-muted-foreground animate-pulse uppercase tracking-widest text-[10px]">Syncing Business Intelligence...</p>
+        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 bg-[#fcf9f6]">
+          <div className="w-8 h-8 border-4 border-[#735c00]/20 border-t-[#735c00] rounded-full animate-spin"></div>
+          <p className="font-body text-[10px] font-bold uppercase tracking-widest text-[#44474c]">Initializing Store Manifest...</p>
         </div>
       </Layout>
     );
@@ -320,618 +310,409 @@ export default function SupplierDashboard() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-secondary/10 py-12 md:py-20">
-        <div className="container mx-auto px-4">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');
+        .font-headline { font-family: 'Newsreader', serif; }
+        .font-body { font-family: 'Manrope', sans-serif; }
+      `}</style>
+      
+      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e5e2df 1px, transparent 1px), linear-gradient(90deg, #e5e2df 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.3 }} />
+        
+        <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
           
-          {/* Header Card */}
-          <div className="mb-12">
-            <Reveal width="100%" direction="up">
-              <Card className="border-border/50 shadow-2xl bg-background rounded-[3rem] overflow-hidden">
-                <div className="flex flex-col md:flex-row p-10 md:p-14 gap-10 items-start md:items-center justify-between">
-                  <div>
-                    <h1 className="text-4xl md:text-6xl font-black tracking-tight text-foreground mb-4">
-                      Supplier <span className="text-primary tracking-tighter">Terminal</span>
-                    </h1>
-                    <div className="flex items-center gap-4">
-                       <Badge className="bg-primary text-white px-6 py-2 rounded-full font-black uppercase tracking-widest text-[10px]">
-                        Authorized Supplier
-                       </Badge>
-                       <p className="text-muted-foreground font-bold flex items-center gap-2">
-                        <Store className="w-5 h-5 text-primary" /> {supplierData?.business_name}
-                        {supplierData?.is_verified && <CheckCircle2 className="w-5 h-5 text-green-500 fill-current" />}
-                       </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-4">
-                    {activeTab === "products" && !isAddProductOpen && (
-                      <Button size="lg" className="rounded-2xl font-black shadow-lg shadow-primary/20 group" onClick={() => setIsAddProductOpen(true)}>
-                        <PackageOpen className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
-                        Stock New Unit
-                      </Button>
-                    )}
-                    {isAddProductOpen && (
-                      <Button variant="outline" size="lg" className="rounded-2xl font-black border-2" onClick={() => setIsAddProductOpen(false)}>
-                        Return to Inventory
-                      </Button>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Stats quick-view */}
-                <div className="bg-secondary/30 grid grid-cols-2 md:grid-cols-4 border-t border-border/50">
-                  {[
-                    { label: "Active Stock", value: products.filter(p => p.is_published).length, icon: Package },
-                    { label: "Pending Inquiries", value: inquiries.filter(i => i.status === 'pending').length, icon: ClipboardList, color: "text-destructive" },
-                    { label: "Verified Performance", value: "A+", icon: TrendingUp },
-                    { label: "Market Trust", value: "98%", icon: ShieldCheck },
-                  ].map((stat, i) => (
-                    <div key={i} className="p-8 border-r border-border/50 last:border-0 flex items-center gap-5">
-                       <div className="w-12 h-12 bg-background rounded-xl flex items-center justify-center shadow-sm">
-                          <stat.icon className={`w-6 h-6 ${stat.color || "text-primary"}`} />
-                       </div>
-                       <div>
-                          <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
-                          <p className="text-xl font-black text-foreground">{stat.value}</p>
-                       </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </Reveal>
-          </div>
+          <div className="flex flex-col md:flex-row gap-16 md:gap-24 items-start">
+            
+            {/* Sidebar Controller */}
+            <div className="w-full md:w-1/4 shrink-0 sticky top-32">
+              <span className="font-headline italic text-2xl text-[#735c00] mb-4 block underline underline-offset-8 decoration-1 decoration-[#c4c6cc]">Logistics Hub.</span>
+              <h1 className="text-6xl font-headline tracking-tight leading-none mb-4">
+                Supplier <span className="italic">Manifest.</span>
+              </h1>
+              <div className="flex items-center gap-2 mb-8">
+                 <Badge variant="outline" className="rounded-full px-3 py-1 font-bold text-[8px] uppercase tracking-widest border-[#e5e2df]">Verified Entity</Badge>
+                 <span className="text-[10px] font-bold text-[#74777d] truncate max-w-[150px]">{supplierData?.business_name}</span>
+              </div>
 
-          <div className="grid md:grid-cols-[280px_1fr] gap-12">
-            {/* Sidebar Navigation */}
-            <Reveal width="100%" direction="right">
-              <nav className="space-y-3 sticky top-32">
+              <div className="space-y-4 pt-8">
                 {[
-                  { id: "products", label: "Inventory", icon: LayoutGrid },
-                  { id: "inquiries", label: "Orders & Inquiries", icon: Package, badge: inquiries.filter(i => i.status === 'pending').length },
+                  { id: "products", label: "Inventory Registry", icon: LayoutGrid },
+                  { id: "inquiries", label: "Demand Signals", icon: ClipboardList, badge: inquiries.filter(i => i.status === 'pending').length },
                   { id: "profile", label: "Business Identity", icon: Store },
-                  { id: "account", label: "Control Center", icon: Settings },
                 ].map((item) => (
-                  <Button 
+                  <button 
                     key={item.id}
-                    variant={activeTab === item.id ? "default" : "ghost"} 
-                    className={`w-full h-16 justify-start px-8 rounded-2xl font-black uppercase tracking-[0.15em] text-[10px] transition-all relative overflow-hidden group ${activeTab === item.id ? "shadow-xl shadow-primary/20" : ""}`} 
-                    onClick={() => {setActiveTab(item.id); setIsAddProductOpen(false);}}
+                    onClick={() => { setActiveTab(item.id); setIsAddProductOpen(false); }}
+                    className={`w-full flex items-center justify-between p-5 rounded-sm border transition-all ${activeTab === item.id && !isAddProductOpen ? "bg-white border-[#735c00] shadow-sm text-[#1c1c1a]" : "border-transparent text-[#74777d] hover:text-[#1c1c1a] hover:bg-white/50"}`}
                   >
-                    <item.icon className="w-5 h-5 mr-4" />
-                    {item.label}
-                    {item.badge ? (
-                      <span className="ml-auto bg-destructive text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center font-black">
-                        {item.badge}
-                      </span>
-                    ) : null}
-                    {activeTab === item.id && (
-                      <motion.div 
-                        layoutId="activeNav"
-                        className="absolute inset-0 bg-primary/10 -z-10"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                      />
-                    )}
-                  </Button>
+                    <div className="flex items-center gap-4">
+                      <item.icon className={`w-4 h-4 ${activeTab === item.id ? "text-[#735c00]" : ""}`} />
+                      <span className="text-[10px] uppercase font-bold tracking-widest">{item.label}</span>
+                    </div>
+                    {item.badge ? <span className="w-5 h-5 bg-[#735c00] text-white text-[8px] rounded-full flex items-center justify-center font-bold">{item.badge}</span> : null}
+                  </button>
                 ))}
-                
-                <Separator className="my-8" />
-                
-                <Button 
-                  variant="ghost" 
-                  className="w-full h-16 justify-start px-8 rounded-2xl font-black uppercase tracking-[0.15em] text-[10px] text-destructive hover:bg-destructive/10 transition-all" 
-                  onClick={async () => {
-                    await supabase.auth.signOut();
-                    navigate("/supplier/auth");
-                  }}
-                >
-                  <LogOut className="w-5 h-5 mr-4" />
-                  Liquidate Session
-                </Button>
-              </nav>
-            </Reveal>
+              </div>
 
-            {/* Main Content Area */}
-            <div className="min-h-[600px]">
+              <div className="mt-12 pt-8 border-t border-[#e5e2df]">
+                <button 
+                  onClick={handleLogout}
+                  className="flex items-center gap-4 p-5 text-[#74777d] hover:text-[#1c1c1a] transition-all"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-[10px] uppercase font-bold tracking-widest">Liquidate Session</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Content Core */}
+            <div className="w-full md:w-3/4">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab + (isAddProductOpen ? '-add' : '')}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="bg-white border border-[#e5e2df] p-8 md:p-12 rounded-sm shadow-sm min-h-[600px]"
                 >
-                  {/* PRODUCTS LIST */}
+                  
+                  {/* INVENTORY REGISTRY */}
                   {activeTab === "products" && !isAddProductOpen && (
-                    <div className="space-y-10">
-                      <div className="flex items-center justify-between">
-                         <h2 className="text-2xl font-black tracking-tight flex items-center gap-4">
-                            <LayoutGrid className="w-8 h-8 text-primary" />
-                            Live Inventory
-                         </h2>
-                         <Badge variant="outline" className="rounded-full px-6 py-2 font-black uppercase text-[10px]">
-                            {products.length} High-Value Units
-                         </Badge>
+                    <div className="space-y-12">
+                      <div className="flex items-center justify-between border-b border-[#e5e2df] pb-8">
+                        <div>
+                           <h2 className="text-4xl font-headline tracking-tight mb-2">Live <span className="italic">Inventory.</span></h2>
+                           <p className="text-xs font-body text-[#74777d]">Total Assets Tracked: {products.length}</p>
+                        </div>
+                        <button 
+                          onClick={() => setIsAddProductOpen(true)}
+                          className="h-12 px-8 bg-[#1c1c1a] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#735c00] transition-colors flex items-center gap-3"
+                        >
+                          <Plus className="w-4 h-4" /> Stock New Unit
+                        </button>
                       </div>
 
                       {products.length === 0 ? (
-                        <Card className="flex flex-col items-center justify-center p-24 text-center rounded-[4rem] border-2 border-dashed border-border/50 bg-background/50 backdrop-blur-xl">
-                          <Package className="w-20 h-20 text-muted-foreground/30 mb-8" />
-                          <h3 className="text-2xl font-black text-foreground mb-4">Marketplace Ghost</h3>
-                          <p className="text-muted-foreground mb-10 max-w-sm font-medium">Your digital storefront is currently empty. List your building materials to start fulfilling demand.</p>
-                          <Button onClick={() => setIsAddProductOpen(true)} size="lg" className="rounded-2xl font-black px-12 group">
-                             Stock First Unit
-                             <Plus className="ml-3 w-5 h-5 group-hover:rotate-90 transition-transform" />
-                          </Button>
-                        </Card>
+                        <div className="flex flex-col items-center justify-center py-32 text-center opacity-40">
+                          <Package className="w-12 h-12 mb-4" />
+                          <p className="text-[10px] uppercase font-bold tracking-[0.2em]">Zero Requisitions Found</p>
+                        </div>
                       ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                          {products.map((p, idx) => (
-                            <motion.div
-                              key={p.id}
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: idx * 0.05 }}
-                              whileHover={{ y: -8 }}
-                            >
-                              <Card className="overflow-hidden group border-border/50 shadow-xl bg-background rounded-[2.5rem] hover:border-primary/30 transition-all">
-                                <div className="aspect-[4/3] bg-secondary relative overflow-hidden">
-                                  {p.images && p.images.length > 0 ? (
-                                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                                  ) : (
-                                    <div className="flex items-center justify-center h-full opacity-20"><Search className="w-12 h-12"/></div>
-                                  )}
-                                  <div className="absolute top-4 right-4">
-                                    <Badge className={`${p.is_published ? "bg-primary text-white" : "bg-background/80 backdrop-blur-md text-foreground"} px-4 py-1.5 rounded-full font-black uppercase tracking-widest text-[9px] shadow-lg`}>
-                                      {p.is_published ? "Live" : "Draft"}
-                                    </Badge>
-                                  </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                          {products.map((p) => (
+                            <div key={p.id} className="group border border-[#e5e2df] p-6 hover:border-[#735c00] transition-colors rounded-sm relative">
+                              <div className="absolute top-6 right-6 z-10">
+                                <Badge className={`${p.is_published ? "bg-[#735c00] text-white" : "bg-[#f6f3f0] text-[#74777d]"} font-bold text-[8px] uppercase tracking-widest border-none`}>{p.is_published ? "Live" : "Draft"}</Badge>
+                              </div>
+                              
+                              <div className="aspect-video bg-[#f6f3f0] mb-6 overflow-hidden rounded-sm relative">
+                                {p.images && p.images.length > 0 ? (
+                                  <img src={p.images[0]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={p.name} />
+                                ) : (
+                                  <div className="flex items-center justify-center h-full opacity-20"><Package className="w-8 h-8"/></div>
+                                )}
+                              </div>
+
+                              <div className="space-y-4">
+                                <div>
+                                  <span className="text-[9px] uppercase font-bold tracking-widest text-[#735c00] mb-1 block">{p.category}</span>
+                                  <h3 className="text-lg font-headline font-bold leading-tight line-clamp-1">{p.name}</h3>
+                                  <p className="text-[10px] font-body text-[#74777d] mt-1 italic">{p.brand}</p>
                                 </div>
-                                <CardContent className="p-8">
-                                  <p className="text-[9px] text-primary font-black uppercase tracking-[0.2em] mb-2">{p.category}</p>
-                                  <h3 className="font-black text-xl text-foreground line-clamp-1 mb-4">{p.name}</h3>
-                                  <div className="flex items-end justify-between border-t border-border/30 pt-6">
-                                     <div>
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">Unit Valuation</p>
-                                        <p className="text-2xl font-black text-foreground">₹{p.price.toLocaleString()}</p>
-                                     </div>
-                                     <div className="text-right">
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">Availability</p>
-                                        <p className="text-sm font-black text-primary">{p.stock_qty} {p.unit}s</p>
-                                     </div>
-                                  </div>
-                                </CardContent>
-                                <CardFooter className="p-6 pt-0 flex gap-3 border-t border-border/20 bg-muted/10">
-                                  <div className="flex items-center gap-3 pt-4 flex-1">
-                                    <Switch checked={p.is_published} onCheckedChange={() => togglePublish(p.id, p.is_published)} />
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{p.is_published ? 'Market Ready' : 'Hidden'}</span>
-                                  </div>
-                                  <div className="flex gap-2 pt-4">
-                                    <Button size="icon" variant="outline" onClick={() => handleEditProduct(p)} className="h-10 w-10 rounded-xl border-2 hover:bg-primary hover:text-white transition-all"><Pencil className="w-4 h-4"/></Button>
-                                    <Button size="icon" variant="destructive" onClick={() => deleteProduct(p.id)} className="h-10 w-10 rounded-xl shadow-lg shadow-destructive/10"><Trash className="w-4 h-4"/></Button>
-                                  </div>
-                                </CardFooter>
-                              </Card>
-                            </motion.div>
+
+                                <div className="flex items-end justify-between pt-4 border-t border-[#f6f3f0]">
+                                   <div>
+                                      <p className="text-[9px] font-bold uppercase text-[#74777d] mb-1">Valuation</p>
+                                      <p className="text-xl font-headline font-black">₹{p.price?.toLocaleString() || "0"}</p>
+                                   </div>
+                                   <div className="text-right">
+                                      <p className="text-[9px] font-bold uppercase text-[#74777d] mb-1">Vol</p>
+                                      <p className="text-sm font-bold">{p.stock_qty} {p.unit}</p>
+                                   </div>
+                                </div>
+
+                                <div className="flex gap-2 pt-4">
+                                   <button 
+                                     onClick={() => handleEditProduct(p)}
+                                     className="flex-1 py-3 border border-[#e5e2df] text-[9px] uppercase font-bold tracking-widest hover:bg-[#1c1c1a] hover:text-white transition-all rounded-sm"
+                                   >
+                                     Refine
+                                   </button>
+                                   <button 
+                                     onClick={() => deleteProduct(p.id)}
+                                     className="w-12 h-12 flex items-center justify-center border border-[#e5e2df] hover:border-[#735c00] hover:text-[#735c00] transition-colors rounded-sm"
+                                   >
+                                     <Trash className="w-3 h-3" />
+                                   </button>
+                                </div>
+                              </div>
+                            </div>
                           ))}
                         </div>
                       )}
                     </div>
                   )}
 
-                  {/* ADD/EDIT PRODUCT FORM */}
+                  {/* ADMISSION FLOW */}
                   {activeTab === "products" && isAddProductOpen && (
-                    <Reveal width="100%" direction="up">
-                      <div className="max-w-5xl mx-auto pb-20">
-                        <div className="flex items-center justify-end mb-8">
-                           <Button variant="ghost" onClick={() => { setIsAddProductOpen(false); resetProductForm(); }} className="font-black uppercase tracking-widest text-[10px] text-muted-foreground hover:text-foreground">
-                             <X className="w-4 h-4 mr-2" /> Cancel Operation
-                           </Button>
+                    <div className="space-y-12">
+                      <header className="flex items-center justify-between border-b border-[#e5e2df] pb-8">
+                        <div>
+                           <h2 className="text-4xl font-headline tracking-tight mb-2">{editingProduct ? "Refine" : "Admission"} <span className="italic">Flow.</span></h2>
+                           <p className="text-xs font-body text-[#74777d]">Synchronize new high-value units to the network.</p>
+                        </div>
+                        <button onClick={() => { setIsAddProductOpen(false); resetProductForm(); }} className="p-3 hover:bg-[#f6f3f0] rounded-full transition-colors"><X className="w-5 h-5 text-[#74777d]"/></button>
+                      </header>
+
+                      <div className="space-y-12">
+                        {/* Section 1: Basic Identification */}
+                        <div className="space-y-6">
+                          <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#735c00] border-b border-[#e5e2df] pb-2">Basic Identification</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                             <div className="space-y-2">
+                               <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Architectural Component *</label>
+                               <input value={productForm.name} onChange={e => setProductForm({...productForm, name: e.target.value})} placeholder="E.g. Marine Grade Plywood" className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                             </div>
+                             <div className="space-y-2">
+                               <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Brand Registry *</label>
+                               <input value={productForm.brand} onChange={e => setProductForm({...productForm, brand: e.target.value})} placeholder="E.g. CenturyPly" className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                             </div>
+                             <div className="space-y-2">
+                               <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Logistical Sector *</label>
+                               <select value={productForm.category} onChange={e => setProductForm({...productForm, category: e.target.value})} className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors appearance-none cursor-pointer">
+                                 <option value="" disabled>Select Sector</option>
+                                 {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+                               </select>
+                             </div>
+                             <div className="space-y-2">
+                               <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Standard Metric Unit</label>
+                               <select value={productForm.unit} onChange={e => setProductForm({...productForm, unit: e.target.value})} className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors appearance-none cursor-pointer">
+                                 {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                               </select>
+                             </div>
+                          </div>
                         </div>
 
-                        <Card className="border-border/50 shadow-2xl bg-background rounded-[3.5rem] overflow-hidden group">
-                          <div className="bg-primary/5 px-12 py-10 border-b border-border/50 flex items-center justify-between">
-                            <div className="flex items-center gap-5">
-                              <div className="w-16 h-16 bg-primary rounded-[1.5rem] flex items-center justify-center shadow-lg shadow-primary/20">
-                                <PackageOpen className="w-8 h-8 text-white" />
-                              </div>
-                              <div>
-                                <h3 className="text-2xl font-black tracking-tight text-foreground">{editingProduct ? "Refine Inventory" : "Strategic Admission"}</h3>
-                                <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-1">Foundational Specifications</p>
-                              </div>
+                        {/* Section 2: Pricing Strategy */}
+                        <div className="space-y-6">
+                          <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#735c00] border-b border-[#e5e2df] pb-2">Pricing Strategy</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Base Valuation (₹)</label>
+                              <input type="number" value={productForm.price} onChange={e => setProductForm({...productForm, price: e.target.value})} placeholder="0" className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body font-bold text-[#735c00]" />
                             </div>
-                            <Zap className="w-10 h-10 text-primary opacity-20" />
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Market Value (₹)</label>
+                              <input type="number" value={productForm.original_price} onChange={e => setProductForm({...productForm, original_price: e.target.value})} placeholder="Discount baseline" className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Discount (%)</label>
+                              <input readOnly value={productForm.discount} className="w-full px-4 py-4 bg-[#f6f3f0]/50 border border-transparent rounded-sm text-sm outline-none font-body font-bold text-green-700" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Bulk Valuation (₹)</label>
+                              <input type="number" value={productForm.bulk_price} onChange={e => setProductForm({...productForm, bulk_price: e.target.value})} placeholder="Volume rate" className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Bulk Threshold (Qty)</label>
+                              <input type="number" value={productForm.bulk_min_qty} onChange={e => setProductForm({...productForm, bulk_min_qty: e.target.value})} placeholder="Min units for bulk" className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body" />
+                            </div>
                           </div>
-                          <CardContent className="p-12 space-y-12">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                              <div className="space-y-3">
-                                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Product Identity *</Label>
-                                <Input required value={productForm.name} onChange={e => setProductForm({...productForm, name: e.target.value})} placeholder="E.g. Marine Grade Plywood" className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
-                              </div>
-                              <div className="space-y-3">
-                                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Architectural Brand *</Label>
-                                <Input required value={productForm.brand} onChange={e => setProductForm({...productForm, brand: e.target.value})} placeholder="E.g. CenturyPly" className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
-                              </div>
-                              <div className="space-y-3">
-                                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Market Category *</Label>
-                                <Select value={productForm.category} onValueChange={v => setProductForm({...productForm, category: v})}>
-                                  <SelectTrigger className="h-14 rounded-2xl bg-secondary/30 border-transparent font-black"><SelectValue placeholder="Select Category" /></SelectTrigger>
-                                  <SelectContent className="rounded-2xl">{CATEGORIES.map(c => <SelectItem key={c.id} value={c.id} className="rounded-xl">{c.label}</SelectItem>)}</SelectContent>
-                                </Select>
-                              </div>
-                              <div className="space-y-3">
-                                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Standard Metric *</Label>
-                                <Select value={productForm.unit} onValueChange={v => setProductForm({...productForm, unit: v})}>
-                                  <SelectTrigger className="h-14 rounded-2xl bg-secondary/30 border-transparent font-black"><SelectValue placeholder="Select Metric" /></SelectTrigger>
-                                  <SelectContent className="rounded-2xl">{UNITS.map(u => <SelectItem key={u} value={u} className="rounded-xl">{u}</SelectItem>)}</SelectContent>
-                                </Select>
-                              </div>
-                              <div className="space-y-3">
-                                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Base Valuation (₹) *</Label>
-                                <Input type="number" required value={productForm.price} onChange={e => setProductForm({...productForm, price: e.target.value})} placeholder="0" className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-xl text-primary" />
-                              </div>
-                              <div className="space-y-3">
-                                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">MSRP / Original (₹)</Label>
-                                <Input type="number" value={productForm.original_price} onChange={e => setProductForm({...productForm, original_price: e.target.value})} placeholder="0" className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-xl text-muted-foreground" />
-                              </div>
+                        </div>
+
+                        {/* Section 3: Logistical Manifest */}
+                        <div className="space-y-6">
+                          <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#735c00] border-b border-[#e5e2df] pb-2">Logistical Manifest</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Vault Stock Volume</label>
+                              <input type="number" value={productForm.stock_qty} onChange={e => setProductForm({...productForm, stock_qty: e.target.value})} placeholder="Operational Units" className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body" />
                             </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-secondary/20 p-10 rounded-[3rem] border border-border/50 group-hover:border-primary/20 transition-colors">
-                              <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Bulk Tier Price (₹)</Label>
-                                <Input type="number" value={productForm.bulk_price} onChange={e => setProductForm({...productForm, bulk_price: e.target.value})} placeholder="Discounted" className="h-12 rounded-xl bg-background border-transparent font-bold" />
-                              </div>
-                              <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Bulk Threshold</Label>
-                                <Input type="number" value={productForm.bulk_min_qty} onChange={e => setProductForm({...productForm, bulk_min_qty: e.target.value})} placeholder="Min Units" className="h-12 rounded-xl bg-background border-transparent font-bold" />
-                              </div>
-                              <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Vault Inventory</Label>
-                                <Input type="number" value={productForm.stock_qty} onChange={e => setProductForm({...productForm, stock_qty: e.target.value})} placeholder="In Stock" className="h-12 rounded-xl bg-background border-transparent font-black text-primary" />
-                              </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Minimum Order Quantity (MOQ)</label>
+                              <input type="number" value={productForm.min_order_qty} onChange={e => setProductForm({...productForm, min_order_qty: e.target.value})} placeholder="1" className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body" />
                             </div>
-
-                            <div className="space-y-4">
-                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Technical Specification Narrative</Label>
-                              <Textarea 
-                                value={productForm.description} 
-                                onChange={e => setProductForm({...productForm, description: e.target.value})} 
-                                rows={5} 
-                                placeholder="Detail the material composition, engineering grades, and application zones..." 
-                                className="rounded-[2.5rem] bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold p-8 shadow-inner"
-                              />
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Delivery Provision</label>
+                              <input value={productForm.delivery_info} onChange={e => setProductForm({...productForm, delivery_info: e.target.value})} placeholder="E.g. Free Delivery above ₹20,000" className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body" />
                             </div>
-
-                            <div className="space-y-8 pt-8 border-t border-border/30">
-                              <div className="flex items-center justify-between">
-                                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Visualization Suite (Max 5 Assets)</Label>
-                                <Badge className="bg-primary/10 text-primary rounded-full px-5 py-1.5 font-black uppercase text-[9px] tracking-widest border border-primary/20">
-                                  {productImages.length + existingImages.length} / 5 Selected
-                                </Badge>
-                              </div>
-
-                              <div className="relative group/upload">
-                                 <div className="border-4 border-dashed border-border/50 rounded-[4rem] bg-secondary/10 group-hover/upload:bg-primary/5 group-hover/upload:border-primary/40 transition-all flex flex-col items-center justify-center p-20 text-center space-y-6">
-                                    <div className="w-24 h-24 bg-background rounded-[2rem] flex items-center justify-center shadow-2xl shadow-primary/5 group-hover/upload:scale-110 transition-transform duration-500">
-                                       <Upload className="w-12 h-12 text-primary" />
-                                    </div>
-                                    <div className="space-y-2">
-                                      <p className="font-black text-foreground uppercase text-base tracking-widest">Transmit Assets to Cloud</p>
-                                      <p className="text-muted-foreground font-bold text-[10px] uppercase tracking-widest">PNG, JPG, WEBP • Max 5MB Each</p>
-                                    </div>
-                                    <Button type="button" variant="outline" className="rounded-2xl px-12 h-14 font-black uppercase tracking-widest text-[10px] bg-background border-2 hover:bg-primary hover:text-white transition-all pointer-events-none">
-                                      Select Media Files
-                                    </Button>
-                                 </div>
-                                 <Input 
-                                   type="file" 
-                                   multiple 
-                                   accept="image/*" 
-                                   className="absolute inset-0 opacity-0 cursor-pointer z-10 h-full w-full" 
-                                   onChange={e => {
-                                      if(e.target.files) {
-                                        const filesArr = Array.from(e.target.files);
-                                        if (productImages.length + filesArr.length + existingImages.length > 5) {
-                                          toast({ variant: "destructive", title: "Max 5 Images" });
-                                          return;
-                                        }
-                                        setProductImages([...productImages, ...filesArr]);
-                                      }
-                                   }} 
-                                   title=""
-                                   value=""
-                                 />
-                              </div>
-
-                              <div className="grid grid-cols-2 sm:grid-cols-5 gap-8">
-                                <AnimatePresence mode="popLayout">
-                                  {existingImages.map((url, i) => (
-                                    <motion.div 
-                                      key={`existing-${url}`} 
-                                      layout 
-                                      initial={{ scale: 0.8, opacity: 0 }} 
-                                      animate={{ scale: 1, opacity: 1 }} 
-                                      exit={{ scale: 0.5, opacity: 0 }} 
-                                      className="relative aspect-square rounded-[2rem] border-2 border-primary/20 overflow-hidden group/img shadow-2xl"
-                                    >
-                                       <img src={url} className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-700" alt="existing" />
-                                       <div className="absolute inset-0 bg-destructive/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all">
-                                          <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full w-12 h-12" onClick={() => setExistingImages(existingImages.filter((_, idx) => idx !== i))}>
-                                             <Trash className="w-6 h-6" />
-                                          </Button>
-                                       </div>
-                                    </motion.div>
-                                  ))}
-                                  {productImages.map((file, i) => (
-                                    <motion.div 
-                                      key={`new-${file.name}-${i}`} 
-                                      layout 
-                                      initial={{ scale: 0.8, opacity: 0 }} 
-                                      animate={{ scale: 1, opacity: 1 }} 
-                                      exit={{ scale: 0.5, opacity: 0 }} 
-                                      className="relative aspect-square rounded-[2rem] border-2 border-border/50 overflow-hidden group/img shadow-2xl"
-                                    >
-                                       <img src={URL.createObjectURL(file)} className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-700" alt="preview" />
-                                       <div className="absolute inset-0 bg-destructive/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all">
-                                          <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full w-12 h-12" onClick={() => setProductImages(productImages.filter((_, idx) => idx !== i))}>
-                                             <Trash className="w-6 h-6" />
-                                          </Button>
-                                       </div>
-                                    </motion.div>
-                                  ))}
-                                </AnimatePresence>
-                              </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Logistical Transit (Days)</label>
+                              <input type="number" value={productForm.delivery_days} onChange={e => setProductForm({...productForm, delivery_days: e.target.value})} placeholder="5" className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body" />
                             </div>
+                            <div className="col-span-full space-y-2">
+                              <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Search Tags (Comma Separated)</label>
+                              <input value={productForm.tags} onChange={e => setProductForm({...productForm, tags: e.target.value})} placeholder="Waterproof, Hardwood, Eco-friendly..." className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body" />
+                            </div>
+                          </div>
+                        </div>
 
-                            <div className="flex flex-col sm:flex-row justify-end gap-6 pt-10 border-t border-border/30">
-                              <Button variant="outline" className="h-16 px-12 rounded-2xl font-black uppercase tracking-widest text-[10px] border-2 shadow-sm transition-all hover:bg-secondary" disabled={isUploading} onClick={() => submitProduct(false)}>
-                                 <Zap className="mr-3 w-4 h-4 text-primary" /> Archive as Stock Draft
-                              </Button>
-                              <Button className="h-16 px-12 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-primary/20 group relative overflow-hidden" disabled={isUploading || !productForm.name || !productForm.price} onClick={() => submitProduct(true)}>
-                                 <span className="relative z-10 flex items-center gap-4">
-                                    {isUploading ? (
-                                      <>
-                                         <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
-                                         Syncing Vault...
-                                      </>
-                                    ) : (
-                                      <>
-                                         {editingProduct ? "Authorize Inventory Update" : "Launch in Marketplace"}
-                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-                                      </>
-                                    )}
-                                 </span>
-                                 <motion.div 
-                                  className="absolute inset-0 bg-primary-foreground/10"
-                                  initial={{ x: "-100%" }}
-                                  whileHover={{ x: "100%" }}
-                                  transition={{ duration: 0.5 }}
+                        {/* Section 4: Media Allocation */}
+                        <div className="space-y-6">
+                           <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#735c00] border-b border-[#e5e2df] pb-2">Media Allocation</h3>
+                           <div className="space-y-4">
+                              <div className="aspect-video bg-[#f6f3f0] border-2 border-dashed border-[#e5e2df] relative group transition-colors hover:border-[#735c00]">
+                                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-40">
+                                   <Upload className="w-8 h-8 mb-2" />
+                                   <p className="text-[10px] uppercase font-bold">Allocate Product Photography</p>
+                                </div>
+                                <input 
+                                  type="file" 
+                                  multiple 
+                                  onChange={(e) => {
+                                    if (e.target.files) {
+                                      const files = Array.from(e.target.files);
+                                      setProductImages(prev => [...prev, ...files]);
+                                    }
+                                  }} 
+                                  className="absolute inset-0 opacity-0 cursor-pointer" 
                                 />
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
+                              </div>
+                              
+                              <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
+                                 {existingImages.map((img, idx) => (
+                                   <div key={`exist-${idx}`} className="relative aspect-square border border-[#e5e2df] group">
+                                      <img src={img} className="w-full h-full object-cover" />
+                                      <button onClick={() => setExistingImages(prev => prev.filter((_, i) => i !== idx))} className="absolute -top-2 -right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"><X className="w-3 h-3"/></button>
+                                   </div>
+                                 ))}
+                                 {productImages.map((file, idx) => (
+                                   <div key={`new-${idx}`} className="relative aspect-square border-2 border-dashed border-[#735c00] bg-[#fcf9f6] flex items-center justify-center overflow-hidden group">
+                                      <img src={URL.createObjectURL(file)} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+                                      <span className="absolute bottom-1 left-1 bg-[#735c00] text-white text-[6px] px-1 rounded-sm uppercase font-bold z-10">New</span>
+                                      <button onClick={() => setProductImages(prev => prev.filter((_, i) => i !== idx))} className="absolute -top-2 -right-2 bg-red-600 text-white p-1 rounded-full shadow-lg z-10"><X className="w-3 h-3"/></button>
+                                   </div>
+                                 ))}
+                              </div>
+                           </div>
+                        </div>
+
+                        {/* Section 5: Technical Narrative */}
+                        <div className="space-y-6">
+                           <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#735c00] border-b border-[#e5e2df] pb-2">Technical Narrative</h3>
+                           <div className="space-y-2">
+                             <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Specification Commentary</label>
+                             <textarea value={productForm.description} onChange={e => setProductForm({...productForm, description: e.target.value})} rows={4} placeholder="Detailed parameters and engineering standards..." className="w-full p-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors resize-none" />
+                           </div>
+                        </div>
                       </div>
-                    </Reveal>
+
+                      <div className="pt-8 border-t border-[#e5e2df] flex justify-end gap-4">
+                        <button onClick={() => submitProduct(false)} disabled={isUploading} className="px-8 h-12 border border-[#e5e2df] text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] transition-all rounded-sm">Save Manifest Draft</button>
+                        <button onClick={() => submitProduct(true)} disabled={isUploading || !productForm.name || !productForm.price} className="px-10 h-12 bg-[#1c1c1a] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#735c00] transition-all shadow-md">
+                          {isUploading ? "Synchronizing..." : editingProduct ? "Update Admission" : "Execute Launch"}
+                        </button>
+                      </div>
+                    </div>
                   )}
 
-                  {/* INQUIRIES LIST */}
+                  {/* DEMAND SIGNALS */}
                   {activeTab === "inquiries" && (
-                    <div className="space-y-10">
-                      <div className="flex items-center justify-between">
-                         <h2 className="text-2xl font-black tracking-tight flex items-center gap-4">
-                            <ClipboardList className="w-8 h-8 text-primary" />
-                            Marketplace Orders
-                         </h2>
-                         <Badge className="bg-destructive text-white rounded-full px-6 py-2 font-black uppercase text-[10px] animate-pulse">
-                            {inquiries.filter(i => i.status === 'pending').length} Critical Alerts
-                         </Badge>
-                      </div>
+                    <div className="space-y-12">
+                      <header className="flex items-center justify-between border-b border-[#e5e2df] pb-8">
+                        <div>
+                           <h2 className="text-4xl font-headline tracking-tight mb-2">Demand <span className="italic">Signals.</span></h2>
+                           <p className="text-xs font-body text-[#74777d]">Authenticated requests from executing operators.</p>
+                        </div>
+                        <Badge className="bg-destructive text-white font-black text-[9px] uppercase tracking-widest animate-pulse border-none">Critical Attention Required</Badge>
+                      </header>
 
                       {inquiries.length === 0 ? (
-                        <div className="text-center py-32 bg-secondary/10 rounded-[4rem] border-2 border-dashed border-border/50">
-                           <TrendingUp className="w-16 h-16 text-muted-foreground/10 mx-auto mb-6" />
-                           <p className="text-muted-foreground/60 font-black text-sm uppercase tracking-widest">Market demand signals will appear here.</p>
+                        <div className="flex flex-col items-center justify-center py-32 text-center opacity-40">
+                          <TrendingUp className="w-12 h-12 mb-4" />
+                          <p className="text-[10px] uppercase font-bold tracking-[0.2em]">Zero Signals Detected</p>
                         </div>
                       ) : (
                         <div className="space-y-8">
-                          {inquiries.map((inq, idx) => (
-                            <motion.div
-                               key={inq.id}
-                               initial={{ opacity: 0, y: 10 }}
-                               whileInView={{ opacity: 1, y: 0 }}
-                               transition={{ delay: idx * 0.1 }}
-                            >
-                               <Card className="p-8 md:p-12 border-border/50 shadow-xl bg-background rounded-[3rem] group hover:border-primary/20 transition-all">
-                                  <div className="flex flex-col lg:flex-row gap-12 items-start justify-between">
-                                     <div className="flex-1 space-y-8">
-                                        <div className="flex gap-4 items-center">
-                                          <Badge className={`${inq.status === 'pending' ? 'bg-destructive text-white' : inq.status === 'contacted' ? 'bg-primary text-white' : 'bg-secondary text-foreground'} px-6 py-2 rounded-full font-black uppercase tracking-widest text-[9px] shadow-sm`}>
-                                            {inq.status}
-                                          </Badge>
-                                          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                                             <ShieldCheck className="w-3 h-3" /> Digital Ledger: {new Date(inq.created_at).toLocaleDateString()}
-                                          </span>
-                                        </div>
-                                        
-                                        <div>
-                                           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2">Subject Requirement</p>
-                                           <h3 className="text-3xl font-black text-foreground tracking-tight">{inq.supplier_products?.name || "Premium Construct"}</h3>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 border-t border-border/30 pt-8">
-                                           <div className="space-y-4">
-                                              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Inquiry Source</p>
-                                              <div className="space-y-2">
-                                                 <p className="text-xl font-black text-foreground">{inq.name}</p>
-                                                 <p className="text-sm font-bold text-muted-foreground flex items-center gap-2"><MapPin className="w-4 h-4" /> {inq.city}</p>
-                                              </div>
-                                           </div>
-                                           <div className="space-y-4">
-                                              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Volume Required</p>
-                                              <div className="flex items-center gap-3">
-                                                 <div className="px-6 py-3 bg-secondary rounded-2xl font-black text-2xl text-primary">{inq.quantity}</div>
-                                                 <span className="text-xs font-black uppercase text-muted-foreground">Units</span>
-                                              </div>
-                                           </div>
-                                        </div>
-
-                                        {inq.message && (
-                                           <div className="bg-primary/5 p-8 rounded-[2rem] border border-primary/10">
-                                              <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-4">Customer Brief</p>
-                                              <p className="font-bold italic text-foreground/80 leading-relaxed">"{inq.message}"</p>
-                                           </div>
-                                        )}
-                                     </div>
-
-                                     <div className="w-full lg:w-80 space-y-6 lg:sticky lg:top-8">
-                                        <div className="p-8 bg-secondary/30 rounded-[2.5rem] border border-border/50">
-                                           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-6">Engagement Console</p>
-                                           <div className="space-y-4 mb-8">
-                                              <Button variant="outline" className="w-full h-14 rounded-2xl border-2 font-black group transition-all hover:bg-primary hover:text-white hover:border-primary" asChild>
-                                                 <a href={`tel:${inq.phone}`}>
-                                                    <Phone className="w-4 h-4 mr-3 group-hover:animate-bounce" /> {inq.phone}
-                                                 </a>
-                                              </Button>
-                                              <Button variant="outline" className="w-full h-14 rounded-2xl border-2 font-black group" disabled>
-                                                 <Mail className="w-4 h-4 mr-3" /> Market Messenger
-                                              </Button>
-                                           </div>
-                                           <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1 mb-2 block">System Status</Label>
-                                           <Select value={inq.status} onValueChange={(v) => updateInquiryStatus(inq.id, v)}>
-                                              <SelectTrigger className="h-14 rounded-2xl bg-background border-transparent font-black"><SelectValue/></SelectTrigger>
-                                              <SelectContent className="rounded-2xl">
-                                                <SelectItem value="pending" className="rounded-xl">Pending Alert</SelectItem>
-                                                <SelectItem value="contacted" className="rounded-xl">Client Contacted</SelectItem>
-                                                <SelectItem value="closed" className="rounded-xl">Case Resolved</SelectItem>
-                                              </SelectContent>
-                                           </Select>
-                                        </div>
-                                     </div>
+                          {inquiries.map((inq) => (
+                             <div key={inq.id} className="border border-[#e5e2df] p-8 rounded-sm hover:border-[#735c00] transition-all group">
+                                <div className="flex flex-col md:flex-row gap-8 justify-between">
+                                  <div className="space-y-6 flex-1">
+                                    <div className="flex items-center gap-4">
+                                      <Badge variant="outline" className={`px-4 py-1.5 font-bold text-[8px] uppercase tracking-widest ${inq.status === 'pending' ? 'border-destructive text-destructive' : 'border-[#e5e2df] text-[#74777d]'}`}>{inq.status}</Badge>
+                                      <span className="text-[10px] font-bold text-[#c4c6cc] tracking-tighter">Manifest: {new Date(inq.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="space-y-2">
+                                       <span className="text-[9px] uppercase font-bold text-[#735c00]">Subject Requisition</span>
+                                       <h3 className="text-2xl font-headline font-bold">{inq.supplier_products?.name || "System Component"}</h3>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-8 pt-4 border-t border-[#f6f3f0]">
+                                       <div>
+                                          <span className="text-[9px] uppercase font-bold text-[#74777d]">Source</span>
+                                          <p className="font-bold text-sm mt-1">{inq.name}</p>
+                                          <p className="text-[10px] font-body text-[#74777d]">{inq.city}</p>
+                                       </div>
+                                       <div>
+                                          <span className="text-[9px] uppercase font-bold text-[#74777d]">Volume</span>
+                                          <p className="font-headline font-black text-2xl mt-1">{inq.quantity} <span className="text-[10px] font-bold text-[#74777d]">U</span></p>
+                                       </div>
+                                    </div>
                                   </div>
-                               </Card>
-                            </motion.div>
+                                  
+                                  <div className="w-full md:w-64 space-y-3 pt-4 border-t md:border-t-0 md:border-l border-[#e5e2df] md:pl-8">
+                                     <a href={`tel:${inq.phone}`} className="w-full h-12 flex items-center justify-center border border-[#e5e2df] text-[10px] font-bold uppercase tracking-widest hover:bg-[#1c1c1a] hover:text-white transition-all rounded-sm gap-3">
+                                        <Phone className="w-3 h-3" /> Execute Call
+                                     </a>
+                                     <select value={inq.status} onChange={(e) => updateInquiryStatus(inq.id, e.target.value)} className="w-full h-12 border border-[#735c00] text-[#735c00] text-[9px] font-black uppercase tracking-widest rounded-sm bg-transparent px-4 outline-none cursor-pointer">
+                                        <option value="pending">Pending</option>
+                                        <option value="contacted">Contacted</option>
+                                        <option value="closed">Fulfilled</option>
+                                     </select>
+                                  </div>
+                                </div>
+                             </div>
                           ))}
                         </div>
                       )}
                     </div>
                   )}
 
-                  {/* BUSINESS PROFILE */}
+                  {/* IDENTITY MATRIX */}
                   {activeTab === "profile" && (
-                    <div className="max-w-4xl mx-auto">
-                      <Card className="border-border/50 shadow-2xl bg-background rounded-[4rem] overflow-hidden">
-                        <div className="bg-primary/5 px-12 py-10 border-b border-border/50 flex items-center justify-between">
-                           <div className="flex items-center gap-5">
-                              <div className="w-16 h-16 bg-background rounded-[1.5rem] flex items-center justify-center shadow-sm">
-                                 <Store className="w-8 h-8 text-primary" />
-                              </div>
-                              <div>
-                                 <h3 className="text-2xl font-black tracking-tight text-foreground">Economic Entity</h3>
-                                 <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-1">Institutional Profile</p>
-                              </div>
-                           </div>
-                           <ShieldCheck className="w-10 h-10 text-primary opacity-20" />
-                        </div>
-                        <CardContent className="p-12 space-y-12">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                            <div className="space-y-3">
-                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Certified Business Name</Label>
-                              <Input value={profileForm.business_name} onChange={e => setProfileForm({...profileForm, business_name: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
-                            </div>
-                            <div className="space-y-3">
-                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Verified Email (Primary)</Label>
-                              <Input value={user?.email || ""} readOnly className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed" />
-                            </div>
-                            <div className="space-y-3">
-                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Authorized Signatory (Locked)</Label>
-                              <Input value={profileForm.owner_name} readOnly className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed" />
-                            </div>
-                            <div className="space-y-3">
-                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Commercial Hotline (Locked)</Label>
-                              <Input value={profileForm.phone} readOnly className="h-14 rounded-2xl bg-secondary/10 border-transparent transition-all font-bold opacity-60 cursor-not-allowed" />
-                              <p className="text-[10px] text-muted-foreground ml-1">Contact support to update verified identity details.</p>
-                            </div>
-                            <div className="space-y-3">
-                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Logistics Hub (City)</Label>
-                              <Input value={profileForm.city} onChange={e => setProfileForm({...profileForm, city: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black text-lg" />
-                            </div>
-                            <div className="space-y-3">
-                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">GST Identification (GSTIN)</Label>
-                              <Input value={profileForm.gst_number} onChange={e => setProfileForm({...profileForm, gst_number: e.target.value})} placeholder="00XXXXX0000X0Z0" className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black" />
-                            </div>
-                            <div className="space-y-3">
-                              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Zip / Pincode</Label>
-                              <Input value={profileForm.pincode} onChange={e => setProfileForm({...profileForm, pincode: e.target.value})} className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-black" />
-                            </div>
-                          </div>
-                          <div className="space-y-3 pt-6 border-t border-border/30">
-                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Corporate Site Address</Label>
-                            <Textarea value={profileForm.address} onChange={e => setProfileForm({...profileForm, address: e.target.value})} rows={3} className="rounded-[2.5rem] bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold p-8" />
-                          </div>
-                          <div className="flex justify-end">
-                             <Button size="lg" onClick={handleUpdateProfile} className="h-16 px-12 rounded-2xl font-black shadow-xl shadow-primary/20 group relative overflow-hidden">
-                               <span className="relative z-10 flex items-center gap-3">
-                                  Sync Business Identity
-                                  <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-                               </span>
-                               <motion.div 
-                                className="absolute inset-0 bg-primary-foreground/10"
-                                initial={{ x: "-100%" }}
-                                whileHover={{ x: "100%" }}
-                                transition={{ duration: 0.5 }}
-                              />
-                             </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  )}
-
-                  {/* ACCOUNT SETTINGS */}
-                  {activeTab === "account" && (
-                    <div className="max-w-2xl mx-auto">
-                      <Card className="border-border/50 shadow-2xl bg-background rounded-[3.5rem] overflow-hidden">
-                        <div className="bg-destructive/5 px-12 py-10 border-b border-border/50 flex items-center justify-between">
-                           <div className="flex items-center gap-5">
-                              <div className="w-16 h-16 bg-background rounded-[1.5rem] flex items-center justify-center shadow-sm">
-                                 <Settings className="w-8 h-8 text-destructive" />
-                              </div>
-                              <div>
-                                 <h3 className="text-2xl font-black tracking-tight text-foreground">Control Center</h3>
-                                 <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-1">System & Security</p>
-                              </div>
-                           </div>
-                        </div>
-                        <CardContent className="p-12 space-y-12">
-                          <div className="p-10 rounded-[2.5rem] bg-secondary/20 border-2 border-dashed border-border/50 text-center">
-                            <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground mb-4 block">Identity Access Token</Label>
-                            <p className="text-2xl font-black text-foreground break-all">{user?.email}</p>
-                          </div>
-                          
-                          <div className="space-y-4">
-                             <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground ml-2">Marketplace Status</p>
-                             <div className="flex items-center justify-between p-8 rounded-3xl bg-secondary/10 border border-border/50">
-                                <div className="flex items-center gap-4">
-                                   <div className={`w-4 h-4 rounded-full ${supplierData?.is_verified ? "bg-green-500 animate-pulse" : "bg-yellow-500"}`} />
-                                   <span className="font-black uppercase tracking-widest text-xs">{supplierData?.is_verified ? "Active Commercial Status" : "Verification Pending"}</span>
-                                </div>
-                                <Button variant="outline" className="rounded-xl h-12 border-2 text-[10px] uppercase font-black tracking-widest">Verify Store</Button>
+                     <div className="space-y-12">
+                       <header className="border-b border-[#e5e2df] pb-8">
+                          <h2 className="text-4xl font-headline tracking-tight mb-2">Identity <span className="italic">Matrix.</span></h2>
+                          <p className="text-xs font-body text-[#74777d]">Manage the logistical presence of your corporate entity.</p>
+                       </header>
+                       
+                       <form onSubmit={handleUpdateProfile} className="space-y-10">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                             <div className="space-y-2">
+                               <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Corporate Title</label>
+                               <input value={profileForm.business_name} onChange={e => setProfileForm({...profileForm, business_name: e.target.value})} className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                             </div>
+                             <div className="space-y-2">
+                               <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Authorized Director</label>
+                               <input value={profileForm.owner_name} onChange={e => setProfileForm({...profileForm, owner_name: e.target.value})} className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                             </div>
+                             <div className="space-y-2">
+                               <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Identity Contact</label>
+                               <input value={profileForm.phone} onChange={e => setProfileForm({...profileForm, phone: e.target.value})} className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                             </div>
+                             <div className="space-y-2">
+                               <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Federal State / City</label>
+                               <input value={profileForm.city} onChange={e => setProfileForm({...profileForm, city: e.target.value})} className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
                              </div>
                           </div>
 
-                          <Button variant="destructive" size="lg" className="h-16 w-full rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-destructive/20 group" onClick={handleLogout}>
-                            <LogOut className="w-5 h-5 mr-4 group-hover:-translate-x-2 transition-transform" />
-                            Terminate Session
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Structural Headquarters</label>
+                            <input value={profileForm.address} onChange={e => setProfileForm({...profileForm, address: e.target.value})} className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                          </div>
+
+                          <div className="flex justify-end pt-8 border-t border-[#e5e2df]">
+                             <button type="submit" className="h-14 px-12 bg-[#1c1c1a] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#735c00] transition-all shadow-md">Update Vector Identity</button>
+                          </div>
+                       </form>
+                     </div>
                   )}
 
                 </motion.div>
               </AnimatePresence>
             </div>
+
           </div>
-        </div>
+        </main>
       </div>
     </Layout>
   );

@@ -20,7 +20,6 @@ const Index = () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-          setIsCheckingRole(false);
           return;
         }
 
@@ -61,11 +60,9 @@ const Index = () => {
           navigate('/supplier/dashboard');
           return;
         }
-
-        // If no specific role is found, just show the home page
-        setIsCheckingRole(false);
       } catch (error) {
         console.error("Error checking user role:", error);
+      } finally {
         setIsCheckingRole(false);
       }
     };
