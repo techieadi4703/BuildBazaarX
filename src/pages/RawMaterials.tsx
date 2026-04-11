@@ -3,27 +3,12 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Package, Truck, BadgeCheck, IndianRupee, ArrowRight, Star, ShoppingCart, Heart, Sparkles } from "lucide-react";
+import { Search, Filter, Truck, Palette, Plus, Zap, ArrowUpRight } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Fallback product images (used when image_url is null)
+// Fallback images
 import plywoodImg from "@/assets/products/plywood.jpg";
 import paintImg from "@/assets/products/paint.jpg";
 import tilesImg from "@/assets/products/tiles.jpg";
@@ -33,7 +18,6 @@ import cementImg from "@/assets/products/cement.jpg";
 import laminateImg from "@/assets/products/laminate.jpg";
 import switchesImg from "@/assets/products/switches.jpg";
 
-// Map category → fallback image
 const categoryFallbackImages: Record<string, string> = {
   wood: plywoodImg,
   paints: paintImg,
@@ -44,38 +28,20 @@ const categoryFallbackImages: Record<string, string> = {
   hardware: laminateImg,
 };
 
-// Map brand → fallback image (more specific than category)
-const brandFallbackImages: Record<string, string> = {
-  Greenlam: laminateImg,
-  Merino: laminateImg,
-  Anchor: switchesImg,
-  Legrand: switchesImg,
-  Havells: ledLightImg,
-  Philips: ledLightImg,
-};
-
-function getProductImage(product: { image_url: string | null; brand: string | null; category: string | null }): string {
+function getProductImage(product: { image_url: string | null; category: string | null }): string {
   if (product.image_url) return product.image_url;
-  if (product.brand && brandFallbackImages[product.brand]) return brandFallbackImages[product.brand];
   if (product.category && categoryFallbackImages[product.category]) return categoryFallbackImages[product.category];
   return plywoodImg;
 }
 
 const categories = [
-  { id: "wood", name: "Wood & Boards", icon: "🪵" },
-  { id: "construction", name: "Construction Materials", icon: "🧱" },
-  { id: "paints", name: "Paints & Finishes", icon: "🎨" },
-  { id: "plumbing", name: "Plumbing & Sanitary", icon: "🚿" },
-  { id: "electrical", name: "Electrical & Lighting", icon: "💡" },
-  { id: "tiles", name: "Tiles & Flooring", icon: "🔲" },
-  { id: "hardware", name: "Hardware & Accessories", icon: "🔩" },
-];
-
-const usps = [
-  { icon: IndianRupee, title: "Best Market Price" },
-  { icon: BadgeCheck, title: "100% Genuine Products" },
-  { icon: Package, title: "Trusted Sellers" },
-  { icon: Truck, title: "Fast Delivery" },
+  { id: "wood", name: "Wood & Boards", count: 8 },
+  { id: "paints", name: "Paints & Finishes", count: 24 },
+  { id: "construction", name: "Construction", count: 12 },
+  { id: "tiles", name: "Tiles & Flooring", count: 19 },
+  { id: "hardware", name: "Hardware", count: 42 },
+  { id: "plumbing", name: "Plumbing", count: 15 },
+  { id: "electrical", name: "Electrical", count: 31 },
 ];
 
 type Product = {
@@ -103,50 +69,10 @@ const RawMaterials = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (categoryFromUrl) {
-      setSelectedCategory(categoryFromUrl);
-    }
+    if (categoryFromUrl) setSelectedCategory(categoryFromUrl);
   }, [categoryFromUrl]);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    city: "",
-    material: "",
-    quantity: "",
-  });
-
-  useEffect(() => {
-    const prefillData = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setFormData(prev => ({
-          ...prev,
-          name: session.user.user_metadata?.full_name || prev.name,
-        }));
-
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
-
-        if (profile) {
-          const typedProfile = profile as any;
-          setFormData(prev => ({
-            ...prev,
-            name: typedProfile.full_name || prev.name,
-            phone: typedProfile.phone || prev.phone,
-            city: typedProfile.city || prev.city,
-          }));
-        }
-      }
-    };
-    prefillData();
-  }, []);
-
-  const { data: regularProducts = [], isLoading: isLoadingRegular, isError: isErrorRegular } = useQuery({
+  const { data: regularProducts = [], isLoading: isLoadingReq } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const { data, error } = await supabase.from("products").select("*");
@@ -155,571 +81,267 @@ const RawMaterials = () => {
     },
   });
 
-  const { data: supplierProducts = [], isLoading: isLoadingSupplier, isError: isErrorSupplier } = useQuery({
+  const { data: supplierProducts = [], isLoading: isLoadingSup } = useQuery({
     queryKey: ["supplier-products"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('supplier_products')
         .select(`*, suppliers(business_name)`)
-        .eq('is_published', true)
-        .order('created_at', { ascending: false });
-        
+        .eq('is_published', true);
       if (error) throw error;
-      
-      const hashCode = (str: string) => {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-          const char = str.charCodeAt(i);
-          hash = ((hash << 5) - hash) + char;
-          hash = hash & hash; // Convert to 32bit integer
-        }
-        return Math.abs(hash);
-      };
-
       return (data || []).map((dbProd: any) => ({
-        id: hashCode(dbProd.id),
+        id: dbProd.id,
         name: dbProd.name,
-        brand: dbProd.brand || (dbProd.suppliers ? dbProd.suppliers.business_name : null),
+        brand: dbProd.brand || (dbProd.suppliers?.business_name),
         category: dbProd.category,
         price: dbProd.price,
-        original_price: dbProd.original_price,
         discount: dbProd.discount,
-        rating: dbProd.rating,
-        reviews: dbProd.total_reviews,
         specs: dbProd.specs,
         in_stock: dbProd.in_stock,
-        image_url: dbProd.images && dbProd.images.length > 0 ? dbProd.images[0] : null,
+        image_url: dbProd.images?.[0] || null,
       })) as Product[];
     }
   });
 
-  const isLoading = isLoadingRegular || isLoadingSupplier;
-  const isError = isErrorRegular || isErrorSupplier;
-  
   const allProducts = [...regularProducts, ...supplierProducts];
-
   const filteredProducts = allProducts.filter((product) => {
-    const matchesCategory = !selectedCategory || product.category === selectedCategory;
-    const matchesSearch =
-      (product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
-      (product.brand?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
-    return matchesCategory && matchesSearch;
+    const matchCat = !selectedCategory || product.category === selectedCategory;
+    const matchSearch = product.name?.toLowerCase().includes(searchQuery.toLowerCase()) || product.brand?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCat && matchSearch;
   });
 
-  const handleAddToCart = (product: Product) => {
-    addToCart({
-      id: product.id,
-      name: product.name ?? "",
-      brand: product.brand ?? "",
-      image: getProductImage(product),
-      price: product.price ?? 0,
-      originalPrice: product.original_price ?? 0,
-      specs: product.specs ?? "",
-    });
-    toast({
-      title: "Added to Cart! 🛒",
-      description: `${product.name} has been added to your cart.`,
-    });
-  };
-
-  const handleBuyNow = (product: Product) => {
-    addToCart({
-      id: product.id,
-      name: product.name ?? "",
-      brand: product.brand ?? "",
-      image: getProductImage(product),
-      price: product.price ?? 0,
-      originalPrice: product.original_price ?? 0,
-      specs: product.specs ?? "",
-    });
-    navigate("/checkout");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleAddToCart = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      const { error } = await supabase.from("leads").insert({
-        name: formData.name,
-        phone: formData.phone,
-        city: formData.city,
-        message: `Material: ${formData.material} | Requirement: ${formData.quantity}`,
-      });
-      if (error) throw error;
-      toast({
-        title: "Quote Request Submitted!",
-        description: "Our team will contact you with the best price within 24 hours.",
-      });
-      setFormData({ name: "", phone: "", city: "", material: "", quantity: "" });
-    } catch (err) {
-      toast({
-        title: "Submission Failed",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    e.stopPropagation();
+    addToCart({
+      id: product.id,
+      name: product.name ?? "Raw Material",
+      brand: product.brand ?? "Premium Brand",
+      image: getProductImage(product),
+      price: product.price ?? 0,
+      originalPrice: product.original_price ?? 0,
+      specs: product.specs ?? "",
+    });
+    toast({ title: "Module Added", description: `${product.name} initialized in cart.` });
   };
 
   return (
     <Layout>
-      {/* Search Bar */}
-      <motion.section 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="py-12 bg-primary-container"
-      >
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto space-y-6">
-            <h1 className="text-3xl md:text-5xl font-extrabold text-center text-white tracking-tight">Search Quality Materials</h1>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <div className="relative flex-1 group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <Input
-                  placeholder="Search for plywood, tiles, paints..."
-                  className="pl-12 bg-white/10 border border-white/20 text-white placeholder:text-white/60 h-14 rounded-2xl shadow-lg focus:ring-2 focus:ring-secondary-container/40 transition-all text-lg"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <Button size="lg" variant="action" className="h-14 px-10 rounded-2xl shadow-xl font-bold text-lg">
-                Search
-              </Button>
+      {/* Scope Google Fonts so it overrides seamlessly */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');
+        .font-headline { font-family: 'Newsreader', serif; }
+        .font-body { font-family: 'Manrope', sans-serif; }
+      `}</style>
+      
+      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20">
+        <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-12 md:py-20">
+          
+          {/* Header */}
+          <header className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="max-w-2xl">
+              <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[#735c00] mb-4 block font-bold">Curation No. 042</span>
+              <h1 className="text-6xl md:text-8xl font-headline tracking-tight leading-none mb-6">
+                Raw <span className="italic">Materials</span>
+              </h1>
+              <p className="text-lg md:text-xl font-body text-[#44474c] leading-relaxed opacity-80">
+                A curated monograph of structural elements and finishing coats. From the core strength of premium grade steel to the chromatic precision of elite laminates.
+              </p>
             </div>
-          </div>
-        </div>
-      </motion.section>
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col text-right">
+                <span className="font-body text-[10px] uppercase tracking-widest text-[#74777d]">Current Inventory</span>
+                <span className="text-2xl font-headline font-medium">{allProducts.length} Items</span>
+              </div>
+              <div className="w-12 h-[1px] bg-[#c4c6cc] opacity-50"></div>
+            </div>
+            {/* Search Input inline with header */}
+            <div className="relative w-full md:w-64 -mt-4 md:mt-0">
+               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+               <input 
+                 className="pl-12 pr-4 py-3 bg-[#f6f3f0] border-none focus:ring-1 focus:ring-[#735c00] rounded-full text-sm w-full outline-none font-body shadow-inner" 
+                 placeholder="Search materials..." 
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)}
+                 type="text"
+               />
+            </div>
+          </header>
 
-      {/* USPs */}
-      <section className="py-6 bg-primary overflow-hidden">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="flex flex-wrap justify-center gap-8 md:gap-16"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={{
-              visible: { transition: { staggerChildren: 0.1 } }
-            }}
-          >
-            {usps.map((usp, index) => (
-              <motion.div 
-                key={index} 
-                className="flex items-center gap-3 text-primary-foreground/90 hover:text-white transition-colors cursor-default"
-                variants={{
-                  hidden: { opacity: 0, x: -20 },
-                  visible: { opacity: 1, x: 0 }
-                }}
-              >
-                <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
-                  <usp.icon className="w-5 h-5" />
+          {/* Bento Features */}
+          <section className="mb-16 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="md:col-span-2 p-8 bg-[#f6f3f0] rounded-xl flex flex-col justify-between group transition-all hover:bg-[#eae8e5]">
+              <div className="flex justify-between items-start mb-12">
+                <div className="bg-[#735c00] p-3 rounded-full text-white">
+                  <Filter className="w-5 h-5" />
                 </div>
-                <span className="font-bold text-sm tracking-wide uppercase">{usp.title}</span>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Categories Horizontal Scroll */}
-      <section className="py-8 bg-background border-b border-border/50">
-        <div className="container mx-auto px-4">
-          <Reveal width="100%" direction="up" distance={20} staggerChildren={0.05}>
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide no-scrollbar">
-              <RevealItem>
-                <Button 
-                  variant={selectedCategory === null ? "default" : "outline"}
-                  className="rounded-full px-8 shrink-0 h-11 font-bold"
-                  onClick={() => setSelectedCategory(null)}
-                >
-                  All Materials
-                </Button>
-              </RevealItem>
-              {categories.map((cat) => (
-                <RevealItem key={cat.id}>
-                  <Button 
-                    variant={selectedCategory === cat.id ? "default" : "outline"}
-                    className="rounded-full px-8 shrink-0 h-11 font-bold flex items-center gap-2"
-                    onClick={() => setSelectedCategory(cat.id)}
-                  >
-                    <span>{cat.icon}</span>
-                    {cat.name}
-                  </Button>
-                </RevealItem>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* Products Grid */}
-      <section className="py-16 bg-background relative">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
-            <Reveal direction="up">
+                <span className="font-body text-[10px] uppercase tracking-widest text-[#735c00] font-bold">Smart Filters</span>
+              </div>
               <div>
-                <h2 className="text-3xl font-extrabold text-foreground tracking-tight mb-2">
-                  {selectedCategory
-                    ? categories.find((c) => c.id === selectedCategory)?.name
-                    : "Premium Materials Catalog"}
-                </h2>
-                <p className="text-muted-foreground text-lg">
-                  {isLoading ? "Fetching the best products for you..." : `${filteredProducts.length} high-quality products found`}
-                </p>
+                <h3 className="text-2xl font-headline italic mb-3">Refine Selection</h3>
+                <div className="flex flex-wrap gap-2 text-[#1c1c1a]">
+                  <span className="px-4 py-1.5 bg-[#e5e2df] rounded-full text-[10px] uppercase tracking-wider font-bold">Premium Brands</span>
+                  <span className="px-4 py-1.5 bg-[#e5e2df] rounded-full text-[10px] uppercase tracking-wider font-bold">In-Stock</span>
+                  <span className="px-4 py-1.5 bg-[#e5e2df] rounded-full text-[10px] uppercase tracking-wider font-bold">Eco-Certified</span>
+                </div>
               </div>
-            </Reveal>
-            <Reveal direction="up" delay={0.1}>
-              <Select defaultValue="popular">
-                <SelectTrigger className="w-56 h-12 rounded-2xl border-2">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent className="rounded-2xl">
-                  <SelectItem value="popular">Popularity</SelectItem>
-                  <SelectItem value="low-high">Price: Low to High</SelectItem>
-                  <SelectItem value="high-low">Price: High to Low</SelectItem>
-                  <SelectItem value="rating">Customer Rating</SelectItem>
-                  <SelectItem value="discount">Discount</SelectItem>
-                </SelectContent>
-              </Select>
-            </Reveal>
-          </div>
+            </div>
 
-          <AnimatePresence mode="popLayout">
-            {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <Card key={i} className="overflow-hidden rounded-[2rem] border-border/50">
-                    <Skeleton className="aspect-square w-full" />
-                    <CardContent className="p-6 space-y-4">
-                      <Skeleton className="h-4 w-20" />
-                      <Skeleton className="h-6 w-full" />
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-12 w-full rounded-xl" />
-                    </CardContent>
-                  </Card>
-                ))}
+            <div className="p-8 bg-[#0f1c2c] text-[#778598] rounded-xl flex flex-col justify-between">
+              <Truck className="w-10 h-10 text-[#fed65b]" />
+              <div>
+                <p className="font-body text-[10px] uppercase tracking-widest mb-1 opacity-60 font-bold">Express Logistics</p>
+                <h3 className="text-2xl font-headline leading-tight text-white">Priority Home <br/>Delivery</h3>
               </div>
-            ) : isError ? (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-24 bg-destructive/5 rounded-[3rem] border-2 border-dashed border-destructive/20"
-              >
-                <p className="text-destructive text-xl font-bold mb-2">System Error</p>
-                <p className="text-muted-foreground">We couldn't load the catalog. Please try refreshing.</p>
-              </motion.div>
-            ) : (
-              <Reveal width="100%" staggerChildren={0.05}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                  {filteredProducts.map((product) => (
-                    <RevealItem key={product.id}>
-                      <ProductCard product={product} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
-                    </RevealItem>
-                  ))}
-                  {filteredProducts.length === 0 && (
-                    <motion.div 
-                      className="col-span-full text-center py-24 bg-surface-container rounded-[3rem] border-2 border-dashed border-outline-variant/30"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                    >
-                      <Package className="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-20" />
-                      <p className="text-muted-foreground text-xl font-medium">No materials found in this category.</p>
-                    </motion.div>
+            </div>
+
+            <div className="p-8 bg-[#e5e2df] rounded-xl relative overflow-hidden group">
+              <div className="absolute inset-0 opacity-20 transition-transform group-hover:scale-110 duration-700">
+                <div className="w-full h-full bg-gradient-to-br from-[#735c00] to-transparent"></div>
+              </div>
+              <div className="relative z-10 h-full flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <Palette className="w-10 h-10 text-[#1c1c1a]" />
+                  <span className="text-[9px] font-body uppercase tracking-widest text-[#735c00] bg-white/50 px-2 py-1 rounded font-bold">Incoming Feature</span>
+                </div>
+                <h3 className="text-2xl font-headline text-[#1c1c1a]">Visual Search</h3>
+              </div>
+            </div>
+          </section>
+
+          <div className="flex flex-col lg:flex-row gap-12 mt-12">
+            
+            {/* Sidebar Categories */}
+            <aside className="lg:w-64 flex-shrink-0">
+              <div className="sticky top-32">
+                <div className="flex justify-between items-end mb-8">
+                  <h4 className="font-body text-[10px] uppercase tracking-[0.2em] text-[#74777d] font-bold">Categories</h4>
+                  {selectedCategory && (
+                    <button onClick={() => setSelectedCategory(null)} className="text-[10px] text-[#74777d] border-b border-[#74777d] pb-[1px] hover:text-black">
+                      Clear
+                    </button>
                   )}
                 </div>
-              </Reveal>
-            )}
-          </AnimatePresence>
-        </div>
-        
-        {/* Decorative background shape */}
-        <div className="absolute top-1/2 right-0 translate-x-1/2 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] -z-10" />
-      </section>
-
-      {/* Bulk Order Section */}
-      <section className="py-20 bg-primary relative overflow-hidden">
-        <motion.div 
-          className="container mx-auto px-4 text-center relative z-10"
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-        >
-          <div className="max-w-3xl mx-auto">
-            <Badge className="bg-white/20 text-white border-none px-4 py-1.5 rounded-full mb-6 font-bold uppercase tracking-widest text-xs">
-              Exclusive Offer
-            </Badge>
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight leading-tight">
-              Bulk Orders? <br/>Get Extra Discounts!
-            </h2>
-            <p className="text-white/80 text-xl md:text-2xl mb-10 leading-relaxed">
-              Special pricing for contractors, builders & large projects. Save up to <span className="text-white font-black underline decoration-accent underline-offset-4">30%</span> on wholesale orders.
-            </p>
-            <Button size="lg" variant="secondary" className="h-16 px-12 rounded-2xl text-xl font-bold shadow-2xl hover:scale-105 transition-transform group">
-              Request Wholesale Quote
-              <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform" />
-            </Button>
-          </div>
-        </motion.div>
-        
-        {/* Animated background lines */}
-        <motion.div 
-          className="absolute inset-0 opacity-10"
-          animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          style={{ backgroundImage: "linear-gradient(45deg, white 25%, transparent 25%, transparent 50%, white 50%, white 75%, transparent 75%, transparent)" , backgroundSize: "60px 60px" }}
-        />
-      </section>
-
-      {/* Lead Form */}
-      <section className="py-24 bg-primary-container relative">
-        <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />
-        <div className="absolute inset-0 bg-dot-grid opacity-[0.05] pointer-events-none" />
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto">
-            <Reveal width="100%" direction="up">
-              <div className="text-center mb-16">
-                <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-secondary mb-4 block">Custom_Requisition</span>
-                <h2 className="text-4xl md:text-5xl font-serif text-white mb-6 tracking-tight italic">
-                  Can't Find What You Need?
-                </h2>
-                <p className="text-white/60 text-lg md:text-xl font-sans max-w-2xl mx-auto leading-relaxed">
-                  Tell us your requirements and we'll source it for you at the best market price.
-                </p>
-              </div>
-            </Reveal>
-
-            <Reveal width="100%" direction="up" delay={0.2}>
-              <motion.form 
-                onSubmit={handleSubmit} 
-                className="space-y-8 bg-[#C5A572] p-8 md:p-12 rounded-[3rem] border border-white/20 shadow-[0_40px_100px_rgba(0,0,0,0.5)] relative overflow-hidden"
-                whileHover={{ y: -5 }}
-                transition={{ duration: 0.5 }}
-              >
-                {/* Internal Blueprints */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10">
-                  <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black uppercase">Form_Asset</span>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-8 relative z-10">
-                  <RevealItem>
-                    <div className="space-y-3">
-                      <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Full Name</Label>
-                      <Input
-                        id="name"
-                        placeholder="Your name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg px-6"
-                      />
-                    </div>
-                  </RevealItem>
-                  <RevealItem>
-                    <div className="space-y-3">
-                      <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="+91 XXXXX XXXXX"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg px-6"
-                      />
-                    </div>
-                  </RevealItem>
-                  <RevealItem>
-                    <div className="space-y-3">
-                      <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">City</Label>
-                      <Input
-                        id="city"
-                        placeholder="Your city"
-                        value={formData.city}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                        required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg px-6"
-                      />
-                    </div>
-                  </RevealItem>
-                  <RevealItem>
-                    <div className="space-y-3">
-                      <Label htmlFor="material" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Material Type</Label>
-                      <Select
-                        value={formData.material}
-                        onValueChange={(value) => setFormData({ ...formData, material: value })}
+                <ul className="space-y-6">
+                  {categories.map((cat) => (
+                    <li key={cat.id}>
+                      <button 
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`flex items-center justify-between w-full group ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#1c1c1a]'}`}
                       >
-                        <SelectTrigger id="material" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-lg px-6">
-                          <SelectValue placeholder="Select material" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl bg-white text-black border-transparent shadow-xl">
-                          {categories.map((cat) => (
-                            <SelectItem key={cat.id} value={cat.id} className="rounded-lg hover:bg-black/5 focus:bg-black/5 focus:text-black cursor-pointer">
-                              {cat.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </RevealItem>
+                        <span className={`font-headline text-xl italic group-hover:text-[#735c00] transition-colors ${selectedCategory === cat.id ? 'border-b-2 border-[#735c00] pb-1' : ''}`}>
+                          {cat.name}
+                        </span>
+                        <span className="text-[10px] font-body text-[#74777d] font-bold opacity-60 group-hover:opacity-100">
+                          {cat.count}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Featured Ad inside Sidebar */}
+                <div className="mt-16 p-6 bg-[#f6f3f0] rounded-lg">
+                  <h5 className="text-sm font-bold mb-3 font-headline italic text-lg">Featured Material</h5>
+                  <img src={laminateImg} alt="Veneer" className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply" />
+                  <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">Discover the 2024 Architectural Digest choice for sustainable veneers.</p>
+                  <a href="#" className="font-body text-[10px] font-bold uppercase text-[#735c00] flex items-center gap-1 hover:underline">
+                    Read Monograph <ArrowUpRight className="w-3 h-3" />
+                  </a>
                 </div>
-                
-                <RevealItem>
-                  <div className="space-y-3 relative z-10">
-                    <Label htmlFor="quantity" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Requirement Details</Label>
-                    <Textarea
-                      id="quantity"
-                      placeholder="E.g., 100 sheets of 19mm Greenply plywood for modular kitchen..."
-                      value={formData.quantity}
-                      onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                      rows={4}
-                      className="rounded-2xl bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg p-6 resize-none"
-                    />
+              </div>
+            </aside>
+
+            {/* Catalog Grid */}
+            <div className="flex-grow">
+              <AnimatePresence>
+                {filteredProducts.length === 0 ? (
+                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center p-20 text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]">
+                      <span className="font-headline text-2xl italic mb-2 text-[#1c1c1a]">No Elements Active</span>
+                      <p className="font-body text-sm text-[#74777d]">Shift curation filters to uncover available components.</p>
+                   </motion.div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-y-16 gap-x-8">
+                    {filteredProducts.map((product) => (
+                      <motion.article 
+                        key={product.id} 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="group flex flex-col h-full"
+                      >
+                        {/* Image Box */}
+                        <div className="relative aspect-[4/5] mb-6 overflow-hidden bg-[#f6f3f0] rounded-sm cursor-pointer border border-transparent group-hover:border-[#e5e2df] transition-all">
+                          <img 
+                            src={getProductImage(product)} 
+                            alt={product.brand || "Material"} 
+                            className="w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105 p-4" 
+                          />
+                          <div className="absolute top-4 left-4">
+                            <span className="px-3 py-1 bg-white border border-[#eae8e5] text-[#1c1c1a] text-[9px] font-body font-bold uppercase tracking-widest rounded-full shadow-sm">
+                              {product.in_stock ? 'In Stock' : 'Pre-Order'}
+                            </span>
+                          </div>
+                          {/* Hover FAB - Add to Cart */}
+                          <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+                            <button 
+                              onClick={(e) => handleAddToCart(e, product)}
+                              className="w-12 h-12 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
+                            >
+                              <Plus className="w-5 h-5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Title & Price */}
+                        <div className="flex justify-between items-start mb-2 gap-4">
+                          <h3 className="text-xl font-headline font-semibold leading-tight text-[#1c1c1a]">{product.name}</h3>
+                          <span className="font-body font-medium text-[#1c1c1a] text-lg whitespace-nowrap pt-1">
+                            ₹{product.price} <span className="text-[10px] text-[#74777d] font-normal">/unit</span>
+                          </span>
+                        </div>
+
+                        {/* Specs */}
+                        <p className="text-sm font-body text-[#44474c] mb-6 line-clamp-2 leading-relaxed flex-grow">
+                          {product.specs || "Premium structural material sourced from trusted aggregators."}
+                        </p>
+
+                        {/* Footer tags */}
+                        <div className="flex items-center gap-4 mt-auto">
+                          <span className="flex items-center gap-1 text-[9px] font-body font-bold uppercase tracking-tighter text-[#735c00] bg-[#f5e1ae]/30 px-2 py-1 rounded">
+                            <Zap className="w-3 h-3 fill-current" /> Priority Match
+                          </span>
+                          <span className="text-[10px] font-body uppercase tracking-tighter text-[#74777d] italic font-medium">
+                            {product.brand}
+                          </span>
+                        </div>
+                      </motion.article>
+                    ))}
                   </div>
-                </RevealItem>
-                
-                <RevealItem>
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-6 border-t border-black/10 relative z-10">
-                    <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/50 max-w-[240px]">
-                      By initiating this protocol, you agree to our terms.
-                    </p>
-                    <Button 
-                      type="submit" 
-                      className="w-full sm:w-auto rounded-full px-12 h-14 text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/80 transition-all duration-300 group relative overflow-hidden"
-                      disabled={isSubmitting}
-                    >
-                      <span className="relative z-10 flex items-center gap-2">
-                        {isSubmitting ? "Processing..." : "Get Exclusive Quote"}
-                      </span>
-                      <motion.div 
-                        className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                        initial={{ x: "-100%" }}
-                        whileHover={{ x: "100%" }}
-                        transition={{ duration: 0.5 }}
-                      />
-                    </Button>
+                )}
+              </AnimatePresence>
+
+              {/* Pagination */}
+              {filteredProducts.length > 0 && (
+                <div className="mt-24 flex items-center justify-between border-t border-[#e5e2df] pt-8">
+                  <button className="font-body font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 text-[#74777d] hover:text-[#735c00] transition-colors">
+                    Previous Sector
+                  </button>
+                  <div className="flex gap-8">
+                    <span className="font-headline italic text-[#735c00] text-lg">01</span>
+                    <span className="font-headline italic text-[#74777d] opacity-40 text-lg">02</span>
+                    <span className="font-headline italic text-[#74777d] opacity-40 text-lg">03</span>
                   </div>
-                </RevealItem>
-              </motion.form>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-    </Layout>
-  );
-};
-
-interface ProductCardProps {
-  product: Product;
-  onAddToCart: (product: Product) => void;
-  onBuyNow: (product: Product) => void;
-}
-
-const ProductCard = ({ product, onAddToCart, onBuyNow }: ProductCardProps) => {
-  return (
-    <motion.div
-      whileHover={{ y: -10 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="h-full"
-    >
-      <Card className="group overflow-hidden border-border/50 hover:border-[#C5A572]/50 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[2rem] bg-[#F4F0EA] h-full flex flex-col pt-0">
-        {/* Image */}
-        <div className="relative aspect-square overflow-hidden bg-white">
-          <motion.img
-            src={getProductImage(product)}
-            alt={product.name ?? "Product"}
-            className="w-full h-full object-cover mix-blend-multiply"
-            whileHover={{ scale: 1.15 }}
-            transition={{ duration: 0.8 }}
-          />
-          {/* Discount Badge */}
-          {product.discount != null && (
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="absolute top-4 left-4 z-10"
-            >
-              <Badge className="bg-destructive text-white border-none px-3 py-1 rounded-full shadow-lg font-bold text-xs ring-4 ring-destructive/20">
-                {product.discount}% OFF
-              </Badge>
-            </motion.div>
-          )}
-          {/* Wishlist Button */}
-          <motion.button 
-            whileHover={{ scale: 1.25, rotate: 15 }}
-            whileTap={{ scale: 0.9 }}
-            className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg text-black/60 hover:text-destructive transition-colors z-10"
-          >
-            <Heart className="w-5 h-5" />
-          </motion.button>
-          
-          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        </div>
-
-        <CardContent className="p-6 flex-grow flex flex-col">
-          {/* Brand */}
-          <p className="text-[10px] text-[#C5A572] font-black uppercase tracking-[0.2em] mb-2">{product.brand}</p>
-
-          {/* Name */}
-          <h3 className="font-serif text-black text-xl line-clamp-2 min-h-[56px] transition-colors leading-tight mb-2">
-            {product.name}
-          </h3>
-
-          {/* Specs */}
-          <p className="text-xs text-black/60 font-medium mb-4 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C5A572]" />
-            {product.specs}
-          </p>
-
-          <div className="flex items-center justify-between mt-auto mb-6">
-            {/* Price */}
-            <div className="flex flex-col">
-              <span className="text-2xl font-black text-black">
-                ₹{(product.price ?? 0).toLocaleString()}
-              </span>
-              {product.original_price != null && (
-                <span className="text-sm text-black/40 line-through font-medium">
-                  ₹{product.original_price.toLocaleString()}
-                </span>
+                  <button className="font-body font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 text-[#1c1c1a] hover:text-[#735c00] transition-colors">
+                    Next Sector 
+                  </button>
+                </div>
               )}
             </div>
 
-            {/* Rating */}
-            {product.rating != null && (
-              <div className="flex flex-col items-end">
-                <div className="flex items-center gap-1 bg-green-500/10 border border-green-500/20 text-green-600 px-2 py-1 rounded-lg text-xs font-black">
-                  <Star className="w-3.5 h-3.5 fill-green-500 text-green-500" />
-                  {product.rating}
-                </div>
-                <span className="text-[10px] text-black/40 font-bold mt-1 uppercase tracking-tighter">{(product.reviews ?? 0).toLocaleString()} Reviews</span>
-              </div>
-            )}
           </div>
-
-          {/* Delivery */}
-          <div className="bg-green-50/50 p-3 rounded-xl mb-6 flex items-center gap-2 group/delivery border border-green-100">
-            <Truck className="w-4 h-4 text-green-600 group-hover/delivery:translate-x-1 transition-transform" />
-            <span className="text-xs text-green-700 font-bold uppercase tracking-wider">Priority Home Delivery</span>
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-3">
-            <Button
-              className="flex-1 rounded-xl h-11 font-bold shadow-[0_10px_20px_rgba(0,0,0,0.1)] bg-black text-white hover:bg-black/80 transition-all hover:-translate-y-1"
-              size="sm"
-              onClick={() => onAddToCart(product)}
-            >
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              Cart
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1 rounded-xl h-11 font-bold border-black/10 text-black hover:bg-black/5 hover:text-black transition-all hover:-translate-y-1" onClick={() => onBuyNow(product)}>
-              Buy Now
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
+        </main>
+      </div>
+    </Layout>
   );
 };
 

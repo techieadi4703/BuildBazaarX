@@ -2,22 +2,11 @@ import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, SlidersHorizontal, X, ArrowRight, Sparkles } from "lucide-react";
+import { Search, Heart, BadgeCheck, Clock, Compass, X } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { LeadCaptureForm } from "@/components/shared/LeadCaptureForm";
-import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Images
 import kitchenImage from "@/assets/kitchen-design.jpg";
 import bedroomImage from "@/assets/bedroom-design.jpg";
 import livingroomImage from "@/assets/livingroom-design.jpg";
@@ -31,89 +20,65 @@ const categories = [
   { id: "living-room", name: "Living Room" },
   { id: "bedroom", name: "Bedroom" },
   { id: "bathroom", name: "Bathroom" },
-  { id: "office", name: "Office" },
 ];
 
 const styles = ["Modern", "Luxury", "Minimal", "Traditional", "Contemporary"];
 
-const designs = [
+const staticDesigns = [
   {
     id: 1,
-    name: "Modern L-Shape Kitchen",
-    category: "kitchen",
-    image: kitchenImage,
-    size: "10x12 ft",
+    name: "The Obsidian Pavilion",
+    category: "full-home",
+    image: fullhomeImage,
+    size: "2400 sq ft",
     style: "Modern",
-    executionCost: "₹1,50,000",
-    materialsCost: "₹80,000",
-    customizeCost: "₹20,000",
-    totalCost: "₹2,50,000",
-    trending: true,
+    totalCost: "$12,400",
+    time: "8 Months",
+    featured: true,
   },
   {
     id: 2,
-    name: "Luxury Master Bedroom",
+    name: "Etheric Timber Lodge",
     category: "bedroom",
     image: bedroomImage,
-    size: "14x16 ft",
-    style: "Luxury",
-    executionCost: "₹1,20,000",
-    materialsCost: "₹70,000",
-    customizeCost: "₹15,000",
-    totalCost: "₹2,05,000",
-    trending: true,
+    size: "800 sq ft",
+    style: "Traditional",
+    totalCost: "$8,900",
+    time: "6 Months",
+    featured: false,
   },
   {
     id: 3,
-    name: "Contemporary Living Room",
+    name: "Monolith Residence",
     category: "living-room",
     image: livingroomImage,
-    size: "18x20 ft",
-    style: "Contemporary",
-    executionCost: "₹95,000",
-    materialsCost: "₹55,000",
-    customizeCost: "₹12,000",
-    totalCost: "₹1,62,000",
-    trending: false,
+    size: "1200 sq ft",
+    style: "Minimal",
+    totalCost: "$15,200",
+    time: "12 Months",
+    featured: false,
   },
   {
     id: 4,
-    name: "Walk-in Wardrobe Design",
-    category: "bedroom",
-    image: wardrobeImage,
-    size: "8x10 ft",
-    style: "Modern",
-    executionCost: "₹65,000",
-    materialsCost: "₹45,000",
-    customizeCost: "₹8,000",
-    totalCost: "₹1,18,000",
-    trending: false,
+    name: "Azure Infinity House",
+    category: "full-home",
+    image: kitchenImage, // Placeholder
+    size: "4500 sq ft",
+    style: "Luxury",
+    totalCost: "$21,000",
+    time: "14 Months",
+    featured: false,
   },
   {
     id: 5,
-    name: "Complete 2BHK Interior",
-    category: "full-home",
-    image: fullhomeImage,
-    size: "850 sq ft",
-    style: "Modern",
-    executionCost: "₹3,50,000",
-    materialsCost: "₹2,00,000",
-    customizeCost: "₹50,000",
-    totalCost: "₹6,00,000",
-    trending: true,
-  },
-  {
-    id: 6,
-    name: "Minimal Kitchen Design",
+    name: "The Heritage Barn",
     category: "kitchen",
-    image: kitchenImage,
-    size: "8x10 ft",
-    style: "Minimal",
-    executionCost: "₹1,00,000",
-    materialsCost: "₹60,000",
-    customizeCost: "₹15,000",
-    totalCost: "₹1,75,000",
-    trending: false,
+    image: wardrobeImage, // Placeholder
+    size: "950 sq ft",
+    style: "Contemporary",
+    totalCost: "$7,200",
+    time: "5 Months",
+    featured: false,
   },
 ];
 
@@ -121,7 +86,6 @@ const DesignsCatalog = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStyle, setSelectedStyle] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
 
   const { data: dbDesigns } = useQuery({
     queryKey: ['designs'],
@@ -129,8 +93,7 @@ const DesignsCatalog = () => {
       const { data } = await supabase
         .from('designs')
         .select('*, designers(full_name)')
-        .eq('is_published', true)
-        .order('created_at', { ascending: false });
+        .eq('is_published', true);
       return data || [];
     }
   });
@@ -140,347 +103,243 @@ const DesignsCatalog = () => {
       id: `db-${dbD.id}`,
       name: dbD.name,
       category: dbD.category.toLowerCase().replace(" ", "-"),
-      image: (dbD.images && dbD.images.length > 0) ? dbD.images[0] : "",
-      size: dbD.room_size || "",
+      image: (dbD.images && dbD.images.length > 0) ? dbD.images[0] : fullhomeImage,
+      size: dbD.room_size || "Standard",
       style: dbD.style,
-      executionCost: `₹${(dbD.execution_cost || 0).toLocaleString('en-IN')}`,
-      materialsCost: `₹${(dbD.materials_cost || 0).toLocaleString('en-IN')}`,
-      customizeCost: `₹${(dbD.customize_cost || 0).toLocaleString('en-IN')}`,
       totalCost: `₹${(dbD.total_cost || 0).toLocaleString('en-IN')}`,
-      trending: dbD.is_trending || false,
+      time: "Variable",
+      featured: dbD.is_trending || false,
     }));
-    return [...designs, ...mappedDbDesigns];
+    return [...staticDesigns, ...mappedDbDesigns];
   }, [dbDesigns]);
 
   const filteredDesigns = allDesigns.filter((design) => {
-    const matchesCategory = selectedCategory === "all" || design.category === selectedCategory;
+    const matchesCat = selectedCategory === "all" || design.category === selectedCategory;
     const matchesStyle = selectedStyle === "all" || design.style === selectedStyle;
     const matchesSearch = design.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesStyle && matchesSearch;
+    return matchesCat && matchesStyle && matchesSearch;
   });
-
-  const trendingDesigns = allDesigns.filter((d) => d.trending);
 
   return (
     <Layout>
-      {/* Filters & Search */}
-      <motion.section 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="py-6 bg-primary-container border-b border-white/10 sticky top-16 md:top-20 z-40"
-      >
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
-            {/* Search */}
-            <div className="relative w-full md:w-96 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50 group-focus-within:text-white transition-colors" />
-              <Input
-                placeholder="Search designs..."
-                className="pl-12 h-12 rounded-2xl bg-white/5 border-transparent text-white placeholder:text-white/40 focus:bg-white focus:text-black focus:ring-2 focus:ring-secondary/50 transition-all"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+      {/* Dynamic font injection for the page to ensure perfection */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');
+        .font-headline { font-family: 'Newsreader', serif; }
+        .font-body { font-family: 'Manrope', sans-serif; }
+      `}</style>
 
-            {/* Filter Toggle (Mobile) */}
-            <Button
-              variant="outline"
-              className="md:hidden w-full h-12 rounded-2xl border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <SlidersHorizontal className="w-4 h-4 mr-2" />
-              Filters
-            </Button>
-
-            {/* Desktop Filters */}
-            <div className="hidden md:flex items-center gap-4">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-44 h-12 rounded-2xl bg-white/5 border-transparent text-white hover:bg-white/10 transition-colors">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent className="rounded-2xl border-white/10 bg-[#1A1A1A] text-white">
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id} className="rounded-xl hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={selectedStyle} onValueChange={setSelectedStyle}>
-                <SelectTrigger className="w-44 h-12 rounded-2xl bg-white/5 border-transparent text-white hover:bg-white/10 transition-colors">
-                  <SelectValue placeholder="Style" />
-                </SelectTrigger>
-                <SelectContent className="rounded-2xl border-white/10 bg-[#1A1A1A] text-white">
-                  <SelectItem value="all" className="rounded-xl hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">All Styles</SelectItem>
-                  {styles.map((style) => (
-                    <SelectItem key={style} value={style} className="rounded-xl hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">
-                      {style}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <AnimatePresence>
-                {(selectedCategory !== "all" || selectedStyle !== "all" || searchQuery) && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedCategory("all");
-                        setSelectedStyle("all");
-                        setSearchQuery("");
-                      }}
-                      className="rounded-full text-white/50 hover:text-white hover:bg-white/10"
-                    >
-                      <X className="w-4 h-4 mr-2" />
-                      Clear Filters
-                    </Button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* Mobile Filters */}
-          <AnimatePresence>
-            {showFilters && (
-              <motion.div 
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="md:hidden grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/10 overflow-hidden"
-              >
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="rounded-xl bg-white/5 border-transparent text-white">
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl border-white/10 bg-[#1A1A1A] text-white">
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id} className="rounded-lg hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">
-                        {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={selectedStyle} onValueChange={setSelectedStyle}>
-                  <SelectTrigger className="rounded-xl bg-white/5 border-transparent text-white">
-                    <SelectValue placeholder="Style" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl border-white/10 bg-[#1A1A1A] text-white">
-                    <SelectItem value="all" className="rounded-lg hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">All Styles</SelectItem>
-                    {styles.map((style) => (
-                      <SelectItem key={style} value={style} className="rounded-lg hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">
-                        {style}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.section>
-
-      {/* Trending Designs */}
-      {trendingDesigns.length > 0 && (
-        <section className="py-16 bg-background/50">
-          <div className="container mx-auto px-4">
-            <Reveal width="100%" direction="up" distance={30}>
-              <div className="flex items-center gap-3 mb-10">
-                <Sparkles className="w-8 h-8 text-accent animate-pulse" />
-                <h2 className="text-3xl font-extrabold text-foreground tracking-tight">Trending Collections</h2>
-              </div>
-            </Reveal>
-            
-            <Reveal width="100%" staggerChildren={0.1}>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {trendingDesigns.map((design) => (
-                  <RevealItem key={design.id}>
-                    <DesignCard design={design} />
-                  </RevealItem>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </section>
-      )}
-
-      {/* All Designs */}
-      <section className="py-20 bg-background relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <Reveal width="100%" direction="up" distance={30}>
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
-              <div>
-                <h2 className="text-4xl font-extrabold text-foreground tracking-tight mb-2">Explore All Designs</h2>
-                <p className="text-muted-foreground text-lg">Find the perfect layout for your dream space</p>
-              </div>
-              <Badge variant="outline" className="w-fit h-8 px-4 rounded-full text-base font-medium border-primary/20 bg-primary/5 text-primary">
-                {filteredDesigns.length} designs discovered
-              </Badge>
-            </div>
-          </Reveal>
+      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full">
+        <main className="max-w-[1920px] mx-auto flex flex-col md:flex-row min-h-screen">
           
-          <AnimatePresence mode="popLayout">
-            {filteredDesigns.length > 0 ? (
-              <Reveal width="100%" staggerChildren={0.08}>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {filteredDesigns.map((design) => (
-                    <RevealItem key={design.id}>
-                      <DesignCard design={design} />
-                    </RevealItem>
-                  ))}
-                </div>
-              </Reveal>
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="text-center py-24 bg-secondary/20 rounded-[3rem] border-2 border-dashed border-border"
-              >
-                <div className="max-w-md mx-auto">
-                  <Search className="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-20" />
-                  <p className="text-muted-foreground text-xl font-medium mb-8">No designs matching your requirements were found.</p>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="rounded-full px-8 h-14 border-2"
-                    onClick={() => {
-                      setSelectedCategory("all");
-                      setSelectedStyle("all");
-                      setSearchQuery("");
-                    }}
-                  >
-                    Reset All Filters
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Decorative background shape */}
-        <div className="absolute top-1/2 left-0 -translate-x-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10" />
-      </section>
-
-      {/* Lead Capture */}
-      <div className="pb-16 bg-background">
-        <LeadCaptureForm
-          variant="hero"
-          title="Found a design you love?"
-          subtitle="Get a personalized consultation and a detailed cost estimate from our top interior designers."
-        />
-      </div>
-    </Layout>
-  );
-};
-
-interface DesignCardProps {
-  design: {
-    id: number | string;
-    name: string;
-    category: string;
-    image: string;
-    size: string;
-    style: string;
-    executionCost: string;
-    materialsCost: string;
-    customizeCost: string;
-    totalCost: string;
-    trending: boolean;
-  };
-}
-
-const DesignCard = ({ design }: DesignCardProps) => {
-  return (
-    <Link to={`/designs/${design.id}`}>
-      <motion.div
-        whileHover={{ y: -12 }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        className="h-full"
-      >
-        <Card className="group overflow-hidden border-black/5 hover:border-[#C5A572]/50 transition-all duration-500 hover:shadow-[0_40px_80px_rgba(0,0,0,0.1)] rounded-[2.5rem] bg-[#F4F0EA] h-full flex flex-col">
-          <div className="relative aspect-[4/3] overflow-hidden bg-white">
-            <motion.img
-              src={design.image}
-              alt={design.name}
-              className="w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:opacity-100 transition-all duration-500"
-              whileHover={{ scale: 1.15 }}
-              transition={{ duration: 0.8 }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            
-            <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
-              <Badge className="bg-white/80 backdrop-blur-md text-black border-none px-4 py-1.5 rounded-full shadow-sm font-bold text-[10px] uppercase tracking-widest">
-                {design.style}
-              </Badge>
-              {design.trending && (
-                <Badge className="bg-[#C5A572] text-white border-none px-4 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-widest">
-                  <Sparkles className="w-3 h-3" />
-                  Trending
-                </Badge>
+          {/* Sidebar Filter */}
+          <aside className="w-full md:w-80 p-8 md:p-12 space-y-12 bg-[#f6f3f0] border-r border-[#e5e2df] shrink-0">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="font-headline italic text-2xl">Curation Filter</h2>
+              {(selectedCategory !== "all" || selectedStyle !== "all" || searchQuery !== "") && (
+                <button 
+                  onClick={() => { setSelectedCategory("all"); setSelectedStyle("all"); setSearchQuery(""); }}
+                  className="font-body text-[10px] font-bold uppercase tracking-widest text-[#74777d] hover:text-[#735c00]"
+                >
+                  Clear All
+                </button>
               )}
             </div>
 
-            <motion.div 
-              className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              whileHover={{ scale: 1.1 }}
-            >
-              <div className="w-14 h-14 bg-black rounded-full flex items-center justify-center text-white shadow-2xl">
-                <ArrowRight className="w-7 h-7" />
-              </div>
-            </motion.div>
-          </div>
-          
-          <CardContent className="p-10 flex-grow flex flex-col">
-            <div className="mb-8">
-              <p className="text-[#C5A572] font-black text-[10px] uppercase tracking-[0.3em] mb-3">{design.category.replace("-", " ")}</p>
-              <h3 className="font-serif text-black text-3xl group-hover:text-[#C5A572] transition-colors leading-tight mb-4">
-                {design.name}
-              </h3>
-              <div className="flex items-center gap-3 text-black/40 font-bold text-sm">
-                <div className="w-2 h-2 rounded-full bg-[#C5A572]" />
-                {design.size}
+            <div className="relative w-full mb-8">
+               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+               <input 
+                 className="pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded text-sm w-full outline-none font-body shadow-sm" 
+                 placeholder="Search designs..." 
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)}
+                 type="text"
+               />
+            </div>
+
+            <div className="space-y-6">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Spatial Category</h3>
+              <div className="flex flex-col gap-4">
+                {categories.map(cat => (
+                  <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
+                    <input 
+                      type="radio" 
+                      name="category"
+                      checked={selectedCategory === cat.id}
+                      onChange={() => setSelectedCategory(cat.id)}
+                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                    />
+                    <span className={`text-sm font-medium transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
+                      {cat.name}
+                    </span>
+                  </label>
+                ))}
               </div>
             </div>
 
-            <div className="space-y-4 text-sm bg-white p-8 rounded-[2.5rem] mb-10 border border-black/5 hover:border-[#C5A572]/30 transition-all flex-grow shadow-sm">
-              <div className="flex justify-between items-center">
-                <span className="text-black/40 font-bold uppercase tracking-widest text-[9px]">Execution Strategy</span>
-                <span className="text-black font-black text-lg">{design.executionCost}</span>
+            <div className="space-y-6 pt-6 border-t border-[#e5e2df]">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Architectural Styles</h3>
+              <div className="flex flex-col gap-4">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <input 
+                    type="radio" 
+                    name="style"
+                    checked={selectedStyle === "all"}
+                    onChange={() => setSelectedStyle("all")}
+                    className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                  />
+                  <span className={`text-sm font-medium transition-colors ${selectedStyle === "all" ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
+                    Any Style
+                  </span>
+                </label>
+                {styles.map(style => (
+                  <label key={style} className="flex items-center gap-3 cursor-pointer group">
+                    <input 
+                      type="radio" 
+                      name="style"
+                      checked={selectedStyle === style}
+                      onChange={() => setSelectedStyle(style)}
+                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                    />
+                    <span className={`text-sm font-medium transition-colors ${selectedStyle === style ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
+                      {style}
+                    </span>
+                  </label>
+                ))}
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-black/30 font-bold uppercase tracking-widest text-[9px]">Materials + Logistics</span>
-                <span className="text-black/70 font-bold">{design.materialsCost}</span>
-              </div>
-              <div className="pt-5 border-t border-black/5 flex justify-between items-end mt-4">
-                <div>
-                  <span className="text-black/20 font-mono text-[9px] uppercase tracking-[0.3em] block mb-1">Total_Capital_Expenditure</span>
-                  <span className="text-black font-black text-3xl tracking-tighter leading-none">{design.totalCost}</span>
+            </div>
+
+            <button className="w-full py-4 mt-8 bg-[#1c1c1a] text-white rounded-sm text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#735c00] transition-colors shadow-lg">
+              Apply Curation
+            </button>
+          </aside>
+
+          {/* Content Canvas */}
+          <section className="flex-1 p-8 md:p-16 bg-[#fcf9f6]">
+            
+            {/* Header */}
+            <header className="mb-16">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+                <div className="max-w-2xl">
+                  <h1 className="text-6xl md:text-8xl font-headline leading-tight tracking-tight mb-6">
+                    Designs <br/><span className="italic font-normal">Catalog.</span>
+                  </h1>
+                  <p className="text-lg md:text-xl text-[#44474c] leading-relaxed font-body">
+                    A curated monograph of avant-garde blueprints. Every design is engineered for structural integrity and high-end aesthetic resonance.
+                  </p>
                 </div>
-                <div className="text-[10px] font-mono text-[#C5A572] font-bold uppercase tracking-widest bg-[#C5A572]/5 px-3 py-1 rounded-lg">Verified</div>
+                <div className="flex shrink-0">
+                  <span className="px-5 py-2.5 bg-[#eae8e5] rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#735c00]"></span>
+                    {filteredDesigns.length} Designs Active
+                  </span>
+                </div>
               </div>
-            </div>
+            </header>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Button className="rounded-2xl h-16 font-black text-base shadow-xl bg-black text-white hover:bg-black/90 transition-all duration-300" size="lg">
-                View Protocol
-              </Button>
-              <Button variant="outline" size="lg" className="rounded-2xl h-16 font-black text-base border-black/10 text-black hover:bg-black/5 transition-all duration-300">
-                Customize
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-    </Link>
+            {/* Grid */}
+            <AnimatePresence>
+              {filteredDesigns.length === 0 ? (
+                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]">
+                    <h3 className="font-headline italic text-2xl mb-2 text-[#1c1c1a]">No Blueprints Found</h3>
+                    <p className="font-body text-sm text-[#74777d]">Adjust the structural filters to reveal more monographs.</p>
+                 </motion.div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                  {filteredDesigns.map((design, index) => {
+                    const isFeatured = design.featured && index === 0;
+
+                    return (
+                      <motion.article 
+                        key={design.id} 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`group cursor-pointer flex flex-col ${isFeatured ? 'lg:col-span-2' : ''}`}
+                      >
+                        <Link to={`/designs/${design.id}`} className="block h-full flex flex-col">
+                          <div className={`relative overflow-hidden bg-[#f6f3f0] mb-6 rounded-sm ${isFeatured ? 'aspect-[16/10]' : 'aspect-square'}`}>
+                            <img 
+                              src={design.image} 
+                              alt={design.name} 
+                              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 mix-blend-multiply opacity-90"
+                            />
+                            
+                            <div className="absolute top-6 left-6">
+                              <span className="bg-[#fcf9f6]/90 backdrop-blur-md px-4 py-2 rounded-full text-[9px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 shadow-sm border border-[#e5e2df]">
+                                <BadgeCheck className="w-3.5 h-3.5 text-[#735c00]" />
+                                Verified Blueprint
+                              </span>
+                            </div>
+
+                            {/* Like Button */}
+                            <div className="absolute top-6 right-6">
+                              <div className="w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-[#1c1c1a] hover:text-[#ba1a1a] transition-colors shadow-sm cursor-pointer border border-[#e5e2df]">
+                                <Heart className="w-4 h-4" />
+                              </div>
+                            </div>
+
+                            {isFeatured && (
+                              <div className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row justify-between items-end gap-4">
+                                <div className="bg-[#fcf9f6]/95 backdrop-blur-md p-6 rounded-lg max-w-sm w-full border border-[#e5e2df] shadow-lg">
+                                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00] mb-2">Featured Blueprint</h4>
+                                  <h3 className="text-2xl font-headline font-bold mb-3">{design.name}</h3>
+                                  <div className="flex items-center gap-4 text-[10px] font-bold uppercase opacity-60 tracking-wider">
+                                    <span>{design.size}</span>
+                                    <span>•</span>
+                                    <span>{design.time} Build</span>
+                                  </div>
+                                </div>
+                                <div className="bg-[#1c1c1a] text-white p-6 rounded-lg shrink-0 shadow-lg border border-black/10 hidden sm:block">
+                                  <span className="text-[10px] uppercase opacity-60 block mb-1 tracking-widest">Starting from</span>
+                                  <span className="text-2xl font-body font-bold">{design.totalCost}</span>
+                                </div>
+                              </div>
+                            )}
+
+                            {!isFeatured && (
+                              <div className="absolute bottom-4 left-4">
+                                <span className="bg-[#735c00] text-white px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-sm shadow-md">
+                                  {design.style}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {!isFeatured && (
+                            <div className="space-y-3 flex-grow flex flex-col">
+                              <div className="flex justify-between items-start gap-4">
+                                <h3 className="text-xl font-headline font-bold leading-tight">{design.name}</h3>
+                                <span className="text-lg font-body font-bold text-[#1c1c1a] whitespace-nowrap">{design.totalCost}</span>
+                              </div>
+                              <p className="text-sm text-[#44474c] line-clamp-2 leading-relaxed flex-grow">A masterclass in {design.style.toLowerCase()} luxury, focusing on spatial harmony and robust architectural detailing.</p>
+                              <div className="flex items-center gap-5 text-[10px] font-bold uppercase tracking-widest opacity-60 pt-3 border-t border-[#e5e2df] mt-auto">
+                                <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {design.time}</span>
+                                <span className="flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" /> {design.size}</span>
+                              </div>
+                            </div>
+                          )}
+                        </Link>
+                      </motion.article>
+                    );
+                  })}
+                </div>
+              )}
+            </AnimatePresence>
+
+            {/* Pagination/Loader */}
+            {filteredDesigns.length > 0 && (
+              <div className="mt-24 flex flex-col items-center gap-8">
+                <div className="h-[1px] w-full bg-[#e5e2df]"></div>
+                <button className="px-12 py-5 border border-[#c4c6cc] text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#1c1c1a] hover:text-white transition-all duration-500 rounded-sm">
+                  Discover More Blueprints
+                </button>
+              </div>
+            )}
+
+          </section>
+        </main>
+      </div>
+    </Layout>
   );
 };
 
