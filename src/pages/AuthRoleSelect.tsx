@@ -1,11 +1,7 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Home, Wrench, Palette, Package } from "lucide-react";
+import { Home, Wrench, Palette, Package, ArrowRight } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { FloatingBubbles } from "@/components/ui/FloatingBubbles";
-import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion } from "framer-motion";
 
 export const AuthRoleSelect = () => {
@@ -17,121 +13,119 @@ export const AuthRoleSelect = () => {
     {
       id: "customer",
       icon: Home,
-      title: "I'm a Customer",
-      description: "Browse designs, buy materials, find professionals for your home.",
-      buttonText: isLogin ? "Login as Customer" : "Continue as Customer",
+      title: "Client Portal",
+      description: "Browse curated designs and procure raw materials for your next project.",
       path: "/auth",
-    },
-    {
-      id: "professional",
-      icon: Wrench,
-      title: "I'm a Professional",
-      description: "Electrician, plumber, carpenter? List your services and get hired.",
-      buttonText: isLogin ? "Login as Professional" : "Join as Professional",
-      path: "/professional/auth",
     },
     {
       id: "designer",
       icon: Palette,
-      title: "I'm a Designer",
-      description: "Interior designer? Upload your designs and reach thousands of homeowners.",
-      buttonText: isLogin ? "Login as Designer" : "Join as Designer",
+      title: "Architect & Designer Access",
+      description: "Deploy your original blueprints to our verified network of clients.",
       path: "/designer/auth",
+    },
+    {
+      id: "professional",
+      icon: Wrench,
+      title: "Professional Registry",
+      description: "Secure contracts for execution and structural implementation.",
+      path: "/professional/auth",
     },
     {
       id: "supplier",
       icon: Package,
-      title: "I'm a Supplier",
-      description: "Sell construction materials directly to customers and professionals.",
-      buttonText: isLogin ? "Login as Supplier" : "Join as Supplier",
+      title: "Logistics & Supply Chain",
+      description: "Fulfill premium material requisitions directly to verified sites.",
       path: "/supplier/auth",
     },
   ];
 
   return (
     <Layout>
-      <div className="relative min-h-[90vh] overflow-hidden bg-secondary/20 flex items-center">
-        {/* Floating Bubbles */}
-        <FloatingBubbles count={16} palette="brand" />
-
-        <div className="container mx-auto px-4 py-16 md:py-24 max-w-6xl relative z-10">
-          <Reveal width="100%" direction="up" distance={30}>
-            <div className="text-center mb-16">
-              <motion.h1 
-                className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                {isLogin ? (
-                  <>Login to <span className="text-shimmer">BuildBazaarX</span></>
-                ) : (
-                  <>Join <span className="text-shimmer">BuildBazaarX</span></>
-                )}
-              </motion.h1>
-              <p className="text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed">
-                Select your role to {isLogin ? "access your dashboard" : "get started with the platform"}.
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');
+        .font-headline { font-family: 'Newsreader', serif; }
+        .font-body { font-family: 'Manrope', sans-serif; }
+      `}</style>
+      
+      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative">
+        {/* Subtle grid background to match the "blueprint" aesthetic in a muted way */}
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e5e2df 1px, transparent 1px), linear-gradient(90deg, #e5e2df 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.3 }} />
+        
+        <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
+          
+          <div className="flex flex-col md:flex-row gap-16 md:gap-24 items-start">
+            
+            {/* Header Area */}
+            <div className="w-full md:w-1/3 shrink-0 sticky top-32">
+               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[#735c00] mb-4 block font-bold">Authentication Protocol</span>
+               <h1 className="text-6xl md:text-7xl font-headline tracking-tight leading-none mb-6">
+                {isLogin ? "System" : "Platform"} <br/><span className="italic">Access.</span>
+              </h1>
+               <div className="w-12 h-[1px] bg-[#c4c6cc] mb-6"></div>
+              <p className="text-lg font-body text-[#44474c] leading-relaxed max-w-sm">
+                {isLogin 
+                  ? "Select your verified sector to securely enter the dashboard and manage operations." 
+                  : "Establish your identity within the network. Select the appropriate operational sector to begin."}
               </p>
             </div>
-          </Reveal>
 
-          <Reveal width="100%" staggerChildren={0.1}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {roles.map((role) => {
-                const Icon = role.icon;
-                return (
-                  <RevealItem key={role.id}>
+            {/* Roles Grid */}
+            <div className="w-full md:w-2/3">
+              <motion.div 
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  visible: { transition: { staggerChildren: 0.1 } }
+                }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              >
+                {roles.map((role) => {
+                  const Icon = role.icon;
+                  return (
                     <motion.div
-                      whileHover={{ scale: 1.02, y: -5 }}
-                      whileTap={{ scale: 0.98 }}
+                      key={role.id}
+                      variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: { opacity: 1, y: 0 }
+                      }}
+                      whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      className="cursor-pointer group flex flex-col h-full"
+                      onClick={() => navigate(`${role.path}?mode=${isLogin ? 'login' : 'register'}`)}
                     >
-                      <Card 
-                        className="flex flex-col h-full border-border/50 hover:border-primary/50 transition-all duration-500 cursor-pointer group shadow-xl hover:shadow-2xl bg-background overflow-hidden relative"
-                        onClick={() => navigate(`${role.path}?mode=${isLogin ? 'login' : 'register'}`)}
-                      >
-                        <CardHeader className="pb-6 relative z-10">
-                          <motion.div 
-                            className="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-500"
-                            whileHover={{ rotate: [0, -10, 10, 0] }}
-                          >
-                            <Icon className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-500" />
-                          </motion.div>
-                          <CardTitle className="text-3xl font-bold tracking-tight mb-2 group-hover:text-primary transition-colors">
-                            {role.title}
-                          </CardTitle>
-                          <CardDescription className="text-lg leading-relaxed">
-                            {role.description}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardFooter className="pt-6 mt-auto relative z-10">
-                          <Button 
-                            className="w-full h-14 text-lg font-bold rounded-2xl group-hover:shadow-2xl transition-all duration-500 relative overflow-hidden" 
-                            variant="outline"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`${role.path}?mode=${isLogin ? 'login' : 'register'}`);
-                            }}
-                          >
-                            <span className="relative z-10">{role.buttonText}</span>
-                            <motion.div 
-                              className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                            />
-                          </Button>
-                        </CardFooter>
+                      <article className="p-8 md:p-10 bg-[#f6f3f0] border border-[#e5e2df] group-hover:border-[#735c00] transition-colors rounded-sm flex-grow flex flex-col relative overflow-hidden">
                         
-                        {/* Subtle background glow on hover */}
-                        <motion.div 
-                          className="absolute -right-20 -bottom-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" 
-                        />
-                      </Card>
+                        <div className="mb-12">
+                          <div className="w-12 h-12 rounded-full bg-[#e5e2df] flex items-center justify-center mb-6 group-hover:bg-[#1c1c1a] transition-colors">
+                            <Icon className="w-5 h-5 text-[#1c1c1a] group-hover:text-white transition-colors" />
+                          </div>
+                          <h3 className="text-2xl font-headline font-semibold text-[#1c1c1a] leading-tight mb-3">
+                            {role.title}
+                          </h3>
+                          <p className="font-body text-[#44474c] text-sm leading-relaxed">
+                            {role.description}
+                          </p>
+                        </div>
+                        
+                        <div className="mt-auto border-t border-[#e5e2df] pt-6 flex justify-between items-center group-hover:border-[#735c00] transition-colors">
+                          <span className="text-[10px] uppercase font-bold tracking-widest text-[#735c00]">
+                            {isLogin ? "Authenticate" : "Initialize Registration"}
+                          </span>
+                          <div className="w-8 h-8 rounded-full border border-[#c4c6cc] group-hover:border-[#735c00] flex items-center justify-center group-hover:bg-[#735c00] group-hover:text-white transition-all">
+                            <ArrowRight className="w-3 h-3" />
+                          </div>
+                        </div>
+
+                      </article>
                     </motion.div>
-                  </RevealItem>
-                );
-              })}
+                  );
+                })}
+              </motion.div>
             </div>
-          </Reveal>
-        </div>
+
+          </div>
+        </main>
       </div>
     </Layout>
   );
