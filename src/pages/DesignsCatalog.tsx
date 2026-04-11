@@ -136,7 +136,7 @@ const DesignsCatalog = () => {
   });
 
   const allDesigns = useMemo(() => {
-    const mappedDbDesigns = (dbDesigns || []).map((dbD) => ({
+    const mappedDbDesigns = (dbDesigns || []).map((dbD: any) => ({
       id: `db-${dbD.id}`,
       name: dbD.name,
       category: dbD.category.toLowerCase().replace(" ", "-"),
@@ -167,16 +167,16 @@ const DesignsCatalog = () => {
       <motion.section 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="py-6 bg-background/80 backdrop-blur-xl border-b border-border sticky top-16 md:top-20 z-40"
+        className="py-6 bg-primary-container border-b border-white/10 sticky top-16 md:top-20 z-40"
       >
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
             {/* Search */}
             <div className="relative w-full md:w-96 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50 group-focus-within:text-white transition-colors" />
               <Input
                 placeholder="Search designs..."
-                className="pl-12 h-12 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all"
+                className="pl-12 h-12 rounded-2xl bg-white/5 border-transparent text-white placeholder:text-white/40 focus:bg-white focus:text-black focus:ring-2 focus:ring-secondary/50 transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -185,7 +185,7 @@ const DesignsCatalog = () => {
             {/* Filter Toggle (Mobile) */}
             <Button
               variant="outline"
-              className="md:hidden w-full h-12 rounded-2xl border-2"
+              className="md:hidden w-full h-12 rounded-2xl border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
               onClick={() => setShowFilters(!showFilters)}
             >
               <SlidersHorizontal className="w-4 h-4 mr-2" />
@@ -195,12 +195,12 @@ const DesignsCatalog = () => {
             {/* Desktop Filters */}
             <div className="hidden md:flex items-center gap-4">
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-44 h-12 rounded-2xl bg-secondary/30 border-transparent">
+                <SelectTrigger className="w-44 h-12 rounded-2xl bg-white/5 border-transparent text-white hover:bg-white/10 transition-colors">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
-                <SelectContent className="rounded-2xl border-border/50">
+                <SelectContent className="rounded-2xl border-white/10 bg-[#1A1A1A] text-white">
                   {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id} className="rounded-xl">
+                    <SelectItem key={cat.id} value={cat.id} className="rounded-xl hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">
                       {cat.name}
                     </SelectItem>
                   ))}
@@ -208,13 +208,13 @@ const DesignsCatalog = () => {
               </Select>
 
               <Select value={selectedStyle} onValueChange={setSelectedStyle}>
-                <SelectTrigger className="w-44 h-12 rounded-2xl bg-secondary/30 border-transparent">
+                <SelectTrigger className="w-44 h-12 rounded-2xl bg-white/5 border-transparent text-white hover:bg-white/10 transition-colors">
                   <SelectValue placeholder="Style" />
                 </SelectTrigger>
-                <SelectContent className="rounded-2xl border-border/50">
-                  <SelectItem value="all" className="rounded-xl">All Styles</SelectItem>
+                <SelectContent className="rounded-2xl border-white/10 bg-[#1A1A1A] text-white">
+                  <SelectItem value="all" className="rounded-xl hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">All Styles</SelectItem>
                   {styles.map((style) => (
-                    <SelectItem key={style} value={style} className="rounded-xl">
+                    <SelectItem key={style} value={style} className="rounded-xl hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">
                       {style}
                     </SelectItem>
                   ))}
@@ -236,7 +236,7 @@ const DesignsCatalog = () => {
                         setSelectedStyle("all");
                         setSearchQuery("");
                       }}
-                      className="rounded-full text-muted-foreground hover:text-destructive"
+                      className="rounded-full text-white/50 hover:text-white hover:bg-white/10"
                     >
                       <X className="w-4 h-4 mr-2" />
                       Clear Filters
@@ -254,15 +254,15 @@ const DesignsCatalog = () => {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="md:hidden grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-border overflow-hidden"
+                className="md:hidden grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/10 overflow-hidden"
               >
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="rounded-xl bg-secondary/30">
+                  <SelectTrigger className="rounded-xl bg-white/5 border-transparent text-white">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
+                  <SelectContent className="rounded-xl border-white/10 bg-[#1A1A1A] text-white">
                     {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id} className="rounded-lg">
+                      <SelectItem key={cat.id} value={cat.id} className="rounded-lg hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">
                         {cat.name}
                       </SelectItem>
                     ))}
@@ -270,13 +270,13 @@ const DesignsCatalog = () => {
                 </Select>
 
                 <Select value={selectedStyle} onValueChange={setSelectedStyle}>
-                  <SelectTrigger className="rounded-xl bg-secondary/30">
+                  <SelectTrigger className="rounded-xl bg-white/5 border-transparent text-white">
                     <SelectValue placeholder="Style" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="all" className="rounded-lg">All Styles</SelectItem>
+                  <SelectContent className="rounded-xl border-white/10 bg-[#1A1A1A] text-white">
+                    <SelectItem value="all" className="rounded-lg hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">All Styles</SelectItem>
                     {styles.map((style) => (
-                      <SelectItem key={style} value={style} className="rounded-lg">
+                      <SelectItem key={style} value={style} className="rounded-lg hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer">
                         {style}
                       </SelectItem>
                     ))}
@@ -406,23 +406,23 @@ const DesignCard = ({ design }: DesignCardProps) => {
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         className="h-full"
       >
-        <Card className="group overflow-hidden border-border/50 hover:border-primary/50 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[2rem] bg-background h-full flex flex-col">
-          <div className="relative aspect-[4/3] overflow-hidden">
+        <Card className="group overflow-hidden border-black/5 hover:border-[#C5A572]/50 transition-all duration-500 hover:shadow-[0_40px_80px_rgba(0,0,0,0.1)] rounded-[2.5rem] bg-[#F4F0EA] h-full flex flex-col">
+          <div className="relative aspect-[4/3] overflow-hidden bg-white">
             <motion.img
               src={design.image}
               alt={design.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:opacity-100 transition-all duration-500"
               whileHover={{ scale: 1.15 }}
               transition={{ duration: 0.8 }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
-            <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10">
-              <Badge className="bg-background/90 backdrop-blur-md text-foreground border-none px-3 py-1 rounded-full shadow-lg">
+            <div className="absolute top-6 left-6 flex flex-wrap gap-2 z-10">
+              <Badge className="bg-white/80 backdrop-blur-md text-black border-none px-4 py-1.5 rounded-full shadow-sm font-bold text-[10px] uppercase tracking-widest">
                 {design.style}
               </Badge>
               {design.trending && (
-                <Badge className="bg-destructive/90 backdrop-blur-md text-destructive-foreground border-none px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                <Badge className="bg-[#C5A572] text-white border-none px-4 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-widest">
                   <Sparkles className="w-3 h-3" />
                   Trending
                 </Badge>
@@ -430,48 +430,50 @@ const DesignCard = ({ design }: DesignCardProps) => {
             </div>
 
             <motion.div 
-              className="absolute bottom-4 right-4 z-10"
-              initial={{ scale: 0, opacity: 0 }}
-              whileHover={{ scale: 1, opacity: 1 }}
+              className="absolute bottom-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              whileHover={{ scale: 1.1 }}
             >
-              <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white shadow-xl">
-                <ArrowRight className="w-6 h-6" />
+              <div className="w-14 h-14 bg-black rounded-full flex items-center justify-center text-white shadow-2xl">
+                <ArrowRight className="w-7 h-7" />
               </div>
             </motion.div>
           </div>
           
-          <CardContent className="p-8 flex-grow flex flex-col">
-            <div className="mb-6">
-              <p className="text-primary font-bold text-xs uppercase tracking-widest mb-2 opacity-80">{design.category.replace("-", " ")}</p>
-              <h3 className="font-extrabold text-foreground text-2xl group-hover:text-primary transition-colors leading-tight mb-2">
+          <CardContent className="p-10 flex-grow flex flex-col">
+            <div className="mb-8">
+              <p className="text-[#C5A572] font-black text-[10px] uppercase tracking-[0.3em] mb-3">{design.category.replace("-", " ")}</p>
+              <h3 className="font-serif text-black text-3xl group-hover:text-[#C5A572] transition-colors leading-tight mb-4">
                 {design.name}
               </h3>
-              <p className="text-muted-foreground font-medium flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+              <div className="flex items-center gap-3 text-black/40 font-bold text-sm">
+                <div className="w-2 h-2 rounded-full bg-[#C5A572]" />
                 {design.size}
-              </p>
+              </div>
             </div>
 
-            <div className="space-y-4 text-sm bg-secondary/20 p-6 rounded-3xl mb-8 border border-transparent hover:border-primary/10 transition-all flex-grow">
+            <div className="space-y-4 text-sm bg-white p-8 rounded-[2.5rem] mb-10 border border-black/5 hover:border-[#C5A572]/30 transition-all flex-grow shadow-sm">
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground font-medium">Execution:</span>
-                <span className="text-foreground font-bold">{design.executionCost}</span>
+                <span className="text-black/40 font-bold uppercase tracking-widest text-[9px]">Execution Strategy</span>
+                <span className="text-black font-black text-lg">{design.executionCost}</span>
               </div>
-              <div className="flex justify-between items-center text-xs opacity-80">
-                <span className="text-muted-foreground">Materials + Labour:</span>
-                <span className="text-foreground font-semibold">{design.materialsCost}</span>
+              <div className="flex justify-between items-center">
+                <span className="text-black/30 font-bold uppercase tracking-widest text-[9px]">Materials + Logistics</span>
+                <span className="text-black/70 font-bold">{design.materialsCost}</span>
               </div>
-              <div className="pt-3 border-t border-border/50 flex justify-between items-center">
-                <span className="text-foreground font-extrabold text-lg">Total Cost:</span>
-                <span className="text-primary font-black text-xl">{design.totalCost}</span>
+              <div className="pt-5 border-t border-black/5 flex justify-between items-end mt-4">
+                <div>
+                  <span className="text-black/20 font-mono text-[9px] uppercase tracking-[0.3em] block mb-1">Total_Capital_Expenditure</span>
+                  <span className="text-black font-black text-3xl tracking-tighter leading-none">{design.totalCost}</span>
+                </div>
+                <div className="text-[10px] font-mono text-[#C5A572] font-bold uppercase tracking-widest bg-[#C5A572]/5 px-3 py-1 rounded-lg">Verified</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Button className="rounded-2xl h-12 font-bold shadow-lg" size="sm">
-                View Details
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Button className="rounded-2xl h-16 font-black text-base shadow-xl bg-black text-white hover:bg-black/90 transition-all duration-300" size="lg">
+                View Protocol
               </Button>
-              <Button variant="outline" size="sm" className="rounded-2xl h-12 font-bold border-2 hover:bg-primary/5 hover:text-primary hover:border-primary/30">
+              <Button variant="outline" size="lg" className="rounded-2xl h-16 font-black text-base border-black/10 text-black hover:bg-black/5 transition-all duration-300">
                 Customize
               </Button>
             </div>

@@ -118,43 +118,44 @@ export const MaterialsSection = () => {
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
                       className="h-full"
                     >
-                      <Card className="group overflow-hidden border-on-surface/5 hover:border-secondary/30 transition-all duration-500 hover:shadow-xl h-full flex flex-col rounded-2xl bg-white/60 backdrop-blur-sm">
-                        <div className="relative aspect-square overflow-hidden bg-muted/30">
+                      <Card className="group overflow-hidden border-border/50 hover:border-[#C5A572]/50 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] h-full flex flex-col rounded-[2rem] bg-[#F4F0EA]">
+                        <div className="relative aspect-square overflow-hidden bg-white">
                           <motion.img
                             src={product.image}
                             alt={product.name}
-                            className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-500"
-                            whileHover={{ scale: 1.1 }}
+                            className="w-full h-full object-cover transition-all duration-500 mix-blend-multiply"
+                            whileHover={{ scale: 1.15 }}
                             transition={{ duration: 0.8 }}
                           />
-                          <div className="absolute top-2 left-2 flex flex-col gap-1">
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                          <div className="absolute top-4 left-4 flex flex-col gap-1 z-10">
                             <motion.div 
-                              className="bg-secondary text-white text-[9px] font-bold px-2 py-0.5 rounded shadow-lg"
+                              className="bg-destructive text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-lg ring-2 ring-destructive/20"
                             >
                               {discount}% OFF
                             </motion.div>
-                            <div className="bg-black/60 backdrop-blur-md text-white text-[8px] font-mono px-2 py-0.5 rounded">
+                            <div className="bg-black/40 backdrop-blur-md text-white/80 text-[8px] font-mono px-2 py-0.5 rounded mt-1">
                               SKU_0{index + 1}
                             </div>
                           </div>
                         </div>
-                        <CardContent className="p-5 flex-grow flex flex-col">
-                          <p className="text-[10px] text-secondary font-bold uppercase tracking-widest mb-2">{product.brand}</p>
-                          <h3 className="text-sm font-bold text-on-surface line-clamp-2 mb-3 leading-tight group-hover:text-secondary transition-colors duration-300">
+                        <CardContent className="p-5 flex-grow flex flex-col pt-6">
+                          <p className="text-[10px] text-[#C5A572] font-black uppercase tracking-[0.2em] mb-2">{product.brand}</p>
+                          <h3 className="text-base font-serif font-bold text-black line-clamp-2 mb-3 leading-tight transition-colors duration-300">
                             {product.name}
                           </h3>
                           <div className="mt-auto">
                             <div className="flex items-center gap-1 mb-3">
                               {[1, 2, 3, 4, 5].map((s) => (
-                                <Star key={s} className={`w-2.5 h-2.5 ${s <= Math.floor(product.rating) ? "fill-secondary text-secondary" : "fill-on-surface/10 text-on-surface/10"}`} />
+                                <Star key={s} className={`w-3 h-3 ${s <= Math.floor(product.rating) ? "fill-[#C5A572] text-[#C5A572]" : "fill-black/10 text-black/10"}`} />
                               ))}
-                              <span className="text-[9px] text-on-surface/40 font-mono ml-1">{product.rating}</span>
+                              <span className="text-[10px] text-black/40 font-mono ml-1">{product.rating}</span>
                             </div>
                             <div className="flex items-baseline gap-2">
-                              <span className="font-bold text-xl text-on-surface tracking-tighter">₹{product.price}</span>
-                              <span className="text-[10px] text-on-surface/40 line-through font-medium">₹{product.originalPrice}</span>
+                              <span className="font-black text-xl text-black tracking-tighter">₹{product.price}</span>
+                              <span className="text-[10px] text-black/40 line-through font-medium">₹{product.originalPrice}</span>
                             </div>
-                            <p className="text-[10px] text-on-surface/50 font-medium tracking-wide mt-1 uppercase italic">{product.unit}</p>
+                            <p className="text-[10px] text-black/50 font-medium tracking-wide mt-1 uppercase italic">{product.unit}</p>
                           </div>
                         </CardContent>
                       </Card>

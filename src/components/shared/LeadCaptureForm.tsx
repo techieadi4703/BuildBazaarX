@@ -121,27 +121,27 @@ export const LeadCaptureForm = ({
           <Reveal width="100%" direction="up" delay={0.2}>
             <motion.form
               onSubmit={handleSubmit}
-              className={`${isHero ? "bg-background p-8 md:p-12 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.2)]" : "bg-background p-8 md:p-12 rounded-3xl shadow-xl"} border border-border/50`}
+              className={`${isHero ? "bg-[#C5A572] p-8 md:p-12 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.2)]" : "bg-[#C5A572] p-8 md:p-12 rounded-3xl shadow-xl"} border border-white/20`}
               whileHover={{ y: -5 }}
               transition={{ duration: 0.5 }}
             >
               <div className={`grid ${isCompact ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-2"} gap-6 mb-8`}>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="name" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Full Name</Label>
+                    <Label htmlFor="name" className="text-sm font-bold uppercase tracking-wider text-black/60">Full Name</Label>
                     <Input
                       id="name"
                       placeholder="Enter your name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all duration-300"
+                      className="rounded-xl h-12 bg-[#E5DACE] border-transparent focus:bg-white focus:border-white transition-all duration-300 text-black placeholder:text-black/40"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="phone" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Phone Number</Label>
+                    <Label htmlFor="phone" className="text-sm font-bold uppercase tracking-wider text-black/60">Phone Number</Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -149,31 +149,31 @@ export const LeadCaptureForm = ({
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all duration-300"
+                      className="rounded-xl h-12 bg-[#E5DACE] border-transparent focus:bg-white focus:border-white transition-all duration-300 text-black placeholder:text-black/40"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="city" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">City</Label>
+                    <Label htmlFor="city" className="text-sm font-bold uppercase tracking-wider text-black/60">City</Label>
                     <Input
                       id="city"
                       placeholder="Your city"
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all duration-300"
+                      className="rounded-xl h-12 bg-[#E5DACE] border-transparent focus:bg-white focus:border-white transition-all duration-300 text-black placeholder:text-black/40"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="budget" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Budget Range</Label>
+                    <Label htmlFor="budget" className="text-sm font-bold uppercase tracking-wider text-black/60">Budget Range</Label>
                     <Select
                       value={formData.budget}
                       onValueChange={(value) => setFormData({ ...formData, budget: value })}
                     >
-                      <SelectTrigger id="budget" className="rounded-xl h-12 bg-secondary/30 border-transparent focus:bg-background focus:border-primary transition-all duration-300">
+                      <SelectTrigger id="budget" className="rounded-xl h-12 bg-[#E5DACE] border-transparent focus:bg-white focus:border-white transition-all duration-300 text-black">
                         <SelectValue placeholder="Select budget" />
                       </SelectTrigger>
                       <SelectContent>
@@ -192,14 +192,14 @@ export const LeadCaptureForm = ({
                 <Button 
                   type="submit" 
                   size="lg" 
-                  className="w-full sm:w-auto rounded-full px-12 h-14 text-lg font-bold shadow-2xl group relative overflow-hidden transition-all duration-500"
+                  className="w-full sm:w-auto rounded-full px-12 h-14 text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/80 group relative overflow-hidden transition-all duration-500"
                   disabled={isSubmitting}
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     {isSubmitting ? "Submitting..." : "Get Free Consultation"}
                   </span>
                   <motion.div 
-                    className="absolute inset-0 bg-primary-foreground/10"
+                    className="absolute inset-0 bg-white/10"
                     initial={{ x: "-100%" }}
                     whileHover={{ x: "100%" }}
                     transition={{ duration: 0.5 }}

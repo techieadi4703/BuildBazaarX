@@ -133,11 +133,12 @@ const RawMaterials = () => {
           .single();
 
         if (profile) {
+          const typedProfile = profile as any;
           setFormData(prev => ({
             ...prev,
-            name: profile.full_name || prev.name,
-            phone: profile.phone || prev.phone,
-            city: profile.city || prev.city,
+            name: typedProfile.full_name || prev.name,
+            phone: typedProfile.phone || prev.phone,
+            city: typedProfile.city || prev.city,
           }));
         }
       }
@@ -471,116 +472,137 @@ const RawMaterials = () => {
       </section>
 
       {/* Lead Form */}
-      <section className="py-24 bg-card">
-        <div className="container mx-auto px-4">
+      <section className="py-24 bg-primary-container relative">
+        <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />
+        <div className="absolute inset-0 bg-dot-grid opacity-[0.05] pointer-events-none" />
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto">
             <Reveal width="100%" direction="up">
-              <div className="text-center mb-12">
-                <h2 className="text-4xl font-extrabold text-foreground mb-4 tracking-tight">
+              <div className="text-center mb-16">
+                <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-secondary mb-4 block">Custom_Requisition</span>
+                <h2 className="text-4xl md:text-5xl font-serif text-white mb-6 tracking-tight italic">
                   Can't Find What You Need?
                 </h2>
-                <p className="text-muted-foreground text-xl">
+                <p className="text-white/60 text-lg md:text-xl font-sans max-w-2xl mx-auto leading-relaxed">
                   Tell us your requirements and we'll source it for you at the best market price.
                 </p>
               </div>
             </Reveal>
 
-            <motion.form 
-              onSubmit={handleSubmit} 
-              className="space-y-6 bg-background p-10 rounded-[2.5rem] border border-border/50 shadow-2xl"
-              whileHover={{ y: -5 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="grid sm:grid-cols-2 gap-6">
-                <RevealItem>
-                  <div className="space-y-3">
-                    <Label htmlFor="name" className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Full Name</Label>
-                    <Input
-                      id="name"
-                      placeholder="Your name"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
-                      className="rounded-xl h-12 bg-surface-container border-transparent focus:bg-surface-container-lowest focus:border-secondary transition-all"
-                    />
-                  </div>
-                </RevealItem>
-                <RevealItem>
-                  <div className="space-y-3">
-                    <Label htmlFor="phone" className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+91 XXXXX XXXXX"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      required
-                      className="rounded-xl h-12 bg-surface-container border-transparent focus:bg-surface-container-lowest focus:border-secondary transition-all"
-                    />
-                  </div>
-                </RevealItem>
-                <RevealItem>
-                  <div className="space-y-3">
-                    <Label htmlFor="city" className="text-sm font-bold uppercase tracking-widest text-muted-foreground">City</Label>
-                    <Input
-                      id="city"
-                      placeholder="Your city"
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      required
-                      className="rounded-xl h-12 bg-surface-container border-transparent focus:bg-surface-container-lowest focus:border-secondary transition-all"
-                    />
-                  </div>
-                </RevealItem>
-                <RevealItem>
-                  <div className="space-y-3">
-                    <Label htmlFor="material" className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Material Type</Label>
-                    <Select
-                      value={formData.material}
-                      onValueChange={(value) => setFormData({ ...formData, material: value })}
-                    >
-                      <SelectTrigger id="material" className="rounded-xl h-12 bg-surface-container border-transparent">
-                        <SelectValue placeholder="Select material" />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl">
-                        {categories.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.id} className="rounded-lg">
-                            {cat.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </RevealItem>
-              </div>
-              <RevealItem>
-                <div className="space-y-3">
-                  <Label htmlFor="quantity" className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Requirement Details</Label>
-                  <Textarea
-                    id="quantity"
-                    placeholder="E.g., 100 sheets of 19mm Greenply plywood for modular kitchen..."
-                    value={formData.quantity}
-                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                    rows={4}
-                    className="rounded-xl bg-surface-container border-transparent focus:bg-surface-container-lowest focus:border-secondary transition-all"
-                  />
+            <Reveal width="100%" direction="up" delay={0.2}>
+              <motion.form 
+                onSubmit={handleSubmit} 
+                className="space-y-8 bg-[#C5A572] p-8 md:p-12 rounded-[3rem] border border-white/20 shadow-[0_40px_100px_rgba(0,0,0,0.5)] relative overflow-hidden"
+                whileHover={{ y: -5 }}
+                transition={{ duration: 0.5 }}
+              >
+                {/* Internal Blueprints */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10">
+                  <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black uppercase">Form_Asset</span>
                 </div>
-              </RevealItem>
-              <RevealItem>
-                <Button type="submit" size="lg" className="w-full h-14 rounded-xl text-lg font-bold shadow-xl group overflow-hidden relative" disabled={isSubmitting}>
-                  <span className="relative z-10 flex items-center justify-center gap-2">
-                    {isSubmitting ? "Submitting..." : "Get Exclusive Quote"}
-                    <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                  </span>
-                  <motion.div 
-                    className="absolute inset-0 bg-primary-foreground/10"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "100%" }}
-                    transition={{ duration: 0.5 }}
-                  />
-                </Button>
-              </RevealItem>
-            </motion.form>
+
+                <div className="grid sm:grid-cols-2 gap-8 relative z-10">
+                  <RevealItem>
+                    <div className="space-y-3">
+                      <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Full Name</Label>
+                      <Input
+                        id="name"
+                        placeholder="Your name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg px-6"
+                      />
+                    </div>
+                  </RevealItem>
+                  <RevealItem>
+                    <div className="space-y-3">
+                      <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="+91 XXXXX XXXXX"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        required
+                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg px-6"
+                      />
+                    </div>
+                  </RevealItem>
+                  <RevealItem>
+                    <div className="space-y-3">
+                      <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">City</Label>
+                      <Input
+                        id="city"
+                        placeholder="Your city"
+                        value={formData.city}
+                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        required
+                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg px-6"
+                      />
+                    </div>
+                  </RevealItem>
+                  <RevealItem>
+                    <div className="space-y-3">
+                      <Label htmlFor="material" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Material Type</Label>
+                      <Select
+                        value={formData.material}
+                        onValueChange={(value) => setFormData({ ...formData, material: value })}
+                      >
+                        <SelectTrigger id="material" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-lg px-6">
+                          <SelectValue placeholder="Select material" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl bg-white text-black border-transparent shadow-xl">
+                          {categories.map((cat) => (
+                            <SelectItem key={cat.id} value={cat.id} className="rounded-lg hover:bg-black/5 focus:bg-black/5 focus:text-black cursor-pointer">
+                              {cat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </RevealItem>
+                </div>
+                
+                <RevealItem>
+                  <div className="space-y-3 relative z-10">
+                    <Label htmlFor="quantity" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Requirement Details</Label>
+                    <Textarea
+                      id="quantity"
+                      placeholder="E.g., 100 sheets of 19mm Greenply plywood for modular kitchen..."
+                      value={formData.quantity}
+                      onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                      rows={4}
+                      className="rounded-2xl bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg p-6 resize-none"
+                    />
+                  </div>
+                </RevealItem>
+                
+                <RevealItem>
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-6 border-t border-black/10 relative z-10">
+                    <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/50 max-w-[240px]">
+                      By initiating this protocol, you agree to our terms.
+                    </p>
+                    <Button 
+                      type="submit" 
+                      className="w-full sm:w-auto rounded-full px-12 h-14 text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/80 transition-all duration-300 group relative overflow-hidden"
+                      disabled={isSubmitting}
+                    >
+                      <span className="relative z-10 flex items-center gap-2">
+                        {isSubmitting ? "Processing..." : "Get Exclusive Quote"}
+                      </span>
+                      <motion.div 
+                        className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: "100%" }}
+                        transition={{ duration: 0.5 }}
+                      />
+                    </Button>
+                  </div>
+                </RevealItem>
+              </motion.form>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -601,13 +623,13 @@ const ProductCard = ({ product, onAddToCart, onBuyNow }: ProductCardProps) => {
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="h-full"
     >
-      <Card className="group overflow-hidden border-border/50 hover:border-primary/50 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[2rem] bg-background h-full flex flex-col">
+      <Card className="group overflow-hidden border-border/50 hover:border-[#C5A572]/50 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[2rem] bg-[#F4F0EA] h-full flex flex-col pt-0">
         {/* Image */}
-        <div className="relative aspect-square overflow-hidden bg-surface-container">
+        <div className="relative aspect-square overflow-hidden bg-white">
           <motion.img
             src={getProductImage(product)}
             alt={product.name ?? "Product"}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover mix-blend-multiply"
             whileHover={{ scale: 1.15 }}
             transition={{ duration: 0.8 }}
           />
@@ -627,37 +649,37 @@ const ProductCard = ({ product, onAddToCart, onBuyNow }: ProductCardProps) => {
           <motion.button 
             whileHover={{ scale: 1.25, rotate: 15 }}
             whileTap={{ scale: 0.9 }}
-            className="absolute top-4 right-4 w-10 h-10 bg-background/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg text-muted-foreground hover:text-destructive transition-colors z-10"
+            className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg text-black/60 hover:text-destructive transition-colors z-10"
           >
             <Heart className="w-5 h-5" />
           </motion.button>
           
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </div>
 
         <CardContent className="p-6 flex-grow flex flex-col">
           {/* Brand */}
-          <p className="text-[10px] text-primary font-black uppercase tracking-[0.2em] mb-2 opacity-80">{product.brand}</p>
+          <p className="text-[10px] text-[#C5A572] font-black uppercase tracking-[0.2em] mb-2">{product.brand}</p>
 
           {/* Name */}
-          <h3 className="font-extrabold text-foreground text-lg line-clamp-2 min-h-[56px] group-hover:text-primary transition-colors leading-tight mb-2">
+          <h3 className="font-serif text-black text-xl line-clamp-2 min-h-[56px] transition-colors leading-tight mb-2">
             {product.name}
           </h3>
 
           {/* Specs */}
-          <p className="text-xs text-muted-foreground font-medium mb-4 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary/30" />
+          <p className="text-xs text-black/60 font-medium mb-4 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C5A572]" />
             {product.specs}
           </p>
 
           <div className="flex items-center justify-between mt-auto mb-6">
             {/* Price */}
             <div className="flex flex-col">
-              <span className="text-2xl font-black text-foreground">
+              <span className="text-2xl font-black text-black">
                 ₹{(product.price ?? 0).toLocaleString()}
               </span>
               {product.original_price != null && (
-                <span className="text-sm text-muted-foreground line-through font-medium">
+                <span className="text-sm text-black/40 line-through font-medium">
                   ₹{product.original_price.toLocaleString()}
                 </span>
               )}
@@ -666,17 +688,17 @@ const ProductCard = ({ product, onAddToCart, onBuyNow }: ProductCardProps) => {
             {/* Rating */}
             {product.rating != null && (
               <div className="flex flex-col items-end">
-                <div className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-lg text-xs font-black">
-                  <Star className="w-3.5 h-3.5 fill-green-600 text-green-600" />
+                <div className="flex items-center gap-1 bg-green-500/10 border border-green-500/20 text-green-600 px-2 py-1 rounded-lg text-xs font-black">
+                  <Star className="w-3.5 h-3.5 fill-green-500 text-green-500" />
                   {product.rating}
                 </div>
-                <span className="text-[10px] text-muted-foreground font-bold mt-1 uppercase tracking-tighter">{(product.reviews ?? 0).toLocaleString()} Reviews</span>
+                <span className="text-[10px] text-black/40 font-bold mt-1 uppercase tracking-tighter">{(product.reviews ?? 0).toLocaleString()} Reviews</span>
               </div>
             )}
           </div>
 
           {/* Delivery */}
-          <div className="bg-green-50/50 p-3 rounded-xl mb-6 flex items-center gap-2 group/delivery">
+          <div className="bg-green-50/50 p-3 rounded-xl mb-6 flex items-center gap-2 group/delivery border border-green-100">
             <Truck className="w-4 h-4 text-green-600 group-hover/delivery:translate-x-1 transition-transform" />
             <span className="text-xs text-green-700 font-bold uppercase tracking-wider">Priority Home Delivery</span>
           </div>
@@ -684,14 +706,14 @@ const ProductCard = ({ product, onAddToCart, onBuyNow }: ProductCardProps) => {
           {/* Actions */}
           <div className="flex gap-3">
             <Button
-              className="flex-1 rounded-xl h-11 font-bold shadow-lg shadow-primary/20"
+              className="flex-1 rounded-xl h-11 font-bold shadow-[0_10px_20px_rgba(0,0,0,0.1)] bg-black text-white hover:bg-black/80 transition-all hover:-translate-y-1"
               size="sm"
               onClick={() => onAddToCart(product)}
             >
               <ShoppingCart className="w-4 h-4 mr-2" />
               Cart
             </Button>
-            <Button variant="outline" size="sm" className="flex-1 rounded-xl h-11 font-bold border-2" onClick={() => onBuyNow(product)}>
+            <Button variant="outline" size="sm" className="flex-1 rounded-xl h-11 font-bold border-black/10 text-black hover:bg-black/5 hover:text-black transition-all hover:-translate-y-1" onClick={() => onBuyNow(product)}>
               Buy Now
             </Button>
           </div>
