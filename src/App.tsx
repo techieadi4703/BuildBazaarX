@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { Analytics } from "@vercel/analytics/react";
 import { PageTransition } from "./components/shared/PageTransition";
 import Index from "./pages/Index";
 import DesignsCatalog from "./pages/DesignsCatalog";
@@ -117,6 +118,7 @@ const App = () => (
         <BrowserRouter>
           <AnimatedRoutes />
         </BrowserRouter>
+        <Analytics />
       </TooltipProvider>
     </CartProvider>
   </QueryClientProvider>
