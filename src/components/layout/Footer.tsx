@@ -75,11 +75,11 @@ export const Footer = () => {
         >
           {/* Company Info */}
           <motion.div className="space-y-6" variants={columnVariants}>
-            <Link to="/" className="flex items-center gap-3 group">
+            <Link to="/" className="flex justify-center pr-12 items-center gap-3 group">
               <motion.img 
                 src={logo} 
                 alt="BuildBazaarX" 
-                className="h-9 w-auto grayscale brightness-200" 
+                className="h-10 md:h-36 w-auto" 
                 whileHover={{ scale: 1.05 }}
               />
             </Link>
@@ -130,14 +130,20 @@ export const Footer = () => {
               <ul className="space-y-3">
                 <motion.li className="flex items-center gap-3" variants={itemVariants}>
                   <Mail className="w-3.5 h-3.5 text-[#735c00]" />
-                  <a href="mailto:contact@buildbazaarx.com" className="text-[13px] text-[#74777d] hover:text-white transition-colors font-medium">
-                    monograph@buildbazaarx.com
+                  <a href="mailto:techie.adi47@gmail.com" className="text-[13px] text-[#74777d] hover:text-white transition-colors font-medium">
+                    techie.adi47@gmail.com
                   </a>
                 </motion.li>
                 <motion.li className="flex items-center gap-3" variants={itemVariants}>
                   <Phone className="w-3.5 h-3.5 text-[#735c00]" />
                   <a href="tel:+919521259456" className="text-[13px] text-[#74777d] hover:text-white transition-colors font-medium">
                     +91 9521259456
+                  </a>
+                </motion.li>
+                <motion.li className="flex items-center gap-3" variants={itemVariants}>
+                  <Phone className="w-3.5 h-3.5 text-[#735c00]" />
+                  <a href="tel:+917309958494" className="text-[13px] text-[#74777d] hover:text-white transition-colors font-medium">
+                    +91 7309958494
                   </a>
                 </motion.li>
               </ul>

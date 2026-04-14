@@ -87,12 +87,12 @@ export const Header = () => {
               <motion.img
                 src={logoIcon}
                 alt="BuildBazaarX Logo"
-                className="h-8 md:h-9 w-auto object-contain"
+                className="h-9 md:h-10 w-auto object-contain rounded-lg shadow-sm"
                 whileHover={{ rotate: [0, -5, 5, 0], scale: 1.1 }}
                 transition={{ duration: 0.4 }}
               />
               <span className="text-xl md:text-2xl font-bold tracking-tight text-primary leading-none group-hover:tracking-wide transition-all duration-300">
-                Build<span className="text-accent">Bazaar</span>X
+                Build<span className="text-[#E8A317]">Bazaar</span>X
               </span>
             </Link>
           </motion.div>

@@ -32,30 +32,37 @@ import { motion } from "framer-motion";
 const contactInfo = [
   {
     icon: Phone,
-    title: "Direct Hotline",
-    value: "+91 9521259456",
-    link: "tel:+919521259456",
+    title: "Direct Hotlines",
+    values: [
+      { text: "+91 9521259456", link: "tel:+919521259456" },
+      { text: "+91 7309958494", link: "tel:+917309958494" }
+    ],
     color: "text-white"
   },
   {
     icon: Mail,
+    
     title: "Official Email",
-    value: "contact@buildbazaarx.com",
-    link: "mailto:contact@buildbazaarx.com",
+    values: [
+      { text: "jangidrahul9829@gmail.com", link: "mailto:jangidrahul9829@gmail.com" },
+      { text: "techie.adi47@gmail.com", link: "mailto:techie.adi47@gmail.com" }
+    ],
     color: "text-white"
   },
   {
     icon: MapPin,
     title: "Headquarters",
-    value: "Jaipur, Rajasthan, India",
-    link: null,
+    values: [
+      { text: "Jaipur, Rajasthan, India", link: null }
+    ],
     color: "text-white"
   },
   {
     icon: Clock,
     title: "Availability",
-    value: "Mon - Sat: 10 AM – 7 PM",
-    link: null,
+    values: [
+      { text: "Mon - Sat: 10 AM – 7 PM", link: null }
+    ],
     color: "text-white"
   },
 ];
@@ -192,10 +199,10 @@ const Contact = () => {
       {/* Main Command Center Form */}
       <section className="py-24 bg-[#F4F0EA] relative">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-12 gap-16 max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-12 gap-12 max-w-7xl mx-auto">
             
             {/* Left: Gold Form */}
-            <div className="lg:col-span-7">
+            <div className="lg:col-span-6">
               <Reveal width="100%" direction="up">
                 <div className="mb-10">
                   <h2 className="text-4xl font-black text-black mb-4 tracking-tighter">Submit Execution Request</h2>
@@ -368,7 +375,7 @@ const Contact = () => {
             </div>
 
             {/* Right: Info Panels / Bento */}
-            <div className="lg:col-span-5 space-y-8 flex flex-col pt-12 lg:pt-24">
+            <div className="lg:col-span-6 space-y-8 flex flex-col pt-12 lg:pt-24">
               
               {/* Communication Interface Grid */}
               <Reveal width="100%" staggerChildren={0.1}>
@@ -380,17 +387,22 @@ const Contact = () => {
                           <div className={`w-12 h-12 bg-primary-container rounded-2xl flex items-center justify-center mb-6 border border-black/10 group-hover:scale-110 transition-transform ${info.color}`}>
                             <info.icon className="w-5 h-5 text-white" />
                           </div>
-                          <h3 className="font-bold text-black mb-1 text-sm uppercase tracking-widest">{info.title}</h3>
-                          {info.link ? (
-                            <a
-                              href={info.link}
-                              className="text-black/60 font-medium hover:text-[#C5A572] transition-colors text-sm break-all"
-                            >
-                              {info.value}
-                            </a>
-                          ) : (
-                            <p className="text-black/60 font-medium text-sm">{info.value}</p>
-                          )}
+                          <h3 className="font-bold text-black mb-2 text-sm uppercase tracking-widest">{info.title}</h3>
+                          <div className="flex flex-col gap-2">
+                            {info.values.map((v, i) => (
+                              v.link ? (
+                                <a
+                                  key={i}
+                                  href={v.link}
+                                  className="text-black/60 font-medium hover:text-[#C5A572] transition-colors text-sm break-all"
+                                >
+                                  {v.text}
+                                </a>
+                              ) : (
+                                <p key={i} className="text-black/60 font-medium text-sm">{v.text}</p>
+                              )
+                            ))}
+                          </div>
                         </CardContent>
                       </Card>
                     </RevealItem>
