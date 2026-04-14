@@ -43,12 +43,11 @@ const designCategories = [
 
 export const PopularDesignsSection = () => {
   return (
-    <section className="py-24 bg-[#0B132B] relative overflow-hidden">
+    <section className="py-16 bg-[#0B132B] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         
-        {/* Section Header */}
         <Reveal width="100%" direction="up">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest uppercase">
               POPULAR DESIGNS: CATEGORY_INDEX
             </h2>
@@ -102,9 +101,8 @@ export const PopularDesignsSection = () => {
           </div>
         </Reveal>
 
-        {/* Simple CTA */}
         <Reveal width="100%" direction="up" delay={0.3}>
-          <div className="text-center mt-12">
+          <div className="text-center mt-8">
             <Button asChild size="sm" className="bg-[#C5A572]/10 hover:bg-[#C5A572] border border-[#C5A572]/50 text-[#C5A572] hover:text-[#0B132B] px-8 uppercase tracking-widest text-xs font-bold transition-all">
               <Link to="/designs">
                 View All Designs

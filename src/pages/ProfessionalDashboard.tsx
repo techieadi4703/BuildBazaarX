@@ -35,49 +35,66 @@ export default function ProfessionalDashboard() {
 
   const fetchData = async () => {
     setIsLoading(true);
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      navigate("/professional/auth");
-      return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/professional/auth");
+        return;
+      }
+      setUser(session.user);
+
+      // First check role in profiles table to avoid mis-redirection
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (profileData && profileData.role !== "professional") {
+        navigate("/");
+        return;
+      }
+
+      const { data: profData, error: profError } = await supabase
+        .from("professionals")
+        .select("*")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (profError || !profData) {
+        navigate("/professional/setup");
+        return;
+      }
+      
+      setProfile(profData);
+      setSkillsInput((profData.skills || []).join(", "));
+      setLanguagesInput((profData.languages || []).join(", "));
+      setPortfolioInput((profData.portfolio_urls || []).join(", "));
+
+      const today = new Date().toISOString().split('T')[0];
+      const { data: slotsData } = await supabase
+        .from("professional_slots")
+        .select("*")
+        .eq("professional_id", session.user.id)
+        .gte("date", today)
+        .order("date", { ascending: true })
+        .order("start_time", { ascending: true });
+      
+      if (slotsData) setSlots(slotsData);
+
+      const { data: reviewsData } = await supabase
+        .from("professional_reviews")
+        .select("*")
+        .eq("professional_id", session.user.id)
+        .order("created_at", { ascending: false });
+
+      if (reviewsData) setReviews(reviewsData);
+    } catch (err: any) {
+      console.error("ProfessionalDashboard fetchData error:", err);
+      toast({ title: "Load Failed", description: err.message, variant: "destructive" });
+    } finally {
+      setIsLoading(false);
     }
-    setUser(session.user);
-
-    const { data: profData, error: profError } = await supabase
-      .from("professionals")
-      .select("*")
-      .eq("id", session.user.id)
-      .maybeSingle();
-
-    if (profError || !profData) {
-      navigate("/professional/setup");
-      return;
-    }
-    
-    setProfile(profData);
-    setSkillsInput((profData.skills || []).join(", "));
-    setLanguagesInput((profData.languages || []).join(", "));
-    setPortfolioInput((profData.portfolio_urls || []).join(", "));
-
-    const today = new Date().toISOString().split('T')[0];
-    const { data: slotsData } = await supabase
-      .from("professional_slots")
-      .select("*")
-      .eq("professional_id", session.user.id)
-      .gte("date", today)
-      .order("date", { ascending: true })
-      .order("start_time", { ascending: true });
-    
-    if (slotsData) setSlots(slotsData);
-
-    const { data: reviewsData } = await supabase
-      .from("professional_reviews")
-      .select("*")
-      .eq("professional_id", session.user.id)
-      .order("created_at", { ascending: false });
-
-    if (reviewsData) setReviews(reviewsData);
-    
-    setIsLoading(false);
   };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -129,6 +146,16 @@ export default function ProfessionalDashboard() {
     e.preventDefault();
     if (!profile) return;
 
+    if (!newSlot.startTime || !newSlot.endTime) {
+      toast({ variant: "destructive", title: "Time Required", description: "Please select both commence and terminate times." });
+      return;
+    }
+
+    if (newSlot.endTime <= newSlot.startTime) {
+      toast({ variant: "destructive", title: "Invalid Time Range", description: "Terminate time must be later than commence time." });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from("professional_slots")
@@ -165,7 +192,7 @@ export default function ProfessionalDashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/professional/auth");
+    navigate("/");
   };
 
   if (isLoading || !profile) {
@@ -187,7 +214,7 @@ export default function ProfessionalDashboard() {
         .font-body { font-family: 'Manrope', sans-serif; }
       `}</style>
       
-      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative overflow-hidden">
+      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative">
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e5e2df 1px, transparent 1px), linear-gradient(90deg, #e5e2df 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.3 }} />
         
         <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
@@ -215,16 +242,26 @@ export default function ProfessionalDashboard() {
                   <button 
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center justify-between p-5 rounded-sm border transition-all ${activeTab === item.id ? "bg-white border-[#735c00] shadow-sm text-[#1c1c1a]" : "border-transparent text-[#74777d] hover:text-[#1c1c1a] hover:bg-white/50"}`}
+                    className={`w-full flex items-center justify-between p-5 rounded-sm border transition-all relative group overflow-hidden ${activeTab === item.id ? "text-[#1c1c1a]" : "border-transparent text-[#74777d] hover:text-[#1c1c1a] hover:bg-white/50"}`}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 relative z-10">
                       <item.icon className={`w-4 h-4 ${activeTab === item.id ? "text-[#735c00]" : ""}`} />
                       <span className="text-[10px] uppercase font-bold tracking-widest">{item.label}</span>
                     </div>
-                    {activeTab === item.id && <ArrowRight className="w-3 h-3 text-[#735c00]" />}
+                    {activeTab === item.id ? (
+                      <>
+                        <motion.div
+                          layoutId="active-sidebar-pill"
+                          className="absolute inset-0 bg-white border border-[#735c00] shadow-sm z-0"
+                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                        />
+                        <ArrowRight className="w-3 h-3 text-[#735c00] relative z-10" />
+                      </>
+                    ) : null}
                   </button>
                 ))}
               </div>
+
 
               <div className="mt-12 pt-8 border-t border-[#e5e2df]">
                 <button 
@@ -321,28 +358,28 @@ export default function ProfessionalDashboard() {
                       </header>
                       
                       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                         <div className="lg:col-span-12 xl:col-span-4 space-y-8 p-8 bg-[#fcf9f6] border border-[#e5e2df] rounded-sm">
-                            <h3 className="text-[10px] uppercase font-bold tracking-widest text-[#735c00]">Mark Availability</h3>
+                         <div className="lg:col-span-12 xl:col-span-6 2xl:col-span-6 space-y-8 p-10 bg-white/90 border border-black/5 shadow-sm rounded-3xl">
+                            <h3 className="text-[11px] uppercase font-black tracking-[0.25em] text-[#0B132B]">Mark Availability</h3>
                             <form onSubmit={handleAddSlot} className="space-y-6">
                                <div className="space-y-2">
-                                 <label className="text-[9px] uppercase font-bold text-[#74777d]">Target Date</label>
-                                 <input type="date" required min={new Date().toISOString().split('T')[0]} value={newSlot.date} onChange={e => setNewSlot({...newSlot, date: e.target.value})} className="w-full px-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded-sm text-xs outline-none font-bold" />
+                                 <label className="text-[10px] uppercase font-black text-[#0B132B]/60 tracking-widest ml-1">Target Date</label>
+                                 <input type="date" required min={new Date().toISOString().split('T')[0]} value={newSlot.date} onChange={e => setNewSlot({...newSlot, date: e.target.value})} className="w-full px-5 py-4 bg-secondary/5 border border-border/50 focus:border-primary rounded-2xl text-sm outline-none font-bold placeholder:text-black/40" />
                                </div>
                                <div className="grid grid-cols-2 gap-4">
                                   <div className="space-y-2">
-                                    <label className="text-[9px] uppercase font-bold text-[#74777d]">Commence</label>
-                                    <input type="time" required value={newSlot.startTime} onChange={e => setNewSlot({...newSlot, startTime: e.target.value})} className="w-full px-4 py-3 bg-white border border-[#e5e2df] rounded-sm text-xs outline-none" />
+                                    <label className="text-[10px] uppercase font-black text-[#0B132B]/60 tracking-widest ml-1">Commence</label>
+                                    <input type="time" required value={newSlot.startTime} onChange={e => setNewSlot({...newSlot, startTime: e.target.value, endTime: newSlot.endTime && newSlot.endTime <= e.target.value ? "" : newSlot.endTime})} className="w-full px-5 py-4 bg-secondary/5 border border-border/50 focus:border-primary rounded-2xl text-sm outline-none font-black" />
                                   </div>
                                   <div className="space-y-2">
-                                    <label className="text-[9px] uppercase font-bold text-[#74777d]">Terminate</label>
-                                    <input type="time" required value={newSlot.endTime} onChange={e => setNewSlot({...newSlot, endTime: e.target.value})} className="w-full px-4 py-3 bg-white border border-[#e5e2df] rounded-sm text-xs outline-none" />
+                                    <label className="text-[10px] uppercase font-black text-[#0B132B]/60 tracking-widest ml-1">Terminate</label>
+                                    <input type="time" required min={newSlot.startTime || undefined} value={newSlot.endTime} onChange={e => setNewSlot({...newSlot, endTime: e.target.value})} className="w-full px-5 py-4 bg-secondary/5 border border-border/50 focus:border-primary rounded-2xl text-sm outline-none font-black" />
                                   </div>
                                </div>
-                               <button type="submit" className="w-full py-4 bg-[#735c00] text-white text-[9px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#1c1c1a] transition-all">Allocate Slot</button>
+                               <button type="submit" className="w-full py-5 bg-[#0B132B] text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-primary transition-all shadow-xl shadow-black/10">Allocate Slot</button>
                             </form>
                          </div>
 
-                         <div className="lg:col-span-12 xl:col-span-8 space-y-6">
+                         <div className="lg:col-span-12 xl:col-span-6 2xl:col-span-6 space-y-6">
                             <h3 className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a]">Active Manifest</h3>
                             {slots.length === 0 ? (
                               <div className="py-20 text-center border-2 border-dashed border-[#e5e2df] flex flex-col items-center justify-center opacity-40">

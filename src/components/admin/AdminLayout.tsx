@@ -22,6 +22,7 @@ import {
   X
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { motion } from 'framer-motion';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
@@ -73,17 +74,25 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               key={item.path}
               to={item.path}
               onClick={() => setIsMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+              className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors relative group ${
                 isActive 
-                  ? 'bg-primary/10 text-primary font-medium' 
+                  ? 'text-primary font-medium' 
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}
             >
-              <item.icon className="h-5 w-5" />
-              <span>{item.label}</span>
+              <div className="flex items-center gap-3 relative z-10">
+                <item.icon className="h-5 w-5" />
+                <span>{item.label}</span>
+              </div>
+              {isActive && (
+                <div
+                  className="absolute inset-0 bg-primary/10 rounded-md z-0 transition-all"
+                />
+              )}
             </Link>
           );
         })}
+
       </nav>
 
       <div className="p-4 border-t border-border mt-auto h-[80px]">

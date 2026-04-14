@@ -5,12 +5,12 @@ import { motion } from "framer-motion";
 
 export const WhyChooseUsSection = () => {
   return (
-    <section className="py-24 bg-[#F4F0EA] relative overflow-hidden">
+    <section className="py-16 bg-[#F4F0EA] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         
         {/* Section Header */}
         <Reveal width="100%" direction="up">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-xl md:text-2xl font-black text-[#0B132B] tracking-widest uppercase">
               WHY CHOOSE US: BENTO GRID
             </h2>

@@ -19,12 +19,12 @@ const testimonials = [
 
 export const TestimonialsSection = () => {
   return (
-    <section className="py-24 bg-[#0B132B] relative overflow-hidden">
+    <section className="py-16 bg-[#0B132B] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         
         {/* Section Header */}
         <Reveal width="100%" direction="up">
-          <div className="text-center mb-20">
+          <div className="text-center mb-12">
             <h2 className="text-xl md:text-2xl font-black text-white tracking-widest uppercase">
               VERIFIED <span className="text-[#C5A572] font-serif italic font-normal">TESTIMONY</span>
             </h2>

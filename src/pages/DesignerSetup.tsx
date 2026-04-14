@@ -44,6 +44,17 @@ export default function DesignerSetup() {
       setUserId(session.user.id);
       setForm(prev => ({ ...prev, email: session.user.email || "" }));
       
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (profileData && profileData.role !== "designer") {
+        navigate("/");
+        return;
+      }
+      
       const { data } = await supabase
         .from("designers")
         .select("id")

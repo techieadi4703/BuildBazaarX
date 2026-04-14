@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, LogOut, User, Package } from "lucide-react";
+import { Menu, X, LogIn, LogOut, User, Package, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -40,7 +40,9 @@ export const Header = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchUserRole(session.user.id);
+        window.setTimeout(() => {
+          fetchUserRole(session.user.id);
+        }, 0);
       } else {
         setUserDashboardPath('/');
       }
@@ -72,10 +74,10 @@ export const Header = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 100, damping: 20 }}
-      className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-sm transition-all duration-300"
+      className="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-primary/5 shadow-sm transition-all duration-300"
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-12 md:h-14">
           {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.02 }}
@@ -85,9 +87,9 @@ export const Header = () => {
               <motion.img
                 src={logoIcon}
                 alt="BuildBazaarX Logo"
-                className="h-10 md:h-12 w-auto object-contain"
-                whileHover={{ rotate: [0, -10, 10, 0] }}
-                transition={{ duration: 0.5 }}
+                className="h-8 md:h-9 w-auto object-contain"
+                whileHover={{ rotate: [0, -5, 5, 0], scale: 1.1 }}
+                transition={{ duration: 0.4 }}
               />
               <span className="text-xl md:text-2xl font-bold tracking-tight text-primary leading-none group-hover:tracking-wide transition-all duration-300">
                 Build<span className="text-accent">Bazaar</span>X
@@ -220,7 +222,7 @@ export const Header = () => {
               exit={{ height: 0, opacity: 0 }}
               className="md:hidden py-4 border-t border-border overflow-hidden"
             >
-              <nav className="flex flex-col gap-4">
+              <nav className="flex flex-col gap-2">
                 {!isNonUserRoute && navLinks.map((link, i) => (
                   <motion.div
                     key={link.path}
@@ -231,16 +233,25 @@ export const Header = () => {
                     <Link
                       to={link.path}
                       onClick={() => setIsMenuOpen(false)}
-                      className={`text-sm font-medium transition-colors hover:text-primary ${
+                      className={`text-sm font-medium transition-colors hover:text-primary py-2 px-3 rounded-md relative flex items-center justify-between group ${
                         location.pathname === link.path
                           ? "text-primary"
                           : "text-foreground"
                       }`}
                     >
-                      {link.name}
+                      <span className="relative z-10">{link.name}</span>
+                      {location.pathname === link.path && (
+                        <motion.div
+                          layoutId="mobile-nav-pill"
+                          className="absolute inset-0 bg-primary/5 rounded-md z-0"
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        />
+                      )}
+                      <ArrowRight className={`w-4 h-4 transition-all ${location.pathname === link.path ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0"}`} />
                     </Link>
                   </motion.div>
                 ))}
+
                 {user ? (
                   <motion.div
                     initial={{ opacity: 0 }}

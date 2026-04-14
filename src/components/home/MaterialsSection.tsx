@@ -42,12 +42,11 @@ const products = [
 
 export const MaterialsSection = () => {
   return (
-    <section className="py-24 bg-[#F4F0EA] relative overflow-hidden">
+    <section className="py-16 bg-[#F4F0EA] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         
-        {/* Section Header */}
         <Reveal width="100%" direction="up">
-          <div className="text-center mb-16 px-4">
+          <div className="text-center mb-10 px-4">
             <h2 className="text-xl md:text-2xl font-black text-[#0B132B] tracking-widest uppercase mb-4">
               VERIFIED MATERIALS: INVENTORY SHOWCASE
             </h2>
@@ -57,9 +56,8 @@ export const MaterialsSection = () => {
           </div>
         </Reveal>
 
-        {/* Product Grid */}
         <Reveal width="100%" staggerChildren={0.1}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto mb-8">
             {products.map((product, index) => (
               <RevealItem key={index}>
                 <Link to="/materials">

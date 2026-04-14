@@ -250,7 +250,7 @@ const Profile = () => {
                     </div>
 
                     <div className="space-y-2 max-w-xs">
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Postal Code索引</label>
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Postal Code</label>
                       <input
                         type="text"
                         value={profile.pincode}

@@ -12,75 +12,157 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function DesignerDashboard() {
   const [activeTab, setActiveTab] = useState("gallery");
   const [isUploading, setIsUploading] = useState(false);
+  const [editingDesign, setEditingDesign] = useState<any>(null);
+  const [designer, setDesigner] = useState<any>(null);
+  const [designs, setDesigns] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch Designer Info
-  const { data: designer, isLoading: isDesignerLoading } = useQuery({
-    queryKey: ["designer-profile"],
-    queryFn: async () => {
+  const fetchDesigner = async () => {
+    setIsLoading(true);
+    try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("Not authenticated");
-      
-      const { data, error } = await supabase
+      if (!session) {
+        navigate("/designer/auth");
+        return;
+      }
+
+      // Role check
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (profileData && profileData.role !== "designer") {
+        navigate("/");
+        return;
+      }
+
+      // Fetch designer row
+      const { data: designerData, error: designerError } = await supabase
         .from("designers")
         .select("*")
         .eq("id", session.user.id)
-        .single();
-      
-      if (error) throw error;
-      return data;
-    }
-  });
+        .maybeSingle();
 
-  // Fetch Designs
-  const { data: designs, isLoading: isDesignsLoading } = useQuery({
-    queryKey: ["designer-designs", designer?.id],
-    enabled: !!designer?.id,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("designs")
-        .select("*")
-        .eq("designer_id", designer.id)
-        .order("created_at", { ascending: false });
-      
-      if (error) throw error;
-      return data;
+      if (designerError) throw designerError;
+      if (!designerData) {
+        navigate("/designer/setup");
+        return;
+      }
+      setDesigner(designerData);
+    } catch (err: any) {
+      if (err?.name === "AbortError") {
+        return;
+      }
+      console.error("DesignerDashboard error:", err);
+      toast({ variant: "destructive", title: "Load Failed", description: err.message });
+    } finally {
+      setIsLoading(false);
     }
-  });
+  };
 
-  // Fetch Reviews
-  const { data: reviews } = useQuery({
-    queryKey: ["designer-reviews", designer?.id],
-    enabled: !!designer?.id,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("design_reviews")
-        .select(`
-          *,
-          profiles(full_name),
-          designs(name)
-        `)
-        .eq('designs.designer_id', designer.id);
-      
-      if (error) throw error;
-      return data || [];
-    }
-  });
+  useEffect(() => {
+    fetchDesigner();
+  }, []);
+
+  useEffect(() => {
+    if (!designer?.id) return;
+
+    const fetchDesigns = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("designs")
+          .select("*")
+          .eq("designer_id", designer.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setDesigns(data || []);
+      } catch (err: any) {
+        if (err?.name === "AbortError") return;
+        console.error("Designer designs load error:", err);
+        toast({ variant: "destructive", title: "Designs Load Failed", description: err.message || "Unable to load your design repository." });
+      }
+    };
+
+    fetchDesigns();
+  }, [designer?.id]);
+
+  useEffect(() => {
+    if (!designer?.id) return;
+
+    const fetchReviews = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("design_reviews")
+          .select("id, rating, comment, created_at, profiles(full_name), designs!inner(name, designer_id)")
+          .eq("designs.designer_id", designer.id);
+
+        if (error) throw error;
+        setReviews(data || []);
+      } catch (err: any) {
+        if (err?.name === "AbortError") return;
+        console.error("Designer reviews load error:", err);
+      }
+    };
+
+    fetchReviews();
+  }, [designer?.id]);
 
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/designer/auth");
+    navigate("/");
   };
 
-  if (isDesignerLoading) {
+  const handleDeleteDesign = async (designId: string) => {
+    if (!window.confirm("Are you sure you want to terminate this architectural listing? This action is irreversible.")) return;
+    
+    try {
+      const { error } = await supabase
+        .from("designs")
+        .delete()
+        .eq("id", designId);
+      
+      if (error) throw error;
+      toast({ title: "Blueprint Decommissioned", description: "The design record has been removed from the registry." });
+      const updatedDesigns = designs.filter((design) => design.id !== designId);
+      setDesigns(updatedDesigns);
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Deletion Failed", description: error.message });
+    }
+  };
+
+  if (isLoading) {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 bg-[#fcf9f6]">
           <div className="w-8 h-8 border-4 border-[#735c00]/20 border-t-[#735c00] rounded-full animate-spin"></div>
           <p className="font-body text-[10px] font-bold uppercase tracking-widest text-[#44474c]">Initializing Studio Matrix...</p>
+          <button onClick={handleLogout} className="mt-6 px-6 py-2 text-[9px] uppercase font-bold tracking-widest text-[#74777d] hover:text-[#1c1c1a] border border-[#e5e2df] rounded-sm transition-colors">Terminate Session</button>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!designer) {
+    return (
+      <Layout>
+        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 bg-[#fcf9f6] px-6 text-center">
+          <div className="w-10 h-10 border-4 border-[#735c00]/20 border-t-[#735c00] rounded-full animate-spin"></div>
+          <div className="space-y-2">
+            <p className="font-body text-[10px] font-bold uppercase tracking-widest text-[#44474c]">Studio profile unavailable</p>
+            <p className="text-sm text-[#74777d] max-w-md">The designer workspace is still syncing or your session needs to be reloaded.</p>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => fetchDesigner()} className="px-6 py-2 text-[9px] uppercase font-bold tracking-widest text-white bg-[#1c1c1a] rounded-sm transition-colors hover:bg-[#735c00]">Retry Load</button>
+            <button onClick={handleLogout} className="px-6 py-2 text-[9px] uppercase font-bold tracking-widest text-[#74777d] hover:text-[#1c1c1a] border border-[#e5e2df] rounded-sm transition-colors">Terminate Session</button>
+          </div>
         </div>
       </Layout>
     );
@@ -120,17 +202,27 @@ export default function DesignerDashboard() {
                 ].map((item) => (
                   <button 
                     key={item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center justify-between p-5 rounded-sm border transition-all ${activeTab === item.id ? "bg-white border-[#735c00] shadow-sm text-[#1c1c1a]" : "border-transparent text-[#74777d] hover:text-[#1c1c1a] hover:bg-white/50"}`}
+                    onClick={() => { setActiveTab(item.id); setEditingDesign(null); }}
+                    className={`w-full flex items-center justify-between p-5 rounded-sm border transition-all relative group overflow-hidden ${activeTab === item.id ? "text-[#1c1c1a]" : "border-transparent text-[#74777d] hover:text-[#1c1c1a] hover:bg-white/50"}`}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 relative z-10">
                       <item.icon className={`w-4 h-4 ${activeTab === item.id ? "text-[#735c00]" : ""}`} />
                       <span className="text-[10px] uppercase font-bold tracking-widest">{item.label}</span>
                     </div>
-                    {activeTab === item.id && <ArrowRight className="w-3 h-3 text-[#735c00]" />}
+                    {activeTab === item.id ? (
+                      <>
+                        <motion.div
+                          layoutId="active-sidebar-pill"
+                          className="absolute inset-0 bg-white border border-[#735c00] shadow-sm z-0"
+                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                        />
+                        <ArrowRight className="w-3 h-3 text-[#735c00] relative z-10" />
+                      </>
+                    ) : null}
                   </button>
                 ))}
               </div>
+
 
               <div className="mt-12 pt-8 border-t border-[#e5e2df]">
                 <button 
@@ -165,50 +257,51 @@ export default function DesignerDashboard() {
                         </button>
                       </header>
 
-                      {isDesignsLoading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                           {[1, 2, 3, 4].map(i => <div key={i} className="aspect-square bg-[#f6f3f0] animate-pulse rounded-sm" />)}
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          {designs?.map((design) => (
-                            <div key={design.id} className="group relative border border-[#e5e2df] p-4 hover:border-[#735c00] transition-all">
-                                <div className="aspect-[4/3] bg-[#fcf9f6] mb-6 overflow-hidden relative">
-                                   <img src={design.images && design.images.length > 0 ? design.images[0] : ""} alt={design.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                   <div className="absolute top-4 right-4 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
-                                      <button className="w-10 h-10 bg-white border border-[#e5e2df] flex items-center justify-center hover:bg-[#1c1c1a] hover:text-white transition-colors"><Edit className="w-4 h-4" /></button>
-                                      <button className="w-10 h-10 bg-white border border-[#e5e2df] flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors"><Trash className="w-4 h-4" /></button>
-                                   </div>
-                                </div>
-                                <div className="flex justify-between items-start mb-4">
-                                   <div>
-                                      <h3 className="text-xl font-headline font-bold mb-1">{design.name}</h3>
-                                      <span className="text-[10px] uppercase font-bold text-[#735c00] tracking-widest">{design.category}</span>
-                                   </div>
-                                   <span className="text-sm font-bold">₹{design.total_cost?.toLocaleString() || "0"}</span>
-                                </div>
-                                <div className="pt-4 border-t border-[#f6f3f0] flex items-center justify-between">
-                                   <Badge variant="outline" className={`rounded-none text-[8px] font-bold uppercase tracking-[0.2em] border-none px-0 ${design.is_published ? "text-green-600" : "text-[#74777d]"}`}>
-                                      {design.is_published ? "● Active Listing" : "● Draft Status"}
-                                   </Badge>
-                                   <span className="text-[8px] font-black text-[#c4c6cc] uppercase tracking-widest">UID: {design.id.substring(0, 8)}</span>
-                                </div>
-                            </div>
-                          ))}
-                          {designs?.length === 0 && (
-                            <div className="col-span-full py-24 text-center border-2 border-dashed border-[#e5e2df] flex flex-col items-center justify-center opacity-40">
-                               <ImageIcon className="w-12 h-12 mb-4" />
-                               <p className="text-[10px] uppercase font-bold tracking-[0.3em]">Registry Currently Void</p>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {designs?.map((design) => (
+                          <div key={design.id} className="group relative border border-[#e5e2df] p-4 hover:border-[#735c00] transition-all">
+                              <div className="aspect-[4/3] bg-[#fcf9f6] mb-6 overflow-hidden relative">
+                                 <img src={design.images && design.images.length > 0 ? design.images[0] : ""} alt={design.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                 <div className="absolute top-4 right-4 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
+                                    <button onClick={() => { setEditingDesign(design); setActiveTab("upload"); }} className="w-10 h-10 bg-white border border-[#e5e2df] flex items-center justify-center hover:bg-[#1c1c1a] hover:text-white transition-colors" title="Edit Design"><Edit className="w-4 h-4" /></button>
+                                    <button onClick={() => handleDeleteDesign(design.id)} className="w-10 h-10 bg-white border border-[#e5e2df] flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors" title="Delete Design"><Trash className="w-4 h-4" /></button>
+                                 </div>
+                              </div>
+                              <div className="flex justify-between items-start mb-4">
+                                 <div>
+                                    <h3 className="text-xl font-headline font-bold mb-1">{design.name}</h3>
+                                    <span className="text-[10px] uppercase font-bold text-[#735c00] tracking-widest">{design.category}</span>
+                                 </div>
+                                 <span className="text-sm font-bold">₹{design.total_cost?.toLocaleString() || "0"}</span>
+                              </div>
+                              <div className="pt-4 border-t border-[#f6f3f0] flex items-center justify-between">
+                                 <Badge variant="outline" className={`rounded-none text-[8px] font-bold uppercase tracking-[0.2em] border-none px-0 ${design.is_published ? "text-green-600" : "text-[#74777d]"}`}>
+                                    {design.is_published ? "● Active Listing" : "● Draft Status"}
+                                 </Badge>
+                                 <span className="text-[8px] font-black text-[#c4c6cc] uppercase tracking-widest">UID: {design.id.substring(0, 8)}</span>
+                              </div>
+                          </div>
+                        ))}
+                        {designs?.length === 0 && (
+                          <div className="col-span-full py-24 text-center border-2 border-dashed border-[#e5e2df] flex flex-col items-center justify-center opacity-40">
+                             <ImageIcon className="w-12 h-12 mb-4" />
+                             <p className="text-[10px] uppercase font-bold tracking-[0.3em]">Registry Currently Void</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
 
-                  {activeTab === "upload" && <UploadDesignSection designerId={designer.id} onComplete={() => setActiveTab("gallery")} />}
+                  {activeTab === "upload" && (
+                    <UploadDesignSection 
+                      designerId={designer?.id ?? ""} 
+                      editingDesign={editingDesign}
+                      onComplete={() => { setActiveTab("gallery"); setEditingDesign(null); }} 
+                      onCancel={() => { setActiveTab("gallery"); setEditingDesign(null); }}
+                    />
+                  )}
 
-                  {activeTab === "profile" && <DesignerProfileSection designer={designer} />}
+                  {activeTab === "profile" && designer && <DesignerProfileSection designer={designer} />}
 
                   {activeTab === "reviews" && (
                     <div className="space-y-12">
@@ -258,17 +351,39 @@ export default function DesignerDashboard() {
 
 // SUB-COMPONENTS (Feature-Complete)
 
-function UploadDesignSection({ designerId, onComplete }: { designerId: string, onComplete: () => void }) {
+function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }: { designerId: string, editingDesign?: any, onComplete: () => void, onCancel: () => void }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    name: "", description: "", category: "Living Room", room_size: "", style: "Modern", total_cost: "",
-    execution_cost: "", materials_cost: "", customize_cost: "", timeline: "6 Weeks", warranty: "10 Year Limited", features: "", tags: ""
+    name: editingDesign?.name || "", 
+    description: editingDesign?.description || "", 
+    category: editingDesign?.category || "Living Room", 
+    room_size: editingDesign?.room_size || "", 
+    style: editingDesign?.style || "Modern", 
+    total_cost: editingDesign?.total_cost?.toString() || "",
+    execution_cost: editingDesign?.execution_cost?.toString() || "", 
+    materials_cost: editingDesign?.materials_cost?.toString() || "", 
+    customize_cost: editingDesign?.customize_cost?.toString() || "", 
+    timeline: editingDesign?.timeline || "6 Weeks", 
+    warranty: editingDesign?.warranty || "10 Year Limited", 
+    features: editingDesign?.features?.join(", ") || "", 
+    tags: editingDesign?.tags?.join(", ") || ""
   });
   const [materials, setMaterials] = useState<any[]>([]);
   const [images, setImages] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>(editingDesign?.images || []);
+  const [existingImages, setExistingImages] = useState<string[]>(editingDesign?.images || []);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  useEffect(() => {
+    if (editingDesign?.id) {
+      const fetchMaterials = async () => {
+        const { data } = await supabase.from('design_materials').select('*').eq('design_id', editingDesign.id);
+        if (data) setMaterials(data);
+      };
+      fetchMaterials();
+    }
+  }, [editingDesign]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -296,9 +411,8 @@ function UploadDesignSection({ designerId, onComplete }: { designerId: string, o
     setMaterials(materials.filter(m => m.id !== id));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (images.length === 0) {
+  const handleSubmit = async () => {
+    if (images.length === 0 && existingImages.length === 0) {
       toast({ variant: "destructive", title: "Media Missing", description: "At least one visual blueprint is required." });
       return;
     }
@@ -324,12 +438,12 @@ function UploadDesignSection({ designerId, onComplete }: { designerId: string, o
       const features_array = formData.features.split(',').map(f => f.trim()).filter(f => f);
       const tags_array = formData.tags.split(',').map(t => t.trim()).filter(t => t);
 
-      const { data: designData, error: dbError } = await supabase.from('designs').insert({
+      const designPayload = {
         designer_id: designerId,
         name: formData.name,
         description: formData.description,
         category: formData.category,
-        images: imageUrls,
+        images: [...existingImages, ...imageUrls],
         is_published: true,
         room_size: formData.room_size,
         style: formData.style,
@@ -341,9 +455,18 @@ function UploadDesignSection({ designerId, onComplete }: { designerId: string, o
         warranty: formData.warranty,
         features: features_array,
         tags: tags_array
-      }).select().single();
+      };
 
-      if (dbError) throw dbError;
+      let designData;
+      if (editingDesign?.id) {
+        const { data, error } = await supabase.from('designs').update(designPayload).eq('id', editingDesign.id).select().single();
+        if (error) throw error;
+        designData = data;
+      } else {
+        const { data, error } = await supabase.from('designs').insert(designPayload).select().single();
+        if (error) throw error;
+        designData = data;
+      }
 
       if (designData && materials.length > 0) {
         const materialRows = materials.map(m => ({
@@ -364,15 +487,23 @@ function UploadDesignSection({ designerId, onComplete }: { designerId: string, o
       queryClient.invalidateQueries({ queryKey: ["designer-designs"] });
       onComplete();
     } catch (error: any) {
-      toast({ variant: "destructive", title: "Publication Failed", description: error.message });
+      console.error("Publication error:", error);
+      toast({ variant: "destructive", title: "Publication Failed", description: error.message || "An unexpected error occurred." });
     }
   };
 
   return (
     <div className="space-y-12">
-       <header className="border-b border-[#e5e2df] pb-8">
-          <h2 className="text-4xl font-headline tracking-tight mb-2">Publish <span className="italic">Vision.</span></h2>
-          <p className="text-xs font-body text-[#74777d]">Deposit architectural blueprints into the global registry.</p>
+       <header className="flex items-center justify-between border-b border-[#e5e2df] pb-8">
+          <div>
+             <h2 className="text-4xl font-headline tracking-tight mb-2">{editingDesign ? "Refine" : "Publish"} <span className="italic">Vision.</span></h2>
+             <p className="text-xs font-body text-[#74777d]">Deposit architectural blueprints into the global registry.</p>
+          </div>
+          {editingDesign && (
+            <button onClick={onCancel} className="p-3 hover:bg-[#f6f3f0] rounded-full transition-colors text-[10px] font-black uppercase tracking-widest text-red-600 flex items-center gap-2">
+              <X className="w-4 h-4" /> Terminate Refinement
+            </button>
+          )}
        </header>
 
        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -507,7 +638,7 @@ function UploadDesignSection({ designerId, onComplete }: { designerId: string, o
 
                    <div className="flex gap-4">
                       <button onClick={() => setStep(1)} className="flex-1 h-14 bg-[#f6f3f0] text-[#1c1c1a] text-[10px] font-bold uppercase tracking-widest hover:bg-[#e5e2df] transition-all">Return</button>
-                      <button onClick={handleSubmit} className="flex-[2] h-14 bg-[#735c00] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#1c1c1a] transition-all">Execute Publication</button>
+                      <button type="button" onClick={handleSubmit} className="flex-[2] h-14 bg-[#735c00] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#1c1c1a] transition-all">Execute Publication</button>
                    </div>
                 </div>
              )}

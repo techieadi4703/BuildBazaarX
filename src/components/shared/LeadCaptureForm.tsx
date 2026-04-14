@@ -99,7 +99,7 @@ export const LeadCaptureForm = ({
   const isHero = variant === "hero";
 
   return (
-    <section className={`relative overflow-hidden ${isHero ? "py-24 md:py-32 bg-primary" : "py-20 md:py-28 bg-secondary/30"}`}>
+    <section className={`relative overflow-hidden ${isHero ? "py-16 md:py-20 bg-primary" : "py-16 md:py-20 bg-secondary/30"}`}>
       {/* Bubbles */}
       <FloatingBubbles count={isHero ? 20 : 12} palette={isHero ? "neutral" : "brand"} className="opacity-40" />
 
@@ -135,7 +135,7 @@ export const LeadCaptureForm = ({
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-[#E5DACE] border-transparent focus:bg-white focus:border-white transition-all duration-300 text-black placeholder:text-black/40"
+                      className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black placeholder:text-black/60 shadow-sm"
                     />
                   </div>
                 </RevealItem>
@@ -149,7 +149,7 @@ export const LeadCaptureForm = ({
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-[#E5DACE] border-transparent focus:bg-white focus:border-white transition-all duration-300 text-black placeholder:text-black/40"
+                      className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black placeholder:text-black/60 shadow-sm"
                     />
                   </div>
                 </RevealItem>
@@ -162,7 +162,7 @@ export const LeadCaptureForm = ({
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-[#E5DACE] border-transparent focus:bg-white focus:border-white transition-all duration-300 text-black placeholder:text-black/40"
+                      className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black placeholder:text-black/60 shadow-sm"
                     />
                   </div>
                 </RevealItem>
@@ -173,7 +173,7 @@ export const LeadCaptureForm = ({
                       value={formData.budget}
                       onValueChange={(value) => setFormData({ ...formData, budget: value })}
                     >
-                      <SelectTrigger id="budget" className="rounded-xl h-12 bg-[#E5DACE] border-transparent focus:bg-white focus:border-white transition-all duration-300 text-black">
+                      <SelectTrigger id="budget" className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black shadow-sm">
                         <SelectValue placeholder="Select budget" />
                       </SelectTrigger>
                       <SelectContent>
@@ -196,7 +196,7 @@ export const LeadCaptureForm = ({
                   disabled={isSubmitting}
                 >
                   <span className="relative z-10 flex items-center gap-2">
-                    {isSubmitting ? "Submitting..." : "Get Free Consultation"}
+                    {isSubmitting ? "Submitting..." : "Initiate Free Consultation"}
                   </span>
                   <motion.div 
                     className="absolute inset-0 bg-white/10"

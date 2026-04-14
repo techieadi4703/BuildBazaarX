@@ -20,9 +20,13 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session) navigate("/profile");
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        // Don't navigate here — handleAuth already handles it for login
+        // This handles the case of returning authenticated users
+      }
     });
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -32,8 +36,22 @@ export default function Auth() {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast({ title: "Authentication Successful", description: "Entering your private catalog..." });
-        navigate("/profile");
+        // Role-based redirect
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .maybeSingle();
+          if (profile?.role === 'admin') {
+            navigate("/admin");
+          } else {
+            navigate("/");
+          }
+        } else {
+          navigate("/");
+        }
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -43,7 +61,7 @@ export default function Auth() {
         if (error) throw error;
         if (data.user) {
           toast({ title: "Identity Established", description: "Verification email dispatched." });
-          navigate("/profile");
+          navigate("/");
         }
       }
     } catch (error: any) {

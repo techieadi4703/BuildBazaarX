@@ -25,7 +25,29 @@ const Index = () => {
 
         const userId = session.user.id;
 
-        // Check if user is a Designer
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', userId)
+          .maybeSingle();
+
+        if (profileError) throw profileError;
+
+        if (profile) {
+          if (profile.role === 'designer') {
+            navigate('/designer/dashboard');
+            return;
+          }
+          if (profile.role === 'professional') {
+            navigate('/professional/dashboard');
+            return;
+          }
+          if (profile.role === 'supplier') {
+            navigate('/supplier/dashboard');
+            return;
+          }
+        }
+
         const { data: designer } = await supabase
           .from('designers')
           .select('id')
@@ -37,7 +59,6 @@ const Index = () => {
           return;
         }
 
-        // Check if user is a Professional
         const { data: professional } = await supabase
           .from('professionals')
           .select('id')
@@ -49,7 +70,6 @@ const Index = () => {
           return;
         }
 
-        // Check if user is a Supplier
         const { data: supplier } = await supabase
           .from('suppliers')
           .select('id')

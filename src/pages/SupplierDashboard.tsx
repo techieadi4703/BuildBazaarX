@@ -78,6 +78,18 @@ export default function SupplierDashboard() {
       }
       setUser(session.user);
 
+      // First check role in profiles table to avoid mis-redirection
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (profileData && profileData.role !== "supplier") {
+        navigate("/");
+        return;
+      }
+
       const { data: supplier, error: supplierErr } = await supabase
         .from("suppliers")
         .select("*")
@@ -172,7 +184,7 @@ export default function SupplierDashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/supplier/auth");
+    navigate("/");
   };
 
   const submitProduct = async (isPublished: boolean) => {
@@ -254,6 +266,7 @@ export default function SupplierDashboard() {
   };
 
   const deleteProduct = async (id: string) => {
+    if (!window.confirm("Are you sure you want to liquidate this product? This action cannot be undone.")) return;
     await supabase.from("supplier_products").delete().eq("id", id);
     toast({ title: "Product Liquidated" });
     fetchData();
@@ -343,16 +356,24 @@ export default function SupplierDashboard() {
                   <button 
                     key={item.id}
                     onClick={() => { setActiveTab(item.id); setIsAddProductOpen(false); }}
-                    className={`w-full flex items-center justify-between p-5 rounded-sm border transition-all ${activeTab === item.id && !isAddProductOpen ? "bg-white border-[#735c00] shadow-sm text-[#1c1c1a]" : "border-transparent text-[#74777d] hover:text-[#1c1c1a] hover:bg-white/50"}`}
+                    className={`w-full flex items-center justify-between p-5 rounded-sm border transition-all relative group overflow-hidden ${activeTab === item.id && !isAddProductOpen ? "text-[#1c1c1a]" : "border-transparent text-[#74777d] hover:text-[#1c1c1a] hover:bg-white/50"}`}
                   >
-                    <div className="flex items-center gap-4">
-                      <item.icon className={`w-4 h-4 ${activeTab === item.id ? "text-[#735c00]" : ""}`} />
+                    <div className="flex items-center gap-4 relative z-10">
+                      <item.icon className={`w-4 h-4 ${activeTab === item.id && !isAddProductOpen ? "text-[#735c00]" : ""}`} />
                       <span className="text-[10px] uppercase font-bold tracking-widest">{item.label}</span>
                     </div>
-                    {item.badge ? <span className="w-5 h-5 bg-[#735c00] text-white text-[8px] rounded-full flex items-center justify-center font-bold">{item.badge}</span> : null}
+                    {item.badge ? <span className="w-5 h-5 bg-[#735c00] text-white text-[8px] rounded-full flex items-center justify-center font-bold relative z-10">{item.badge}</span> : null}
+                    {activeTab === item.id && !isAddProductOpen && (
+                      <motion.div
+                        layoutId="active-sidebar-pill"
+                        className="absolute inset-0 bg-white border border-[#735c00] shadow-sm z-0"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
                   </button>
                 ))}
               </div>
+
 
               <div className="mt-12 pt-8 border-t border-[#e5e2df]">
                 <button 

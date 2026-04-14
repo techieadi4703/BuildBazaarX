@@ -26,10 +26,32 @@ export default function DesignerAuth() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const resolveDesignerDestination = async (userId: string) => {
+    const { data: designerData, error: designerError } = await supabase
+      .from("designers")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (designerError) throw designerError;
+
+    return designerData ? "/designer/dashboard" : "/designer/setup";
+  };
+
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session) navigate("/designer/dashboard");
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) return;
+
+      window.setTimeout(() => {
+        resolveDesignerDestination(session.user.id)
+          .then((path) => navigate(path))
+          .catch((error) => {
+            console.error("Designer auth redirect error:", error);
+            navigate("/designer/setup");
+          });
+      }, 0);
     });
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   const toggleSpec = (spec: string) => {
@@ -46,7 +68,8 @@ export default function DesignerAuth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast({ title: "Authorized", description: "Entering Designer Studio..." });
-        navigate("/designer/dashboard");
+        const nextPath = await resolveDesignerDestination((await supabase.auth.getSession()).data.session!.user.id);
+        navigate(nextPath);
       } else {
         if (selectedSpecs.length === 0) {
           throw new Error("Please select at least one specialization.");

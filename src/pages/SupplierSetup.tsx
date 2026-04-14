@@ -43,6 +43,17 @@ export default function SupplierSetup() {
 
       setUser(session.user);
 
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (profileData && profileData.role !== "supplier") {
+        navigate("/");
+        return;
+      }
+
       const { data } = await supabase
         .from("suppliers")
         .select("id")

@@ -54,6 +54,17 @@ export default function ProfessionalSetup() {
       }
       setUserId(session.user.id);
       
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (profileData && profileData.role !== "professional") {
+        navigate("/");
+        return;
+      }
+      
       const { data } = await supabase
         .from("professionals")
         .select("id")

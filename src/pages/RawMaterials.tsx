@@ -113,7 +113,7 @@ const RawMaterials = () => {
   const handleAddToCart = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart({
+    const added = addToCart({
       id: product.id,
       name: product.name ?? "Raw Material",
       brand: product.brand ?? "Premium Brand",
@@ -122,7 +122,16 @@ const RawMaterials = () => {
       originalPrice: product.original_price ?? 0,
       specs: product.specs ?? "",
     });
-    toast({ title: "Module Added", description: `${product.name} initialized in cart.` });
+    if (added) {
+      toast({ title: "Module Added", description: `${product.name} initialized in cart.` });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Authentication Required",
+        description: "Please sign in as a customer to add items to your cart.",
+      });
+      navigate("/auth");
+    }
   };
 
   return (
@@ -227,17 +236,25 @@ const RawMaterials = () => {
                     <li key={cat.id}>
                       <button 
                         onClick={() => setSelectedCategory(cat.id)}
-                        className={`flex items-center justify-between w-full group ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#1c1c1a]'}`}
+                        className={`flex items-center justify-between w-full group relative py-1 ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#1c1c1a]'}`}
                       >
-                        <span className={`font-headline text-xl italic group-hover:text-[#735c00] transition-colors ${selectedCategory === cat.id ? 'border-b-2 border-[#735c00] pb-1' : ''}`}>
+                        <span className={`font-headline text-xl italic group-hover:text-[#735c00] transition-colors relative z-10`}>
                           {cat.name}
                         </span>
-                        <span className="text-[10px] font-body text-[#74777d] font-bold opacity-60 group-hover:opacity-100">
+                        <span className="text-[10px] font-body text-[#74777d] font-bold opacity-60 group-hover:opacity-100 relative z-10">
                           {cat.count}
                         </span>
+                        {selectedCategory === cat.id && (
+                          <motion.div
+                            layoutId="active-category-underline"
+                            className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#735c00] z-0"
+                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                          />
+                        )}
                       </button>
                     </li>
                   ))}
+
                 </ul>
 
                 {/* Featured Ad inside Sidebar */}
