@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useQuery } from "@tanstack/react-query";
@@ -136,6 +137,14 @@ const RawMaterials = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Buy Raw Materials Online | BuildBazaarX – Cement, Tiles, Wood & More</title>
+        <meta name="description" content="Source premium construction raw materials at BuildBazaarX. Shop cement, tiles, plywood, paints, plumbing, electrical & hardware from verified suppliers. Direct to site delivery across India." />
+        <link rel="canonical" href="https://buildbazaarx.com/raw-materials" />
+        <meta property="og:url" content="https://buildbazaarx.com/raw-materials" />
+        <meta property="og:title" content="Buy Raw Materials Online | BuildBazaarX" />
+        <meta property="og:description" content="Shop premium construction raw materials from verified Indian suppliers. Cement, tiles, wood, paints & more — delivered direct to site." />
+      </Helmet>
       {/* Scope Google Fonts so it overrides seamlessly */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');

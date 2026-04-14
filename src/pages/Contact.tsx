@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   Phone, 
@@ -158,6 +159,14 @@ const Contact = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Contact Us | BuildBazaarX – Get a Free Estimate</title>
+        <meta name="description" content="Connect with BuildBazaarX for home interior, construction or raw material sourcing. Get a free algorithmic estimate. Call +91 9521259456 or fill the form — response within 24 hours." />
+        <link rel="canonical" href="https://buildbazaarx.com/contact" />
+        <meta property="og:url" content="https://buildbazaarx.com/contact" />
+        <meta property="og:title" content="Contact Us | BuildBazaarX" />
+        <meta property="og:description" content="Reach our team in Jaipur. Free estimates, 24h response, and verified subject experts for every construction need." />
+      </Helmet>
       {/* Blueprint Hero Section */}
       <section className="relative overflow-hidden bg-primary-container pt-32 pb-24 md:pt-48 md:pb-32">
         <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />

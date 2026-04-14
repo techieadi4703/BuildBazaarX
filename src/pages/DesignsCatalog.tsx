@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -122,6 +123,14 @@ const DesignsCatalog = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Home Interior Designs Catalog | BuildBazaarX</title>
+        <meta name="description" content="Browse 500+ verified home interior designs on BuildBazaarX — full home, kitchen, bedroom, living room & more. Filter by style, size, and budget. Get your dream home today." />
+        <link rel="canonical" href="https://buildbazaarx.com/designs" />
+        <meta property="og:url" content="https://buildbazaarx.com/designs" />
+        <meta property="og:title" content="Home Interior Designs Catalog | BuildBazaarX" />
+        <meta property="og:description" content="Browse 500+ verified home interior design blueprints. Full home, kitchen, bedroom & more. Filter by style and budget." />
+      </Helmet>
       {/* Dynamic font injection for the page to ensure perfection */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');

@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { 
   Home, 
@@ -46,6 +47,14 @@ const milestones = [
 const About = () => {
   return (
     <Layout>
+      <Helmet>
+        <title>About Us | BuildBazaarX – India's Construction Marketplace</title>
+        <meta name="description" content="Learn how BuildBazaarX is architecting the future of construction. Our mission: unify home designs, verified professionals, and raw material supply into one seamless platform." />
+        <link rel="canonical" href="https://buildbazaarx.com/about" />
+        <meta property="og:url" content="https://buildbazaarx.com/about" />
+        <meta property="og:title" content="About Us | BuildBazaarX" />
+        <meta property="og:description" content="Hear the BuildBazaarX story — incubated at IIT Bombay, built to obliterate friction in India's construction industry." />
+      </Helmet>
       {/* Immersive Blueprint Hero */}
       <section className="relative overflow-hidden bg-primary-container pt-32 pb-24 md:pt-48 md:pb-32">
         <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />

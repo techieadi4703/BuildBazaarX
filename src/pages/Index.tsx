@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
@@ -10,6 +11,7 @@ import { WhyChooseUsSection } from "@/components/home/WhyChooseUsSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { LeadCaptureForm } from "@/components/shared/LeadCaptureForm";
 import { Reveal } from "@/components/shared/Reveal";
+
 
 const Index = () => {
   const navigate = useNavigate();
@@ -93,6 +95,11 @@ const Index = () => {
   if (isCheckingRole) {
     return (
       <Layout>
+        <Helmet>
+          <title>BuildBazaarX – Design, Build &amp; Source Raw Materials Online</title>
+          <meta name="description" content="BuildBazaarX is India's all-in-one construction marketplace. Discover premium home designs, hire verified professionals, and source quality raw materials — fast." />
+          <link rel="canonical" href="https://buildbazaarx.com/" />
+        </Helmet>
         <div className="flex h-[70vh] items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent shadow-lg text-primary"></div>
         </div>
@@ -102,6 +109,14 @@ const Index = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>BuildBazaarX – Design, Build &amp; Source Raw Materials Online</title>
+        <meta name="description" content="BuildBazaarX is India's all-in-one construction marketplace. Discover premium home designs, hire verified professionals, and source quality raw materials — fast." />
+        <link rel="canonical" href="https://buildbazaarx.com/" />
+        <meta property="og:url" content="https://buildbazaarx.com/" />
+        <meta property="og:title" content="BuildBazaarX – Design, Build & Source Raw Materials Online" />
+        <meta property="og:description" content="India's all-in-one construction marketplace. Designs, professionals &amp; raw materials — one platform." />
+      </Helmet>
       <Reveal width="100%" direction="up"><HeroSection /></Reveal>
       <Reveal width="100%" direction="up"><HowItWorksSection /></Reveal>
       <Reveal width="100%" direction="up"><PopularDesignsSection /></Reveal>
