@@ -233,7 +233,7 @@ const Contact = () => {
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg px-6"
+                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
@@ -247,7 +247,7 @@ const Contact = () => {
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg px-6"
+                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
@@ -263,7 +263,7 @@ const Contact = () => {
                         placeholder="you@email.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg px-6"
+                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
@@ -276,7 +276,7 @@ const Contact = () => {
                         value={formData.city}
                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                         required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg px-6"
+                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
@@ -290,7 +290,7 @@ const Contact = () => {
                         value={formData.service}
                         onValueChange={(value) => setFormData({ ...formData, service: value })}
                       >
-                        <SelectTrigger id="service" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-lg px-6">
+                        <SelectTrigger id="service" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-sm px-5">
                           <SelectValue placeholder="Select target parameter" />
                         </SelectTrigger>
                         <SelectContent className="rounded-xl bg-white text-black border-transparent shadow-xl">
@@ -310,7 +310,7 @@ const Contact = () => {
                         value={formData.budget}
                         onValueChange={(value) => setFormData({ ...formData, budget: value })}
                       >
-                        <SelectTrigger id="budget" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-lg px-6">
+                        <SelectTrigger id="budget" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-sm px-5">
                           <SelectValue placeholder="Select capital bounds" />
                         </SelectTrigger>
                         <SelectContent className="rounded-xl bg-white text-black border-transparent shadow-xl">
@@ -334,7 +334,7 @@ const Contact = () => {
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       rows={5}
-                      className="rounded-2xl bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-lg p-6 resize-none"
+                      className="rounded-2xl bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm p-5 resize-none"
                     />
                   </div>
                 </RevealItem>

@@ -29,6 +29,7 @@ import { DesignPricingCalculator } from "@/components/design-detail/DesignPricin
 import { ExecutionCostBreakdown } from "@/components/design-detail/ExecutionCostBreakdown";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion, AnimatePresence } from "framer-motion";
+import { autoClassifyMaterial } from "@/lib/utils";
 
 import kitchenImage from "@/assets/kitchen-design.jpg";
 import bedroomImage from "@/assets/bedroom-design.jpg";
@@ -350,7 +351,7 @@ const DesignDetail = () => {
         <div className="container mx-auto px-4">
           <Link
             to="/designs"
-            className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-primary transition-colors group"
+            className="inline-flex items-center text-sm font-bold text-[#44474c] hover:text-primary transition-colors group"
           >
             <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
               <ArrowLeft className="w-4 h-4" />
@@ -463,7 +464,7 @@ const DesignDetail = () => {
                   <div className="flex items-center gap-2 bg-accent/5 px-4 py-2 rounded-2xl border border-accent/10">
                     <Star className="w-5 h-5 fill-accent text-accent" />
                     <span className="text-foreground text-lg">{design.rating}</span>
-                    <span className="text-muted-foreground font-medium">({design.reviews} Reviews)</span>
+                    <span className="text-[#44474c] font-medium">({design.reviews} Reviews)</span>
                   </div>
                   <div className="flex items-center gap-2 bg-secondary/30 px-4 py-2 rounded-2xl border border-border/50">
                     <Ruler className="w-5 h-5 text-primary" />
@@ -474,7 +475,7 @@ const DesignDetail = () => {
             </Reveal>
 
             <Reveal width="100%" direction="up" delay={0.1}>
-              <p className="text-muted-foreground text-lg leading-relaxed font-medium">
+              <p className="text-[#44474c] text-lg leading-relaxed font-medium">
                 {design.description}
               </p>
             </Reveal>
@@ -492,7 +493,7 @@ const DesignDetail = () => {
                       <div className="w-12 h-12 bg-background rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                         <item.icon className="w-6 h-6 text-primary" />
                       </div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{item.label}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-[#44474c] mb-1">{item.label}</p>
                       <p className="font-black text-foreground text-sm">{item.value}</p>
                     </div>
                   </RevealItem>
@@ -515,7 +516,7 @@ const DesignDetail = () => {
                     <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all">
                       <Check className="w-4 h-4" />
                     </div>
-                    <span className="text-sm font-bold text-muted-foreground group-hover:text-foreground transition-colors">{feat}</span>
+                    <span className="text-sm font-bold text-[#44474c] group-hover:text-foreground transition-colors">{feat}</span>
                   </motion.div>
                 ))}
               </div>
@@ -530,13 +531,13 @@ const DesignDetail = () => {
                 </div>
                 <CardContent className="p-8 space-y-6">
                   <div className="flex justify-between items-center group">
-                    <span className="text-muted-foreground font-bold uppercase tracking-widest text-xs">Standard Execution</span>
+                    <span className="text-[#44474c] font-bold uppercase tracking-widest text-xs">Standard Execution</span>
                     <span className="font-black text-foreground text-lg group-hover:text-primary transition-colors">
                       ₹{design.executionCost?.toLocaleString("en-IN") || "0"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center group">
-                    <span className="text-muted-foreground font-bold uppercase tracking-widest text-xs">Standard Materials</span>
+                    <span className="text-[#44474c] font-bold uppercase tracking-widest text-xs">Standard Materials</span>
                     <span className="font-black text-foreground text-lg group-hover:text-primary transition-colors">
                       ₹{design.materialsCost?.toLocaleString("en-IN") || "0"}
                     </span>
@@ -544,7 +545,7 @@ const DesignDetail = () => {
                   <Separator className="bg-border/50" />
                   <div className="flex justify-between items-end">
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Estimated Total Price</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-[#44474c] mb-1">Estimated Total Price</p>
                       <p className="font-black text-primary text-4xl tracking-tighter">
                         ₹{design.totalCost?.toLocaleString("en-IN") || "0"}
                       </p>
@@ -632,7 +633,7 @@ const DesignDetail = () => {
                         className="hover:bg-secondary/20 transition-all group"
                       >
                         <td className="px-10 py-6 font-bold text-foreground group-hover:text-primary transition-colors">{mat.material_name}</td>
-                        <td className="px-10 py-6 font-medium text-muted-foreground italic text-sm">{mat.category || '-'}</td>
+                        <td className="px-10 py-6 font-medium text-muted-foreground italic text-sm">{mat.category || autoClassifyMaterial(mat.material_name)}</td>
                         <td className="px-10 py-6">
                            <Badge variant="outline" className="rounded-full px-4 py-1 border-primary/10 font-bold bg-primary/5 text-primary">{mat.quantity} {mat.unit}</Badge>
                         </td>
@@ -659,7 +660,7 @@ const DesignDetail = () => {
               <div className="text-center mb-16">
                 <h2 className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4">Final Step</h2>
                 <h3 className="text-4xl md:text-6xl font-black text-foreground mb-6 tracking-tight">Your Dream, Crafted.</h3>
-                <p className="text-muted-foreground text-xl font-medium max-w-2xl mx-auto">
+                <p className="text-[#44474c] text-xl font-medium max-w-2xl mx-auto">
                   Share your vision with us and let our expert team bring it to life with precision and luxury.
                 </p>
               </div>
@@ -683,25 +684,30 @@ const DesignDetail = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-name" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Full Name</Label>
+                        <Label htmlFor="consult-name" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Full Name</Label>
                         <Input
                           id="consult-name"
+                          name="name"
+                          autoComplete="name"
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           placeholder="Your preferred name"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-[#74777d]/70 text-[#1c1c1a]"
                         />
                       </div>
                     </RevealItem>
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-phone" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Mobile Access</Label>
+                        <Label htmlFor="consult-phone" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Mobile Access</Label>
                         <Input
                           id="consult-phone"
+                          name="phone"
+                          type="tel"
+                          autoComplete="tel"
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           placeholder="+91"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-[#74777d]/70 text-[#1c1c1a]"
                         />
                       </div>
                     </RevealItem>
@@ -710,31 +716,33 @@ const DesignDetail = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-city" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Site Location</Label>
+                        <Label htmlFor="consult-city" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Site Location</Label>
                         <Input
                           id="consult-city"
+                          name="city"
+                          autoComplete="address-level2"
                           value={formData.city}
                           onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                           placeholder="Project city"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-[#74777d]/70 text-[#1c1c1a]"
                         />
                       </div>
                     </RevealItem>
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-project" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Configuration</Label>
+                        <Label htmlFor="consult-project" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Configuration</Label>
                         <select
                           id="consult-project"
                           value={formData.projectType}
                           onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                          className="flex h-14 w-full rounded-2xl bg-secondary/30 border-transparent px-4 py-2 text-sm font-bold focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none cursor-pointer"
+                          className={`flex h-14 w-full rounded-2xl bg-secondary/30 border-transparent px-4 py-2 text-sm font-bold focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none cursor-pointer ${formData.projectType === "" ? "text-[#74777d]/70" : "text-[#1c1c1a]"}`}
                         >
-                          <option value="">Specific Category</option>
-                          <option value="Kitchen">Modern Kitchen</option>
-                          <option value="Bedroom">Bespoke Bedroom</option>
-                          <option value="Living Room">Premium Living Lounge</option>
-                          <option value="Full Home">End-to-End Home</option>
-                          <option value="Other">Custom Project</option>
+                          <option value="" disabled hidden>Specific Category</option>
+                          <option value="Kitchen" className="text-[#1c1c1a]">Modern Kitchen</option>
+                          <option value="Bedroom" className="text-[#1c1c1a]">Bespoke Bedroom</option>
+                          <option value="Living Room" className="text-[#1c1c1a]">Premium Living Lounge</option>
+                          <option value="Full Home" className="text-[#1c1c1a]">End-to-End Home</option>
+                          <option value="Other" className="text-[#1c1c1a]">Custom Project</option>
                         </select>
                       </div>
                     </RevealItem>
@@ -742,14 +750,14 @@ const DesignDetail = () => {
 
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="consult-message" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Design Aspirations</Label>
+                      <Label htmlFor="consult-message" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Design Aspirations</Label>
                       <Textarea
                         id="consult-message"
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                         placeholder="Tell us everything — materials preferences, timeline constraints, or aesthetic inspiration..."
                         rows={4}
-                        className="rounded-3xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold pt-4 px-4"
+                        className="rounded-3xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold pt-4 px-4 placeholder:text-[#74777d]/70 text-[#1c1c1a]"
                       />
                     </div>
                   </RevealItem>

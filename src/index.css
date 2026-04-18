@@ -175,6 +175,15 @@ All colors MUST be HSL.
   }
 }
 
+/* ──── Form Autofill Fixes ──── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s !important;
+  -webkit-text-fill-color: hsl(var(--on-surface-variant)) !important;
+}
+
 /* ──── Animation Utilities ──── */
 
 /* Animated underline that grows from center on hover */

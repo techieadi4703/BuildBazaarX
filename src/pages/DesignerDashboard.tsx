@@ -8,6 +8,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { autoClassifyMaterial } from "@/lib/utils";
 
 export default function DesignerDashboard() {
   const [activeTab, setActiveTab] = useState("gallery");
@@ -70,26 +71,25 @@ export default function DesignerDashboard() {
     fetchDesigner();
   }, []);
 
-  useEffect(() => {
+  const fetchDesigns = async () => {
     if (!designer?.id) return;
+    try {
+      const { data, error } = await supabase
+        .from("designs")
+        .select("*")
+        .eq("designer_id", designer.id)
+        .order("created_at", { ascending: false });
 
-    const fetchDesigns = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("designs")
-          .select("*")
-          .eq("designer_id", designer.id)
-          .order("created_at", { ascending: false });
+      if (error) throw error;
+      setDesigns(data || []);
+    } catch (err: any) {
+      if (err?.name === "AbortError") return;
+      console.error("Designer designs load error:", err);
+      toast({ variant: "destructive", title: "Designs Load Failed", description: err.message || "Unable to load your design repository." });
+    }
+  };
 
-        if (error) throw error;
-        setDesigns(data || []);
-      } catch (err: any) {
-        if (err?.name === "AbortError") return;
-        console.error("Designer designs load error:", err);
-        toast({ variant: "destructive", title: "Designs Load Failed", description: err.message || "Unable to load your design repository." });
-      }
-    };
-
+  useEffect(() => {
     fetchDesigns();
   }, [designer?.id]);
 
@@ -296,7 +296,7 @@ export default function DesignerDashboard() {
                     <UploadDesignSection 
                       designerId={designer?.id ?? ""} 
                       editingDesign={editingDesign}
-                      onComplete={() => { setActiveTab("gallery"); setEditingDesign(null); }} 
+                      onComplete={async () => { await fetchDesigns(); setActiveTab("gallery"); setEditingDesign(null); }} 
                       onCancel={() => { setActiveTab("gallery"); setEditingDesign(null); }}
                     />
                   )}
@@ -351,7 +351,7 @@ export default function DesignerDashboard() {
 
 // SUB-COMPONENTS (Feature-Complete)
 
-function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }: { designerId: string, editingDesign?: any, onComplete: () => void, onCancel: () => void }) {
+function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }: { designerId: string, editingDesign?: any, onComplete: () => Promise<void> | void, onCancel: () => void }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: editingDesign?.name || "", 
@@ -395,20 +395,26 @@ function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }
   };
 
   const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+    const previewToRemove = imagePreviews[index];
+    if (existingImages.includes(previewToRemove)) {
+      setExistingImages(prev => prev.filter(img => img !== previewToRemove));
+    } else {
+      const newFileIndex = imagePreviews.slice(0, index).filter(img => !existingImages.includes(img)).length;
+      setImages(prev => prev.filter((_, i) => i !== newFileIndex));
+    }
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const addMaterialRow = () => {
-    setMaterials([...materials, { id: Date.now(), material_name: "", quantity: "", unit: "nos", notes: "" }]);
+    setMaterials([...materials, { material_name: "", quantity: "", unit: "nos", notes: "" }]);
   };
 
-  const updateMaterial = (id: number, field: string, value: string) => {
-    setMaterials(materials.map(m => m.id === id ? { ...m, [field]: value } : m));
+  const updateMaterial = (index: number, field: string, value: string) => {
+    setMaterials(materials.map((m, i) => i === index ? { ...m, [field]: value } : m));
   };
 
-  const removeMaterial = (id: number) => {
-    setMaterials(materials.filter(m => m.id !== id));
+  const removeMaterial = (index: number) => {
+    setMaterials(materials.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async () => {
@@ -460,11 +466,24 @@ function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }
       let designData;
       if (editingDesign?.id) {
         const { data, error } = await supabase.from('designs').update(designPayload).eq('id', editingDesign.id).select().single();
-        if (error) throw error;
+        if (error) {
+           toast({ variant: "destructive", title: "Update Restricted", description: `Cannot modify design: ${error.message}` });
+           throw error;
+        }
         designData = data;
+        
+        // Delete existing materials so they don't duplicate on update
+        const { error: delError } = await supabase.from('design_materials').delete().eq('design_id', designData.id);
+        if (delError) {
+          console.error("BoM delete error:", delError);
+          toast({ variant: "destructive", title: "Storage Policy Restricted", description: `Cannot delete legacy materials: ${delError.message}` });
+        }
       } else {
         const { data, error } = await supabase.from('designs').insert(designPayload).select().single();
-        if (error) throw error;
+        if (error) {
+           toast({ variant: "destructive", title: "Creation Restricted", description: `Cannot create design: ${error.message}` });
+           throw error;
+        }
         designData = data;
       }
 
@@ -472,20 +491,24 @@ function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }
         const materialRows = materials.map(m => ({
           design_id: designData.id,
           material_name: m.material_name,
+          category: m.category || autoClassifyMaterial(m.material_name),
           quantity: parseFloat(m.quantity) || 0,
-          unit: m.unit,
+          unit: m.unit || "nos",
           notes: m.notes
         })).filter(m => m.material_name && m.quantity > 0);
 
         if (materialRows.length > 0) {
           const { error: matError } = await supabase.from('design_materials').insert(materialRows);
-          if (matError) console.error("BoM upload error:", matError);
+          if (matError) {
+             console.error("BoM upload error:", matError);
+             toast({ variant: "destructive", title: "BoM Sync Failed", description: matError.message });
+          }
         }
       }
 
       toast({ title: "Blueprint Synchronized!", description: "Your vision and technical specs are now live." });
       queryClient.invalidateQueries({ queryKey: ["designer-designs"] });
-      onComplete();
+      await onComplete();
     } catch (error: any) {
       console.error("Publication error:", error);
       toast({ variant: "destructive", title: "Publication Failed", description: error.message || "An unexpected error occurred." });
@@ -582,7 +605,7 @@ function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }
                        </div>
                     </div>
                    
-                     <div className="grid grid-cols-4 gap-4">
+                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <label className="text-[10px] uppercase font-bold tracking-widest opacity-60">Room Size (sq.ft)</label>
                           <input type="number" value={formData.room_size} onChange={e => setFormData({...formData, room_size: e.target.value})} className="w-full px-4 py-3 bg-[#f6f3f0] border border-transparent outline-none rounded-sm text-sm" />
@@ -602,7 +625,7 @@ function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }
                      </div>
                      <div className="space-y-2">
                         <label className="text-[10px] uppercase font-bold tracking-widest opacity-60">Execution Features (Comma Separated)</label>
-                        <textarea value={formData.features} onChange={e => setFormData({...formData, features: e.target.value})} rows={2} className="w-full p-4 bg-[#f6f3f0] border border-transparent outline-none rounded-sm resize-none text-[10px]" />
+                        <textarea value={formData.features} onChange={e => setFormData({...formData, features: e.target.value})} rows={2} className="w-full p-4 bg-[#f6f3f0] border border-transparent outline-none rounded-sm resize-none text-sm" />
                      </div>
 
                      <div className="space-y-6 pt-4 border-t border-[#e5e2df]">
@@ -611,22 +634,22 @@ function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }
                            <button type="button" onClick={addMaterialRow} className="text-[8px] font-black uppercase tracking-widest flex items-center gap-2 hover:text-[#735c00] transition-colors"><Plus className="w-3 h-3" /> Append Specification</button>
                         </div>
                         <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                           {materials.map((mat) => (
-                              <div key={mat.id} className="grid grid-cols-12 gap-3 bg-[#f6f3f0] p-4 group relative">
+                           {materials.map((mat, index) => (
+                              <div key={index} className="grid grid-cols-12 gap-3 bg-[#f6f3f0] p-4 group relative">
                                  <div className="col-span-5">
-                                    <label className="text-[7px] font-bold uppercase block mb-1">Component Name</label>
-                                    <input value={mat.material_name} onChange={e => updateMaterial(mat.id, 'material_name', e.target.value)} className="w-full bg-transparent border-b border-[#e5e2df] outline-none text-[10px] font-bold py-1" />
+                                    <label className="text-[9px] font-bold uppercase block mb-1">Component Name</label>
+                                    <input value={mat.material_name} onChange={e => updateMaterial(index, 'material_name', e.target.value)} className="w-full bg-transparent border-b border-[#e5e2df] outline-none text-xs font-bold py-1" />
                                  </div>
                                  <div className="col-span-2">
-                                    <label className="text-[7px] font-bold uppercase block mb-1">Quantity</label>
-                                    <input type="number" value={mat.quantity} onChange={e => updateMaterial(mat.id, 'quantity', e.target.value)} className="w-full bg-transparent border-b border-[#e5e2df] outline-none text-[10px] font-bold py-1" />
+                                    <label className="text-[9px] font-bold uppercase block mb-1">Quantity</label>
+                                    <input type="number" value={mat.quantity} onChange={e => updateMaterial(index, 'quantity', e.target.value)} className="w-full bg-transparent border-b border-[#e5e2df] outline-none text-xs font-bold py-1" />
                                  </div>
                                  <div className="col-span-4">
-                                    <label className="text-[7px] font-bold uppercase block mb-1">Notes / Grades</label>
-                                    <input value={mat.notes} onChange={e => updateMaterial(mat.id, 'notes', e.target.value)} className="w-full bg-transparent border-b border-[#e5e2df] outline-none text-[10px] font-bold py-1" />
+                                    <label className="text-[9px] font-bold uppercase block mb-1">Notes / Grades</label>
+                                    <input value={mat.notes} onChange={e => updateMaterial(index, 'notes', e.target.value)} className="w-full bg-transparent border-b border-[#e5e2df] outline-none text-xs font-bold py-1" />
                                  </div>
                                  <div className="col-span-1 flex items-end">
-                                    <button type="button" onClick={() => removeMaterial(mat.id)} className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><Trash className="w-3 h-3" /></button>
+                                    <button type="button" onClick={() => removeMaterial(index)} className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><Trash className="w-3 h-3" /></button>
                                  </div>
                               </div>
                            ))}
