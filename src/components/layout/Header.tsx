@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, LogOut, User, Package, ArrowRight } from "lucide-react";
+import { LogIn, LogOut, User, Package, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -17,7 +17,6 @@ const navLinks = [
 ];
 
 export const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [userDashboardPath, setUserDashboardPath] = useState<string>("/");
   const location = useLocation();
@@ -99,7 +98,7 @@ export const Header = () => {
 
           {/* Desktop Navigation */}
           {!isNonUserRoute && (
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden lg:flex items-center gap-8">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.path}
@@ -130,7 +129,7 @@ export const Header = () => {
           )}
 
           {/* Cart + Auth Buttons */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             {!isNonUserRoute && user && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
                 <CartSheet />
@@ -195,117 +194,13 @@ export const Header = () => {
             )}
           </div>
 
-          {/* Mobile Cart + Menu */}
-          <div className="md:hidden flex items-center gap-1">
+          {/* Mobile Cart */}
+          <div className="lg:hidden flex items-center gap-1">
             {!isNonUserRoute && user && <CartSheet />}
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              className="p-2"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? (
-                <X className="w-6 h-6 text-foreground" />
-              ) : (
-                <Menu className="w-6 h-6 text-foreground" />
-              )}
-            </motion.button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="md:hidden py-4 border-t border-border overflow-hidden"
-            >
-              <nav className="flex flex-col gap-2">
-                {!isNonUserRoute && navLinks.map((link, i) => (
-                  <motion.div
-                    key={link.path}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    <Link
-                      to={link.path}
-                      onClick={() => setIsMenuOpen(false)}
-                      className={`text-sm font-medium transition-colors hover:text-primary py-2 px-3 rounded-md relative flex items-center justify-between group ${
-                        location.pathname === link.path
-                          ? "text-primary"
-                          : "text-foreground"
-                      }`}
-                    >
-                      <span className="relative z-10">{link.name}</span>
-                      {location.pathname === link.path && (
-                        <motion.div
-                          layoutId="mobile-nav-pill"
-                          className="absolute inset-0 bg-primary/5 rounded-md z-0"
-                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        />
-                      )}
-                      <ArrowRight className={`w-4 h-4 transition-all ${location.pathname === link.path ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0"}`} />
-                    </Link>
-                  </motion.div>
-                ))}
-
-                {user ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    {!isNonUserRoute && (
-                      <Link
-                        to="/orders"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="text-sm font-medium transition-colors text-foreground hover:text-primary flex items-center gap-2 mb-4"
-                      >
-                        <Package className="w-4 h-4" />
-                        My Orders
-                      </Link>
-                    )}
-                    <Button
-                      variant="outline"
-                      className="mt-2 rounded-full w-full"
-                      onClick={() => {
-                        handleLogout();
-                        setIsMenuOpen(false);
-                      }}
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Logout
-                    </Button>
-                  </motion.div>
-                ) : (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="mt-2 space-y-2 border-t pt-4"
-                  >
-                    <div className="grid grid-cols-1 gap-2">
-                      <Button asChild variant="outline" className="rounded-full text-foreground w-full">
-                        <Link to="/auth/select-role?mode=login" onClick={() => setIsMenuOpen(false)}>
-                          <LogIn className="w-4 h-4 mr-2" />
-                          Login
-                        </Link>
-                      </Button>
-                      <Button asChild className="rounded-full w-full">
-                        <Link to="/auth/select-role" onClick={() => setIsMenuOpen(false)}>
-                          Sign Up
-                        </Link>
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Mobile menu removed */}
       </div>
     </motion.header>
   );

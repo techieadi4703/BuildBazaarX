@@ -3,7 +3,7 @@ import { Layout } from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, MapPin, Mail, Save, Loader2, Package, ArrowRight } from "lucide-react";
+import { User, Phone, MapPin, Mail, Save, Loader2, Package, ArrowRight, LogOut } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -22,6 +22,12 @@ const Profile = () => {
     state: "",
     pincode: "",
   });
+
+  const handleLogout = async () => {
+    setIsSaving(true);
+    await supabase.auth.signOut();
+    navigate("/");
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -127,18 +133,33 @@ const Profile = () => {
                 Manage your identity and logistical requisitions within the BuildBazaarX network.
               </p>
               
-              <Link to="/orders" className="group flex items-center justify-between p-6 bg-white border border-[#e5e2df] hover:border-[#735c00] transition-colors rounded-sm shadow-sm max-w-sm">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-[#f6f3f0] flex items-center justify-center">
-                    <Package className="w-5 h-5 text-[#1c1c1a]" />
+              <div className="space-y-4">
+                <Link to="/orders" className="group flex items-center justify-between p-6 bg-white border border-[#e5e2df] hover:border-[#735c00] transition-colors rounded-sm shadow-sm max-w-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-[#f6f3f0] flex items-center justify-center">
+                      <Package className="w-5 h-5 text-[#1c1c1a]" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] block mb-1">Logistics</span>
+                      <span className="text-sm font-semibold">Active Requisitions</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] block mb-1">Logistics</span>
-                    <span className="text-sm font-semibold">Active Requisitions</span>
+                  <ArrowRight className="w-4 h-4 text-[#74777d] group-hover:text-[#735c00] group-hover:translate-x-1 transition-all" />
+                </Link>
+
+                <button onClick={handleLogout} className="group w-full flex items-center justify-between p-6 bg-white border border-red-100 hover:border-red-500 transition-colors rounded-sm shadow-sm max-w-sm cursor-pointer text-left">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+                      <LogOut className="w-5 h-5 text-red-500" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] uppercase font-bold tracking-widest text-red-500 block mb-1">Session</span>
+                      <span className="text-sm font-semibold text-red-600">Terminate Access</span>
+                    </div>
                   </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#74777d] group-hover:text-[#735c00] group-hover:translate-x-1 transition-all" />
-              </Link>
+                  <ArrowRight className="w-4 h-4 text-red-300 group-hover:text-red-500 group-hover:translate-x-1 transition-all" />
+                </button>
+              </div>
             </div>
 
             {/* Main Form Area */}
