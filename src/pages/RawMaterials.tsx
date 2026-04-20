@@ -131,7 +131,7 @@ const RawMaterials = () => {
         title: "Authentication Required",
         description: "Please sign in as a customer to add items to your cart.",
       });
-      navigate("/auth");
+      navigate("/auth?mode=login");
     }
   };
 

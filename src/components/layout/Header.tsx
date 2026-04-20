@@ -131,7 +131,7 @@ export const Header = () => {
 
           {/* Cart + Auth Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            {!isNonUserRoute && (
+            {!isNonUserRoute && user && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
                 <CartSheet />
               </motion.div>
@@ -197,7 +197,7 @@ export const Header = () => {
 
           {/* Mobile Cart + Menu */}
           <div className="md:hidden flex items-center gap-1">
-            {!isNonUserRoute && <CartSheet />}
+            {!isNonUserRoute && user && <CartSheet />}
             <motion.button
               whileTap={{ scale: 0.9 }}
               className="p-2"
