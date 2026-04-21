@@ -614,14 +614,7 @@ function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }
                           <label className="text-[10px] uppercase font-bold tracking-widest opacity-60">Execution (₹)</label>
                           <input type="number" value={formData.execution_cost} onChange={e => setFormData({...formData, execution_cost: e.target.value})} className="w-full px-4 py-3 bg-[#f6f3f0] border border-transparent outline-none rounded-sm text-sm" />
                         </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase font-bold tracking-widest opacity-60">Materials (₹)</label>
-                          <input type="number" value={formData.materials_cost} onChange={e => setFormData({...formData, materials_cost: e.target.value})} className="w-full px-4 py-3 bg-[#f6f3f0] border border-transparent outline-none rounded-sm text-sm" />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase font-bold tracking-widest opacity-60">Finesse (₹)</label>
-                          <input type="number" value={formData.customize_cost} onChange={e => setFormData({...formData, customize_cost: e.target.value})} className="w-full px-4 py-3 bg-[#f6f3f0] border border-transparent outline-none rounded-sm text-sm" />
-                        </div>
+
                      </div>
                      <div className="space-y-2">
                         <label className="text-[10px] uppercase font-bold tracking-widest opacity-60">Execution Features (Comma Separated)</label>

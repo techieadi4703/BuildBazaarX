@@ -536,12 +536,7 @@ const DesignDetail = () => {
                       ₹{design.executionCost?.toLocaleString("en-IN") || "0"}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center group">
-                    <span className="text-[#44474c] font-bold uppercase tracking-widest text-xs">Standard Materials</span>
-                    <span className="font-black text-foreground text-lg group-hover:text-primary transition-colors">
-                      ₹{design.materialsCost?.toLocaleString("en-IN") || "0"}
-                    </span>
-                  </div>
+
                   <Separator className="bg-border/50" />
                   <div className="flex justify-between items-end">
                     <div>
