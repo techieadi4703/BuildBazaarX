@@ -268,7 +268,7 @@ const RawMaterials = () => {
 
                 {/* Featured Ad inside Sidebar */}
                 <div className="mt-16 p-6 bg-[#f6f3f0] rounded-lg">
-                  <h5 className="text-sm font-bold mb-3 font-headline italic text-lg">Featured Material</h5>
+                  <h5 className="font-bold mb-3 font-headline italic text-lg">Featured Material</h5>
                   <img src={laminateImg} alt="Veneer" className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply" />
                   <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">Discover the 2024 Architectural Digest choice for sustainable veneers.</p>
                   <a href="#" className="font-body text-[10px] font-bold uppercase text-[#735c00] flex items-center gap-1 hover:underline">
