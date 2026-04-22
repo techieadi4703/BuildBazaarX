@@ -184,7 +184,7 @@ export const ExecutionCostBreakdown = () => {
             </div>
 
             {/* Sticky Total Bar */}
-            <div className="sticky bottom-0 p-4 md:px-6 bg-primary text-primary-foreground rounded-b-lg flex items-center justify-between">
+            <div className="sticky bottom-0 p-4 md:px-6 bg-primary text-primary-foreground rounded-b-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Calculator className="h-5 w-5" />
                 <span className="font-semibold text-sm md:text-base">

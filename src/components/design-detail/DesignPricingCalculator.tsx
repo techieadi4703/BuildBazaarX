@@ -208,11 +208,11 @@ export const DesignPricingCalculator = () => {
           </CardContent>
 
           {/* Sticky Buy All Bar */}
-          <div className="sticky bottom-0 bg-primary text-primary-foreground p-4 rounded-b-lg flex items-center justify-between">
-            <span className="font-semibold text-sm md:text-base">
+          <div className="sticky bottom-0 bg-primary text-primary-foreground p-4 rounded-b-lg flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <span className="font-semibold text-sm md:text-base mb-2 sm:mb-0">
               Need all materials? Buy everything in one go →
             </span>
-            <Button variant="secondary" size="sm" className="rounded-full" asChild>
+            <Button variant="secondary" size="sm" className="rounded-full w-full sm:w-auto" asChild>
               <Link to="/materials">
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Browse All Materials
