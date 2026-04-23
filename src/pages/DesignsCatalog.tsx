@@ -25,63 +25,63 @@ const categories = [
 
 const styles = ["Modern", "Luxury", "Minimal", "Traditional", "Contemporary"];
 
-const staticDesigns = [
-  {
-    id: 1,
-    name: "The Obsidian Pavilion",
-    category: "full-home",
-    image: fullhomeImage,
-    size: "2400 sq ft",
-    style: "Modern",
-    totalCost: "$12,400",
-    time: "8 Months",
-    featured: true,
-  },
-  {
-    id: 2,
-    name: "Etheric Timber Lodge",
-    category: "bedroom",
-    image: bedroomImage,
-    size: "800 sq ft",
-    style: "Traditional",
-    totalCost: "$8,900",
-    time: "6 Months",
-    featured: false,
-  },
-  {
-    id: 3,
-    name: "Monolith Residence",
-    category: "living-room",
-    image: livingroomImage,
-    size: "1200 sq ft",
-    style: "Minimal",
-    totalCost: "$15,200",
-    time: "12 Months",
-    featured: false,
-  },
-  {
-    id: 4,
-    name: "Azure Infinity House",
-    category: "full-home",
-    image: kitchenImage, // Placeholder
-    size: "4500 sq ft",
-    style: "Luxury",
-    totalCost: "$21,000",
-    time: "14 Months",
-    featured: false,
-  },
-  {
-    id: 5,
-    name: "The Heritage Barn",
-    category: "kitchen",
-    image: wardrobeImage, // Placeholder
-    size: "950 sq ft",
-    style: "Contemporary",
-    totalCost: "$7,200",
-    time: "5 Months",
-    featured: false,
-  },
-];
+// const staticDesigns = [
+//   {
+//     id: 1,
+//     name: "The Obsidian Pavilion",
+//     category: "full-home",
+//     image: fullhomeImage,
+//     size: "2400 sq ft",
+//     style: "Modern",
+//     totalCost: "$12,400",
+//     time: "8 Months",
+//     featured: true,
+//   },
+//   {
+//     id: 2,
+//     name: "Etheric Timber Lodge",
+//     category: "bedroom",
+//     image: bedroomImage,
+//     size: "800 sq ft",
+//     style: "Traditional",
+//     totalCost: "$8,900",
+//     time: "6 Months",
+//     featured: false,
+//   },
+//   {
+//     id: 3,
+//     name: "Monolith Residence",
+//     category: "living-room",
+//     image: livingroomImage,
+//     size: "1200 sq ft",
+//     style: "Minimal",
+//     totalCost: "$15,200",
+//     time: "12 Months",
+//     featured: false,
+//   },
+//   {
+//     id: 4,
+//     name: "Azure Infinity House",
+//     category: "full-home",
+//     image: kitchenImage, // Placeholder
+//     size: "4500 sq ft",
+//     style: "Luxury",
+//     totalCost: "$21,000",
+//     time: "14 Months",
+//     featured: false,
+//   },
+//   {
+//     id: 5,
+//     name: "The Heritage Barn",
+//     category: "kitchen",
+//     image: wardrobeImage, // Placeholder
+//     size: "950 sq ft",
+//     style: "Contemporary",
+//     totalCost: "$7,200",
+//     time: "5 Months",
+//     featured: false,
+//   },
+// ];
 
 const DesignsCatalog = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -111,7 +111,7 @@ const DesignsCatalog = () => {
       time: "Variable",
       featured: dbD.is_trending || false,
     }));
-    return [...staticDesigns, ...mappedDbDesigns];
+    return [...mappedDbDesigns];
   }, [dbDesigns]);
 
   const filteredDesigns = allDesigns.filter((design) => {
