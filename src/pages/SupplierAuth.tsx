@@ -23,9 +23,30 @@ export default function SupplierAuth() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const resolveSupplierDestination = async (userId: string) => {
+    const { data: supplierData, error: supplierError } = await supabase
+      .from("suppliers")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (supplierError) throw supplierError;
+
+    return supplierData ? "/supplier/dashboard" : "/supplier/setup";
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) navigate("/supplier/dashboard");
+      if (!session) return;
+
+      window.setTimeout(() => {
+        resolveSupplierDestination(session.user.id)
+          .then((path) => navigate(path))
+          .catch((error) => {
+            console.error("Supplier auth redirect error:", error);
+            navigate("/supplier/setup");
+          });
+      }, 500);
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
@@ -37,8 +58,14 @@ export default function SupplierAuth() {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast({ title: "Authorized", description: "Accessing Logistics Dashboard..." });
-        navigate("/supplier/dashboard");
+        const sessionData = await supabase.auth.getSession();
+        const userId = sessionData.data.session?.user.id;
+        if (userId) {
+          const nextPath = await resolveSupplierDestination(userId);
+          navigate(nextPath);
+        } else {
+          navigate("/supplier/dashboard");
+        }
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -46,27 +73,26 @@ export default function SupplierAuth() {
           options: {
             data: {
               full_name: ownerName,
-              role: "supplier",
-            },
-          },
-        });
+              role: 'supplier',
+              phone: phone,
+              business_name: businessName,
+              city: city
+            }
+          });
 
         if (error) throw error;
 
         if (data.user) {
-          const { error: supplierError } = await supabase.from("suppliers").insert({
-            id: data.user.id,
-            business_name: businessName,
-            owner_name: ownerName,
-            city,
-            phone,
-            is_verified: false,
-          });
+          // Safety Sync: Explicitly update the profiles table to ensure role and basic info are attached first
+          await supabase.from('profiles').update({ 
+            role: 'supplier', 
+            full_name: ownerName,
+            phone: phone,
+            city: city
+          }).eq('id', data.user.id);
 
-          if (supplierError) throw supplierError;
-
-          toast({ title: "Registry Created", description: "Your logistics profile is now active." });
-          navigate("/supplier/dashboard");
+          toast({ title: "Logistics Syncing", description: "Configuring your supply chain workspace..." });
+          navigate("/supplier/setup");
         }
       }
     } catch (error: any) {
@@ -123,7 +149,7 @@ export default function SupplierAuth() {
                         <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Authorized Director *</label>
                         <div className="relative">
                           <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                          <input required value={ownerName} onChange={(e) => setOwnerName(e.target.value)} placeholder="Full Name" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                          <input required value={ownerName} onChange={(e) => setOwnerName(e.target.value)} placeholder="e.g. Aditya Srivastava" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -137,7 +163,7 @@ export default function SupplierAuth() {
                         <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Contact Line *</label>
                         <div className="relative">
                           <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                          <input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 00000 00000" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                          <input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 XXXXX" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
                         </div>
                       </div>
                     </div>
@@ -147,7 +173,15 @@ export default function SupplierAuth() {
                     <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Corporate Email</label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                      <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="logistics@entity.com" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                      <input 
+                        required 
+                        type="email" 
+                        autoComplete="off"
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        placeholder="business@supply.com" 
+                        className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" 
+                      />
                     </div>
                   </div>
 
@@ -155,7 +189,15 @@ export default function SupplierAuth() {
                     <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Authentication Key</label>
                     <div className="relative">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                      <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••••••" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                      <input 
+                        required 
+                        type="password" 
+                        autoComplete="new-password"
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        placeholder="••••••••" 
+                        className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" 
+                      />
                     </div>
                   </div>
 

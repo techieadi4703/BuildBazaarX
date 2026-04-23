@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
-import { ArrowRight, Mail, Lock, Palette, ShieldCheck, User, LayoutGrid, Check } from "lucide-react";
+import { ArrowRight, Mail, Lock, Palette, User, Check, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SPECIALIZATIONS = [
@@ -21,6 +21,7 @@ export default function DesignerAuth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [selectedSpecs, setSelectedSpecs] = useState<string[]>([]);
   
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ export default function DesignerAuth() {
             console.error("Designer auth redirect error:", error);
             navigate("/designer/setup");
           });
-      }, 0);
+      }, 500);
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
@@ -89,17 +90,15 @@ export default function DesignerAuth() {
         if (error) throw error;
 
         if (data.user) {
-          const { error: designerError } = await supabase.from("designers").insert({
-            id: data.user.id,
+          // Safety Sync: Explicitly update the profiles table to ensure role and contact info are attached first
+          await supabase.from('profiles').update({ 
+            role: 'designer', 
             full_name: fullName,
-            specializations: selectedSpecs,
-            is_verified: false,
-          });
+            phone: phone
+          }).eq('id', data.user.id);
 
-          if (designerError) throw designerError;
-
-          toast({ title: "Identity Registered", description: "Design profile created successfully." });
-          navigate("/designer/dashboard");
+          toast({ title: "Studio Access Synchronized", description: "Configuring your creative workspace..." });
+          navigate("/designer/setup");
         }
       }
     } catch (error: any) {
@@ -143,32 +142,49 @@ export default function DesignerAuth() {
                 className="bg-white border border-[#e5e2df] p-8 md:p-12 rounded-sm shadow-sm"
               >
                 <form onSubmit={handleAuth} className="space-y-8">
-                  {!isLogin && (
+                   {!isLogin && (
                     <div className="space-y-8">
-                       <div className="space-y-2">
+                      <div className="space-y-2">
                         <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Creative Nomenclature *</label>
                         <div className="relative">
                           <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                          <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full Name" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                          <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Aditya Srivastava" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Designer Contact *</label>
+                        <div className="relative">
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                          <input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 XXXXX" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
                         </div>
                       </div>
 
                       <div className="space-y-4">
                         <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Specialization Grid (Select All That Apply)</label>
                         <div className="grid grid-cols-2 gap-3">
-                          {SPECIALIZATIONS.map(spec => (
-                            <button
-                              key={spec}
-                              type="button"
-                              onClick={() => toggleSpec(spec)}
-                              className={`flex items-center gap-3 p-4 border transition-all rounded-sm ${selectedSpecs.includes(spec) ? "border-[#735c00] bg-[#fcf9f6] text-[#735c00]" : "border-[#e5e2df] text-[#74777d] hover:border-[#c4c6cc] bg-whiteText"}`}
-                            >
-                               <div className={`w-3 h-3 rounded-full border border-current flex items-center justify-center`}>
-                                 {selectedSpecs.includes(spec) && <div className="w-1.5 h-1.5 rounded-full bg-current" />}
-                               </div>
-                               <span className="text-[9px] uppercase font-black tracking-widest">{spec}</span>
-                            </button>
-                          ))}
+                          {SPECIALIZATIONS.map(spec => {
+                            const isSelected = selectedSpecs.includes(spec);
+                            return (
+                              <button
+                                key={spec}
+                                type="button"
+                                onClick={() => toggleSpec(spec)}
+                                className={`flex items-center gap-3 p-4 border transition-all rounded-sm ${
+                                  isSelected 
+                                    ? "border-[#735c00] bg-[#fcf9f6] text-[#735c00] shadow-sm" 
+                                    : "border-[#e5e2df] text-[#74777d] hover:border-[#c4c6cc] bg-white"
+                                }`}
+                              >
+                                <div className="pointer-events-none flex items-center gap-3 w-full">
+                                  <div className={`w-3.5 h-3.5 rounded-full border-2 border-current flex items-center justify-center shrink-0`}>
+                                    {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                                  </div>
+                                  <span className="text-[10px] uppercase font-black tracking-widest text-left">{spec}</span>
+                                </div>
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
@@ -178,7 +194,15 @@ export default function DesignerAuth() {
                     <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Identity Email</label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                      <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="creative@studio.com" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                      <input 
+                        required 
+                        type="email" 
+                        autoComplete="off"
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        placeholder="name@studio.com" 
+                        className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" 
+                      />
                     </div>
                   </div>
 
@@ -186,7 +210,15 @@ export default function DesignerAuth() {
                     <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Security Key</label>
                     <div className="relative">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                      <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••••••" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                      <input 
+                        required 
+                        type="password" 
+                        autoComplete="new-password"
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        placeholder="••••••••" 
+                        className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" 
+                      />
                     </div>
                   </div>
 

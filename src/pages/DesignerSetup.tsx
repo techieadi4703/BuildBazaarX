@@ -54,6 +54,25 @@ export default function DesignerSetup() {
         navigate("/");
         return;
       }
+
+      const { data: profileInfo } = await supabase
+        .from("profiles")
+        .select("full_name, phone")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (profileInfo) {
+        // Extract specializations from auth metadata if available
+        const metadata = (session.user as any).user_metadata;
+        const initialSpecs = metadata?.specializations || [];
+        
+        setForm(prev => ({
+          ...prev,
+          fullName: profileInfo.full_name || prev.fullName,
+          phone: profileInfo.phone || prev.phone,
+          specializations: initialSpecs
+        }));
+      }
       
       const { data } = await supabase
         .from("designers")
@@ -68,26 +87,17 @@ export default function DesignerSetup() {
     checkUser();
   }, [navigate]);
 
-  const handleSpecializationToggle = (spec: string) => {
-    setForm(prev => {
-      const isSelected = prev.specializations.includes(spec);
-      if (isSelected) {
-        return { ...prev, specializations: prev.specializations.filter(s => s !== spec) };
-      } else {
-        return { ...prev, specializations: [...prev.specializations, spec] };
-      }
-    });
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
 
-    if (form.specializations.length === 0) {
+    if (!form.fullName || !form.phone || !form.city || !form.yearsOfExperience) {
       toast({
         variant: "destructive",
         title: "Incomplete Profile",
-        description: "Please select at least one creative specialization.",
+        description: "Please fill in all required fields to continue.",
       });
       return;
     }
@@ -96,7 +106,7 @@ export default function DesignerSetup() {
     try {
       const { error } = await supabase
         .from("designers")
-        .insert({
+        .upsert({
           id: userId,
           full_name: form.fullName,
           phone: form.phone,
@@ -165,7 +175,7 @@ export default function DesignerSetup() {
                             value={form.fullName}
                             onChange={(e) => setForm({...form, fullName: e.target.value})}
                             placeholder="Aditya Srivastava"
-                            className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                            className="pl-12 h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                           />
                         </div>
                       </div>
@@ -180,7 +190,7 @@ export default function DesignerSetup() {
                           value={form.phone}
                           onChange={(e) => setForm({...form, phone: e.target.value})}
                           placeholder="+91 XXXXX XXXXX"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                          className="h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                         />
                       </div>
                     </RevealItem>
@@ -196,7 +206,7 @@ export default function DesignerSetup() {
                             value={form.city}
                             onChange={(e) => setForm({...form, city: e.target.value})}
                             placeholder="Jaipur"
-                            className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                            className="pl-12 h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                           />
                         </div>
                       </div>
@@ -215,35 +225,13 @@ export default function DesignerSetup() {
                             value={form.yearsOfExperience}
                             onChange={(e) => setForm({...form, yearsOfExperience: e.target.value})}
                             placeholder="E.g. 5"
-                            className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                            className="pl-12 h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                           />
                         </div>
                       </div>
                     </RevealItem>
                     
-                    <RevealItem className="md:col-span-2">
-                      <div className="space-y-6">
-                        <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Specializations & Domains</Label>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                          {SPECIALIZATIONS.map(spec => (
-                            <motion.div 
-                              key={spec} 
-                              whileHover={{ x: 5 }} 
-                              onClick={() => handleSpecializationToggle(spec)}
-                              className="flex items-center space-x-4 p-4 rounded-2xl bg-secondary/20 hover:bg-primary/5 transition-colors cursor-pointer group"
-                            >
-                              <Checkbox 
-                                id={`setup-spec-${spec}`} 
-                                checked={form.specializations.includes(spec)}
-                                onCheckedChange={() => handleSpecializationToggle(spec)}
-                                className="scale-125 rounded-lg border-2"
-                              />
-                              <Label htmlFor={`setup-spec-${spec}`} className="font-bold text-sm text-foreground cursor-pointer tracking-tight">{spec}</Label>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-                    </RevealItem>
+
 
                     <RevealItem className="md:col-span-2">
                       <div className="space-y-3">
@@ -255,7 +243,7 @@ export default function DesignerSetup() {
                           value={form.bio}
                           onChange={(e) => setForm({...form, bio: e.target.value})}
                           rows={4}
-                          className="rounded-[2.5rem] bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold p-8"
+                          className="rounded-[2.5rem] bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold p-8 text-base placeholder:text-foreground/30 shadow-inner"
                         />
                       </div>
                     </RevealItem>
