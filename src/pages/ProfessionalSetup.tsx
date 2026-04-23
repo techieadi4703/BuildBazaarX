@@ -65,6 +65,21 @@ export default function ProfessionalSetup() {
         return;
       }
       
+      const { data: profileInfo } = await supabase
+        .from("profiles")
+        .select("full_name, phone, city")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (profileInfo) {
+        setForm(prev => ({
+          ...prev,
+          fullName: profileInfo.full_name || prev.fullName,
+          phone: profileInfo.phone || prev.phone,
+          city: profileInfo.city || prev.city
+        }));
+      }
+      
       const { data } = await supabase
         .from("professionals")
         .select("id")
@@ -86,7 +101,7 @@ export default function ProfessionalSetup() {
     try {
       const { error } = await supabase
         .from("professionals")
-        .insert({
+        .upsert({
           id: userId,
           full_name: form.fullName,
           profession: form.profession,
@@ -157,7 +172,7 @@ export default function ProfessionalSetup() {
                             value={form.fullName}
                             onChange={(e) => setForm({...form, fullName: e.target.value})}
                             placeholder="Aditya Srivastava"
-                            className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                            className="pl-12 h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                           />
                         </div>
                       </div>
@@ -171,7 +186,7 @@ export default function ProfessionalSetup() {
                           value={form.profession}
                           onValueChange={(val) => setForm({...form, profession: val})}
                         >
-                          <SelectTrigger id="profession" className="h-14 rounded-2xl bg-secondary/30 border-transparent font-bold">
+                          <SelectTrigger id="profession" className="h-16 rounded-2xl bg-white border border-secondary/10 font-bold text-base shadow-inner">
                             <SelectValue placeholder="What do you do best?" />
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl">
@@ -192,7 +207,7 @@ export default function ProfessionalSetup() {
                           value={form.phone}
                           onChange={(e) => setForm({...form, phone: e.target.value})}
                           placeholder="+91 XXXXX XXXXX"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                          className="h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                         />
                       </div>
                     </RevealItem>
@@ -208,7 +223,7 @@ export default function ProfessionalSetup() {
                             value={form.city}
                             onChange={(e) => setForm({...form, city: e.target.value})}
                             placeholder="E.g. Jaipur"
-                            className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                            className="pl-12 h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                           />
                         </div>
                       </div>
@@ -222,7 +237,7 @@ export default function ProfessionalSetup() {
                           value={form.address}
                           onChange={(e) => setForm({...form, address: e.target.value})}
                           placeholder="Shop / Office No, Area..."
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                          className="h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                         />
                       </div>
                     </RevealItem>
@@ -235,7 +250,7 @@ export default function ProfessionalSetup() {
                           value={form.pincode}
                           onChange={(e) => setForm({...form, pincode: e.target.value})}
                           placeholder="6-Digit Code"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                          className="h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                         />
                       </div>
                     </RevealItem>
@@ -250,7 +265,7 @@ export default function ProfessionalSetup() {
                           value={form.hourlyRate}
                           onChange={(e) => setForm({...form, hourlyRate: e.target.value})}
                           placeholder="E.g. 500"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                          className="h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                         />
                       </div>
                     </RevealItem>
@@ -265,7 +280,7 @@ export default function ProfessionalSetup() {
                           onChange={(e) => setForm({...form, bio: e.target.value})}
                           placeholder="A brief summary of your expertise and experience..."
                           rows={4}
-                          className="rounded-[2rem] bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold p-6"
+                          className="rounded-[2rem] bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold p-6 text-base placeholder:text-foreground/30 shadow-inner"
                         />
                       </div>
                     </RevealItem>

@@ -53,6 +53,26 @@ export default function SupplierSetup() {
         navigate("/");
         return;
       }
+      
+      const { data: profileInfo } = await supabase
+        .from("profiles")
+        .select("full_name, phone")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (profileInfo) {
+        // Pull business_name from auth metadata as it's not in the generic profile table
+        const metadata = (session.user as any).user_metadata;
+        const businessName = metadata?.business_name || "";
+
+        setSetupForm(prev => ({
+          ...prev,
+          ownerName: profileInfo.full_name || prev.ownerName,
+          phone: profileInfo.phone || prev.phone,
+          city: (profileInfo as any).city || prev.city,
+          businessName: businessName || prev.businessName
+        }));
+      }
 
       const { data } = await supabase
         .from("suppliers")
@@ -86,7 +106,7 @@ export default function SupplierSetup() {
     try {
       const { error } = await supabase
         .from("suppliers")
-        .insert({
+        .upsert({
           id: user.id,
           business_name: setupForm.businessName,
           owner_name: setupForm.ownerName,
@@ -171,7 +191,7 @@ export default function SupplierSetup() {
                             value={setupForm.businessName}
                             onChange={(e) => setSetupForm({...setupForm, businessName: e.target.value})}
                             placeholder="E.g. Heritage Marbles Ltd."
-                            className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                            className="pl-12 h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                           />
                         </div>
                       </div>
@@ -188,7 +208,7 @@ export default function SupplierSetup() {
                             value={setupForm.ownerName}
                             onChange={(e) => setSetupForm({...setupForm, ownerName: e.target.value})}
                             placeholder="Aditya Srivastava"
-                            className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                            className="pl-12 h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                           />
                         </div>
                       </div>
@@ -205,7 +225,7 @@ export default function SupplierSetup() {
                             value={setupForm.phone}
                             onChange={(e) => setSetupForm({...setupForm, phone: e.target.value})}
                             placeholder="+91 XXXXX XXXXX"
-                            className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                            className="pl-12 h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                           />
                         </div>
                       </div>
@@ -222,7 +242,7 @@ export default function SupplierSetup() {
                             value={setupForm.city}
                             onChange={(e) => setSetupForm({...setupForm, city: e.target.value})}
                             placeholder="Jaipur"
-                            className="pl-12 h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                            className="pl-12 h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                           />
                         </div>
                       </div>
@@ -236,7 +256,7 @@ export default function SupplierSetup() {
                           value={setupForm.gstNumber}
                           onChange={(e) => setSetupForm({...setupForm, gstNumber: e.target.value})}
                           placeholder="00XXXXX0000X0Z0"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                          className="h-16 rounded-2xl bg-white border border-secondary/10 focus:bg-white focus:ring-2 focus:ring-secondary/20 transition-all font-bold text-base placeholder:text-foreground/30 shadow-inner"
                         />
                       </div>
                     </RevealItem>
@@ -248,7 +268,7 @@ export default function SupplierSetup() {
                           value={setupForm.businessType} 
                           onValueChange={(v) => setSetupForm({...setupForm, businessType: v})}
                         >
-                          <SelectTrigger className="h-14 rounded-2xl bg-secondary/30 border-transparent font-bold">
+                          <SelectTrigger className="h-16 rounded-2xl bg-white border border-secondary/10 font-bold text-base shadow-inner">
                             <SelectValue placeholder="Select Model" />
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl">
