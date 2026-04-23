@@ -76,9 +76,9 @@ export default function SupplierAuth() {
               role: 'supplier',
               phone: phone,
               business_name: businessName,
-              city: city
             }
-          });
+          }
+        });
 
         if (error) throw error;
 
@@ -211,7 +211,7 @@ export default function SupplierAuth() {
                   <span className="text-[10px] uppercase font-bold tracking-widest text-[#74777d]">
                     {isLogin ? "New provider?" : "Existing entity?"}
                   </span>
-                  <button onClick={() => setIsLogin(!isLogin)} className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4 font-black">
+                  <button onClick={() => setIsLogin(!isLogin)} className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4">
                     {isLogin ? "Apply for License" : "Credential Access"}
                   </button>
                 </div>

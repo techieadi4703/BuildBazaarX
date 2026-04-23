@@ -204,7 +204,7 @@ export default function ProfessionalAuth() {
                   <span className="text-[10px] uppercase font-bold tracking-widest text-[#74777d]">
                     {isLogin ? "New registrar?" : "Existing operative?"}
                   </span>
-                  <button onClick={() => setIsLogin(!isLogin)} className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4 font-black">
+                  <button onClick={() => setIsLogin(!isLogin)} className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4">
                     {isLogin ? "Apply for Registry" : "Credential Access"}
                   </button>
                 </div>

@@ -69,7 +69,7 @@ export default function SupplierSetup() {
           ...prev,
           ownerName: profileInfo.full_name || prev.ownerName,
           phone: profileInfo.phone || prev.phone,
-          city: profileInfo.city || prev.city,
+          city: (profileInfo as any).city || prev.city,
           businessName: businessName || prev.businessName
         }));
       }

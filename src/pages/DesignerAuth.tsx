@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
-import { ArrowRight, Mail, Lock, Palette, User, Check, Phone } from "lucide-react";
+import { ArrowRight, Mail, Lock, Palette, User, Check, Phone, MapPin } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SPECIALIZATIONS = [
@@ -22,6 +22,7 @@ export default function DesignerAuth() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  const [city, setCity] = useState("");
   const [selectedSpecs, setSelectedSpecs] = useState<string[]>([]);
   
   const navigate = useNavigate();
@@ -83,6 +84,9 @@ export default function DesignerAuth() {
             data: {
               full_name: fullName,
               role: "designer",
+              phone: phone,
+              city: city,
+              specializations: selectedSpecs
             },
           },
         });
@@ -94,7 +98,8 @@ export default function DesignerAuth() {
           await supabase.from('profiles').update({ 
             role: 'designer', 
             full_name: fullName,
-            phone: phone
+            phone: phone,
+            city: city,
           }).eq('id', data.user.id);
 
           toast({ title: "Studio Access Synchronized", description: "Configuring your creative workspace..." });
@@ -157,6 +162,14 @@ export default function DesignerAuth() {
                         <div className="relative">
                           <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
                           <input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 XXXXX" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Headquarters (City) *</label>
+                        <div className="relative">
+                          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                          <input required value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Jaipur" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
                         </div>
                       </div>
 
@@ -232,7 +245,7 @@ export default function DesignerAuth() {
                   <span className="text-[10px] uppercase font-bold tracking-widest text-[#74777d]">
                     {isLogin ? "No active license?" : "Existing resident?"}
                   </span>
-                  <button onClick={() => setIsLogin(!isLogin)} className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4 font-black">
+                  <button onClick={() => setIsLogin(!isLogin)} className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4">
                     {isLogin ? "Join the Network" : "Portal Access"}
                   </button>
                 </div>
