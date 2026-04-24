@@ -3,7 +3,8 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Heart, BadgeCheck, Clock, Compass, X } from "lucide-react";
+import { Search, Heart, BadgeCheck, Clock, Compass, X, ChevronDown, SlidersHorizontal, Sliders } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -87,6 +88,41 @@ const DesignsCatalog = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStyle, setSelectedStyle] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedMobileDropdown, setExpandedMobileDropdown] = useState<string | null>(null);
+
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+  const [draftCategory, setDraftCategory] = useState("all");
+  const [draftStyle, setDraftStyle] = useState("all");
+
+  const openFilterSheet = () => {
+    setDraftCategory(selectedCategory);
+    setDraftStyle(selectedStyle);
+    setIsFilterSheetOpen(true);
+  };
+
+  const applyFilters = () => {
+    setSelectedCategory(draftCategory);
+    setSelectedStyle(draftStyle);
+    setIsFilterSheetOpen(false);
+    setExpandedMobileDropdown(null); 
+  };
+
+  const resetFilters = () => {
+    setDraftCategory("all");
+    setDraftStyle("all");
+  };
+
+  const clearAllFilters = () => {
+    setSelectedCategory("all");
+    setSelectedStyle("all");
+    setSearchQuery("");
+    setDraftCategory("all");
+    setDraftStyle("all");
+  };
+
+  const toggleDropdown = (dropdown: string) => {
+    setExpandedMobileDropdown(prev => prev === dropdown ? null : dropdown);
+  };
 
   const { data: dbDesigns } = useQuery({
     queryKey: ['designs'],
@@ -139,103 +175,156 @@ const DesignsCatalog = () => {
       `}</style>
 
       <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full">
-        <main className="max-w-[1920px] mx-auto flex flex-col md:flex-row min-h-screen">
+        <main className="max-w-[1920px] mx-auto flex flex-col md:flex-row min-h-screen relative">
           
-          {/* Sidebar Filter */}
-          <aside className="w-full md:w-80 p-8 md:p-12 space-y-12 bg-[#f6f3f0] border-r border-[#e5e2df] shrink-0">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="font-headline italic text-2xl">Curation Filter</h2>
-              {(selectedCategory !== "all" || selectedStyle !== "all" || searchQuery !== "") && (
-                <button 
-                  onClick={() => { setSelectedCategory("all"); setSelectedStyle("all"); setSearchQuery(""); }}
-                  className="font-body text-[10px] font-bold uppercase tracking-widest text-[#74777d] hover:text-[#735c00]"
-                >
-                  Clear All
-                </button>
-              )}
+          {/* Mobile Top Navigation (Search + Button) */}
+          <div className="md:hidden flex flex-col px-4 pt-4 pb-2 bg-[#fcf9f6] space-y-4 sticky top-0 z-20">
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+                <input 
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded-xl text-sm outline-none shadow-sm" 
+                  placeholder="Search designs..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  type="text"
+                />
+              </div>
+              <button 
+                onClick={openFilterSheet}
+                className="flex items-center justify-center gap-2 px-5 py-3 bg-[#f6f3f0] border border-[#e5e2df] rounded-xl text-sm font-medium whitespace-nowrap hover:bg-[#eae8e5] transition-colors shadow-sm"
+              >
+                <SlidersHorizontal className="w-4 h-4" />
+                Filter
+              </button>
             </div>
-
-            <div className="relative w-full mb-8">
-               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
-               <input 
-                 className="pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded text-sm w-full outline-none font-body shadow-sm" 
-                 placeholder="Search designs..." 
-                 value={searchQuery}
-                 onChange={(e) => setSearchQuery(e.target.value)}
-                 type="text"
-               />
-            </div>
-
-            <div className="space-y-6">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Spatial Category</h3>
-              <div className="flex flex-col gap-4">
-                {categories.map(cat => (
-                  <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
-                    <input 
-                      type="radio" 
-                      name="category"
-                      checked={selectedCategory === cat.id}
-                      onChange={() => setSelectedCategory(cat.id)}
-                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                    />
-                    <span className={`text-sm font-medium transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
-                      {cat.name}
-                    </span>
-                  </label>
-                ))}
+            
+            <div className="flex items-center justify-between text-sm pt-2">
+              <span className="text-[#74777d]">Showing <span className="font-bold text-[#1c1c1a]">{filteredDesigns.length}</span> designs</span>
+              <div className="flex items-center cursor-pointer font-medium text-[#1c1c1a]">
+                Newest <ChevronDown className="w-4 h-4 ml-1" />
               </div>
             </div>
 
-            <div className="space-y-6 pt-6 border-t border-[#e5e2df]">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Architectural Styles</h3>
-              <div className="flex flex-col gap-4">
-                <label className="flex items-center gap-3 cursor-pointer group">
-                  <input 
-                    type="radio" 
-                    name="style"
-                    checked={selectedStyle === "all"}
-                    onChange={() => setSelectedStyle("all")}
-                    className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                  />
-                  <span className={`text-sm font-medium transition-colors ${selectedStyle === "all" ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
-                    Any Style
+            {/* Active filter pills */}
+            {(selectedCategory !== "all" || selectedStyle !== "all") && (
+              <div className="flex flex-wrap gap-2 pt-1 pb-1">
+                {selectedCategory !== "all" && (
+                  <span className="bg-[#f6f3f0] border border-[#e5e2df] text-[#1c1c1a] px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
+                    {categories.find(c => c.id === selectedCategory)?.name}
+                    <X className="w-3 h-3 cursor-pointer opacity-50 hover:opacity-100 transition-opacity" onClick={() => setSelectedCategory('all')} />
                   </span>
-                </label>
-                {styles.map(style => (
-                  <label key={style} className="flex items-center gap-3 cursor-pointer group">
-                    <input 
-                      type="radio" 
-                      name="style"
-                      checked={selectedStyle === style}
-                      onChange={() => setSelectedStyle(style)}
-                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                    />
-                    <span className={`text-sm font-medium transition-colors ${selectedStyle === style ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
-                      {style}
-                    </span>
-                  </label>
-                ))}
+                )}
+                {selectedStyle !== "all" && (
+                  <span className="bg-[#f6f3f0] border border-[#e5e2df] text-[#1c1c1a] px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
+                     {selectedStyle}
+                     <X className="w-3 h-3 cursor-pointer opacity-50 hover:opacity-100 transition-opacity" onClick={() => setSelectedStyle('all')} />
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Floating Action Button for Mobile */}
+          <button 
+            onClick={openFilterSheet}
+            className="md:hidden fixed bottom-24 right-6 z-30 bg-[#735c00] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform"
+          >
+            <Sliders className="w-6 h-6" />
+          </button>
+
+          {/* Desktop Sidebar Filter */}
+          <aside className="hidden w-80 px-4 py-8 pt-6 md:px-5 md:flex flex-col gap-4 bg-[#f6f3f0] border-r border-[#e5e2df] shrink-0 sticky top-0 h-auto">
+            <div className="flex flex-col gap-6 md:gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="font-headline italic text-2xl">Curation Filter</h2>
+                {(selectedCategory !== "all" || selectedStyle !== "all" || searchQuery !== "") && (
+                  <button 
+                    onClick={clearAllFilters}
+                    className="font-body text-[10px] font-bold uppercase tracking-widest text-[#74777d] hover:text-[#735c00]"
+                  >
+                    Clear All
+                  </button>
+                )}
+              </div>
+
+              <div className="relative w-full md:w-[85%]">
+                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+                 <input 
+                   className="pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded text-sm w-full outline-none font-body shadow-sm" 
+                   placeholder="Search designs..." 
+                   value={searchQuery}
+                   onChange={(e) => setSearchQuery(e.target.value)}
+                   type="text"
+                 />
               </div>
             </div>
 
-            <button className="w-full py-4 mt-8 bg-[#1c1c1a] text-white rounded-sm text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#735c00] transition-colors shadow-lg">
-              Apply Curation
-            </button>
+            <div className="space-y-4 md:space-y-3">
+              <div className="space-y-4 md:space-y-3">
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Spatial Category</h3>
+                <div className="flex flex-col gap-3 md:gap-2">
+                  {categories.map(cat => (
+                    <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
+                      <input 
+                        type="radio" 
+                        name="desktopCategory"
+                        checked={selectedCategory === cat.id}
+                        onChange={() => setSelectedCategory(cat.id)}
+                        className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                      />
+                      <span className={`text-sm font-medium transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
+                        {cat.name}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4 md:space-y-3 pt-4 border-t border-[#e5e2df]">
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Architectural Styles</h3>
+                <div className="flex flex-col gap-3 md:gap-2">
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <input 
+                      type="radio" 
+                      name="desktopStyle"
+                      checked={selectedStyle === "all"}
+                      onChange={() => setSelectedStyle("all")}
+                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                    />
+                    <span className={`text-sm font-medium transition-colors ${selectedStyle === "all" ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
+                      Any Style
+                    </span>
+                  </label>
+                  {styles.map(style => (
+                    <label key={style} className="flex items-center gap-3 cursor-pointer group">
+                      <input 
+                        type="radio" 
+                        name="desktopStyle"
+                        checked={selectedStyle === style}
+                        onChange={() => setSelectedStyle(style)}
+                        className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                      />
+                      <span className={`text-sm font-medium transition-colors ${selectedStyle === style ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
+                        {style}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
           </aside>
 
           {/* Content Canvas */}
-          <section className="flex-1 p-8 md:p-16 bg-[#fcf9f6]">
+          <section className="flex-1 p-8 md:px-16 md:pt-8 md:pb-4 bg-[#fcf9f6]">
             
-            {/* Header */}
-            <header className="mb-16">
+            {/* Header - Hidden on mobile, handled by mobile top bar */}
+            <header className="hidden md:block mb-8">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                 <div className="max-w-2xl">
-                  <h1 className="text-6xl md:text-8xl font-headline leading-tight tracking-tight mb-6">
-                    Designs <br/><span className="italic font-normal">Catalog.</span>
+                  <h1 className="text-6xl md:text-8xl font-headline leading-tight tracking-tight mb-6 md:mb-2">
+                    Designs <br className="md:hidden" /><span className="italic font-normal">Catalog.</span>
                   </h1>
-                  <p className="text-lg md:text-xl text-[#44474c] leading-relaxed font-body">
-                    A curated monograph of avant-garde blueprints. Every design is engineered for structural integrity and high-end aesthetic resonance.
-                  </p>
                 </div>
                 <div className="flex shrink-0">
                   <span className="px-5 py-2.5 bg-[#eae8e5] rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
@@ -249,12 +338,15 @@ const DesignsCatalog = () => {
             {/* Grid */}
             <AnimatePresence>
               {filteredDesigns.length === 0 ? (
-                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]">
-                    <h3 className="font-headline italic text-2xl mb-2 text-[#1c1c1a]">No Blueprints Found</h3>
-                    <p className="font-body text-sm text-[#74777d]">Adjust the structural filters to reveal more monographs.</p>
+                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 flex flex-col items-center justify-center text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]">
+                    <h3 className="font-headline text-2xl mb-2 text-[#1c1c1a]">No designs found 😕</h3>
+                    <p className="font-body text-sm text-[#74777d] max-w-sm">Try adjusting your filters or clearing them to see more results.</p>
+                    <button onClick={clearAllFilters} className="mt-8 px-8 py-3.5 bg-[#735c00] text-white rounded-lg font-bold text-sm hover:bg-[#5a4800] transition-colors shadow-md">
+                      Clear Filters
+                    </button>
                  </motion.div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-x-8 md:gap-y-16 px-4 md:px-0">
                   {filteredDesigns.map((design, index) => {
                     const isFeatured = design.featured && index === 0;
 
@@ -263,27 +355,30 @@ const DesignsCatalog = () => {
                         key={design.id} 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
+                        whileHover={{ y: -5 }}
+                        whileTap={{ scale: 0.98 }}
                         className={`group cursor-pointer flex flex-col ${isFeatured ? 'lg:col-span-2' : ''}`}
                       >
-                        <Link to={`/designs/${design.id}`} className="block h-full flex flex-col">
-                          <div className={`relative overflow-hidden bg-[#f6f3f0] mb-6 rounded-sm ${isFeatured ? 'aspect-[16/10]' : 'aspect-square'}`}>
+                        <Link to={`/designs/${design.id}`} className="block h-full flex flex-col bg-white md:bg-transparent rounded-2xl md:rounded-none overflow-hidden shadow-sm md:shadow-none border border-[#e5e2df] md:border-none relative">
+                          <div className={`relative overflow-hidden bg-[#f6f3f0] md:mb-6 ${isFeatured ? 'aspect-[16/10]' : 'aspect-[4/5] md:aspect-square'}`}>
                             <img 
                               src={design.image} 
                               alt={design.name} 
                               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 mix-blend-multiply opacity-90"
                             />
                             
-                            <div className="absolute top-6 left-6">
-                              <span className="bg-[#fcf9f6]/90 backdrop-blur-md px-4 py-2 rounded-full text-[9px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 shadow-sm border border-[#e5e2df]">
-                                <BadgeCheck className="w-3.5 h-3.5 text-[#735c00]" />
-                                Verified Blueprint
+                            <div className="absolute top-3 left-3 md:top-6 md:left-6">
+                              <span className="bg-[#fcf9f6]/90 backdrop-blur-md px-2 py-1 md:px-4 md:py-2 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest md:tracking-[0.2em] flex items-center gap-1 md:gap-2 shadow-sm border border-[#e5e2df]">
+                                <BadgeCheck className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#735c00] shrink-0" />
+                                <span className="md:hidden">Verified</span>
+                                <span className="hidden md:inline">Verified Blueprint</span>
                               </span>
                             </div>
 
                             {/* Like Button */}
-                            <div className="absolute top-6 right-6">
-                              <div className="w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-[#1c1c1a] hover:text-[#ba1a1a] transition-colors shadow-sm cursor-pointer border border-[#e5e2df]">
-                                <Heart className="w-4 h-4" />
+                            <div className="absolute top-3 right-3 md:top-6 md:right-6">
+                              <div className="w-7 h-7 md:w-10 md:h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-[#1c1c1a] hover:text-[#ba1a1a] transition-colors shadow-sm cursor-pointer border border-[#e5e2df] shrink-0">
+                                <Heart className="w-3 h-3 md:w-4 md:h-4" />
                               </div>
                             </div>
 
@@ -315,15 +410,23 @@ const DesignsCatalog = () => {
                           </div>
                           
                           {!isFeatured && (
-                            <div className="space-y-3 flex-grow flex flex-col">
-                              <div className="flex justify-between items-start gap-4">
-                                <h3 className="text-xl font-headline font-bold leading-tight">{design.name}</h3>
-                                <span className="text-lg font-body font-bold text-[#1c1c1a] whitespace-nowrap">{design.totalCost}</span>
+                            <div className="p-3 md:p-0 md:space-y-3 flex-grow flex flex-col bg-white md:bg-transparent">
+                              <div className="flex md:justify-between items-start flex-col md:flex-row md:gap-4 mb-1 md:mb-0">
+                                <h3 className="text-xs md:text-xl font-headline font-bold leading-tight line-clamp-1">{design.name}</h3>
                               </div>
-                              <p className="text-sm text-[#44474c] line-clamp-2 leading-relaxed flex-grow">A masterclass in {design.style.toLowerCase()} luxury, focusing on spatial harmony and robust architectural detailing.</p>
-                              <div className="flex items-center gap-5 text-[10px] font-bold uppercase tracking-widest opacity-60 pt-3 border-t border-[#e5e2df] mt-auto">
-                                <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {design.time}</span>
-                                <span className="flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" /> {design.size}</span>
+                              
+                              {/* Mobile simplified info */}
+                              <div className="flex items-center gap-1.5 text-[9px] text-[#74777d] md:hidden font-body font-medium mt-auto">
+                                {design.category.replace("-", " ")}
+                              </div>
+
+                              {/* Desktop full info */}
+                              <div className="hidden md:flex flex-col flex-grow">
+                                <p className="text-sm text-[#44474c] line-clamp-2 leading-relaxed flex-grow">A masterclass in {design.style.toLowerCase()} luxury, focusing on spatial harmony and robust architectural detailing.</p>
+                                <div className="flex items-center gap-5 text-[10px] font-bold uppercase tracking-widest opacity-60 pt-3 border-t border-[#e5e2df] mt-auto">
+                                  <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {design.time}</span>
+                                  <span className="flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" /> {design.size}</span>
+                                </div>
                               </div>
                             </div>
                           )}
@@ -346,6 +449,76 @@ const DesignsCatalog = () => {
             )}
 
           </section>
+
+          {/* Mobile Bottom Sheet for Filters */}
+          <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
+             <SheetContent className="overflow-y-auto w-full md:hidden bg-[#fcf9f6] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl" side="bottom">
+               <SheetHeader className="mb-6 pb-2 block">
+                 <SheetTitle className="font-headline text-2xl text-left bg-gradient-to-r from-[#1c1c1a] to-[#735c00] bg-clip-text text-transparent">Filter Settings</SheetTitle>
+                 <SheetDescription className="hidden">Filter options to refine the catalog of modern architectural designs.</SheetDescription>
+               </SheetHeader>
+               
+               <div className="space-y-4 md:space-y-3 pb-32">
+                 <div className="space-y-4">
+                   <div className="flex justify-between items-center cursor-pointer group" onClick={() => toggleDropdown('draftCategory')}>
+                     <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Spatial Category</h3>
+                     <ChevronDown className={`w-4 h-4 text-[#1c1c1a] opacity-60 transition-transform ${expandedMobileDropdown === 'draftCategory' ? 'rotate-180' : ''}`} />
+                   </div>
+                   <div className={`overflow-hidden transition-all duration-300 ${expandedMobileDropdown === 'draftCategory' ? 'max-h-96 opacity-100 flex flex-col gap-4' : 'max-h-0 opacity-0 hidden'}`}>
+                     {categories.map(cat => (
+                       <label key={cat.id} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                         <input 
+                           type="radio" 
+                           name="draftCategory"
+                           checked={draftCategory === cat.id}
+                           onChange={() => setDraftCategory(cat.id)}
+                           className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                         />
+                         <span className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{cat.name}</span>
+                       </label>
+                     ))}
+                   </div>
+                 </div>
+
+                 <div className="space-y-4 pt-4 border-t border-[#e5e2df]">
+                    <div className="flex justify-between items-center cursor-pointer group" onClick={() => toggleDropdown('draftStyle')}>
+                     <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Architectural Styles</h3>
+                     <ChevronDown className={`w-4 h-4 text-[#1c1c1a] opacity-60 transition-transform ${expandedMobileDropdown === 'draftStyle' ? 'rotate-180' : ''}`} />
+                   </div>
+                   <div className={`overflow-hidden transition-all duration-300 ${expandedMobileDropdown === 'draftStyle' ? 'max-h-96 opacity-100 flex flex-col gap-4' : 'max-h-0 opacity-0 hidden'}`}>
+                     <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                       <input 
+                         type="radio" 
+                         name="draftStyle"
+                         checked={draftStyle === "all"}
+                         onChange={() => setDraftStyle("all")}
+                         className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                       />
+                       <span className={`text-sm font-medium transition-colors ${draftStyle === "all" ? 'text-[#735c00]' : 'text-[#44474c]'}`}>Any Style</span>
+                     </label>
+                     {styles.map(style => (
+                       <label key={style} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                         <input 
+                           type="radio" 
+                           name="draftStyle"
+                           checked={draftStyle === style}
+                           onChange={() => setDraftStyle(style)}
+                           className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                         />
+                         <span className={`text-sm font-medium transition-colors ${draftStyle === style ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{style}</span>
+                       </label>
+                     ))}
+                   </div>
+                 </div>
+               </div>
+
+               <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t border-[#e5e2df] flex gap-4 pb-12">
+                  <button onClick={resetFilters} className="w-1/3 py-4 border border-[#e5e2df] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] bg-white transition-colors">Reset</button>
+                  <button onClick={applyFilters} className="flex-1 py-4 bg-[#1c1c1a] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#735c00] transition-colors shadow-xl">Apply Filters</button>
+               </div>
+             </SheetContent>
+          </Sheet>
+
         </main>
       </div>
     </Layout>

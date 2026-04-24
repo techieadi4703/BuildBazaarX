@@ -361,8 +361,8 @@ const DesignDetail = () => {
         </div>
       </motion.div>
 
-      <div className="container mx-auto px-4 py-12 md:py-20">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+      <div className="w-full md:container md:mx-auto px-4 py-8 md:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-20 items-start">
 
           {/* LEFT: Image Gallery */}
           <Reveal width="100%" direction="up">
@@ -608,7 +608,8 @@ const DesignDetail = () => {
                 </Badge>
               </div>
               
-              <div className="overflow-hidden rounded-[3rem] border border-border/50 bg-background shadow-2xl">
+              
+              <div className="overflow-x-auto rounded-[3rem] border border-border/50 bg-background shadow-2xl">
                 <table className="w-full text-left">
                   <thead className="bg-primary/5 text-muted-foreground border-b border-primary/10">
                     <tr>
