@@ -56,10 +56,23 @@ export default function Auth() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: fullName } },
+          options: {
+            data: {
+              full_name: fullName,
+              role: "customer",
+            },
+          },
         });
         if (error) throw error;
         if (data.user) {
+          await supabase
+            .from("profiles")
+            .update({
+              role: "customer",
+              full_name: fullName,
+            })
+            .eq("id", data.user.id);
+
           toast({ title: "Identity Established", description: "Verification email dispatched." });
           navigate("/");
         }
