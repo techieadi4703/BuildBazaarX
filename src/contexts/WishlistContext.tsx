@@ -63,12 +63,12 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
       } else if (event === "SIGNED_IN" && uid) {
         setUserId(uid);
         setIsAuthenticated(true);
-        // Restore wishlist from DB
+        // Restore wishlist from DB only on fresh sign in
         await loadWishlistFromDb(uid);
       } else if (uid) {
+        // For other events (TOKEN_REFRESHED, USER_UPDATED), just update auth state
         setUserId(uid);
         setIsAuthenticated(true);
-        await loadWishlistFromDb(uid);
       }
     };
 

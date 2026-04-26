@@ -73,12 +73,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       } else if (event === "SIGNED_IN" && uid) {
         setUserId(uid);
         setIsAuthenticated(true);
-        // Restore cart from DB
+        // Restore cart from DB only on fresh sign in
         await loadCartFromDb(uid);
       } else if (uid) {
+        // For other events (TOKEN_REFRESHED, USER_UPDATED), just update auth state
+        // Do NOT reload from DB to avoid overwriting pending local changes
         setUserId(uid);
         setIsAuthenticated(true);
-        await loadCartFromDb(uid);
       }
     };
 

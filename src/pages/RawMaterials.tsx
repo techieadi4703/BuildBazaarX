@@ -4,9 +4,11 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Plus, Minus, Zap, ArrowUpRight } from "lucide-react";
+import { Search, Plus, Minus, Zap, ArrowUpRight, SlidersHorizontal, Sliders, ChevronDown, X, Heart, Hammer, Droplets, HardHat, Grid3X3, Settings, Pipette } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Layout } from "@/components/layout/Layout";
 import { useToast } from "@/hooks/use-toast";
+import { useWishlist } from "@/contexts/WishlistContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Fallback images
@@ -36,13 +38,13 @@ function getProductImage(product: { image_url: string | null; category: string |
 }
 
 const categories = [
-  { id: "wood", name: "Wood & Boards", count: 8 },
-  { id: "paints", name: "Paints & Finishes", count: 24 },
-  { id: "construction", name: "Construction", count: 12 },
-  { id: "tiles", name: "Tiles & Flooring", count: 19 },
-  { id: "hardware", name: "Hardware", count: 42 },
-  { id: "plumbing", name: "Plumbing", count: 15 },
-  { id: "electrical", name: "Electrical", count: 31 },
+  { id: "wood", name: "Wood & Boards", count: 8, icon: Hammer },
+  { id: "paints", name: "Paints & Finishes", count: 24, icon: Droplets },
+  { id: "construction", name: "Construction", count: 12, icon: HardHat },
+  { id: "tiles", name: "Tiles & Flooring", count: 19, icon: Grid3X3 },
+  { id: "hardware", name: "Hardware", count: 42, icon: Settings },
+  { id: "plumbing", name: "Plumbing", count: 15, icon: Pipette },
+  { id: "electrical", name: "Electrical", count: 31, icon: Zap },
 ];
 
 type Product = {
@@ -62,16 +64,40 @@ type Product = {
 
 const RawMaterials = () => {
   const { toast } = useToast();
-  const { addToCart, items, updateQuantity } = useCart();
+  const { addToCart, items: cartItems, updateQuantity } = useCart();
+  const { isInWishlist, addToWishlist, removeFromWishlist, isAuthenticated } = useWishlist();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryFromUrl);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+  const [expandedMobileDropdown, setExpandedMobileDropdown] = useState<string | null>(null);
+  const [draftCategory, setDraftCategory] = useState<string | null>(null);
+
   useEffect(() => {
     if (categoryFromUrl) setSelectedCategory(categoryFromUrl);
   }, [categoryFromUrl]);
+
+  const openFilterSheet = () => {
+    setDraftCategory(selectedCategory);
+    setIsFilterSheetOpen(true);
+  };
+
+  const applyFilters = () => {
+    setSelectedCategory(draftCategory);
+    setIsFilterSheetOpen(false);
+    setExpandedMobileDropdown(null);
+  };
+
+  const resetFilters = () => {
+    setDraftCategory(null);
+  };
+
+  const toggleDropdown = (dropdown: string) => {
+    setExpandedMobileDropdown(prev => prev === dropdown ? null : dropdown);
+  };
 
   const { data: regularProducts = [], isLoading: isLoadingReq } = useQuery({
     queryKey: ["products"],
@@ -134,6 +160,34 @@ const RawMaterials = () => {
       navigate("/auth?mode=login");
     }
   };
+  
+  const handleWishlistToggle = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to save materials to your wishlist",
+      });
+      return;
+    }
+    
+    const wishlistId = `mat-${product.id}`;
+    if (isInWishlist(wishlistId)) {
+      removeFromWishlist(wishlistId);
+      toast({ title: "Removed", description: "Material removed from wishlist" });
+    } else {
+      addToWishlist({
+        id: wishlistId,
+        name: product.name ?? "Raw Material",
+        image: getProductImage(product),
+        category: product.category ?? "General",
+        style: "Material"
+      });
+      toast({ title: "Saved", description: "Material added to wishlist" });
+    }
+  };
 
   return (
     <Layout>
@@ -152,8 +206,54 @@ const RawMaterials = () => {
         .font-body { font-family: 'Manrope', sans-serif; }
       `}</style>
       
-      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20">
-        <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-12 md:py-20">
+      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative">
+        
+        {/* Mobile Top Navigation (Search + Button) */}
+        <div className="md:hidden flex flex-col px-4 pt-4 pb-2 bg-[#fcf9f6] space-y-4 sticky top-0 z-20 shadow-sm border-b border-[#e5e2df]">
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+              <input 
+                className="w-full pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded-xl text-sm outline-none shadow-sm font-body" 
+                placeholder="Search materials..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                type="text"
+              />
+            </div>
+            <button 
+              onClick={openFilterSheet}
+              className="flex items-center justify-center gap-2 px-5 py-3 bg-[#f6f3f0] border border-[#e5e2df] rounded-xl text-sm font-medium whitespace-nowrap hover:bg-[#eae8e5] transition-colors shadow-sm font-body"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              Filter
+            </button>
+          </div>
+          
+          <div className="flex items-center justify-between text-sm pt-2 font-body">
+            <span className="text-[#74777d]">Showing <span className="font-bold text-[#1c1c1a]">{filteredProducts.length}</span> materials</span>
+          </div>
+
+          {/* Active filter pills */}
+          {selectedCategory && (
+            <div className="flex flex-wrap gap-2 pt-1 pb-1">
+              <span className="bg-[#f6f3f0] border border-[#e5e2df] text-[#1c1c1a] px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 font-body">
+                {categories.find(c => c.id === selectedCategory)?.name || selectedCategory}
+                <X className="w-3 h-3 cursor-pointer opacity-50 hover:opacity-100 transition-opacity" onClick={() => setSelectedCategory(null)} />
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Floating Action Button for Mobile */}
+        <button 
+          onClick={openFilterSheet}
+          className="md:hidden fixed bottom-24 right-6 z-30 bg-[#735c00] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform"
+        >
+          <Sliders className="w-6 h-6" />
+        </button>
+
+        <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-8 md:py-20">
           
           {/* Header */}
           <header className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -162,9 +262,6 @@ const RawMaterials = () => {
               <h1 className="text-6xl md:text-8xl font-headline tracking-tight leading-none mb-6">
                 Raw <span className="italic">Materials</span>
               </h1>
-              <p className="text-lg md:text-xl font-body text-[#44474c] leading-relaxed opacity-80">
-                A curated monograph of structural elements and finishing coats. From the core strength of premium grade steel to the chromatic precision of elite laminates.
-              </p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex flex-col text-right">
@@ -174,7 +271,7 @@ const RawMaterials = () => {
               <div className="w-12 h-[1px] bg-[#c4c6cc] opacity-50"></div>
             </div>
             {/* Search Input inline with header */}
-            <div className="relative w-full md:w-64 -mt-4 md:mt-0">
+            <div className="hidden md:block relative w-full md:w-64 -mt-4 md:mt-0">
                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
                <input 
                  className="pl-12 pr-4 py-3 bg-[#f6f3f0] border-none focus:ring-1 focus:ring-[#735c00] rounded-full text-sm w-full outline-none font-body shadow-inner" 
@@ -191,7 +288,7 @@ const RawMaterials = () => {
           <div className="flex flex-col lg:flex-row gap-12 mt-12">
             
             {/* Sidebar Categories */}
-            <aside className="lg:w-64 flex-shrink-0">
+            <aside className="hidden lg:block lg:w-64 flex-shrink-0">
               <div className="sticky top-32">
                 <div className="flex justify-between items-end mb-8">
                   <h4 className="font-body text-[10px] uppercase tracking-[0.2em] text-[#74777d] font-bold">Categories</h4>
@@ -202,29 +299,34 @@ const RawMaterials = () => {
                   )}
                 </div>
                 <ul className="space-y-6">
-                  {categories.map((cat) => (
-                    <li key={cat.id}>
-                      <button 
-                        onClick={() => setSelectedCategory(cat.id)}
-                        className={`flex items-center justify-between w-full group relative py-1 ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#1c1c1a]'}`}
-                      >
-                        <span className={`font-headline text-xl italic group-hover:text-[#735c00] transition-colors relative z-10`}>
-                          {cat.name}
-                        </span>
-                        <span className="text-[10px] font-body text-[#74777d] font-bold opacity-60 group-hover:opacity-100 relative z-10">
-                          {cat.count}
-                        </span>
-                        {selectedCategory === cat.id && (
-                          <motion.div
-                            layoutId="active-category-underline"
-                            className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#735c00] z-0"
-                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                          />
-                        )}
-                      </button>
-                    </li>
-                  ))}
-
+                  {categories.map((cat) => {
+                    const Icon = cat.icon;
+                    return (
+                      <li key={cat.id}>
+                        <button 
+                          onClick={() => setSelectedCategory(cat.id)}
+                          className={`flex items-center justify-between w-full group relative py-1 ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#1c1c1a]'}`}
+                        >
+                          <div className="flex items-center gap-3 relative z-10">
+                            <Icon className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#74777d] group-hover:text-[#735c00]'}`} />
+                            <span className={`font-headline text-xl italic group-hover:text-[#735c00] transition-colors`}>
+                              {cat.name}
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-body text-[#74777d] font-bold opacity-60 group-hover:opacity-100 relative z-10">
+                            {cat.count}
+                          </span>
+                          {selectedCategory === cat.id && (
+                            <motion.div
+                              layoutId="active-category-underline"
+                              className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#735c00] z-0"
+                              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                            />
+                          )}
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
 
                 {/* Featured Ad inside Sidebar */}
@@ -263,15 +365,26 @@ const RawMaterials = () => {
                             alt={product.brand || "Material"} 
                             className="w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105 p-4" 
                           />
-                          <div className="absolute top-4 left-4">
+                          <div className="absolute top-4 left-4 z-10">
                             <span className="px-3 py-1 bg-white border border-[#eae8e5] text-[#1c1c1a] text-[9px] font-body font-bold uppercase tracking-widest rounded-full shadow-sm">
                               {product.in_stock ? 'In Stock' : 'Pre-Order'}
                             </span>
                           </div>
+                          
+                          {/* Wishlist Button */}
+                          <div className="absolute top-4 right-4 z-20">
+                            <button 
+                              onClick={(e) => handleWishlistToggle(e, product)}
+                              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-lg border backdrop-blur-sm ${isInWishlist(`mat-${product.id}`) ? 'bg-[#ba1a1a]/10 text-[#ba1a1a] border-[#ba1a1a]/20' : 'bg-white/80 text-[#1c1c1a] border-[#e5e2df] hover:bg-white'}`}
+                            >
+                              <Heart className={`w-5 h-5 ${isInWishlist(`mat-${product.id}`) ? 'fill-current' : ''}`} />
+                            </button>
+                          </div>
+
                           {/* Hover FAB - Add to Cart / Quantity Controller */}
-                          <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
+                          <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300 z-20">
                             {(() => {
-                              const cartItem = items.find(i => i.id === product.id);
+                              const cartItem = cartItems.find(i => i.id === product.id);
                               if (cartItem) {
                                 return (
                                   <motion.div 
@@ -359,8 +472,59 @@ const RawMaterials = () => {
                 </div>
               )}
             </div>
-
           </div>
+
+          {/* Mobile Bottom Sheet for Filters */}
+          <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
+             <SheetContent className="overflow-y-auto w-full md:hidden bg-[#fcf9f6] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl" side="bottom">
+               <SheetHeader className="mb-6 pb-2 block">
+                 <SheetTitle className="font-headline text-2xl text-left bg-gradient-to-r from-[#1c1c1a] to-[#735c00] bg-clip-text text-transparent">Material Filters</SheetTitle>
+                 <SheetDescription className="hidden">Filter options to refine the catalog of premium raw materials.</SheetDescription>
+               </SheetHeader>
+               
+               <div className="space-y-4 md:space-y-3 pb-32">
+                 <div className="space-y-4">
+                   <div className="flex justify-between items-center cursor-pointer group" onClick={() => toggleDropdown('draftCategory')}>
+                     <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Material Category</h3>
+                     <ChevronDown className={`w-4 h-4 text-[#1c1c1a] opacity-60 transition-transform ${expandedMobileDropdown === 'draftCategory' ? 'rotate-180' : ''}`} />
+                   </div>
+                   <div className={`overflow-hidden transition-all duration-300 ${expandedMobileDropdown === 'draftCategory' ? 'max-h-96 opacity-100 flex flex-col gap-4' : 'max-h-0 opacity-0 hidden'}`}>
+                     <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                       <input 
+                         type="radio" 
+                         name="draftCategory"
+                         checked={draftCategory === null}
+                         onChange={() => setDraftCategory(null)}
+                         className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                       />
+                       <span className={`text-sm font-medium transition-colors ${draftCategory === null ? 'text-[#735c00]' : 'text-[#44474c]'}`}>All Materials</span>
+                     </label>
+                     {categories.map(cat => {
+                       const Icon = cat.icon;
+                       return (
+                         <label key={cat.id} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                           <input 
+                             type="radio" 
+                             name="draftCategory"
+                             checked={draftCategory === cat.id}
+                             onChange={() => setDraftCategory(cat.id)}
+                             className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                           />
+                           <Icon className={`w-4 h-4 ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#74777d]'}`} />
+                           <span className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{cat.name}</span>
+                         </label>
+                       );
+                     })}
+                   </div>
+                 </div>
+               </div>
+
+               <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t border-[#e5e2df] flex gap-4 pb-12">
+                  <button onClick={resetFilters} className="w-1/3 py-4 border border-[#e5e2df] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] bg-white transition-colors font-body">Reset</button>
+                  <button onClick={applyFilters} className="flex-1 py-4 bg-[#1c1c1a] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#735c00] transition-colors shadow-xl font-body">Apply Filters</button>
+               </div>
+             </SheetContent>
+          </Sheet>
         </main>
       </div>
     </Layout>
