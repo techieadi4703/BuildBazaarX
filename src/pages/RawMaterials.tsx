@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Filter, Truck, Palette, Plus, Minus, Zap, ArrowUpRight } from "lucide-react";
+import { Search, Plus, Minus, Zap, ArrowUpRight } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -186,46 +186,7 @@ const RawMaterials = () => {
             </div>
           </header>
 
-          {/* Bento Features */}
-          <section className="mb-16 grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-2 p-8 bg-[#f6f3f0] rounded-xl flex flex-col justify-between group transition-all hover:bg-[#eae8e5]">
-              <div className="flex justify-between items-start mb-12">
-                <div className="bg-[#735c00] p-3 rounded-full text-white">
-                  <Filter className="w-5 h-5" />
-                </div>
-                <span className="font-body text-[10px] uppercase tracking-widest text-[#735c00] font-bold">Smart Filters</span>
-              </div>
-              <div>
-                <h3 className="text-2xl font-headline italic mb-3">Refine Selection</h3>
-                <div className="flex flex-wrap gap-2 text-[#1c1c1a]">
-                  <span className="px-4 py-1.5 bg-[#e5e2df] rounded-full text-[10px] uppercase tracking-wider font-bold">Premium Brands</span>
-                  <span className="px-4 py-1.5 bg-[#e5e2df] rounded-full text-[10px] uppercase tracking-wider font-bold">In-Stock</span>
-                  <span className="px-4 py-1.5 bg-[#e5e2df] rounded-full text-[10px] uppercase tracking-wider font-bold">Eco-Certified</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-8 bg-[#0f1c2c] text-[#778598] rounded-xl flex flex-col justify-between">
-              <Truck className="w-10 h-10 text-[#fed65b]" />
-              <div>
-                <p className="font-body text-[10px] uppercase tracking-widest mb-1 opacity-60 font-bold">Express Logistics</p>
-                <h3 className="text-2xl font-headline leading-tight text-white">Priority Home <br/>Delivery</h3>
-              </div>
-            </div>
-
-            <div className="p-8 bg-[#e5e2df] rounded-xl relative overflow-hidden group">
-              <div className="absolute inset-0 opacity-20 transition-transform group-hover:scale-110 duration-700">
-                <div className="w-full h-full bg-gradient-to-br from-[#735c00] to-transparent"></div>
-              </div>
-              <div className="relative z-10 h-full flex flex-col justify-between">
-                <div className="flex justify-between items-start">
-                  <Palette className="w-10 h-10 text-[#1c1c1a]" />
-                  <span className="text-[9px] font-body uppercase tracking-widest text-[#735c00] bg-white/50 px-2 py-1 rounded font-bold">Incoming Feature</span>
-                </div>
-                <h3 className="text-2xl font-headline text-[#1c1c1a]">Visual Search</h3>
-              </div>
-            </div>
-          </section>
+          {/* Bento Features Removed as per request */}
 
           <div className="flex flex-col lg:flex-row gap-12 mt-12">
             

@@ -384,10 +384,9 @@ const DesignsCatalog = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         whileHover={{ y: -5 }}
-                        whileTap={{ scale: 0.98 }}
                         className={`group relative cursor-pointer flex flex-col ${isFeatured ? 'lg:col-span-2' : ''}`}
                       >
-                        <Link to={`/designs/${design.id}`} className="block h-full flex flex-col bg-white md:bg-transparent rounded-2xl md:rounded-none overflow-hidden shadow-sm md:shadow-none border border-[#e5e2df] md:border-none relative">
+                        <Link to={`/designs/${design.id}`} className="h-full flex flex-col bg-white md:bg-transparent rounded-2xl md:rounded-none overflow-hidden shadow-sm md:shadow-none border border-[#e5e2df] md:border-none relative">
                           <div className={`relative overflow-hidden bg-[#f6f3f0] md:mb-6 ${isFeatured ? 'aspect-[16/10]' : 'aspect-[4/5] md:aspect-square'}`}>
                             <img 
                               src={design.image} 
@@ -401,6 +400,7 @@ const DesignsCatalog = () => {
                                 <span className="md:hidden">Verified</span>
                                 <span className="hidden md:inline">Verified Blueprint</span>
                               </span>
+                            </div>
                             {/* Like button removed from inside Link */}
 
                             {isFeatured && (

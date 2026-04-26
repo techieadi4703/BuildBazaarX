@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import logoIcon from "@/assets/logo-icon.png";
 import { CartSheet } from "@/components/cart/CartSheet";
+import { useWishlist } from "@/contexts/WishlistContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -19,6 +20,7 @@ const navLinks = [
 export const Header = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [userDashboardPath, setUserDashboardPath] = useState<string>("/");
+  const { totalItems: wishlistCount } = useWishlist();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -148,7 +150,14 @@ export const Header = () => {
                       to="/wishlist" 
                       className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group mr-2"
                     >
-                      <Heart className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                      <div className="relative">
+                        <Heart className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                        {wishlistCount > 0 && (
+                          <span className="absolute -top-1.5 -right-2 w-3.5 h-3.5 bg-accent text-accent-foreground text-[9px] font-bold rounded-full flex items-center justify-center animate-scale-in">
+                            {wishlistCount}
+                          </span>
+                        )}
+                      </div>
                       <span className="hidden lg:inline font-medium">Wishlist</span>
                     </Link>
                     <Link 
@@ -201,9 +210,23 @@ export const Header = () => {
             )}
           </div>
 
-          {/* Mobile Cart */}
+          {/* Mobile Actions */}
           <div className="lg:hidden flex items-center gap-1">
-            {!isNonUserRoute && user && <CartSheet />}
+            {!isNonUserRoute && user && (
+              <>
+                <Button asChild variant="ghost" size="icon" className="relative">
+                  <Link to="/wishlist" className="relative">
+                    <Heart className="w-5 h-5" />
+                    {wishlistCount > 0 && (
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
+                        {wishlistCount}
+                      </span>
+                    )}
+                  </Link>
+                </Button>
+                <CartSheet />
+              </>
+            )}
           </div>
         </div>
 

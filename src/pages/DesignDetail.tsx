@@ -29,7 +29,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { DesignPricingCalculator } from "@/components/design-detail/DesignPricingCalculator";
-import { ExecutionCostBreakdown } from "@/components/design-detail/ExecutionCostBreakdown";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion, AnimatePresence } from "framer-motion";
 import { autoClassifyMaterial } from "@/lib/utils";
@@ -232,11 +231,13 @@ const DesignDetail = () => {
           name: session.user.user_metadata?.full_name || prev.name,
         }));
 
-        const { data: profile } = await supabase
+        const response = await supabase
           .from("profiles")
           .select("*")
           .eq("id", session.user.id)
           .single();
+          
+        const profile = response.data as any;
 
         if (profile) {
           setFormData(prev => ({
@@ -258,11 +259,14 @@ const DesignDetail = () => {
       const actualId = id.replace("db-", "");
       
       try {
-        const { data, error } = await supabase
+        const response = await supabase
           .from('designs')
           .select('*, design_materials(*), designers(full_name, city, rating)')
           .eq('id', actualId)
           .single();
+          
+        const data = response.data as any;
+        const error = response.error;
 
         if (error) throw error;
 
@@ -578,38 +582,6 @@ const DesignDetail = () => {
               </div>
             </div>
 
-            {/* Cost Summary Card Premium */}
-            <Reveal width="100%" direction="up" delay={0.3}>
-              <Card className="border-border/50 shadow-2xl rounded-[3rem] overflow-hidden bg-background">
-                <div className="bg-primary px-8 py-6 flex items-center gap-3">
-                  <Sparkles className="w-6 h-6 text-white" />
-                  <h3 className="font-black text-white text-lg uppercase tracking-tight">Investment Summary</h3>
-                </div>
-                <CardContent className="p-8 space-y-6">
-                  <div className="flex justify-between items-center group">
-                    <span className="text-[#44474c] font-bold uppercase tracking-widest text-xs">Standard Execution</span>
-                    <span className="font-black text-foreground text-lg group-hover:text-primary transition-colors">
-                      ₹{design.executionCost?.toLocaleString("en-IN") || "0"}
-                    </span>
-                  </div>
-
-                  <Separator className="bg-border/50" />
-                  <div className="flex justify-between items-end">
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#44474c] mb-1">Estimated Total Price</p>
-                      <p className="font-black text-primary text-4xl tracking-tighter">
-                        ₹{design.totalCost?.toLocaleString("en-IN") || "0"}
-                      </p>
-                    </div>
-                    <div className="bg-green-50 px-4 py-2 rounded-2xl border border-green-100 hidden sm:block">
-                      <p className="text-[10px] font-black text-green-700 uppercase tracking-tighter">EMI Starting at</p>
-                      <p className="font-black text-green-800">₹{(Math.round((design.totalCost || 0) / 24)).toLocaleString() || "0"} / mo</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Reveal>
-
             {/* CTA Button */}
             <Reveal width="100%" direction="up" delay={0.4}>
               <Button
@@ -637,12 +609,7 @@ const DesignDetail = () => {
         </div>
       </div>
 
-      {/* Breakdowns & Lists */}
-      <section className="py-20 bg-secondary/10">
-        <Reveal width="100%" direction="up">
-          <ExecutionCostBreakdown />
-        </Reveal>
-      </section>
+      {/* Breakdowns & Lists Removed */}
 
       {/* Raw Materials Required */}
       <AnimatePresence>
