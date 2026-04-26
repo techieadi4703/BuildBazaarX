@@ -344,7 +344,7 @@ const DesignsCatalog = () => {
           </aside>
 
           {/* Content Canvas */}
-          <section className="flex-1 p-8 md:px-16 md:pt-8 md:pb-4 bg-[#fcf9f6]">
+          <section className="flex-1 p-0 md:p-8 md:px-16 md:pt-8 md:pb-4 bg-[#fcf9f6]">
             
             {/* Header - Hidden on mobile, handled by mobile top bar */}
             <header className="hidden md:block mb-8">
@@ -374,7 +374,7 @@ const DesignsCatalog = () => {
                     </button>
                  </motion.div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-x-8 md:gap-y-16 px-4 md:px-0">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-x-8 md:gap-y-16 px-4 md:px-0">
                   {filteredDesigns.map((design, index) => {
                     const isFeatured = design.featured && index === 0;
 
@@ -394,7 +394,7 @@ const DesignsCatalog = () => {
                               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 mix-blend-multiply opacity-90"
                             />
                             
-                            <div className="absolute top-3 left-3 md:top-6 md:left-6">
+                            <div className="absolute top-4 left-4 md:top-6 md:left-6">
                               <span className="bg-[#fcf9f6]/90 backdrop-blur-md px-2 py-1 md:px-4 md:py-2 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest md:tracking-[0.2em] flex items-center gap-1 md:gap-2 shadow-sm border border-[#e5e2df]">
                                 <BadgeCheck className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#735c00] shrink-0" />
                                 <span className="md:hidden">Verified</span>
@@ -454,7 +454,7 @@ const DesignsCatalog = () => {
                         </Link>
 
                         {/* Like Button (Positioned over the card but outside Link) */}
-                        <div className="absolute top-3 right-3 md:top-6 md:right-6 z-20">
+                        <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20">
                           <button 
                             type="button"
                             onClick={(e) => handleWishlistToggle(e, design)}

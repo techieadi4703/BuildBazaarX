@@ -230,10 +230,6 @@ const RawMaterials = () => {
             </button>
           </div>
           
-          <div className="flex items-center justify-between text-sm pt-2 font-body">
-            <span className="text-[#74777d]">Showing <span className="font-bold text-[#1c1c1a]">{filteredProducts.length}</span> materials</span>
-          </div>
-
           {/* Active filter pills */}
           {selectedCategory && (
             <div className="flex flex-wrap gap-2 pt-1 pb-1">
@@ -253,17 +249,16 @@ const RawMaterials = () => {
           <Sliders className="w-6 h-6" />
         </button>
 
-        <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-8 md:py-20">
+        <main className="max-w-[1440px] mx-auto px-4 md:px-12 py-0 md:py-20">
           
           {/* Header */}
-          <header className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <header className="hidden md:flex mb-16 md:mb-24 flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="max-w-2xl">
-              <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[#735c00] mb-4 block font-bold">Curation No. 042</span>
               <h1 className="text-6xl md:text-8xl font-headline tracking-tight leading-none mb-6">
                 Raw <span className="italic">Materials</span>
               </h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-4">
               <div className="flex flex-col text-right">
                 <span className="font-body text-[10px] uppercase tracking-widest text-[#74777d]">Current Inventory</span>
                 <span className="text-2xl font-headline font-medium">{allProducts.length} Items</span>
@@ -285,7 +280,7 @@ const RawMaterials = () => {
 
           {/* Bento Features Removed as per request */}
 
-          <div className="flex flex-col lg:flex-row gap-12 mt-12">
+          <div className="flex flex-col lg:flex-row gap-12 mt-4 md:mt-12">
             
             {/* Sidebar Categories */}
             <aside className="hidden lg:block lg:w-64 flex-shrink-0">
@@ -482,42 +477,36 @@ const RawMaterials = () => {
                  <SheetDescription className="hidden">Filter options to refine the catalog of premium raw materials.</SheetDescription>
                </SheetHeader>
                
-               <div className="space-y-4 md:space-y-3 pb-32">
-                 <div className="space-y-4">
-                   <div className="flex justify-between items-center cursor-pointer group" onClick={() => toggleDropdown('draftCategory')}>
-                     <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Material Category</h3>
-                     <ChevronDown className={`w-4 h-4 text-[#1c1c1a] opacity-60 transition-transform ${expandedMobileDropdown === 'draftCategory' ? 'rotate-180' : ''}`} />
-                   </div>
-                   <div className={`overflow-hidden transition-all duration-300 ${expandedMobileDropdown === 'draftCategory' ? 'max-h-96 opacity-100 flex flex-col gap-4' : 'max-h-0 opacity-0 hidden'}`}>
-                     <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
-                       <input 
-                         type="radio" 
-                         name="draftCategory"
-                         checked={draftCategory === null}
-                         onChange={() => setDraftCategory(null)}
-                         className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                       />
-                       <span className={`text-sm font-medium transition-colors ${draftCategory === null ? 'text-[#735c00]' : 'text-[#44474c]'}`}>All Materials</span>
-                     </label>
-                     {categories.map(cat => {
-                       const Icon = cat.icon;
-                       return (
-                         <label key={cat.id} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
-                           <input 
-                             type="radio" 
-                             name="draftCategory"
-                             checked={draftCategory === cat.id}
-                             onChange={() => setDraftCategory(cat.id)}
-                             className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                           />
-                           <Icon className={`w-4 h-4 ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#74777d]'}`} />
-                           <span className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{cat.name}</span>
-                         </label>
-                       );
-                     })}
-                   </div>
-                 </div>
-               </div>
+                <div className="space-y-4 md:space-y-3 pb-32">
+                  <div className="flex flex-col gap-4">
+                    <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                      <input 
+                        type="radio" 
+                        name="draftCategory"
+                        checked={draftCategory === null}
+                        onChange={() => setDraftCategory(null)}
+                        className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                      />
+                      <span className={`text-sm font-medium transition-colors ${draftCategory === null ? 'text-[#735c00]' : 'text-[#44474c]'}`}>All Materials</span>
+                    </label>
+                    {categories.map(cat => {
+                      const Icon = cat.icon;
+                      return (
+                        <label key={cat.id} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                          <input 
+                            type="radio" 
+                            name="draftCategory"
+                            checked={draftCategory === cat.id}
+                            onChange={() => setDraftCategory(cat.id)}
+                            className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                          />
+                          <Icon className={`w-4 h-4 ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#74777d]'}`} />
+                          <span className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{cat.name}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
 
                <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t border-[#e5e2df] flex gap-4 pb-12">
                   <button onClick={resetFilters} className="w-1/3 py-4 border border-[#e5e2df] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] bg-white transition-colors font-body">Reset</button>
