@@ -7,6 +7,8 @@ import { Search, Heart, BadgeCheck, Clock, Compass, X, ChevronDown, SlidersHoriz
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { toast } from "sonner";
 
 // Images
 import kitchenImage from "@/assets/kitchen-design.jpg";
@@ -93,6 +95,32 @@ const DesignsCatalog = () => {
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [draftCategory, setDraftCategory] = useState("all");
   const [draftStyle, setDraftStyle] = useState("all");
+
+  const { isInWishlist, addToWishlist, removeFromWishlist, isAuthenticated } = useWishlist();
+
+  const handleWishlistToggle = (e: React.MouseEvent, design: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      toast.error("Please log in to save designs to your wishlist");
+      return;
+    }
+    
+    if (isInWishlist(design.id)) {
+      removeFromWishlist(design.id);
+      toast.success("Removed from wishlist");
+    } else {
+      addToWishlist({
+        id: design.id,
+        name: design.name,
+        image: design.image,
+        category: design.category,
+        style: design.style
+      });
+      toast.success("Added to wishlist");
+    }
+  };
 
   const openFilterSheet = () => {
     setDraftCategory(selectedCategory);
@@ -357,7 +385,7 @@ const DesignsCatalog = () => {
                         animate={{ opacity: 1, y: 0 }}
                         whileHover={{ y: -5 }}
                         whileTap={{ scale: 0.98 }}
-                        className={`group cursor-pointer flex flex-col ${isFeatured ? 'lg:col-span-2' : ''}`}
+                        className={`group relative cursor-pointer flex flex-col ${isFeatured ? 'lg:col-span-2' : ''}`}
                       >
                         <Link to={`/designs/${design.id}`} className="block h-full flex flex-col bg-white md:bg-transparent rounded-2xl md:rounded-none overflow-hidden shadow-sm md:shadow-none border border-[#e5e2df] md:border-none relative">
                           <div className={`relative overflow-hidden bg-[#f6f3f0] md:mb-6 ${isFeatured ? 'aspect-[16/10]' : 'aspect-[4/5] md:aspect-square'}`}>
@@ -373,14 +401,7 @@ const DesignsCatalog = () => {
                                 <span className="md:hidden">Verified</span>
                                 <span className="hidden md:inline">Verified Blueprint</span>
                               </span>
-                            </div>
-
-                            {/* Like Button */}
-                            <div className="absolute top-3 right-3 md:top-6 md:right-6">
-                              <div className="w-7 h-7 md:w-10 md:h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-[#1c1c1a] hover:text-[#ba1a1a] transition-colors shadow-sm cursor-pointer border border-[#e5e2df] shrink-0">
-                                <Heart className="w-3 h-3 md:w-4 md:h-4" />
-                              </div>
-                            </div>
+                            {/* Like button removed from inside Link */}
 
                             {isFeatured && (
                               <div className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row justify-between items-end gap-4">
@@ -431,6 +452,17 @@ const DesignsCatalog = () => {
                             </div>
                           )}
                         </Link>
+
+                        {/* Like Button (Positioned over the card but outside Link) */}
+                        <div className="absolute top-3 right-3 md:top-6 md:right-6 z-20">
+                          <button 
+                            type="button"
+                            onClick={(e) => handleWishlistToggle(e, design)}
+                            className={`w-7 h-7 md:w-10 md:h-10 ${isInWishlist(design.id) ? 'bg-[#ba1a1a]/10 text-[#ba1a1a] border-[#ba1a1a]/20' : 'bg-white/80 text-[#1c1c1a] border-[#e5e2df]'} backdrop-blur-md rounded-full flex items-center justify-center hover:text-[#ba1a1a] transition-colors shadow-sm cursor-pointer border shrink-0`}
+                          >
+                            <Heart className={`w-3 h-3 md:w-4 md:h-4 ${isInWishlist(design.id) ? 'fill-current' : ''}`} />
+                          </button>
+                        </div>
                       </motion.article>
                     );
                   })}

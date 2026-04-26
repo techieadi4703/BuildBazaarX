@@ -15,8 +15,11 @@ import {
   Sparkles,
   Zap,
   ArrowRight,
+  Heart,
+  BadgeCheck,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { useWishlist } from "@/contexts/WishlistContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -209,6 +212,7 @@ const DesignDetail = () => {
   const [dbDesign, setDbDesign] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(id?.startsWith("db-") ? true : false);
   const [dbMaterials, setDbMaterials] = useState<any[]>([]);
+  const { isInWishlist, addToWishlist, removeFromWishlist, isAuthenticated } = useWishlist();
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [formData, setFormData] = useState({
@@ -319,6 +323,41 @@ const DesignDetail = () => {
     );
   }
 
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to save designs to your wishlist",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // We use the URL param 'id' which preserves the 'db-' prefix if present, matching the Catalog.
+    const wishlistId = id || design.id.toString();
+
+    if (isInWishlist(wishlistId)) {
+      removeFromWishlist(wishlistId);
+      toast({
+        title: "Removed from wishlist",
+      });
+    } else {
+      addToWishlist({
+        id: wishlistId,
+        name: design.name,
+        image: design.images[0],
+        category: design.category,
+        style: design.style
+      });
+      toast({
+        title: "Added to wishlist",
+      });
+    }
+  };
+
   const handleSubmit = () => {
     if (!formData.name || !formData.phone) {
       toast({
@@ -387,6 +426,23 @@ const DesignDetail = () => {
                     🔥 Hottest Trend
                   </Badge>
                 )}
+                {!design.trending && (
+                  <Badge className="absolute top-6 left-6 bg-white text-[#735c00] px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-lg border border-[#e5e2df] flex items-center gap-1.5">
+                    <BadgeCheck className="w-4 h-4" />
+                    Verified Blueprint
+                  </Badge>
+                )}
+
+                {/* Like Button */}
+                <div className="absolute top-6 right-6 z-20">
+                  <button 
+                    type="button"
+                    onClick={handleWishlistToggle}
+                    className={`w-12 h-12 ${isInWishlist(id || design.id.toString()) ? 'bg-[#ba1a1a]/10 text-[#ba1a1a] border-[#ba1a1a]/20' : 'bg-white/90 text-[#1c1c1a] border-[#e5e2df]'} backdrop-blur-md rounded-full flex items-center justify-center hover:text-[#ba1a1a] transition-all shadow-xl cursor-pointer border`}
+                  >
+                    <Heart className={`w-5 h-5 ${isInWishlist(id || design.id.toString()) ? 'fill-current' : ''}`} />
+                  </button>
+                </div>
 
                 {/* Navigation Arrows */}
                 {design.images.length > 1 && (

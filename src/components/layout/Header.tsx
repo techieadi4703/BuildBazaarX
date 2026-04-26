@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LogIn, LogOut, User, Package, ArrowRight } from "lucide-react";
+import { LogIn, LogOut, User, Package, ArrowRight, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -144,6 +144,13 @@ export const Header = () => {
               >
                 {!isNonUserRoute && (
                   <>
+                    <Link 
+                      to="/wishlist" 
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group mr-2"
+                    >
+                      <Heart className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                      <span className="hidden lg:inline font-medium">Wishlist</span>
+                    </Link>
                     <Link 
                       to="/orders" 
                       className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"

@@ -17,6 +17,7 @@ import AuthRoleSelect from "./pages/AuthRoleSelect";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
 import Orders from "./pages/Orders";
+import Wishlist from "./pages/Wishlist";
 import NotFound from "./pages/NotFound";
 import ProfessionalAuth from "./pages/ProfessionalAuth";
 import ProfessionalDashboard from "./pages/ProfessionalDashboard";
@@ -29,6 +30,7 @@ import SupplierDashboard from "./pages/SupplierDashboard";
 import SupplierSetup from "./pages/SupplierSetup";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { CartProvider } from "./contexts/CartContext";
+import { WishlistProvider } from "./contexts/WishlistContext";
 import { AdminRoute } from "./components/admin/AdminRoute";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminUsers from "./pages/admin/Users";
@@ -75,6 +77,11 @@ const AnimatedRoutes = () => {
             <PageTransition><Orders /></PageTransition>
           </ProtectedRoute>
         } />
+        <Route path="/wishlist" element={
+          <ProtectedRoute>
+            <PageTransition><Wishlist /></PageTransition>
+          </ProtectedRoute>
+        } />
         <Route path="/checkout" element={
           <ProtectedRoute>
             <PageTransition><Checkout /></PageTransition>
@@ -115,13 +122,15 @@ const AnimatedRoutes = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <CartProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AnimatedRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
+      <WishlistProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AnimatedRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </WishlistProvider>
     </CartProvider>
   </QueryClientProvider>
 );
