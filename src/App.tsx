@@ -19,6 +19,9 @@ import Profile from "./pages/Profile";
 import Orders from "./pages/Orders";
 import Wishlist from "./pages/Wishlist";
 import NotFound from "./pages/NotFound";
+import TermsConditions from "./pages/TermsConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
 import ProfessionalAuth from "./pages/ProfessionalAuth";
 import ProfessionalDashboard from "./pages/ProfessionalDashboard";
 import ProfessionalSetup from "./pages/ProfessionalSetup";
@@ -65,6 +68,9 @@ const AnimatedRoutes = () => {
         <Route path="/materials" element={<PageTransition><RawMaterials /></PageTransition>} />
         <Route path="/about" element={<PageTransition><About /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/terms" element={<PageTransition><TermsConditions /></PageTransition>} />
+        <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
+        <Route path="/refunds" element={<PageTransition><RefundPolicy /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
         <Route path="/auth/select-role" element={<PageTransition><AuthRoleSelect /></PageTransition>} />
         <Route path="/profile" element={

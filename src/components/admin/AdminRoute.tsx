@@ -14,9 +14,7 @@ export const AdminRoute = ({ children }: { children: React.ReactNode }) => {
       const { data: profile, error } = await supabase
         .from('profiles').select('role').eq('id', session.user.id).single();
         
-      console.log('Admin Check - Session User ID:', session.user.id);
-      console.log('Admin Check - Profile Data:', profile);
-      console.log('Admin Check - Error if any:', error);
+
       
       setStatus(profile?.role === 'admin' ? 'allowed' : 'denied');
     };

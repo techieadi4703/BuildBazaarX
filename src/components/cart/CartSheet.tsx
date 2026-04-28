@@ -19,7 +19,7 @@ export const CartSheet = () => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group">
+        <button className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors group">
           <div className="relative">
             <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
             {totalItems > 0 && (

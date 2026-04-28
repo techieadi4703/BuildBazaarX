@@ -22,7 +22,7 @@ export default function AdminSuppliers() {
   const { data: suppliers, isLoading, error } = useQuery({
     queryKey: ['admin-suppliers'],
     queryFn: async () => {
-      console.log('Fetching suppliers...');
+
       const { data, error } = await supabase
         .from('suppliers')
         .select(`
@@ -79,7 +79,7 @@ export default function AdminSuppliers() {
     }
   });
 
-  const filteredData = suppliers?.filter(supplier => {
+  const filteredData = (suppliers as any[])?.filter(supplier => {
     if (filterTab === 'pending') {
       if (supplier.is_verified) return false;
     } else if (filterTab === 'verified') {
