@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
+import { getRazorpayConfig } from "@/config/razorpay";
 
 // Razorpay window type
 declare global {
@@ -63,7 +64,8 @@ const Checkout = () => {
           .select("*")
           .eq("id", session.user.id)
           .single()
-          .then(({ data: profile }) => {
+          .then(({ data }) => {
+            const profile = data as any;
             if (profile) {
               setForm((f) => ({
                 ...f,
@@ -151,8 +153,9 @@ const Checkout = () => {
     const dbOrderId = await insertOrder("pending");
 
     await new Promise<void>((resolve, reject) => {
+      const rzpConfig = getRazorpayConfig();
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: rzpConfig.key,
         amount: rzpOrder.amount,
         currency: rzpOrder.currency,
         name: "BuildBazaarX",
@@ -163,7 +166,7 @@ const Checkout = () => {
           email: form.email || userEmail,
           contact: form.phone,
         },
-        theme: { color: "#6366f1" },
+        theme: rzpConfig.theme,
         modal: {
           ondismiss: () => reject(new Error("Payment cancelled by user")),
         },

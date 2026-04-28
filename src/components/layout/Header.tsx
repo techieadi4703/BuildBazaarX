@@ -148,10 +148,10 @@ export const Header = () => {
                   <>
                     <Link 
                       to="/wishlist" 
-                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group mr-2"
+                      className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors group mr-2"
                     >
                       <div className="relative">
-                        <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <Heart className="w-5 h-5 text-foreground group-hover:scale-110 transition-transform" />
                         {wishlistCount > 0 && (
                           <span className="absolute -top-1.5 -right-2 w-4 h-4 bg-accent text-accent-foreground text-[10px] font-bold rounded-full flex items-center justify-center animate-scale-in">
                             {wishlistCount}
@@ -162,16 +162,16 @@ export const Header = () => {
                     </Link>
                     <Link 
                       to="/orders" 
-                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
+                      className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors group"
                     >
-                      <Package className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <Package className="w-5 h-5 text-foreground group-hover:scale-110 transition-transform" />
                       <span className="hidden lg:inline font-medium">Orders</span>
                     </Link>
                     <Link 
                       to="/profile" 
-                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group ml-2 border-l pl-4"
+                      className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors group ml-2 border-l pl-4"
                     >
-                      <User className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <User className="w-5 h-5 text-foreground group-hover:scale-110 transition-transform" />
                       <span className="max-w-[120px] truncate font-medium">
                         {user.user_metadata?.full_name || user.email?.split("@")[0]}
                       </span>
@@ -214,8 +214,8 @@ export const Header = () => {
           <div className="lg:hidden flex items-center gap-1">
             {!isNonUserRoute && user && (
               <>
-                <Link to="/wishlist" className="relative p-2 text-muted-foreground hover:text-primary transition-colors">
-                  <Heart className="w-5 h-5" />
+                <Link to="/wishlist" className="relative p-2 text-foreground hover:text-primary transition-colors">
+                  <Heart className="w-5 h-5 text-foreground" />
                   {wishlistCount > 0 && (
                     <span className="absolute top-1 right-1 w-4 h-4 bg-accent text-accent-foreground text-[10px] font-bold rounded-full flex items-center justify-center animate-scale-in">
                       {wishlistCount}

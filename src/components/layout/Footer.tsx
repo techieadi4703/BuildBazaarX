@@ -64,35 +64,51 @@ const trustBadges = [
 
 export const Footer = () => {
   return (
-    <footer className="bg-[#1c1c1a] text-[#f6f3f0] border-t border-white/5 font-body">
-      <div className="container mx-auto px-4 py-8">
+    <footer className="bg-[#0e0e0d] text-[#f6f3f0] border-t border-white/5 font-body overflow-hidden">
+      <div className="container mx-auto px-4 pt-10 pb-24 md:pt-12 md:pb-4 max-w-7xl">
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 mb-8"
+          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-y-10 gap-x-4 lg:gap-6 mb-8"
           variants={footerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {/* Company Info */}
-          <motion.div className="space-y-6" variants={columnVariants}>
-            <Link to="/" className="flex justify-center pr-12 items-center gap-3 group">
+          {/* Company Info - 3 columns */}
+          <motion.div className="col-span-2 md:col-span-4 lg:col-span-3 space-y-1" variants={columnVariants}>
+            <Link to="/" className="inline-block group">
               <motion.img 
                 src={logo} 
                 alt="BuildBazaarX" 
-                className="h-10 md:h-36 w-auto" 
-                whileHover={{ scale: 1.05 }}
+                className="h-20 md:h-40 pl-40 md:pl-10 w-auto brightness-110" 
+                whileHover={{ scale: 1.02 }}
               />
             </Link>
-            <p className="text-[13px] text-[#74777d] leading-relaxed max-w-xs font-medium">
-              A curated logistics layer and structural monograph network for avant-garde architectural execution.
+            <p className="text-[13px] text-[#74777d] leading-relaxed font-medium pr-8">
+              A curated logistics layer and structural monograph network for avant-garde architectural execution. We bridge the gap between visionary design and ground-level implementation.
             </p>
-             {/* Social removed for now as they were broken placeholder links */}
+            <div className="flex gap-4">
+              {[
+                { Icon: Instagram, href: "https://www.instagram.com/buildbazaarxindia/" },
+                { Icon: Linkedin, href: "https://www.linkedin.com/company/buildbazaarx-india" }
+              ].map((social, i) => (
+                <motion.a 
+                  key={i} 
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white hover:text-[#0e0e0d] transition-all duration-300"
+                  whileHover={{ y: -2 }}
+                >
+                  <social.Icon className="w-3.5 h-3.5" />
+                </motion.a>
+              ))}
+            </div>
           </motion.div>
 
-          {/* Quick Links */}
-          <motion.div variants={columnVariants}>
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#735c00] mb-6">Discovery</h3>
-            <ul className="space-y-4">
+          {/* Quick Links - 2 columns */}
+          <motion.div className="col-span-1 lg:col-span-2 lg:pl-4" variants={columnVariants}>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#735c00] mb-5">Discovery</h3>
+            <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <motion.li key={link.path} variants={itemVariants}>
                   <Link
@@ -106,10 +122,10 @@ export const Footer = () => {
             </ul>
           </motion.div>
 
-          {/* Operational Sectors (Formerly static Services) */}
-          <motion.div variants={columnVariants}>
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#735c00] mb-6">Operational Sectors</h3>
-            <ul className="space-y-4">
+          {/* Operational Sectors - 2 columns */}
+          <motion.div className="col-span-1 lg:col-span-2 lg:pl-4" variants={columnVariants}>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#735c00] mb-5">Sectors</h3>
+            <ul className="space-y-3">
               {operationalSectors.map((sector) => (
                 <motion.li key={sector.name} variants={itemVariants}>
                   <Link 
@@ -123,66 +139,36 @@ export const Footer = () => {
             </ul>
           </motion.div>
 
-          {/* Connect & Partner */}
-          <motion.div variants={columnVariants}>
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#735c00] mb-6">Network Access</h3>
-            <div className="space-y-6">
-              <ul className="space-y-3">
-                <motion.li className="flex items-center gap-3" variants={itemVariants}>
-                  <Mail className="w-3.5 h-3.5 text-[#735c00]" />
-                  <a href="mailto:techie.adi47@gmail.com" className="text-[13px] text-[#74777d] hover:text-white transition-colors font-medium">
-                    techie.adi47@gmail.com
-                  </a>
-                </motion.li>
-                <motion.li className="flex items-center gap-3" variants={itemVariants}>
-                  <Phone className="w-3.5 h-3.5 text-[#735c00]" />
-                  <a href="tel:+919521259456" className="text-[13px] text-[#74777d] hover:text-white transition-colors font-medium">
-                    +91 9521259456
-                  </a>
-                </motion.li>
-                <motion.li className="flex items-center gap-3" variants={itemVariants}>
-                  <Phone className="w-3.5 h-3.5 text-[#735c00]" />
-                  <a href="tel:+917309958494" className="text-[13px] text-[#74777d] hover:text-white transition-colors font-medium">
-                    +91 7309958494
-                  </a>
-                </motion.li>
-              </ul>
-              
-              <div className="pt-4 flex flex-col gap-2">
-                <Link to="/professional/auth" className="text-[10px] uppercase font-black tracking-widest text-white/40 hover:text-[#735c00] transition-colors">
-                  Join Registry: Professional
-                </Link>
-                <Link to="/designer/auth" className="text-[10px] uppercase font-black tracking-widest text-white/40 hover:text-[#735c00] transition-colors">
-                  Join Registry: Designer
-                </Link>
-                <Link to="/supplier/auth" className="text-[10px] uppercase font-black tracking-widest text-white/40 hover:text-[#735c00] transition-colors">
-                  Join Registry: Supplier
-                </Link>
-              </div>
+          {/* Trust Matrix - 5 columns (2x2 Block) */}
+          <motion.div className="col-span-2 md:col-span-2 lg:col-span-5 lg:pl-8" variants={columnVariants}>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#735c00] mb-5 text-center lg:text-left">Trust Node</h3>
+            <div className="grid grid-cols-2 gap-4 md:gap-6">
+              {trustBadges.map(badge => (
+                <motion.div 
+                  key={badge.name} 
+                  className="bg-white/5 border border-white/5 p-5 md:p-6 rounded-2xl hover:bg-[#735c00]/10 transition-all duration-300 group cursor-default"
+                  whileHover={{ y: -5, scale: 1.02 }}
+                >
+                  <CheckCircle className="w-5 h-5 text-[#735c00] mb-3" />
+                  <p className="text-[11px] font-black uppercase tracking-widest text-white leading-tight mb-2">{badge.name}</p>
+                  <p className="text-[10px] text-[#74777d] font-medium leading-relaxed">{badge.description}</p>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </motion.div>
 
-        {/* Bottom Bar: Trust Badges (Modern Horizontal Strip) */}
-        <div className="border-t border-white/5 pt-6">
-           <div className="flex flex-wrap justify-between gap-6 mb-8 pb-8 border-b border-white/5">
-              {trustBadges.map(badge => (
-                <div key={badge.name} className="flex items-center gap-2">
-                   <CheckCircle className="w-3 h-3 text-[#735c00]" />
-                   <div className="flex flex-col">
-                      <span className="text-[9px] font-black uppercase tracking-tight text-white/30">{badge.name}</span>
-                      <span className="text-[10px] text-[#74777d] italic">{badge.description}</span>
-                   </div>
-                </div>
-              ))}
-           </div>
-
-           <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-bold uppercase tracking-[0.2em] text-[#44474c]">
-              <div className="flex gap-8">
-                {/* Legal items removed points to broken links */}
-              </div>
-              <p className="opacity-40">© 2026 BuildBazaarX Network. All Rights Reserved.</p>
-           </div>
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-6 py-6 border-t border-white/5 text-[11px] font-black uppercase tracking-[0.25em]">
+          <div className="flex flex-wrap gap-6 md:gap-12 justify-center">
+            <Link to="/terms" className="text-[#44474c] hover:text-white transition-all hover:tracking-[0.3em] duration-500">Terms</Link>
+            <Link to="/privacy" className="text-[#44474c] hover:text-white transition-all hover:tracking-[0.3em] duration-500">Privacy</Link>
+            <Link to="/refunds" className="text-[#44474c] hover:text-white transition-all hover:tracking-[0.3em] duration-500">Refunds</Link>
+          </div>
+          <div className="flex flex-col items-center lg:items-end gap-2">
+            <p className="text-[#44474c] text-center lg:text-right">
+              © 2026 BuildBazaarX Network. <span className="text-[#735c00]/50">Curated Architecture.</span>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
