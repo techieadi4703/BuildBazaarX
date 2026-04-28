@@ -151,9 +151,9 @@ export const Header = () => {
                       className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group mr-2"
                     >
                       <div className="relative">
-                        <Heart className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                        <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         {wishlistCount > 0 && (
-                          <span className="absolute -top-1.5 -right-2 w-3.5 h-3.5 bg-accent text-accent-foreground text-[9px] font-bold rounded-full flex items-center justify-center animate-scale-in">
+                          <span className="absolute -top-1.5 -right-2 w-4 h-4 bg-accent text-accent-foreground text-[10px] font-bold rounded-full flex items-center justify-center animate-scale-in">
                             {wishlistCount}
                           </span>
                         )}
@@ -164,14 +164,14 @@ export const Header = () => {
                       to="/orders" 
                       className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
                     >
-                      <Package className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                      <Package className="w-5 h-5 group-hover:scale-110 transition-transform" />
                       <span className="hidden lg:inline font-medium">Orders</span>
                     </Link>
                     <Link 
                       to="/profile" 
                       className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group ml-2 border-l pl-4"
                     >
-                      <User className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                      <User className="w-5 h-5 group-hover:scale-110 transition-transform" />
                       <span className="max-w-[120px] truncate font-medium">
                         {user.user_metadata?.full_name || user.email?.split("@")[0]}
                       </span>
@@ -214,17 +214,17 @@ export const Header = () => {
           <div className="lg:hidden flex items-center gap-1">
             {!isNonUserRoute && user && (
               <>
-                <Button asChild variant="ghost" size="icon" className="relative">
-                  <Link to="/wishlist" className="relative">
-                    <Heart className="w-5 h-5" />
-                    {wishlistCount > 0 && (
-                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
-                        {wishlistCount}
-                      </span>
-                    )}
-                  </Link>
-                </Button>
-                <CartSheet />
+                <Link to="/wishlist" className="relative p-2 text-muted-foreground hover:text-primary transition-colors">
+                  <Heart className="w-5 h-5" />
+                  {wishlistCount > 0 && (
+                    <span className="absolute top-1 right-1 w-4 h-4 bg-accent text-accent-foreground text-[10px] font-bold rounded-full flex items-center justify-center animate-scale-in">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
+                <div className="p-2">
+                  <CartSheet />
+                </div>
               </>
             )}
           </div>

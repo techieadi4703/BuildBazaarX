@@ -19,14 +19,17 @@ export const CartSheet = () => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <ShoppingCart className="w-5 h-5" />
-          {totalItems > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
-              {totalItems}
-            </span>
-          )}
-        </Button>
+        <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group">
+          <div className="relative">
+            <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            {totalItems > 0 && (
+              <span className="absolute -top-1.5 -right-2 w-4 h-4 bg-accent text-accent-foreground text-[10px] font-bold rounded-full flex items-center justify-center animate-scale-in">
+                {totalItems}
+              </span>
+            )}
+          </div>
+          <span className="hidden lg:inline font-medium">Cart</span>
+        </button>
       </SheetTrigger>
       <SheetContent className="flex flex-col w-full sm:max-w-md">
         <SheetHeader>
@@ -58,21 +61,25 @@ export const CartSheet = () => {
                     <h4 className="text-sm font-semibold text-foreground truncate">{item.name}</h4>
                     <p className="text-xs text-muted-foreground">{item.specs}</p>
                     <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center gap-1 border border-border rounded-lg">
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="p-1.5 hover:bg-muted rounded-l-lg transition-colors"
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="p-1.5 hover:bg-muted rounded-r-lg transition-colors"
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
-                      </div>
+                      {typeof item.id === 'string' && item.id.startsWith('db-') ? (
+                        <span className="text-sm font-medium text-muted-foreground px-2 py-1 bg-muted rounded-md">1 Unit</span>
+                      ) : (
+                        <div className="flex items-center gap-1 border border-border rounded-lg">
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            className="p-1.5 hover:bg-muted rounded-l-lg transition-colors"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            className="p-1.5 hover:bg-muted rounded-r-lg transition-colors"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
                       <span className="font-bold text-foreground">₹{(item.price * item.quantity).toLocaleString()}</span>
                     </div>
                   </div>

@@ -17,9 +17,12 @@ import {
   ArrowRight,
   Heart,
   BadgeCheck,
+  ShoppingCart,
+  Trash2,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -212,6 +215,7 @@ const DesignDetail = () => {
   const [isLoading, setIsLoading] = useState(id?.startsWith("db-") ? true : false);
   const [dbMaterials, setDbMaterials] = useState<any[]>([]);
   const { isInWishlist, addToWishlist, removeFromWishlist, isAuthenticated } = useWishlist();
+  const { items: cartItems, addToCart, updateQuantity } = useCart();
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [formData, setFormData] = useState({
@@ -362,6 +366,46 @@ const DesignDetail = () => {
     }
   };
 
+  const cartId = id || design.id.toString();
+  const cartItem = cartItems.find((item) => item.id === cartId);
+  const isInCart = !!cartItem;
+
+  const handleCartToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isInCart) {
+      updateQuantity(cartId, 0); // Remove from cart
+      toast({
+        title: "Removed from cart",
+        description: `${design.name} has been removed from your cart.`,
+      });
+    } else {
+      const added = addToCart({
+        id: cartId,
+        name: design.name,
+        brand: "Design Blueprint",
+        image: design.images[0],
+        price: design.totalCost,
+        originalPrice: design.totalCost,
+        specs: `${design.size} • ${design.timeline} • ${design.style}`,
+      });
+
+      if (added) {
+        toast({
+          title: "Added to cart",
+          description: `${design.name} has been added to your cart.`,
+        });
+      } else {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to add items to your cart",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   const handleSubmit = () => {
     if (!formData.name || !formData.phone) {
       toast({
@@ -502,6 +546,53 @@ const DesignDetail = () => {
                   </motion.button>
                 ))}
               </div>
+
+              {/* CTA Buttons moved to the left column to fill space */}
+              <Reveal width="100%" direction="up" delay={0.4}>
+                <div className="flex flex-col gap-4 mt-8">
+                  <Button
+                    size="lg"
+                    variant={isInCart ? "outline" : "default"}
+                    className={`w-full h-20 rounded-[2rem] text-xl font-black shadow-2xl group relative overflow-hidden transition-all ${isInCart ? 'border-destructive text-destructive hover:bg-destructive/10' : 'shadow-primary/20 bg-foreground text-background hover:bg-foreground/90'}`}
+                    onClick={handleCartToggle}
+                  >
+                    <div className="relative z-10 flex items-center justify-center gap-3">
+                      {isInCart ? (
+                        <>
+                          <Trash2 className="w-6 h-6" />
+                          Remove from Cart
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                          Add Blueprint to Cart
+                        </>
+                      )}
+                    </div>
+                  </Button>
+
+                  <Button
+                    size="lg"
+                    className="w-full h-20 rounded-[2rem] text-xl font-black shadow-2xl shadow-primary/20 group relative overflow-hidden"
+                    onClick={() => {
+                      const el = document.getElementById("consultation-form");
+                      el?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                  >
+                    <div className="relative z-10 flex items-center justify-center gap-3">
+                      <Phone className="w-6 h-6 animate-pulse" />
+                      Request Free Expert Consultation
+                      <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                    </div>
+                    <motion.div 
+                      className="absolute inset-0 bg-primary-foreground/10"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: "100%" }}
+                      transition={{ duration: 0.5 }}
+                    />
+                  </Button>
+                </div>
+              </Reveal>
             </div>
           </Reveal>
 
@@ -581,30 +672,6 @@ const DesignDetail = () => {
                 ))}
               </div>
             </div>
-
-            {/* CTA Button */}
-            <Reveal width="100%" direction="up" delay={0.4}>
-              <Button
-                size="lg"
-                className="w-full h-20 rounded-[2rem] text-xl font-black shadow-2xl shadow-primary/20 group relative overflow-hidden"
-                onClick={() => {
-                  const el = document.getElementById("consultation-form");
-                  el?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                <div className="relative z-10 flex items-center justify-center gap-3">
-                  <Phone className="w-6 h-6 animate-pulse" />
-                  Request Free Expert Consultation
-                  <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
-                </div>
-                <motion.div 
-                  className="absolute inset-0 bg-primary-foreground/10"
-                  initial={{ x: "-100%" }}
-                  whileHover={{ x: "100%" }}
-                  transition={{ duration: 0.5 }}
-                />
-              </Button>
-            </Reveal>
           </div>
         </div>
       </div>

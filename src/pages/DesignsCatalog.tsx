@@ -3,11 +3,12 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Heart, BadgeCheck, Clock, Compass, X, ChevronDown, SlidersHorizontal, Sliders } from "lucide-react";
+import { Search, Heart, BadgeCheck, Clock, Compass, X, ChevronDown, SlidersHorizontal, Sliders, Plus, Minus } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 
 // Images
@@ -97,6 +98,7 @@ const DesignsCatalog = () => {
   const [draftStyle, setDraftStyle] = useState("all");
 
   const { isInWishlist, addToWishlist, removeFromWishlist, isAuthenticated } = useWishlist();
+  const { addToCart, items: cartItems, updateQuantity } = useCart();
 
   const handleWishlistToggle = (e: React.MouseEvent, design: any) => {
     e.preventDefault();
@@ -119,6 +121,30 @@ const DesignsCatalog = () => {
         style: design.style
       });
       toast.success("Added to wishlist");
+    }
+  };
+
+  const handleAddToCart = (e: React.MouseEvent, design: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Parse totalCost string to a number for the cart
+    const numericCost = parseFloat(design.totalCost.replace(/[^\d.]/g, '')) || 0;
+
+    const added = addToCart({
+      id: design.id,
+      name: design.name,
+      brand: "Design Blueprint",
+      image: design.image,
+      price: numericCost,
+      originalPrice: numericCost,
+      specs: `${design.size} • ${design.time} Build • ${design.style}`,
+    });
+
+    if (added) {
+      toast.success(`${design.name} blueprint added to cart.`);
+    } else {
+      toast.error("Please log in to add items to your cart.");
     }
   };
 
@@ -428,6 +454,7 @@ const DesignsCatalog = () => {
                                 </span>
                               </div>
                             )}
+
                           </div>
                           
                           {!isFeatured && (
@@ -462,6 +489,37 @@ const DesignsCatalog = () => {
                           >
                             <Heart className={`w-3 h-3 md:w-4 md:h-4 ${isInWishlist(design.id) ? 'fill-current' : ''}`} />
                           </button>
+                        </div>
+
+                        {/* Hover FAB - Add to Cart / Quantity Controller */}
+                        <div className={`absolute opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300 z-30 ${isFeatured ? 'bottom-8 right-8 md:bottom-12 md:right-12' : 'bottom-[70px] right-4 md:bottom-20 md:right-4'}`}>
+                          {(() => {
+                            const cartItem = cartItems.find(i => i.id === design.id);
+                            if (cartItem) {
+                              return (
+                                <button 
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    updateQuantity(design.id, 0); // removes from cart
+                                    toast.success(`${design.name} removed from cart.`);
+                                  }}
+                                  className="w-10 h-10 md:w-12 md:h-12 bg-[#ba1a1a] text-white rounded-full flex items-center justify-center hover:bg-[#8a1212] transition-all shadow-lg"
+                                  title="Remove from cart"
+                                >
+                                  <Minus className="w-4 h-4 md:w-5 md:h-5" />
+                                </button>
+                              );
+                            }
+                            return (
+                              <button 
+                                onClick={(e) => handleAddToCart(e, design)}
+                                className="w-10 h-10 md:w-12 md:h-12 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
+                              >
+                                <Plus className="w-4 h-4 md:w-5 md:h-5" />
+                              </button>
+                            );
+                          })()}
                         </div>
                       </motion.article>
                     );

@@ -8,7 +8,6 @@ import { Search, Plus, Minus, Zap, ArrowUpRight, SlidersHorizontal, Sliders, Che
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Layout } from "@/components/layout/Layout";
 import { useToast } from "@/hooks/use-toast";
-import { useWishlist } from "@/contexts/WishlistContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Fallback images
@@ -65,7 +64,6 @@ type Product = {
 const RawMaterials = () => {
   const { toast } = useToast();
   const { addToCart, items: cartItems, updateQuantity } = useCart();
-  const { isInWishlist, addToWishlist, removeFromWishlist, isAuthenticated } = useWishlist();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
@@ -158,34 +156,6 @@ const RawMaterials = () => {
         description: "Please sign in as a customer to add items to your cart.",
       });
       navigate("/auth?mode=login");
-    }
-  };
-  
-  const handleWishlistToggle = (e: React.MouseEvent, product: Product) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!isAuthenticated) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to save materials to your wishlist",
-      });
-      return;
-    }
-    
-    const wishlistId = `mat-${product.id}`;
-    if (isInWishlist(wishlistId)) {
-      removeFromWishlist(wishlistId);
-      toast({ title: "Removed", description: "Material removed from wishlist" });
-    } else {
-      addToWishlist({
-        id: wishlistId,
-        name: product.name ?? "Raw Material",
-        image: getProductImage(product),
-        category: product.category ?? "General",
-        style: "Material"
-      });
-      toast({ title: "Saved", description: "Material added to wishlist" });
     }
   };
 
@@ -365,17 +335,6 @@ const RawMaterials = () => {
                               {product.in_stock ? 'In Stock' : 'Pre-Order'}
                             </span>
                           </div>
-                          
-                          {/* Wishlist Button */}
-                          <div className="absolute top-4 right-4 z-20">
-                            <button 
-                              onClick={(e) => handleWishlistToggle(e, product)}
-                              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-lg border backdrop-blur-sm ${isInWishlist(`mat-${product.id}`) ? 'bg-[#ba1a1a]/10 text-[#ba1a1a] border-[#ba1a1a]/20' : 'bg-white/80 text-[#1c1c1a] border-[#e5e2df] hover:bg-white'}`}
-                            >
-                              <Heart className={`w-5 h-5 ${isInWishlist(`mat-${product.id}`) ? 'fill-current' : ''}`} />
-                            </button>
-                          </div>
-
                           {/* Hover FAB - Add to Cart / Quantity Controller */}
                           <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300 z-20">
                             {(() => {

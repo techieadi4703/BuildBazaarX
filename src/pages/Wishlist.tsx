@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import { Heart, Trash2, ArrowRight } from "lucide-react";
@@ -6,6 +6,35 @@ import { Layout } from "@/components/layout/Layout";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+
+// Material Fallback Images
+import plywoodImg from "@/assets/products/plywood.jpg";
+import paintImg from "@/assets/products/paint.jpg";
+import tilesImg from "@/assets/products/tiles.jpg";
+import ledLightImg from "@/assets/products/led-light.jpg";
+import showerImg from "@/assets/products/shower.jpg";
+import cementImg from "@/assets/products/cement.jpg";
+import laminateImg from "@/assets/products/laminate.jpg";
+
+// Design Fallback Images
+import fullhomeImage from "@/assets/fullhome-design.jpg";
+
+const categoryFallbackImages: Record<string, string> = {
+  wood: plywoodImg,
+  paints: paintImg,
+  tiles: tilesImg,
+  electrical: ledLightImg,
+  plumbing: showerImg,
+  construction: cementImg,
+  hardware: laminateImg,
+};
+
+const getFallbackImage = (item: any) => {
+  if (item.id.startsWith("mat-") && item.category) {
+    return categoryFallbackImages[item.category.toLowerCase()] || plywoodImg;
+  }
+  return fullhomeImage;
+};
 
 const Wishlist = () => {
   const { items, removeFromWishlist, isAuthenticated } = useWishlist();
@@ -46,7 +75,11 @@ const Wishlist = () => {
             </motion.div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {items.map((design) => (
+              {items.map((design) => {
+                const isMaterial = design.id.startsWith("mat-");
+                const linkTo = isMaterial ? `/raw-materials` : `/designs/${design.id.replace('db-', '')}`;
+
+                return (
                 <motion.div 
                   key={design.id}
                   layout
@@ -55,16 +88,19 @@ const Wishlist = () => {
                   exit={{ opacity: 0, scale: 0.9 }}
                   className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#e5e2df] group relative flex flex-col"
                 >
-                  <Link to={`/designs/${design.id}`} className="block relative aspect-[4/3] overflow-hidden bg-[#f6f3f0]">
+                  <Link to={linkTo} className="block relative aspect-[4/3] overflow-hidden bg-[#f6f3f0]">
                     <img 
                       src={design.image} 
                       alt={design.name} 
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = getFallbackImage(design);
+                      }}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   </Link>
                   <div className="p-5 flex flex-col flex-grow">
                     <div className="flex justify-between items-start mb-2">
-                      <Link to={`/designs/${design.id}`} className="hover:text-[#735c00] transition-colors">
+                      <Link to={linkTo} className="hover:text-[#735c00] transition-colors">
                         <h3 className="font-headline font-bold text-xl line-clamp-1">{design.name}</h3>
                       </Link>
                     </div>
@@ -79,7 +115,7 @@ const Wishlist = () => {
                     
                     <div className="mt-auto pt-4 border-t border-[#e5e2df] flex justify-between items-center">
                       <Button asChild variant="outline" size="sm" className="rounded-full">
-                        <Link to={`/designs/${design.id}`}>View Details</Link>
+                        <Link to={linkTo}>View Details</Link>
                       </Button>
                       <button 
                         onClick={(e) => { e.preventDefault(); removeFromWishlist(design.id); }}
@@ -91,7 +127,7 @@ const Wishlist = () => {
                     </div>
                   </div>
                 </motion.div>
-              ))}
+              )})}
             </div>
           )}
         </div>
