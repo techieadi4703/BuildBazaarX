@@ -15,7 +15,6 @@ import { Reveal } from "@/components/shared/Reveal";
 
 const Index = () => {
   const navigate = useNavigate();
-  const [isCheckingRole, setIsCheckingRole] = useState(true);
 
   useEffect(() => {
     const checkUserRoleAndRedirect = async () => {
@@ -27,85 +26,35 @@ const Index = () => {
 
         const userId = session.user.id;
 
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', userId)
-          .maybeSingle();
+        // Run checks in parallel for performance
+        const [profileRes, designerRes, professionalRes, supplierRes] = await Promise.all([
+          supabase.from('profiles').select('role').eq('id', userId).maybeSingle(),
+          supabase.from('designers').select('id').eq('id', userId).maybeSingle(),
+          supabase.from('professionals').select('id').eq('id', userId).maybeSingle(),
+          supabase.from('suppliers').select('id').eq('id', userId).maybeSingle()
+        ]);
 
-        if (profileError) throw profileError;
+        if (profileRes.error) throw profileRes.error;
 
-        if (profile) {
-          if (profile.role === 'designer') {
-            navigate('/designer/dashboard');
-            return;
-          }
-          if (profile.role === 'professional') {
-            navigate('/professional/dashboard');
-            return;
-          }
-          if (profile.role === 'supplier') {
-            navigate('/supplier/dashboard');
-            return;
-          }
-        }
-
-        const { data: designer } = await supabase
-          .from('designers')
-          .select('id')
-          .eq('id', userId)
-          .maybeSingle();
-
-        if (designer) {
+        if (profileRes.data?.role === 'designer' || designerRes.data) {
           navigate('/designer/dashboard');
           return;
         }
-
-        const { data: professional } = await supabase
-          .from('professionals')
-          .select('id')
-          .eq('id', userId)
-          .maybeSingle();
-
-        if (professional) {
+        if (profileRes.data?.role === 'professional' || professionalRes.data) {
           navigate('/professional/dashboard');
           return;
         }
-
-        const { data: supplier } = await supabase
-          .from('suppliers')
-          .select('id')
-          .eq('id', userId)
-          .maybeSingle();
-
-        if (supplier) {
+        if (profileRes.data?.role === 'supplier' || supplierRes.data) {
           navigate('/supplier/dashboard');
           return;
         }
       } catch (error) {
         console.error("Error checking user role:", error);
-      } finally {
-        setIsCheckingRole(false);
       }
     };
 
     checkUserRoleAndRedirect();
   }, [navigate]);
-
-  if (isCheckingRole) {
-    return (
-      <Layout>
-        <Helmet>
-          <title>BuildBazaarX – Design, Build &amp; Source Raw Materials Online</title>
-          <meta name="description" content="BuildBazaarX is India's all-in-one construction marketplace. Discover premium home designs, hire verified professionals, and source quality raw materials — fast." />
-          <link rel="canonical" href="https://buildbazaarx.com/" />
-        </Helmet>
-        <div className="flex h-[70vh] items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent shadow-lg text-primary"></div>
-        </div>
-      </Layout>
-    );
-  }
 
   return (
     <Layout>

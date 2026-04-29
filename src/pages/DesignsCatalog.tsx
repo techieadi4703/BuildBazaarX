@@ -178,7 +178,7 @@ const DesignsCatalog = () => {
     setExpandedMobileDropdown(prev => prev === dropdown ? null : dropdown);
   };
 
-  const { data: dbDesigns } = useQuery({
+  const { data: dbDesigns, isLoading } = useQuery({
     queryKey: ['designs'],
     queryFn: async () => {
       const { data } = await supabase
@@ -186,7 +186,8 @@ const DesignsCatalog = () => {
         .select('*, designers(full_name)')
         .eq('is_published', true);
       return data || [];
-    }
+    },
+    staleTime: 60000,
   });
 
   const allDesigns = useMemo(() => {
@@ -221,13 +222,6 @@ const DesignsCatalog = () => {
         <meta property="og:title" content="Home Interior Designs Catalog | BuildBazaarX" />
         <meta property="og:description" content="Browse 500+ verified home interior design blueprints. Full home, kitchen, bedroom & more. Filter by style and budget." />
       </Helmet>
-      {/* Dynamic font injection for the page to ensure perfection */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');
-        .font-headline { font-family: 'Newsreader', serif; }
-        .font-body { font-family: 'Manrope', sans-serif; }
-      `}</style>
-
       <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full">
         <main className="max-w-[1920px] mx-auto flex flex-col md:flex-row min-h-screen relative">
           
@@ -391,7 +385,12 @@ const DesignsCatalog = () => {
 
             {/* Grid */}
             <AnimatePresence>
-              {filteredDesigns.length === 0 ? (
+              {isLoading ? (
+                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 flex flex-col items-center justify-center text-center">
+                    <div className="w-10 h-10 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent mb-4"></div>
+                    <p className="font-body text-sm text-[#74777d]">Loading designs catalog...</p>
+                 </motion.div>
+              ) : filteredDesigns.length === 0 ? (
                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 flex flex-col items-center justify-center text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]">
                     <h3 className="font-headline text-2xl mb-2 text-[#1c1c1a]">No designs found 😕</h3>
                     <p className="font-body text-sm text-[#74777d] max-w-sm">Try adjusting your filters or clearing them to see more results.</p>
