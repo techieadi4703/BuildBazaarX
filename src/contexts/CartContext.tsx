@@ -11,6 +11,9 @@ export interface CartItem {
   specs: string;
   priceUnit?: string;
   quantity: number;
+  category?: string;
+  linkedDesignId?: string;
+  linkedMaterialId?: string | number;
 }
 
 interface CartContextType {

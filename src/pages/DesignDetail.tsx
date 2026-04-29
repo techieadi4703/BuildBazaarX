@@ -386,8 +386,8 @@ const DesignDetail = () => {
         name: design.name,
         brand: "Design Blueprint",
         image: design.images[0],
-        price: design.totalCost,
-        originalPrice: design.totalCost,
+        price: id?.startsWith("db-") ? design.executionCost : design.totalCost,
+        originalPrice: id?.startsWith("db-") ? design.executionCost : design.totalCost,
         specs: `${design.size} • ${design.timeline} • ${design.style}`,
       });
 
@@ -426,6 +426,41 @@ const DesignDetail = () => {
     setCurrentImageIndex((prev) => (prev + 1) % design.images.length);
   const prevImage = () =>
     setCurrentImageIndex((prev) => (prev - 1 + design.images.length) % design.images.length);
+
+  const categoryToIdMap: Record<string, string> = {
+    "Wood & Boards": "wood",
+    "Paints & Finishes": "paints",
+    "Construction": "construction",
+    "Tiles & Flooring": "tiles",
+    "Hardware": "hardware",
+    "Plumbing": "plumbing",
+    "Electrical": "electrical"
+  };
+
+  const getMaterialCostAndSelection = (mat: any) => {
+    const selectedItem = cartItems.find(item => String(item.linkedMaterialId) === String(mat.id));
+    if (selectedItem) {
+      return {
+        selected: true,
+        price: selectedItem.price * selectedItem.quantity,
+        name: selectedItem.name,
+        brand: selectedItem.brand,
+      };
+    }
+    return {
+      selected: false,
+      price: mat.estimated_cost || 0,
+    };
+  };
+
+  const executionCost = design.executionCost || 0;
+  let rawMaterialsTotal = 0;
+  if (id?.startsWith("db-")) {
+    dbMaterials.forEach(mat => {
+      rawMaterialsTotal += getMaterialCostAndSelection(mat).price;
+    });
+  }
+  const grandTotal = executionCost + rawMaterialsTotal;
 
   return (
     <Layout>
@@ -621,6 +656,10 @@ const DesignDetail = () => {
                     <Ruler className="w-5 h-5 text-primary" />
                     <span className="text-foreground">{design.size} Area</span>
                   </div>
+                  <div className="flex items-center gap-2 bg-primary/5 px-4 py-2 rounded-2xl border border-primary/20">
+                    <span className="text-primary uppercase tracking-widest text-[10px] font-black">Execution</span>
+                    <span className="text-foreground text-lg">₹{design.executionCost?.toLocaleString('en-IN') || "0"}</span>
+                  </div>
                 </div>
               </div>
             </Reveal>
@@ -710,26 +749,86 @@ const DesignDetail = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
-                    {dbMaterials.map((mat, idx) => (
-                      <motion.tr 
-                        key={mat.id} 
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 * idx }}
-                        className="hover:bg-secondary/20 transition-all group"
-                      >
-                        <td className="px-10 py-6 font-bold text-foreground group-hover:text-primary transition-colors">{mat.material_name}</td>
-                        <td className="px-10 py-6 font-medium text-muted-foreground italic text-sm">{mat.category || autoClassifyMaterial(mat.material_name)}</td>
-                        <td className="px-10 py-6">
-                           <Badge variant="outline" className="rounded-full px-4 py-1 border-primary/10 font-bold bg-primary/5 text-primary">{mat.quantity} {mat.unit}</Badge>
-                        </td>
-                        <td className="px-10 py-6 text-right font-black text-foreground">
-                          {mat.estimated_cost ? `₹${mat.estimated_cost.toLocaleString('en-IN')}` : 'Market Rates'}
-                        </td>
-                      </motion.tr>
-                    ))}
+                    {dbMaterials.map((mat, idx) => {
+                      const materialCategory = mat.category || autoClassifyMaterial(mat.material_name);
+                      const catId = categoryToIdMap[materialCategory] || "hardware";
+                      const selection = getMaterialCostAndSelection(mat);
+
+                      return (
+                        <motion.tr 
+                          key={mat.id} 
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 * idx }}
+                          className="hover:bg-secondary/20 transition-all group"
+                        >
+                          <td className="px-10 py-6">
+                            <div className="font-bold text-foreground group-hover:text-primary transition-colors">{mat.material_name}</div>
+                            {selection.selected && (
+                              <div className="mt-2 flex flex-col gap-1">
+                                <span className="text-xs font-bold text-primary">Selected: {selection.name}</span>
+                                <span className="text-[10px] text-muted-foreground uppercase tracking-widest">{selection.brand}</span>
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-10 py-6 font-medium text-muted-foreground italic text-sm">{materialCategory}</td>
+                          <td className="px-10 py-6">
+                             <Badge variant="outline" className="rounded-full px-4 py-1 border-primary/10 font-bold bg-primary/5 text-primary">{mat.quantity} {mat.unit}</Badge>
+                          </td>
+                          <td className="px-10 py-6 text-right">
+                            <div className="font-black text-foreground">
+                              {selection.selected 
+                                ? `₹${selection.price.toLocaleString('en-IN')}` 
+                                : mat.estimated_cost ? `₹${mat.estimated_cost.toLocaleString('en-IN')}` : 'Market Rates'
+                              }
+                            </div>
+                            {!selection.selected && (
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="mt-2 text-[10px] uppercase tracking-widest font-bold border-primary text-primary hover:bg-primary hover:text-white"
+                                asChild
+                              >
+                                <Link to={`/raw-materials?category=${catId}&designId=${id}&materialId=${mat.id}`}>
+                                  Select Brand
+                                </Link>
+                              </Button>
+                            )}
+                          </td>
+                        </motion.tr>
+                      );
+                    })}
                   </tbody>
                 </table>
+              </div>
+              
+              {/* Total Cost Summary Section */}
+              <div className="mt-12 bg-white rounded-[2rem] p-8 md:p-12 border border-border/50 shadow-xl max-w-2xl mx-auto flex flex-col gap-6">
+                <h4 className="text-2xl font-black text-center mb-2">Package Summary</h4>
+                
+                <div className="flex justify-between items-center text-sm font-bold text-muted-foreground border-b border-border/50 pb-4">
+                  <span>Design Execution Cost</span>
+                  <span className="text-foreground text-lg">₹{executionCost.toLocaleString('en-IN')}</span>
+                </div>
+                
+                <div className="flex justify-between items-center text-sm font-bold text-muted-foreground border-b border-border/50 pb-4">
+                  <span>Selected Materials Total</span>
+                  <span className="text-foreground text-lg">₹{rawMaterialsTotal.toLocaleString('en-IN')}</span>
+                </div>
+
+                <div className="flex justify-between items-center pt-2">
+                  <span className="text-xl font-black uppercase tracking-widest">Grand Total</span>
+                  <span className="text-4xl font-black text-primary">₹{grandTotal.toLocaleString('en-IN')}</span>
+                </div>
+
+                <Button
+                  size="lg"
+                  className="w-full mt-4 h-16 rounded-2xl text-lg font-black shadow-xl"
+                  onClick={handleCartToggle}
+                >
+                  <ShoppingCart className="w-5 h-5 mr-3" />
+                  {isInCart ? 'Remove Package from Cart' : 'Add Complete Package to Cart'}
+                </Button>
               </div>
             </div>
           </motion.section>

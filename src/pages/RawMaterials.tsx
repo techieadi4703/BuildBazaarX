@@ -67,6 +67,8 @@ const RawMaterials = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
+  const designIdFromUrl = searchParams.get("designId");
+  const materialIdFromUrl = searchParams.get("materialId");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryFromUrl);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -146,6 +148,9 @@ const RawMaterials = () => {
       price: product.price ?? 0,
       originalPrice: product.original_price ?? 0,
       specs: product.specs ?? "",
+      category: product.category ?? undefined,
+      linkedDesignId: designIdFromUrl ?? undefined,
+      linkedMaterialId: materialIdFromUrl ?? undefined,
     });
     if (added) {
       toast({ title: "Module Added", description: `${product.name} initialized in cart.` });
