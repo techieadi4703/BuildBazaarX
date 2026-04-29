@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 import kitchenImage from "@/assets/kitchen-design.jpg";
 import bedroomImage from "@/assets/bedroom-design.jpg";
 import fullhomeImage from "@/assets/fullhome-design.jpg";
@@ -42,6 +43,8 @@ const designCategories = [
 ];
 
 export const PopularDesignsSection = () => {
+  const isMobile = useIsMobile();
+
   return (
     <section className="py-16 bg-[#0B132B] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
@@ -73,11 +76,19 @@ export const PopularDesignsSection = () => {
                          <motion.img
                            src={category.image}
                            alt={category.title}
-                           initial={{ opacity: 0.5, filter: "grayscale(100%) blur(2px)" }}
-                           whileInView={{ opacity: 1, filter: "grayscale(0%) blur(0px)" }}
+                           initial={{ 
+                             opacity: 0.5, 
+                             filter: isMobile ? "grayscale(100%) blur(2px)" : "grayscale(100%)" 
+                           }}
+                           whileInView={isMobile ? { opacity: 1, filter: "grayscale(0%) blur(0px)" } : {}}
+                           whileHover={!isMobile ? { opacity: 1, filter: "grayscale(0%)" } : {}}
                            viewport={{ amount: 0.7, once: false }}
-                           transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
-                           className="w-full h-full object-cover rounded transition-transform duration-700 hover:scale-105"
+                           transition={{ 
+                             duration: isMobile ? 1.2 : 0.4, 
+                             delay: isMobile ? 0.1 : 0, 
+                             ease: "easeOut" 
+                           }}
+                           className="w-full h-full object-cover rounded transition-transform duration-700 md:group-hover:scale-105"
                          />
                          {/* Scan line decoration */}
                          <div className="absolute bottom-2 left-2 right-2 h-[2px] bg-[#C5A572]/40" />
