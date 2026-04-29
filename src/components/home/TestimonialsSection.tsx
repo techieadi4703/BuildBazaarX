@@ -19,12 +19,12 @@ const testimonials = [
 
 export const TestimonialsSection = () => {
   return (
-    <section className="py-16 bg-[#0B132B] relative overflow-hidden">
+    <section className="py-10 bg-[#0B132B] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         
         {/* Section Header */}
         <Reveal width="100%" direction="up">
-          <div className="text-center mb-12">
+          <div className="text-center mb-4">
             <h2 className="text-xl md:text-2xl font-black text-white tracking-widest uppercase">
               VERIFIED <span className="text-[#C5A572] font-serif italic font-normal">TESTIMONY</span>
             </h2>
@@ -32,36 +32,36 @@ export const TestimonialsSection = () => {
         </Reveal>
 
         {/* Testimonial List */}
-        <div className="max-w-4xl mx-auto flex flex-col gap-16">
+        <div className="max-w-4xl mx-auto flex flex-col">
           <Reveal width="100%" staggerChildren={0.15}>
             {testimonials.map((testimonial, index) => (
               <RevealItem key={index}>
-                <div className="flex flex-col items-center text-center px-4">
+                <div className="flex flex-col items-center text-center px-4 relative">
                   
                   {/* Gold Quote Mark */}
-                  <div className="text-[#C5A572] text-6xl md:text-8xl font-serif leading-none mb-6 h-12 md:h-16 flex items-center justify-center">
+                  <div className="text-[#C5A572] text-6xl md:text-8xl font-serif leading-none mb-2 h-12 md:h-16 flex items-center justify-center">
                     “
                   </div>
                   
                   {/* Quote Text */}
-                  <p className="text-white/90 text-xl md:text-3xl font-serif italic leading-relaxed mb-8 max-w-3xl">
+                  <p className="text-white/90 text-xl md:text-2xl font-serif italic leading-relaxed mb-2 max-w-3xl">
                     "{testimonial.quote}"
                   </p>
                   
                   {/* Author Name */}
-                  <div className="text-white/70 text-sm md:text-base font-medium tracking-wide mb-2">
+                  <div className="text-white/70 text-sm md:text-base font-medium tracking-wide mb-1">
                     — {testimonial.author}
                   </div>
                   
                   {/* Monospace Tech Footer */}
-                  <div className="text-[#C5A572]/70 text-[10px] md:text-xs font-mono uppercase tracking-widest">
+                  <div className="text-[#C5A572]/70 text-[10px] md:text-xs font-mono uppercase tracking-widest mb-2">
                     Project ID: {testimonial.projectId}, Status: {testimonial.status}.
                   </div>
 
                   {/* Divider (except last item) */}
                   {index < testimonials.length - 1 && (
                     <motion.div 
-                      className="w-full max-w-md h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mt-16" 
+                      className="w-full max-w-md h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mt-4" 
                       initial={{ scaleX: 0 }}
                       whileInView={{ scaleX: 1 }}
                       transition={{ duration: 1, delay: 0.5 }}

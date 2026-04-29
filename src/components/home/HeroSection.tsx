@@ -7,7 +7,7 @@ import heroImage from "@/assets/hero-interior.jpg"; // Re-using existing image, 
 
 export const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-[#0B132B] min-h-screen flex items-center justify-center pt-24 pb-16">
+    <section className="relative overflow-hidden bg-[#0B132B] min-h-[85vh] flex items-center justify-center pt-24 pb-8">
       {/* Blueprint Grid Overlay */}
       <div 
         className="absolute inset-0 opacity-20 pointer-events-none"
@@ -31,7 +31,7 @@ export const HeroSection = () => {
         }}
       />
 
-      <div className="container mx-auto px-4 relative z-10 flex flex-col items-center top-[-2rem]">
+      <div className="container mx-auto px-4 relative z-10 flex flex-col items-center">
         
         {/* Architectural Image Presentation */}
         <motion.div 
@@ -109,9 +109,6 @@ export const HeroSection = () => {
           </div>
         </motion.div>
       </div>
-
-      {/* Fade into next section */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#0B132B] to-transparent z-20" />
     </section>
   );
 };

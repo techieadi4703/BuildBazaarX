@@ -42,16 +42,16 @@ const products = [
 
 export const MaterialsSection = () => {
   return (
-    <section className="py-16 bg-[#F4F0EA] relative overflow-hidden">
+    <section className="py-12 bg-[#F4F0EA] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         
         <Reveal width="100%" direction="up">
-          <div className="text-center mb-10 px-4">
-            <h2 className="text-xl md:text-2xl font-black text-[#0B132B] tracking-widest uppercase mb-4">
+          <div className="text-center mb-8 px-4">
+            <h2 className="text-xl md:text-2xl font-black text-[#0B132B] tracking-widest uppercase mb-3">
               VERIFIED MATERIALS: INVENTORY SHOWCASE
             </h2>
             <p className="text-[#0B132B]/60 text-sm font-medium">
-              Premium brand cards update protocol and available commit to<br/>materials initiatives.
+              Premium brand cards update protocol and available commit to materials initiatives.
             </p>
           </div>
         </Reveal>
