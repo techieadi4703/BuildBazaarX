@@ -70,10 +70,14 @@ export const PopularDesignsSection = () => {
                          <div className="absolute top-4 right-4 z-20 bg-white/10 backdrop-blur-md px-3 py-1 rounded text-[10px] font-mono text-white/80 border border-white/10">
                            {category.categoryId}
                          </div>
-                         <img
+                         <motion.img
                            src={category.image}
                            alt={category.title}
-                           className="w-full h-full object-cover rounded mix-blend-luminosity opacity-70 hover:opacity-100 hover:mix-blend-normal transition-all duration-700"
+                           initial={{ opacity: 0.5, filter: "grayscale(100%) blur(2px)" }}
+                           whileInView={{ opacity: 1, filter: "grayscale(0%) blur(0px)" }}
+                           viewport={{ amount: 0.7, once: false }}
+                           transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
+                           className="w-full h-full object-cover rounded transition-transform duration-700 hover:scale-105"
                          />
                          {/* Scan line decoration */}
                          <div className="absolute bottom-2 left-2 right-2 h-[2px] bg-[#C5A572]/40" />
