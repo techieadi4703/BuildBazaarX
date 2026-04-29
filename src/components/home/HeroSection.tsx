@@ -53,17 +53,30 @@ export const HeroSection = () => {
 
           <div className="relative rounded-[1rem] p-2 bg-[#0A1128] border border-white/10 shadow-[0_0_100px_rgba(197,165,114,0.05)] mx-auto overflow-hidden">
             <div className="absolute inset-0 bg-[#C5A572]/10 mix-blend-overlay z-10 pointer-events-none" />
-            <img
-              src={heroImage}
-              alt="Architectural Render"
-              className="w-full h-[400px] md:h-[500px] object-cover rounded-lg mix-blend-luminosity opacity-80"
-            />
-            {/* Horizontal scan line effect */}
-            <motion.div 
-              className="absolute left-0 right-0 h-[2px] bg-[#C5A572]/30 z-20 blur-[1px]"
-              animate={{ top: ["0%", "100%", "0%"] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-            />
+            <div className="relative w-full h-[400px] md:h-[500px]">
+              {/* Grayscale Base Image */}
+              <img
+                src={heroImage}
+                alt="Architectural Render"
+                className="absolute inset-0 w-full h-full object-cover rounded-lg mix-blend-luminosity opacity-70"
+              />
+
+              {/* Colored Image Reveal */}
+              <motion.img
+                src={heroImage}
+                alt="Architectural Render Colored"
+                className="absolute inset-0 w-full h-full object-cover rounded-lg z-10"
+                animate={{ clipPath: ["inset(0 0 100% 0)", "inset(0 0 0% 0)", "inset(0 0 100% 0)"] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              />
+
+              {/* Horizontal scan line effect */}
+              <motion.div 
+                className="absolute left-0 right-0 h-[2px] bg-[#C5A572] z-20 shadow-[0_0_15px_rgba(197,165,114,0.8)]"
+                animate={{ top: ["0%", "100%", "0%"] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              />
+            </div>
           </div>
         </motion.div>
 
