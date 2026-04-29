@@ -1,4 +1,9 @@
 import React from "react";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AuthProvider } from "./contexts/AuthContext";
+import { CartProvider } from "./contexts/CartContext";
+import { WishlistProvider } from "./contexts/WishlistContext";
+import { AdminRoute } from "./components/admin/AdminRoute";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,46 +11,44 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "./components/shared/PageTransition";
-import Index from "./pages/Index";
-import DesignsCatalog from "./pages/DesignsCatalog";
-import DesignDetail from "./pages/DesignDetail";
-import RawMaterials from "./pages/RawMaterials";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Auth from "./pages/Auth";
-import AuthRoleSelect from "./pages/AuthRoleSelect";
-import Checkout from "./pages/Checkout";
-import Profile from "./pages/Profile";
-import Orders from "./pages/Orders";
-import Wishlist from "./pages/Wishlist";
-import NotFound from "./pages/NotFound";
-import ProfessionalAuth from "./pages/ProfessionalAuth";
-import ProfessionalDashboard from "./pages/ProfessionalDashboard";
-import ProfessionalSetup from "./pages/ProfessionalSetup";
-import DesignerAuth from "./pages/DesignerAuth";
-import DesignerDashboard from "./pages/DesignerDashboard";
-import DesignerSetup from "./pages/DesignerSetup";
-import SupplierAuth from "./pages/SupplierAuth";
-import SupplierDashboard from "./pages/SupplierDashboard";
-import SupplierSetup from "./pages/SupplierSetup";
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { CartProvider } from "./contexts/CartContext";
-import { WishlistProvider } from "./contexts/WishlistContext";
-import { AdminRoute } from "./components/admin/AdminRoute";
-import AdminDashboard from "./pages/admin/Dashboard";
-import AdminUsers from "./pages/admin/Users";
-import AdminCustomers from "./pages/admin/Customers";
-import AdminProfessionals from "./pages/admin/Professionals";
-import AdminDesigners from "./pages/admin/Designers";
-import AdminSuppliers from "./pages/admin/Suppliers";
-import AdminDesigns from "./pages/admin/Designs";
-import AdminProducts from "./pages/admin/Products";
-import AdminOrders from "./pages/admin/Orders";
-import AdminTickets from "./pages/admin/Tickets";
-import AdminCoupons from "./pages/admin/Coupons";
-import AdminBanners from "./pages/admin/Banners";
-import AdminSettings from "./pages/admin/Settings";
-import AdminReports from "./pages/admin/Reports";
+
+const Index = React.lazy(() => import("./pages/Index"));
+const DesignsCatalog = React.lazy(() => import("./pages/DesignsCatalog"));
+const DesignDetail = React.lazy(() => import("./pages/DesignDetail"));
+const RawMaterials = React.lazy(() => import("./pages/RawMaterials"));
+const About = React.lazy(() => import("./pages/About"));
+const Contact = React.lazy(() => import("./pages/Contact"));
+const Auth = React.lazy(() => import("./pages/Auth"));
+const AuthRoleSelect = React.lazy(() => import("./pages/AuthRoleSelect"));
+const Checkout = React.lazy(() => import("./pages/Checkout"));
+const Profile = React.lazy(() => import("./pages/Profile"));
+const Orders = React.lazy(() => import("./pages/Orders"));
+const Wishlist = React.lazy(() => import("./pages/Wishlist"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
+const ProfessionalAuth = React.lazy(() => import("./pages/ProfessionalAuth"));
+const ProfessionalDashboard = React.lazy(() => import("./pages/ProfessionalDashboard"));
+const ProfessionalSetup = React.lazy(() => import("./pages/ProfessionalSetup"));
+const DesignerAuth = React.lazy(() => import("./pages/DesignerAuth"));
+const DesignerDashboard = React.lazy(() => import("./pages/DesignerDashboard"));
+const DesignerSetup = React.lazy(() => import("./pages/DesignerSetup"));
+const SupplierAuth = React.lazy(() => import("./pages/SupplierAuth"));
+const SupplierDashboard = React.lazy(() => import("./pages/SupplierDashboard"));
+const SupplierSetup = React.lazy(() => import("./pages/SupplierSetup"));
+
+const AdminDashboard = React.lazy(() => import("./pages/admin/Dashboard"));
+const AdminUsers = React.lazy(() => import("./pages/admin/Users"));
+const AdminCustomers = React.lazy(() => import("./pages/admin/Customers"));
+const AdminProfessionals = React.lazy(() => import("./pages/admin/Professionals"));
+const AdminDesigners = React.lazy(() => import("./pages/admin/Designers"));
+const AdminSuppliers = React.lazy(() => import("./pages/admin/Suppliers"));
+const AdminDesigns = React.lazy(() => import("./pages/admin/Designs"));
+const AdminProducts = React.lazy(() => import("./pages/admin/Products"));
+const AdminOrders = React.lazy(() => import("./pages/admin/Orders"));
+const AdminTickets = React.lazy(() => import("./pages/admin/Tickets"));
+const AdminCoupons = React.lazy(() => import("./pages/admin/Coupons"));
+const AdminBanners = React.lazy(() => import("./pages/admin/Banners"));
+const AdminSettings = React.lazy(() => import("./pages/admin/Settings"));
+const AdminReports = React.lazy(() => import("./pages/admin/Reports"));
 
 const queryClient = new QueryClient();
 
@@ -121,17 +124,21 @@ const AnimatedRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <CartProvider>
-      <WishlistProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AnimatedRoutes />
-          </BrowserRouter>
-        </TooltipProvider>
-      </WishlistProvider>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <WishlistProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <React.Suspense fallback={<div className="h-screen w-full flex items-center justify-center"><div className="w-8 h-8 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent"></div></div>}>
+                <AnimatedRoutes />
+              </React.Suspense>
+            </BrowserRouter>
+          </TooltipProvider>
+        </WishlistProvider>
+      </CartProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

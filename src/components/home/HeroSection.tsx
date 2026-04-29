@@ -54,19 +54,18 @@ export const HeroSection = () => {
           <div className="relative rounded-[1rem] p-2 bg-[#0A1128] border border-white/10 shadow-[0_0_100px_rgba(197,165,114,0.05)] mx-auto overflow-hidden">
             <div className="absolute inset-0 bg-[#C5A572]/10 mix-blend-overlay z-10 pointer-events-none" />
             <div className="relative w-full h-[400px] md:h-[500px]">
-              {/* Grayscale Base Image */}
+              {/* Single Image with fetchpriority */}
               <img
                 src={heroImage}
                 alt="Architectural Render"
-                className="absolute inset-0 w-full h-full object-cover rounded-lg mix-blend-luminosity opacity-70"
+                fetchPriority="high"
+                className="absolute inset-0 w-full h-full object-cover rounded-lg"
               />
 
-              {/* Colored Image Reveal */}
-              <motion.img
-                src={heroImage}
-                alt="Architectural Render Colored"
-                className="absolute inset-0 w-full h-full object-cover rounded-lg z-10"
-                animate={{ clipPath: ["inset(0 0 100% 0)", "inset(0 0 0% 0)", "inset(0 0 100% 0)"] }}
+              {/* Grayscale overlay animated to reveal color from top to bottom */}
+              <motion.div
+                className="absolute inset-0 w-full h-full rounded-lg z-10 backdrop-grayscale backdrop-brightness-75"
+                animate={{ clipPath: ["inset(0 0 0 0)", "inset(100% 0 0 0)", "inset(0 0 0 0)"] }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               />
 

@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "./AuthContext";
 
 export interface WishlistItem {
   id: string; // The design ID
@@ -23,8 +24,8 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 
 export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<WishlistItem[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { userId, user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const previousUserId = useRef<string | null>(null);
 
   // ─── Sync helpers ────────────────────────────────────────────────────
   const saveWishlistToDb = useCallback(async (uid: string, wishlistItems: WishlistItem[]) => {
@@ -38,9 +39,11 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const loadWishlistFromDb = useCallback(async (uid: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user?.user_metadata?.wishlist && Array.isArray(user.user_metadata.wishlist)) {
-      setItems(user.user_metadata.wishlist as WishlistItem[]);
+    // We already have the user object in AuthContext, but let's be safe
+    // and just use the metadata from it if available, or fetch fresh if needed.
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (currentUser?.user_metadata?.wishlist && Array.isArray(currentUser.user_metadata.wishlist)) {
+      setItems(currentUser.user_metadata.wishlist as WishlistItem[]);
     } else {
       setItems([]);
     }
@@ -48,55 +51,21 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
 
   // ─── Auth state listener ──────────────────────────────────────────────
   useEffect(() => {
-    let mounted = true;
+    if (isAuthLoading) return;
 
-    const syncAuthState = async (event: string, session: any) => {
-      const uid = session?.user?.id ?? null;
-
-      if (!mounted) return;
-
-      if (event === "SIGNED_OUT" || !uid) {
-        // Clear wishlist in state on logout
+    if (!isAuthenticated || !userId) {
+      if (previousUserId.current !== null) {
+        // Clear wishlist on logout
         setItems([]);
-        setUserId(null);
-        setIsAuthenticated(false);
-      } else if (event === "SIGNED_IN" && uid) {
-        setUserId(uid);
-        setIsAuthenticated(true);
-        // Restore wishlist from DB only on fresh sign in
-        await loadWishlistFromDb(uid);
-      } else if (uid) {
-        // For other events (TOKEN_REFRESHED, USER_UPDATED), just update auth state
-        setUserId(uid);
-        setIsAuthenticated(true);
       }
-    };
-
-    const handleAuthChange = (event: string, session: any) => {
-      window.setTimeout(() => {
-        void syncAuthState(event, session);
-      }, 0);
-    };
-
-    // Check existing session on mount
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (mounted) {
-        const uid = session?.user?.id ?? null;
-        if (uid) {
-          setUserId(uid);
-          setIsAuthenticated(true);
-          await loadWishlistFromDb(uid);
-        }
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthChange);
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
-  }, [loadWishlistFromDb]);
+      previousUserId.current = null;
+    } else if (userId !== previousUserId.current) {
+      // User signed in or switched user
+      previousUserId.current = userId;
+      // Load wishlist from DB only on fresh sign in
+      loadWishlistFromDb(userId);
+    }
+  }, [userId, isAuthenticated, isAuthLoading, loadWishlistFromDb]);
 
   // ─── Persist wishlist to DB whenever items change (for logged-in users) ──
   useEffect(() => {

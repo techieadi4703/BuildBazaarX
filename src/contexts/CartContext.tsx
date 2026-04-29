@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "./AuthContext";
 
 export interface CartItem {
   id: number | string;
@@ -28,8 +29,8 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { userId, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const previousUserId = useRef<string | null>(null);
 
   // ─── Sync helpers ────────────────────────────────────────────────────
   const saveCartToDb = useCallback(async (uid: string, cartItems: CartItem[]) => {
@@ -58,56 +59,20 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // ─── Auth state listener ──────────────────────────────────────────────
   useEffect(() => {
-    let mounted = true;
+    if (isAuthLoading) return;
 
-    const syncAuthState = async (event: string, session: any) => {
-      const uid = session?.user?.id ?? null;
-
-      if (!mounted) return;
-
-      if (event === "SIGNED_OUT" || !uid) {
-        // Clear cart in state on logout
+    if (!isAuthenticated || !userId) {
+      if (previousUserId.current !== null) {
+        // Clear cart on logout
         setItems([]);
-        setUserId(null);
-        setIsAuthenticated(false);
-      } else if (event === "SIGNED_IN" && uid) {
-        setUserId(uid);
-        setIsAuthenticated(true);
-        // Restore cart from DB only on fresh sign in
-        await loadCartFromDb(uid);
-      } else if (uid) {
-        // For other events (TOKEN_REFRESHED, USER_UPDATED), just update auth state
-        // Do NOT reload from DB to avoid overwriting pending local changes
-        setUserId(uid);
-        setIsAuthenticated(true);
       }
-    };
-
-    const handleAuthChange = (event: string, session: any) => {
-      window.setTimeout(() => {
-        void syncAuthState(event, session);
-      }, 0);
-    };
-
-    // Check existing session on mount
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (mounted) {
-        const uid = session?.user?.id ?? null;
-        if (uid) {
-          setUserId(uid);
-          setIsAuthenticated(true);
-          await loadCartFromDb(uid);
-        }
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthChange);
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
-  }, [loadCartFromDb]);
+      previousUserId.current = null;
+    } else if (userId !== previousUserId.current) {
+      // User signed in or switched user
+      previousUserId.current = userId;
+      loadCartFromDb(userId);
+    }
+  }, [userId, isAuthenticated, isAuthLoading, loadCartFromDb]);
 
   // ─── Persist cart to DB whenever items change (for logged-in users) ──
   useEffect(() => {
