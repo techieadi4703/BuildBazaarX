@@ -50,7 +50,15 @@ const AdminBanners = React.lazy(() => import("./pages/admin/Banners"));
 const AdminSettings = React.lazy(() => import("./pages/admin/Settings"));
 const AdminReports = React.lazy(() => import("./pages/admin/Reports"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,       // 1 minute default cache
+      retry: 1,                   // only 1 retry on failure
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -122,6 +130,8 @@ const AnimatedRoutes = () => {
   );
 };
 
+import { ErrorBoundary } from "./components/shared/ErrorBoundary";
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -131,9 +141,11 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <React.Suspense fallback={<div className="h-screen w-full flex items-center justify-center"><div className="w-8 h-8 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent"></div></div>}>
-                <AnimatedRoutes />
-              </React.Suspense>
+              <ErrorBoundary>
+                <React.Suspense fallback={<div className="h-screen w-full flex items-center justify-center"><div className="w-8 h-8 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent"></div></div>}>
+                  <AnimatedRoutes />
+                </React.Suspense>
+              </ErrorBoundary>
             </BrowserRouter>
           </TooltipProvider>
         </WishlistProvider>

@@ -104,6 +104,7 @@ const RawMaterials = () => {
       if (error) throw error;
       return data as Product[];
     },
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: supplierProducts = [], isLoading: isLoadingSup } = useQuery({
@@ -125,7 +126,8 @@ const RawMaterials = () => {
         in_stock: dbProd.in_stock,
         image_url: dbProd.images?.[0] || null,
       })) as Product[];
-    }
+    },
+    staleTime: 5 * 60 * 1000,
   });
 
   const allProducts = [...regularProducts, ...supplierProducts];
