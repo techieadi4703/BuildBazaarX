@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Layout } from "@/components/layout/Layout";
 import { HeroSection } from "@/components/home/HeroSection";
 import { PopularDesignsSection } from "@/components/home/PopularDesignsSection";
@@ -15,46 +15,25 @@ import { Reveal } from "@/components/shared/Reveal";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { userRole, isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
-    const checkUserRoleAndRedirect = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          return;
-        }
+    if (isLoading || !isAuthenticated) return;
 
-        const userId = session.user.id;
+    if (userRole === 'designer') {
+      navigate('/designer/dashboard');
+    } else if (userRole === 'professional') {
+      navigate('/professional/dashboard');
+    } else if (userRole === 'supplier') {
+      navigate('/supplier/dashboard');
+    }
+  }, [userRole, isAuthenticated, isLoading, navigate]);
 
-        // Run checks in parallel for performance
-        const [profileRes, designerRes, professionalRes, supplierRes] = await Promise.all([
-          supabase.from('profiles').select('role').eq('id', userId).maybeSingle(),
-          supabase.from('designers').select('id').eq('id', userId).maybeSingle(),
-          supabase.from('professionals').select('id').eq('id', userId).maybeSingle(),
-          supabase.from('suppliers').select('id').eq('id', userId).maybeSingle()
-        ]);
-
-        if (profileRes.error) throw profileRes.error;
-
-        if (profileRes.data?.role === 'designer' || designerRes.data) {
-          navigate('/designer/dashboard');
-          return;
-        }
-        if (profileRes.data?.role === 'professional' || professionalRes.data) {
-          navigate('/professional/dashboard');
-          return;
-        }
-        if (profileRes.data?.role === 'supplier' || supplierRes.data) {
-          navigate('/supplier/dashboard');
-          return;
-        }
-      } catch (error) {
-        console.error("Error checking user role:", error);
-      }
-    };
-
-    checkUserRoleAndRedirect();
-  }, [navigate]);
+  // Optionally show a loading state while deciding on the redirect.
+  // This prevents the page from flashing before redirection to dashboard.
+  if (isLoading || (isAuthenticated && userRole && userRole !== 'customer')) {
+     return <div className="min-h-screen bg-background" />;
+  }
 
   return (
     <Layout>

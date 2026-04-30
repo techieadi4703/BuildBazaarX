@@ -6,6 +6,7 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   userId: string | null;
+  userRole: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -15,7 +16,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const fetchUserRole = async (userId: string) => {
+    // Run checks in parallel
+    const [profileRes, designerRes, professionalRes, supplierRes] = await Promise.all([
+      supabase.from('profiles').select('role').eq('id', userId).maybeSingle(),
+      supabase.from('designers').select('id').eq('id', userId).maybeSingle(),
+      supabase.from('professionals').select('id').eq('id', userId).maybeSingle(),
+      supabase.from('suppliers').select('id').eq('id', userId).maybeSingle()
+    ]);
+
+    if (profileRes.data?.role === 'designer' || designerRes.data) return 'designer';
+    if (profileRes.data?.role === 'professional' || professionalRes.data) return 'professional';
+    if (profileRes.data?.role === 'supplier' || supplierRes.data) return 'supplier';
+    return 'customer'; // Default role
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -26,6 +43,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (mounted) {
           setSession(session);
           setUser(session?.user ?? null);
+          if (session?.user) {
+             const role = await fetchUserRole(session.user.id);
+             if (mounted) setUserRole(role);
+          } else {
+             if (mounted) setUserRole(null);
+          }
         }
       } catch (error) {
         console.error("Error getting session:", error);
@@ -39,10 +62,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initializeAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      async (_event, session) => {
         if (mounted) {
           setSession(session);
           setUser(session?.user ?? null);
+          if (session?.user) {
+            const role = await fetchUserRole(session.user.id);
+            if (mounted) setUserRole(role);
+          } else {
+            if (mounted) setUserRole(null);
+          }
           setIsLoading(false);
         }
       }
@@ -58,6 +87,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     session,
     user,
     userId: user?.id ?? null,
+    userRole,
     isAuthenticated: !!user,
     isLoading,
   };

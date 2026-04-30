@@ -42,170 +42,7 @@ import livingroomImage from "@/assets/livingroom-design.jpg";
 import wardrobeImage from "@/assets/wardrobe-design.jpg";
 import fullhomeImage from "@/assets/fullhome-design.jpg";
 
-const designsData = {
-  "1": {
-    id: 1,
-    name: "Modern L-Shape Kitchen",
-    category: "Kitchen",
-    style: "Modern",
-    size: "10x12 ft",
-    images: [kitchenImage, bedroomImage, livingroomImage],
-    description:
-      "Transform your cooking space with our Modern L-Shape Kitchen design. This layout maximizes corner space while providing ample storage and counter area. Perfect for medium to large kitchens, featuring sleek handleless cabinets, premium countertops, and integrated appliances.",
-    features: [
-      "Soft-close drawers and cabinets",
-      "Modular design for easy customization",
-      "Built-in chimney space",
-      "Dedicated appliance zones",
-      "Under-cabinet LED lighting",
-      "Pull-out pantry units",
-    ],
-    executionCost: 150000,
-    materialsCost: 80000,
-    customizeCost: 20000,
-    totalCost: 250000,
-    timeline: "25–30 days",
-    warranty: "10 Years",
-    rating: 4.8,
-    reviews: 124,
-    trending: true,
-  },
-  "2": {
-    id: 2,
-    name: "Luxury Master Bedroom",
-    category: "Bedroom",
-    style: "Luxury",
-    size: "14x16 ft",
-    images: [bedroomImage, wardrobeImage, livingroomImage],
-    description:
-      "Create your personal sanctuary with our Luxury Master Bedroom design. Featuring elegant bed back paneling, spacious wardrobes, and ambient lighting that sets the perfect mood.",
-    features: [
-      "Designer bed back panel",
-      "Built-in reading lights",
-      "Hidden storage solutions",
-      "Premium veneer finish",
-      "Integrated side tables",
-      "Accent wall design",
-    ],
-    executionCost: 120000,
-    materialsCost: 70000,
-    customizeCost: 15000,
-    totalCost: 205000,
-    timeline: "20–25 days",
-    warranty: "10 Years",
-    rating: 4.9,
-    reviews: 89,
-    trending: true,
-  },
-  "3": {
-    id: 3,
-    name: "Contemporary Living Room",
-    category: "Living Room",
-    style: "Contemporary",
-    size: "18x20 ft",
-    images: [livingroomImage, kitchenImage, fullhomeImage],
-    description:
-      "Make a lasting impression with our Contemporary Living Room design. This space-efficient layout features a stunning TV unit, elegant storage solutions, and a cohesive design language.",
-    features: [
-      "Wall-mounted TV unit",
-      "Display shelving system",
-      "Hidden cable management",
-      "Accent wall paneling",
-      "Floating console design",
-      "Integrated bar unit option",
-    ],
-    executionCost: 95000,
-    materialsCost: 55000,
-    customizeCost: 12000,
-    totalCost: 162000,
-    timeline: "15–20 days",
-    warranty: "10 Years",
-    rating: 4.7,
-    reviews: 156,
-    trending: false,
-  },
-  "4": {
-    id: 4,
-    name: "Walk-in Wardrobe Design",
-    category: "Bedroom",
-    style: "Modern",
-    size: "8x10 ft",
-    images: [wardrobeImage, bedroomImage, livingroomImage],
-    description:
-      "Organize your wardrobe in style with our Walk-in Wardrobe design. Maximize storage with dedicated zones for different clothing types, accessories, and footwear.",
-    features: [
-      "Zone-based organization",
-      "Pull-out accessory trays",
-      "Full-length mirror",
-      "Shoe rack system",
-      "Dedicated saree/suit storage",
-      "Motion sensor lighting",
-    ],
-    executionCost: 65000,
-    materialsCost: 45000,
-    customizeCost: 8000,
-    totalCost: 118000,
-    timeline: "12–15 days",
-    warranty: "10 Years",
-    rating: 4.6,
-    reviews: 67,
-    trending: false,
-  },
-  "5": {
-    id: 5,
-    name: "Complete 2BHK Interior",
-    category: "Full Home",
-    style: "Modern",
-    size: "850 sq ft",
-    images: [fullhomeImage, kitchenImage, bedroomImage, livingroomImage, wardrobeImage],
-    description:
-      "Get your entire home designed with our Complete 2BHK Interior package covering living room, 2 bedrooms, modular kitchen, and all storage needs with a cohesive design theme.",
-    features: [
-      "Complete home solution",
-      "Unified design language",
-      "All rooms covered",
-      "Storage optimization",
-      "Electrical planning included",
-      "Color consultation",
-    ],
-    executionCost: 350000,
-    materialsCost: 200000,
-    customizeCost: 50000,
-    totalCost: 600000,
-    timeline: "45–60 days",
-    warranty: "10 Years",
-    rating: 4.9,
-    reviews: 203,
-    trending: true,
-  },
-  "6": {
-    id: 6,
-    name: "Minimal Kitchen Design",
-    category: "Kitchen",
-    style: "Minimal",
-    size: "8x10 ft",
-    images: [kitchenImage, livingroomImage, bedroomImage],
-    description:
-      "Embrace simplicity with our Minimal Kitchen Design. Clean lines, clutter-free surfaces, and efficient storage define this modern kitchen for those who appreciate 'less is more'.",
-    features: [
-      "Handleless cabinets",
-      "Integrated appliances",
-      "Hidden storage",
-      "Clean countertops",
-      "Neutral color palette",
-      "Maximum functionality",
-    ],
-    executionCost: 100000,
-    materialsCost: 60000,
-    customizeCost: 15000,
-    totalCost: 175000,
-    timeline: "20–25 days",
-    warranty: "10 Years",
-    rating: 4.7,
-    reviews: 92,
-    trending: false,
-  },
-};
+
 
 const DesignDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -275,7 +112,13 @@ const DesignDetail = () => {
         if (error) throw error;
 
         if (data) {
-          await supabase.from('designs').update({ view_count: (data.view_count || 0) + 1 }).eq('id', actualId);
+          // Track views using sessionStorage to avoid multiple increments per session
+          const viewedDesigns = JSON.parse(sessionStorage.getItem('viewedDesigns') || '[]');
+          if (!viewedDesigns.includes(actualId)) {
+            await supabase.from('designs').update({ view_count: (data.view_count || 0) + 1 }).eq('id', actualId);
+            viewedDesigns.push(actualId);
+            sessionStorage.setItem('viewedDesigns', JSON.stringify(viewedDesigns));
+          }
           
           setDbDesign({
             id: actualId,
@@ -312,8 +155,7 @@ const DesignDetail = () => {
     return <Layout><div className="flex justify-center items-center h-[70vh]"><Zap className="w-8 h-8 animate-pulse text-primary" /></div></Layout>;
   }
 
-  const hardcodedDesign = id && !id.startsWith("db-") ? designsData[id as keyof typeof designsData] : null;
-  const design = dbDesign || hardcodedDesign;
+  const design = dbDesign;
 
   if (!design) {
     return (

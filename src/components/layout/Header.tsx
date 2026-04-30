@@ -3,10 +3,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LogIn, LogOut, User, Package, ArrowRight, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { User as SupabaseUser } from "@supabase/supabase-js";
 import logoIcon from "@/assets/logo-icon.png";
 import { CartSheet } from "@/components/cart/CartSheet";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -18,7 +18,7 @@ const navLinks = [
 ];
 
 export const Header = () => {
-  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const { user } = useAuth();
   const [userDashboardPath, setUserDashboardPath] = useState<string>("/");
   const { totalItems: wishlistCount } = useWishlist();
   const location = useLocation();
@@ -38,30 +38,15 @@ export const Header = () => {
       setUserDashboardPath('/');
     };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        window.setTimeout(() => {
-          fetchUserRole(session.user.id);
-        }, 0);
-      } else {
+    if (user?.id) {
+        fetchUserRole(user.id);
+    } else {
         setUserDashboardPath('/');
-      }
-    });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchUserRole(session.user.id);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+    }
+  }, [user?.id]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setUser(null);
     navigate("/");
   };
 

@@ -205,12 +205,14 @@ const DesignsCatalog = () => {
     return [...mappedDbDesigns];
   }, [dbDesigns]);
 
-  const filteredDesigns = allDesigns.filter((design) => {
-    const matchesCat = selectedCategory === "all" || design.category === selectedCategory;
-    const matchesStyle = selectedStyle === "all" || design.style === selectedStyle;
-    const matchesSearch = design.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCat && matchesStyle && matchesSearch;
-  });
+  const filteredDesigns = useMemo(() => {
+    return allDesigns.filter((design) => {
+      const matchesCat = selectedCategory === "all" || design.category === selectedCategory;
+      const matchesStyle = selectedStyle === "all" || design.style === selectedStyle;
+      const matchesSearch = design.name.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCat && matchesStyle && matchesSearch;
+    });
+  }, [allDesigns, selectedCategory, selectedStyle, searchQuery]);
 
   return (
     <Layout>
