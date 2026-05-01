@@ -1,4 +1,4 @@
-/* Google Fonts loaded via non-blocking <link> in index.html */
+/* Google Fonts loaded via non-blocking <link> in index.html for performance */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

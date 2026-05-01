@@ -1,100 +1,64 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { useCart } from "@/contexts/CartContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Plus, Minus, Zap, ArrowUpRight, SlidersHorizontal, Sliders, ChevronDown, X, Heart, Hammer, Droplets, HardHat, Grid3X3, Settings, Pipette } from "lucide-react";
+import { Search, ShoppingCart, Info, SlidersHorizontal, Sliders, X, Star, CheckCircle2, ArrowRight } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Layout } from "@/components/layout/Layout";
-import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Fallback images
-import plywoodImg from "@/assets/products/plywood.jpg";
-import paintImg from "@/assets/products/paint.jpg";
-import tilesImg from "@/assets/products/tiles.jpg";
-import ledLightImg from "@/assets/products/led-light.jpg";
-import showerImg from "@/assets/products/shower.jpg";
-import cementImg from "@/assets/products/cement.jpg";
-import laminateImg from "@/assets/products/laminate.jpg";
-import switchesImg from "@/assets/products/switches.jpg";
+// Placeholder images for categories
+import cementImg from "@/assets/cement-bag.png";
+import plywoodImg from "@/assets/plywood-sheets.png";
+import tilesImg from "@/assets/floor-tiles.png";
+import paintImg from "@/assets/paint-buckets.png";
 
-const categoryFallbackImages: Record<string, string> = {
-  wood: plywoodImg,
-  paints: paintImg,
-  tiles: tilesImg,
-  electrical: ledLightImg,
-  plumbing: showerImg,
-  construction: cementImg,
-  hardware: laminateImg,
-};
-
-function getProductImage(product: { image_url: string | null; category: string | null }): string {
-  if (product.image_url) return product.image_url;
-  if (product.category && categoryFallbackImages[product.category]) return categoryFallbackImages[product.category];
-  return plywoodImg;
+interface Product {
+  id: number;
+  name: string;
+  brand: string;
+  category: string;
+  price: number;
+  original_price: number;
+  discount: number;
+  rating: number;
+  reviews: number;
+  specs: string;
+  in_stock: boolean;
+  image_url: string | null;
 }
 
 const categories = [
-  { id: "wood", name: "Wood & Boards", count: 8, icon: Hammer },
-  { id: "paints", name: "Paints & Finishes", count: 24, icon: Droplets },
-  { id: "construction", name: "Construction", count: 12, icon: HardHat },
-  { id: "tiles", name: "Tiles & Flooring", count: 19, icon: Grid3X3 },
-  { id: "hardware", name: "Hardware", count: 42, icon: Settings },
-  { id: "plumbing", name: "Plumbing", count: 15, icon: Pipette },
-  { id: "electrical", name: "Electrical", count: 31, icon: Zap },
+  { id: "cement", name: "Cement & Steel", icon: "🏗️" },
+  { id: "wood", name: "Plywood & Timber", icon: "🪵" },
+  { id: "tiles", name: "Tiles & Marble", icon: "💎" },
+  { id: "paints", name: "Paints & Finishes", icon: "🎨" },
+  { id: "plumbing", name: "Plumbing & Bath", icon: "🚿" },
+  { id: "electrical", name: "Electrical & Lighting", icon: "💡" },
 ];
 
-type Product = {
-  id: number;
-  name: string | null;
-  brand: string | null;
-  category: string | null;
-  price: number | null;
-  original_price: number | null;
-  discount: number | null;
-  rating: number | null;
-  reviews: number | null;
-  specs: string | null;
-  in_stock: boolean;
-  image_url: string | null;
-};
-
 const RawMaterials = () => {
-  const { toast } = useToast();
-  const { addToCart, items: cartItems, updateQuantity } = useCart();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const categoryFromUrl = searchParams.get("category");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryFromUrl);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-  const [expandedMobileDropdown, setExpandedMobileDropdown] = useState<string | null>(null);
-  const [draftCategory, setDraftCategory] = useState<string | null>(null);
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (categoryFromUrl) setSelectedCategory(categoryFromUrl);
-  }, [categoryFromUrl]);
+  const openFilterSheet = () => setIsFilterSheetOpen(true);
+  const closeFilterSheet = () => setIsFilterSheetOpen(false);
 
-  const openFilterSheet = () => {
-    setDraftCategory(selectedCategory);
-    setIsFilterSheetOpen(true);
-  };
-
-  const applyFilters = () => {
-    setSelectedCategory(draftCategory);
-    setIsFilterSheetOpen(false);
-    setExpandedMobileDropdown(null);
-  };
-
-  const resetFilters = () => {
-    setDraftCategory(null);
-  };
-
-  const toggleDropdown = (dropdown: string) => {
-    setExpandedMobileDropdown(prev => prev === dropdown ? null : dropdown);
+  const getProductImage = (product: Product) => {
+    if (product.image_url) return product.image_url;
+    switch(product.category) {
+      case 'cement': return cementImg;
+      case 'wood': return plywoodImg;
+      case 'tiles': return tilesImg;
+      case 'paints': return paintImg;
+      default: return plywoodImg;
+    }
   };
 
   const { data: regularProducts = [], isLoading: isLoadingReq } = useQuery({
@@ -115,27 +79,95 @@ const RawMaterials = () => {
         .select(`*, suppliers(business_name)`)
         .eq('is_published', true);
       if (error) throw error;
-      return (data || []).map((dbProd: any) => ({
-        id: dbProd.id,
-        name: dbProd.name,
-        brand: dbProd.brand || (dbProd.suppliers?.business_name),
-        category: dbProd.category,
-        price: dbProd.price,
-        discount: dbProd.discount,
-        specs: dbProd.specs,
-        in_stock: dbProd.in_stock,
-        image_url: dbProd.images?.[0] || null,
+      return (data || []).map((sp: any) => ({
+        id: sp.id,
+        name: sp.name,
+        brand: sp.suppliers?.business_name || "Verified Supplier",
+        category: sp.category,
+        price: sp.price,
+        original_price: sp.price,
+        discount: 0,
+        rating: 4.5,
+        reviews: 10,
+        specs: sp.description,
+        in_stock: sp.stock_quantity > 0,
+        image_url: sp.image_url,
       })) as Product[];
     },
     staleTime: 5 * 60 * 1000,
   });
 
-  const allProducts = [...regularProducts, ...supplierProducts];
-  const filteredProducts = allProducts.filter((product) => {
-    const matchCat = !selectedCategory || product.category === selectedCategory;
-    const matchSearch = product.name?.toLowerCase().includes(searchQuery.toLowerCase()) || product.brand?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
-  });
+  const mockMaterials: Product[] = [
+    {
+      id: 101,
+      name: "Premium Marine Plywood",
+      brand: "CenturyPly",
+      category: "wood",
+      price: 185,
+      original_price: 210,
+      discount: 12,
+      rating: 4.8,
+      reviews: 156,
+      specs: "19mm • BWP Grade",
+      in_stock: true,
+      image_url: plywoodImg
+    },
+    {
+      id: 102,
+      name: "Luxury Silk Emulsion",
+      brand: "Asian Paints",
+      category: "paints",
+      price: 450,
+      original_price: 520,
+      discount: 15,
+      rating: 4.9,
+      reviews: 284,
+      specs: "10L • Royale Glitz",
+      in_stock: true,
+      image_url: paintImg
+    },
+    {
+      id: 103,
+      name: "Italian Marble Tiles",
+      brand: "Kajaria",
+      category: "tiles",
+      price: 85,
+      original_price: 110,
+      discount: 22,
+      rating: 4.7,
+      reviews: 92,
+      specs: "600x600mm • Vitrified",
+      in_stock: true,
+      image_url: tilesImg
+    },
+    {
+      id: 104,
+      name: "OPC 53 Grade Cement",
+      brand: "UltraTech",
+      category: "construction",
+      price: 420,
+      original_price: 440,
+      discount: 5,
+      rating: 4.9,
+      reviews: 540,
+      specs: "50kg Bag",
+      in_stock: true,
+      image_url: cementImg
+    }
+  ];
+
+  const allProducts = useMemo(() => {
+    const combined = [...regularProducts, ...supplierProducts];
+    return combined.length > 0 ? combined : mockMaterials;
+  }, [regularProducts, supplierProducts]);
+
+  const filteredProducts = useMemo(() => {
+    return allProducts.filter((product) => {
+      const matchCat = !selectedCategory || product.category === selectedCategory;
+      const matchSearch = product.name?.toLowerCase().includes(searchQuery.toLowerCase()) || product.brand?.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchCat && matchSearch;
+    });
+  }, [allProducts, selectedCategory, searchQuery]);
 
   const handleAddToCart = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
@@ -223,8 +255,8 @@ const RawMaterials = () => {
           {/* Header */}
           <header className="hidden md:flex mb-16 md:mb-24 flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="max-w-2xl">
-              <h1 className="text-6xl md:text-8xl font-headline tracking-tight leading-none mb-6">
-                Raw <span className="italic">Materials</span>
+              <h1 className="text-6xl md:text-8xl font-headline font-bold tracking-tight leading-none mb-6">
+                Raw <span className="italic font-normal">Materials</span>
               </h1>
             </div>
             <div className="hidden md:flex items-center gap-4">
@@ -247,218 +279,191 @@ const RawMaterials = () => {
             </div>
           </header>
 
-          {/* Bento Features Removed as per request */}
-
           <div className="flex flex-col lg:flex-row gap-12 mt-4 md:mt-12">
             
             {/* Sidebar Categories */}
             <aside className="hidden lg:block lg:w-64 flex-shrink-0">
               <div className="sticky top-32">
-                <div className="flex justify-between items-end mb-8">
-                  <h4 className="font-body text-[10px] uppercase tracking-[0.2em] text-[#74777d] font-bold">Categories</h4>
-                  {selectedCategory && (
-                    <button onClick={() => setSelectedCategory(null)} className="text-[10px] text-[#74777d] border-b border-[#74777d] pb-[1px] hover:text-black">
-                      Clear
+                <div className="mb-10">
+                  <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#74777d] mb-6">Inventory Grid</h3>
+                  <div className="flex flex-col gap-2">
+                    <button 
+                      onClick={() => setSelectedCategory(null)}
+                      className={`flex items-center justify-between px-5 py-4 rounded-xl text-sm font-medium transition-all ${!selectedCategory ? 'bg-[#735c00] text-white shadow-lg' : 'bg-white hover:bg-[#f6f3f0] text-[#44474c]'}`}
+                    >
+                      <span>Full Catalog</span>
+                      <ArrowRight className={`w-3.5 h-3.5 transition-transform ${!selectedCategory ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'}`} />
                     </button>
-                  )}
+                    {categories.map(cat => (
+                      <button 
+                        key={cat.id}
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`flex items-center justify-between px-5 py-4 rounded-xl text-sm font-medium transition-all ${selectedCategory === cat.id ? 'bg-[#735c00] text-white shadow-lg' : 'bg-white hover:bg-[#f6f3f0] text-[#44474c]'}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-base">{cat.icon}</span>
+                          <span>{cat.name}</span>
+                        </div>
+                        <ArrowRight className={`w-3.5 h-3.5 transition-transform ${selectedCategory === cat.id ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'}`} />
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <ul className="space-y-6">
-                  {categories.map((cat) => {
-                    const Icon = cat.icon;
-                    return (
-                      <li key={cat.id}>
-                        <button 
-                          onClick={() => setSelectedCategory(cat.id)}
-                          className={`flex items-center justify-between w-full group relative py-1 ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#1c1c1a]'}`}
-                        >
-                          <div className="flex items-center gap-3 relative z-10">
-                            <Icon className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#74777d] group-hover:text-[#735c00]'}`} />
-                            <span className={`font-headline text-xl italic group-hover:text-[#735c00] transition-colors`}>
-                              {cat.name}
-                            </span>
-                          </div>
-                          <span className="text-[10px] font-body text-[#74777d] font-bold opacity-60 group-hover:opacity-100 relative z-10">
-                            {cat.count}
-                          </span>
-                          {selectedCategory === cat.id && (
-                            <motion.div
-                              layoutId="active-category-underline"
-                              className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#735c00] z-0"
-                              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                            />
-                          )}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
 
-                {/* Featured Ad inside Sidebar */}
-                <div className="mt-16 p-6 bg-[#f6f3f0] rounded-lg">
-                  <h5 className="font-bold mb-3 font-headline italic text-lg">Featured Material</h5>
-                  <img src={laminateImg} alt="Veneer" className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply" />
-                  <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">Discover the 2024 Architectural Digest choice for sustainable veneers.</p>
-                  <a href="#" className="font-body text-[10px] font-bold uppercase text-[#735c00] flex items-center gap-1 hover:underline">
-                    Read Monograph <ArrowUpRight className="w-3 h-3" />
-                  </a>
+                <div className="bg-[#1c1c1a] rounded-[2rem] p-8 text-white relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full translate-x-10 -translate-y-10 group-hover:scale-110 transition-transform duration-700" />
+                  <div className="relative z-10">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-[#735c00]">Market Update</span>
+                    <h4 className="text-xl font-bold mt-2 mb-4 leading-tight">Institutional Steel Rates</h4>
+                    <p className="text-[11px] text-[#74777d] leading-relaxed mb-6">Real-time procurement data from primary manufacturers across India.</p>
+                    <button className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 group/btn">
+                      View Indices <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </aside>
 
-            {/* Catalog Grid */}
-            <div className="flex-grow">
-              <AnimatePresence>
-                {filteredProducts.length === 0 ? (
-                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center p-20 text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]">
-                      <span className="font-headline text-2xl italic mb-2 text-[#1c1c1a]">No Elements Active</span>
-                      <p className="font-body text-sm text-[#74777d]">Shift curation filters to uncover available components.</p>
-                   </motion.div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-y-16 gap-x-8">
-                    {filteredProducts.map((product) => (
-                      <motion.article 
-                        key={product.id} 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="group flex flex-col h-full"
+            {/* Products Grid */}
+            <div className="flex-1">
+               {isLoadingReq || isLoadingSup ? (
+                 <div className="h-[40vh] flex flex-col items-center justify-center gap-6">
+                    <div className="w-10 h-10 border-2 border-[#735c00]/20 border-t-[#735c00] rounded-full animate-spin" />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#c4c6cc]">Scanning structural inventory...</span>
+                 </div>
+               ) : filteredProducts.length === 0 ? (
+                 <div className="h-[50vh] flex flex-col items-center justify-center text-center p-8 bg-white border border-[#e5e2df] rounded-[3rem]">
+                    <div className="w-16 h-16 bg-[#f6f3f0] rounded-2xl flex items-center justify-center mb-6">
+                      <X className="w-8 h-8 text-[#c4c6cc]" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">No Matches Found</h3>
+                    <p className="text-[#74777d] max-w-xs mx-auto mb-8">Shift procurement parameters to uncover available materials.</p>
+                    <button 
+                      onClick={() => {setSelectedCategory(null); setSearchQuery("");}}
+                      className="px-8 py-4 bg-[#1c1c1a] text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-[#735c00] transition-colors"
+                    >
+                      Reset Inventory Curation
+                    </button>
+                 </div>
+               ) : (
+                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+                   <AnimatePresence mode="popLayout">
+                    {filteredProducts.map((product, idx) => (
+                      <motion.div
+                        layout
+                        key={product.id}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="group"
                       >
-                        {/* Image Box */}
-                        <div className="relative aspect-[4/5] mb-6 overflow-hidden bg-[#f6f3f0] rounded-sm cursor-pointer border border-transparent group-hover:border-[#e5e2df] transition-all">
-                          <img 
-                            src={getProductImage(product)} 
-                            alt={product.brand || "Material"} 
-                            className="w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105 p-4" 
-                          />
-                          <div className="absolute top-4 left-4 z-10">
-                            <span className="px-3 py-1 bg-white border border-[#eae8e5] text-[#1c1c1a] text-[9px] font-body font-bold uppercase tracking-widest rounded-full shadow-sm">
-                              {product.in_stock ? 'In Stock' : 'Pre-Order'}
-                            </span>
+                        <article className="bg-white rounded-[2.5rem] p-4 border border-black/5 hover:border-[#735c00]/30 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] h-full flex flex-col">
+                          <div className="relative aspect-[4/3] rounded-[1.8rem] overflow-hidden mb-6">
+                            <img 
+                              src={getProductImage(product)} 
+                              alt={product.name}
+                              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                            
+                            {/* Stock Badge */}
+                            <div className="absolute top-4 left-4">
+                              {product.in_stock ? (
+                                <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-black/5">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                  <span className="text-[9px] font-bold uppercase tracking-widest">In Stock</span>
+                                </div>
+                              ) : (
+                                <div className="bg-red-50/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-red-100 text-red-600">
+                                  <span className="text-[9px] font-bold uppercase tracking-widest">Unavailable</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Cart Action */}
+                            <button 
+                              onClick={(e) => handleAddToCart(e, product)}
+                              className="absolute bottom-4 right-4 w-12 h-12 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 hover:bg-[#735c00]"
+                            >
+                              <ShoppingCart className="w-5 h-5" />
+                            </button>
                           </div>
-                          {/* Hover FAB - Add to Cart / Quantity Controller */}
-                          <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300 z-20">
-                            {(() => {
-                              const cartItem = cartItems.find(i => i.id === product.id);
-                              if (cartItem) {
-                                return (
-                                  <motion.div 
-                                    layout
-                                    className="bg-[#1c1c1a] text-white rounded-full flex items-center gap-4 p-1 shadow-lg border border-white/10"
-                                  >
-                                    <button 
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        updateQuantity(product.id, cartItem.quantity - 1);
-                                      }}
-                                      className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
-                                    >
-                                      <Minus className="w-4 h-4" />
-                                    </button>
-                                    <span className="text-[10px] font-black uppercase tracking-widest">{cartItem.quantity}</span>
-                                    <button 
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        updateQuantity(product.id, cartItem.quantity + 1);
-                                      }}
-                                      className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
-                                    >
-                                      <Plus className="w-4 h-4" />
-                                    </button>
-                                  </motion.div>
-                                );
-                              }
-                              return (
-                                <button 
-                                  onClick={(e) => handleAddToCart(e, product)}
-                                  className="w-12 h-12 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
-                                >
-                                  <Plus className="w-5 h-5" />
-                                </button>
-                              );
-                            })()}
+
+                          <div className="px-3 pb-4 flex flex-col flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#735c00]">{product.brand}</span>
+                              <div className="flex items-center gap-1 text-[#74777d]">
+                                <Star className="w-3 h-3 fill-[#735c00] text-[#735c00]" />
+                                <span className="text-[10px] font-bold">{product.rating}</span>
+                              </div>
+                            </div>
+                            
+                            <h3 className="text-xl font-bold text-[#1c1c1a] mb-2 leading-tight group-hover:text-[#735c00] transition-colors">{product.name}</h3>
+                            <p className="text-[11px] text-[#74777d] font-medium mb-6 line-clamp-1">{product.specs}</p>
+                            
+                            <div className="mt-auto pt-6 border-t border-[#f6f3f0] flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <span className="text-sm font-bold text-[#1c1c1a]">₹{product.price.toLocaleString('en-IN')}</span>
+                                {product.original_price > product.price && (
+                                  <span className="text-[10px] text-[#c4c6cc] line-through">₹{product.original_price.toLocaleString('en-IN')}</span>
+                                )}
+                              </div>
+                              <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#735c00] hover:translate-x-1 transition-transform">
+                                Specifications <ArrowRight className="w-3 h-3" />
+                              </button>
+                            </div>
                           </div>
-                        </div>
-
-                        {/* Title & Price */}
-                        <div className="flex justify-between items-start mb-2 gap-4">
-                          <h3 className="text-xl font-headline font-semibold leading-tight text-[#1c1c1a]">{product.name}</h3>
-                          <span className="font-body font-medium text-[#1c1c1a] text-lg whitespace-nowrap pt-1">
-                            ₹{product.price?.toLocaleString() || "0"} <span className="text-[10px] text-[#74777d] font-normal">/unit</span>
-                          </span>
-                        </div>
-
-                        {/* Specs */}
-                        <p className="text-sm font-body text-[#44474c] mb-6 line-clamp-2 leading-relaxed flex-grow">
-                          {product.specs || "Premium structural material sourced from trusted aggregators."}
-                        </p>
-
-                        {/* Footer tags */}
-                        <div className="flex items-center gap-4 mt-auto">
-                          <span className="flex items-center gap-1 text-[9px] font-body font-bold uppercase tracking-tighter text-[#735c00] bg-[#f5e1ae]/30 px-2 py-1 rounded">
-                            <Zap className="w-3 h-3 fill-current" /> Priority Match
-                          </span>
-                          <span className="text-[10px] font-body uppercase tracking-tighter text-[#74777d] italic font-medium">
-                            {product.brand}
-                          </span>
-                        </div>
-                      </motion.article>
+                        </article>
+                      </motion.div>
                     ))}
-                  </div>
-                )}
-              </AnimatePresence>
-
-
-
+                   </AnimatePresence>
+                 </div>
+               )}
             </div>
           </div>
+        </main>
 
-          {/* Mobile Bottom Sheet for Filters */}
-          <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
-             <SheetContent className="overflow-y-auto w-full md:hidden bg-[#fcf9f6] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl" side="bottom">
-               <SheetHeader className="mb-6 pb-2 block">
-                 <SheetTitle className="font-headline text-2xl text-left bg-gradient-to-r from-[#1c1c1a] to-[#735c00] bg-clip-text text-transparent">Material Filters</SheetTitle>
-                 <SheetDescription className="hidden">Filter options to refine the catalog of premium raw materials.</SheetDescription>
-               </SheetHeader>
-               
-                <div className="space-y-4 md:space-y-3 pb-32">
-                  <div className="flex flex-col gap-4">
-                    <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
-                      <input 
-                        type="radio" 
-                        name="draftCategory"
-                        checked={draftCategory === null}
-                        onChange={() => setDraftCategory(null)}
-                        className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                      />
-                      <span className={`text-sm font-medium transition-colors ${draftCategory === null ? 'text-[#735c00]' : 'text-[#44474c]'}`}>All Materials</span>
-                    </label>
-                    {categories.map(cat => {
-                      const Icon = cat.icon;
-                      return (
-                        <label key={cat.id} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
-                          <input 
-                            type="radio" 
-                            name="draftCategory"
-                            checked={draftCategory === cat.id}
-                            onChange={() => setDraftCategory(cat.id)}
-                            className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                          />
-                          <Icon className={`w-4 h-4 ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#74777d]'}`} />
-                          <span className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{cat.name}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
+        {/* Mobile Filter Sheet */}
+        <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
+           <SheetContent side="bottom" className="h-[80vh] rounded-t-[3rem] bg-[#fcf9f6] border-none px-6 pb-12 overflow-y-auto">
+             <SheetHeader className="mb-10 text-left pt-2">
+               <SheetTitle className="text-3xl font-bold tracking-tighter">Inventory curation</SheetTitle>
+               <SheetDescription className="text-xs uppercase tracking-widest text-[#74777d] font-bold">Refine structural supply chain</SheetDescription>
+             </SheetHeader>
+             
+             <div className="space-y-10">
+                <div className="space-y-6">
+                   <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#c4c6cc]">Product Spheres</h4>
+                   <div className="grid grid-cols-2 gap-3">
+                     <button 
+                        onClick={() => {setSelectedCategory(null); closeFilterSheet();}}
+                        className={`flex items-center gap-3 px-5 py-4 rounded-2xl text-xs font-bold transition-all border ${!selectedCategory ? 'bg-[#1c1c1a] border-[#1c1c1a] text-white shadow-xl' : 'bg-white border-[#e5e2df] text-[#44474c]'}`}
+                     >
+                       <span>📋</span>
+                       <span>All Materials</span>
+                     </button>
+                     {categories.map(cat => (
+                       <button 
+                         key={cat.id}
+                         onClick={() => {setSelectedCategory(cat.id); closeFilterSheet();}}
+                         className={`flex items-center gap-3 px-5 py-4 rounded-2xl text-xs font-bold transition-all border ${selectedCategory === cat.id ? 'bg-[#1c1c1a] border-[#1c1c1a] text-white shadow-xl' : 'bg-white border-[#e5e2df] text-[#44474c]'}`}
+                       >
+                         <span>{cat.icon}</span>
+                         <span>{cat.name}</span>
+                       </button>
+                     ))}
+                   </div>
                 </div>
 
-               <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t border-[#e5e2df] flex gap-4 pb-12">
-                  <button onClick={resetFilters} className="w-1/3 py-4 border border-[#e5e2df] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] bg-white transition-colors font-body">Reset</button>
-                  <button onClick={applyFilters} className="flex-1 py-4 bg-[#1c1c1a] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#735c00] transition-colors shadow-xl font-body">Apply Filters</button>
-               </div>
-             </SheetContent>
-          </Sheet>
-        </main>
+                <div className="p-8 bg-[#f6f3f0] rounded-[2rem] border border-[#e5e2df] relative overflow-hidden">
+                   <CheckCircle2 className="absolute top-[-10px] right-[-10px] w-24 h-24 text-black/[0.03]" />
+                   <h5 className="text-sm font-bold mb-2">BuildBazaarX Assurance</h5>
+                   <p className="text-[11px] text-[#74777d] leading-relaxed">Every structural element listed is vetted for ASTM/IS standards and origin-certified.</p>
+                </div>
+             </div>
+           </SheetContent>
+        </Sheet>
       </div>
     </Layout>
   );

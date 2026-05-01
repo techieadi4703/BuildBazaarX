@@ -25,6 +25,8 @@ const Profile = React.lazy(() => import("./pages/Profile"));
 const Orders = React.lazy(() => import("./pages/Orders"));
 const Wishlist = React.lazy(() => import("./pages/Wishlist"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
+const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = React.lazy(() => import("./pages/TermsOfService"));
 const ProfessionalAuth = React.lazy(() => import("./pages/ProfessionalAuth"));
 const ProfessionalDashboard = React.lazy(() => import("./pages/ProfessionalDashboard"));
 const ProfessionalSetup = React.lazy(() => import("./pages/ProfessionalSetup"));
@@ -124,6 +126,8 @@ const AnimatedRoutes = () => {
         <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
         <Route path="/admin/reports" element={<AdminRoute><AdminReports /></AdminRoute>} />
 
+        <Route path="/privacy-policy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
+        <Route path="/terms-of-service" element={<PageTransition><TermsOfService /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>

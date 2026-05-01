@@ -1,9 +1,9 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
 
 interface Props {
-  children?: ReactNode;
+  children: ReactNode;
 }
 
 interface State {
@@ -24,24 +24,43 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error("Uncaught error:", error, errorInfo);
   }
 
+  private handleReset = () => {
+    window.location.reload();
+  };
+
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4 text-center">
-          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-            <AlertCircle className="h-10 w-10" />
+        <div className="min-h-screen flex items-center justify-center bg-[#fcf9f6] p-6 text-center">
+          <div className="max-w-md w-full">
+            <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-red-100">
+              <AlertTriangle className="w-10 h-10 text-red-500" />
+            </div>
+            <h1 className="text-3xl font-headline font-bold text-[#1c1c1a] mb-4 tracking-tight">System Interruption</h1>
+            <p className="text-[#74777d] font-body mb-8 leading-relaxed">
+              An unexpected error occurred while rendering this module. Our structural integrity protocol has safely isolated the failure.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Button 
+                onClick={this.handleReset}
+                className="w-full bg-[#1c1c1a] hover:bg-[#735c00] text-white rounded-xl h-14 font-bold uppercase tracking-widest transition-all shadow-xl"
+              >
+                <RefreshCw className="w-4 h-4 mr-3" />
+                Initialize Recovery
+              </Button>
+              <Button 
+                variant="ghost" 
+                asChild
+                className="w-full text-[10px] font-bold uppercase tracking-widest text-[#c4c6cc] hover:text-[#735c00]"
+              >
+                <a href="/">Return to Control Center</a>
+              </Button>
+            </div>
           </div>
-          <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Something went wrong</h1>
-          <p className="mb-8 max-w-[500px] text-muted-foreground">
-            We encountered an unexpected error while loading this section. Please try refreshing the page.
-          </p>
-          <Button onClick={() => window.location.reload()} size="lg" className="rounded-full">
-            Refresh Page
-          </Button>
         </div>
       );
     }
 
-    return this.props.children;
+    return this.children;
   }
 }

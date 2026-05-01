@@ -29,22 +29,21 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
 
   // ─── Sync helpers ────────────────────────────────────────────────────
   const saveWishlistToDb = useCallback(async (uid: string, wishlistItems: WishlistItem[]) => {
-    // Store wishlist in the profiles table exactly like the cart does
-    await supabase.from("profiles").upsert({
-      id: uid,
-      wishlist: wishlistItems
-    }, { onConflict: "id" });
+    // Instead of altering the profiles table, we store the wishlist snapshot in the user's metadata
+    // This avoids database schema mismatch issues and persists across devices securely.
+    await supabase.auth.updateUser({
+      data: {
+        wishlist: wishlistItems
+      }
+    });
   }, []);
 
   const loadWishlistFromDb = useCallback(async (uid: string) => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("wishlist")
-      .eq("id", uid)
-      .maybeSingle();
-      
-    if (!error && data && Array.isArray(data.wishlist)) {
-      setItems(data.wishlist as WishlistItem[]);
+    // We already have the user object in AuthContext, but let's be safe
+    // and just use the metadata from it if available, or fetch fresh if needed.
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (currentUser?.user_metadata?.wishlist && Array.isArray(currentUser.user_metadata.wishlist)) {
+      setItems(currentUser.user_metadata.wishlist as WishlistItem[]);
     } else {
       setItems([]);
     }
