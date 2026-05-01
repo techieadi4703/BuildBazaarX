@@ -179,7 +179,9 @@ export const Footer = () => {
 
            <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-bold uppercase tracking-[0.2em] text-[#44474c]">
               <div className="flex gap-8">
-                {/* Legal items removed points to broken links */}
+                <Link to="/privacy-policy" className="hover:text-[#735c00] transition-colors">Privacy Policy</Link>
+                <Link to="/terms-of-service" className="hover:text-[#735c00] transition-colors">Terms of Service</Link>
+                <Link to="/contact" className="hover:text-[#735c00] transition-colors">Support</Link>
               </div>
               <p className="opacity-40">© 2026 BuildBazaarX Network. All Rights Reserved.</p>
            </div>

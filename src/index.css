@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap");
+/* Google Fonts loaded via non-blocking <link> in index.html */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -225,6 +225,11 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
 }
 
 /* ──── Blueprint & Technical Utilities ──── */

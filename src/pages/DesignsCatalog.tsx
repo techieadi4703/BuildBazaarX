@@ -29,63 +29,8 @@ const categories = [
 
 const styles = ["Modern", "Luxury", "Minimal", "Traditional", "Contemporary"];
 
-// const staticDesigns = [
-//   {
-//     id: 1,
-//     name: "The Obsidian Pavilion",
-//     category: "full-home",
-//     image: fullhomeImage,
-//     size: "2400 sq ft",
-//     style: "Modern",
-//     totalCost: "$12,400",
-//     time: "8 Months",
-//     featured: true,
-//   },
-//   {
-//     id: 2,
-//     name: "Etheric Timber Lodge",
-//     category: "bedroom",
-//     image: bedroomImage,
-//     size: "800 sq ft",
-//     style: "Traditional",
-//     totalCost: "$8,900",
-//     time: "6 Months",
-//     featured: false,
-//   },
-//   {
-//     id: 3,
-//     name: "Monolith Residence",
-//     category: "living-room",
-//     image: livingroomImage,
-//     size: "1200 sq ft",
-//     style: "Minimal",
-//     totalCost: "$15,200",
-//     time: "12 Months",
-//     featured: false,
-//   },
-//   {
-//     id: 4,
-//     name: "Azure Infinity House",
-//     category: "full-home",
-//     image: kitchenImage, // Placeholder
-//     size: "4500 sq ft",
-//     style: "Luxury",
-//     totalCost: "$21,000",
-//     time: "14 Months",
-//     featured: false,
-//   },
-//   {
-//     id: 5,
-//     name: "The Heritage Barn",
-//     category: "kitchen",
-//     image: wardrobeImage, // Placeholder
-//     size: "950 sq ft",
-//     style: "Contemporary",
-//     totalCost: "$7,200",
-//     time: "5 Months",
-//     featured: false,
-//   },
-// ];
+
+
 
 const DesignsCatalog = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -223,6 +168,9 @@ const DesignsCatalog = () => {
         <meta property="og:url" content="https://buildbazaarx.com/designs" />
         <meta property="og:title" content="Home Interior Designs Catalog | BuildBazaarX" />
         <meta property="og:description" content="Browse 500+ verified home interior design blueprints. Full home, kitchen, bedroom & more. Filter by style and budget." />
+        <meta property="og:image" content="https://buildbazaarx.com/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
       </Helmet>
       <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full">
         <main className="max-w-[1920px] mx-auto flex flex-col md:flex-row min-h-screen relative">
@@ -379,7 +327,7 @@ const DesignsCatalog = () => {
                 <div className="flex shrink-0">
                   <span className="px-5 py-2.5 bg-[#eae8e5] rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#735c00]"></span>
-                    {filteredDesigns.length} Designs Active
+                    {allDesigns.length} DESIGNS ACTIVE
                   </span>
                 </div>
               </div>

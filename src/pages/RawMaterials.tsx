@@ -170,13 +170,10 @@ const RawMaterials = () => {
         <meta property="og:url" content="https://buildbazaarx.com/raw-materials" />
         <meta property="og:title" content="Buy Raw Materials Online | BuildBazaarX" />
         <meta property="og:description" content="Shop premium construction raw materials from verified Indian suppliers. Cement, tiles, wood, paints & more — delivered direct to site." />
+        <meta property="og:image" content="https://buildbazaarx.com/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
       </Helmet>
-      {/* Scope Google Fonts so it overrides seamlessly */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');
-        .font-headline { font-family: 'Newsreader', serif; }
-        .font-body { font-family: 'Manrope', sans-serif; }
-      `}</style>
       
       <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative">
         
@@ -411,22 +408,8 @@ const RawMaterials = () => {
                 )}
               </AnimatePresence>
 
-              {/* Pagination */}
-              {filteredProducts.length > 0 && (
-                <div className="mt-24 flex items-center justify-between border-t border-[#e5e2df] pt-8">
-                  <button className="font-body font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 text-[#74777d] hover:text-[#735c00] transition-colors">
-                    Previous Sector
-                  </button>
-                  <div className="flex gap-8">
-                    <span className="font-headline italic text-[#735c00] text-lg">01</span>
-                    <span className="font-headline italic text-[#74777d] opacity-40 text-lg">02</span>
-                    <span className="font-headline italic text-[#74777d] opacity-40 text-lg">03</span>
-                  </div>
-                  <button className="font-body font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 text-[#1c1c1a] hover:text-[#735c00] transition-colors">
-                    Next Sector 
-                  </button>
-                </div>
-              )}
+
+
             </div>
           </div>
 

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LogIn, LogOut, User, Package, ArrowRight, Heart } from "lucide-react";
+import { LogIn, LogOut, User, Package, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import logoIcon from "@/assets/logo-icon.png";
 import { CartSheet } from "@/components/cart/CartSheet";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -18,32 +18,18 @@ const navLinks = [
 ];
 
 export const Header = () => {
-  const { user } = useAuth();
-  const [userDashboardPath, setUserDashboardPath] = useState<string>("/");
+  const { user, userRole } = useAuth();
   const { totalItems: wishlistCount } = useWishlist();
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUserRole = async (userId: string) => {
-      const { data: designer } = await supabase.from('designers').select('id').eq('id', userId).maybeSingle();
-      if (designer) { setUserDashboardPath('/designer/dashboard'); return; }
-      
-      const { data: professional } = await supabase.from('professionals').select('id').eq('id', userId).maybeSingle();
-      if (professional) { setUserDashboardPath('/professional/dashboard'); return; }
-      
-      const { data: supplier } = await supabase.from('suppliers').select('id').eq('id', userId).maybeSingle();
-      if (supplier) { setUserDashboardPath('/supplier/dashboard'); return; }
-
-      setUserDashboardPath('/');
-    };
-
-    if (user?.id) {
-        fetchUserRole(user.id);
-    } else {
-        setUserDashboardPath('/');
-    }
-  }, [user?.id]);
+  // Derive dashboard path from cached role in AuthContext — no extra DB calls
+  const userDashboardPath = useMemo(() => {
+    if (userRole === 'designer') return '/designer/dashboard';
+    if (userRole === 'professional') return '/professional/dashboard';
+    if (userRole === 'supplier') return '/supplier/dashboard';
+    return '/';
+  }, [userRole]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

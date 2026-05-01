@@ -14,9 +14,9 @@ import { useToast } from "@/hooks/use-toast";
 import {
   ShoppingBag, CreditCard, Smartphone, Banknote,
   ArrowLeft, Minus, Plus, Trash2, CheckCircle2, Lock, Sparkles, ShieldCheck,
-  MapPin,
-  Badge
+  MapPin
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 
@@ -163,7 +163,7 @@ const Checkout = () => {
           email: form.email || userEmail,
           contact: form.phone,
         },
-        theme: { color: "#6366f1" },
+        theme: { color: "#735c00" },
         modal: {
           ondismiss: () => reject(new Error("Payment cancelled by user")),
         },

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 
 interface AuthContextType {
   session: Session | null;
@@ -51,7 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         }
       } catch (error) {
-        console.error("Error getting session:", error);
+        logger.error("Error getting session:", error);
       } finally {
         if (mounted) {
           setIsLoading(false);

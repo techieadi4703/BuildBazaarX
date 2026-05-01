@@ -44,6 +44,9 @@ const Index = () => {
         <meta property="og:url" content="https://buildbazaarx.com/" />
         <meta property="og:title" content="BuildBazaarX – Design, Build & Source Raw Materials Online" />
         <meta property="og:description" content="India's all-in-one construction marketplace. Designs, professionals &amp; raw materials — one platform." />
+        <meta property="og:image" content="https://buildbazaarx.com/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
       </Helmet>
       <Reveal width="100%" direction="up"><HeroSection /></Reveal>
       <Reveal width="100%" direction="up"><HowItWorksSection /></Reveal>

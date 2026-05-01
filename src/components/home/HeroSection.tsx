@@ -102,8 +102,10 @@ export const HeroSection = () => {
                 Explore Projects
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5 hover:text-white px-10 py-6 text-sm font-bold uppercase tracking-widest rounded transition-all bg-transparent">
-              View Methodology
+            <Button size="lg" variant="outline" asChild className="border-white/20 text-white hover:bg-white/5 hover:text-white px-10 py-6 text-sm font-bold uppercase tracking-widest rounded transition-all bg-transparent">
+              <Link to="/about#methodology">
+                View Methodology
+              </Link>
             </Button>
           </div>
         </motion.div>
