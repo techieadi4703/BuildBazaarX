@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { FloatingBubbles } from "@/components/ui/FloatingBubbles";
 import { motion } from "framer-motion";
 import { Reveal, RevealItem } from "./Reveal";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface LeadCaptureFormProps {
   variant?: "default" | "compact" | "hero";
@@ -34,20 +35,20 @@ export const LeadCaptureForm = ({
     city: "",
     budget: "",
   });
+  const { user, userId } = useAuth();
 
   useEffect(() => {
     const prefillData = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
+      if (user && userId) {
         setFormData(prev => ({
           ...prev,
-          name: session.user.user_metadata?.full_name || prev.name,
+          name: user.user_metadata?.full_name || prev.name,
         }));
 
         const { data: profile } = await supabase
           .from("profiles")
           .select("*")
-          .eq("id", session.user.id)
+          .eq("id", userId)
           .single();
 
         if (profile) {
@@ -60,8 +61,8 @@ export const LeadCaptureForm = ({
         }
       }
     };
-    prefillData();
-  }, []);
+    void prefillData();
+  }, [user, userId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

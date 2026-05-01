@@ -12,6 +12,7 @@ import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { Palette, MapPin, User, Sparkles, ArrowRight, ShieldCheck, Briefcase } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const SPECIALIZATIONS = [
   "Modular Kitchen", "Bedroom", "Living Room", "Bathroom",
@@ -20,9 +21,9 @@ const SPECIALIZATIONS = [
 
 export default function DesignerSetup() {
   const [isLoading, setIsLoading] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, userId, isLoading: isAuthLoading } = useAuth();
 
   const [form, setForm] = useState({
     fullName: "",
@@ -36,18 +37,18 @@ export default function DesignerSetup() {
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      if (isAuthLoading) return;
+
+      if (!user || !userId) {
         navigate("/designer/auth");
         return;
       }
-      setUserId(session.user.id);
-      setForm(prev => ({ ...prev, email: session.user.email || "" }));
+      setForm(prev => ({ ...prev, email: user.email || "" }));
       
       const { data: profileData } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profileData && profileData.role !== "designer") {
@@ -58,12 +59,12 @@ export default function DesignerSetup() {
       const { data: profileInfo } = await supabase
         .from("profiles")
         .select("full_name, phone")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profileInfo) {
         // Extract specializations from auth metadata if available
-        const metadata = (session.user as any).user_metadata;
+        const metadata = (user as any).user_metadata;
         const initialSpecs = metadata?.specializations || [];
         
         setForm(prev => ({
@@ -77,15 +78,15 @@ export default function DesignerSetup() {
       const { data } = await supabase
         .from("designers")
         .select("id")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
       
       if (data) {
         navigate("/designer/dashboard");
       }
     };
-    checkUser();
-  }, [navigate]);
+    void checkUser();
+  }, [isAuthLoading, navigate, user, userId]);
 
 
 

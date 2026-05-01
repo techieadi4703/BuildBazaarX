@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
-import { User } from "@supabase/supabase-js";
 import { Badge } from "@/components/ui/badge";
 import { 
   Upload, LayoutGrid, Store, LogOut, Package, Pencil, Trash, 
@@ -12,6 +11,7 @@ import {
   ShieldCheck, Plus, X, ArrowLeft, ArrowUpRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 const CATEGORIES = [
   { id: "wood", label: "Wood & Boards" },
@@ -26,13 +26,13 @@ const CATEGORIES = [
 const UNITS = ["piece", "sq.ft", "kg", "ltr", "bag", "bundle", "rmt", "sheet"];
 
 export default function SupplierDashboard() {
-  const [user, setUser] = useState<User | null>(null);
   const [supplierData, setSupplierData] = useState<any>(null);
   const [products, setProducts] = useState<any[]>([]);
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, userId, isLoading: isAuthLoading, signOut } = useAuth();
 
   const [activeTab, setActiveTab] = useState("products");
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -54,8 +54,9 @@ export default function SupplierDashboard() {
   });
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isAuthLoading) return;
+    void fetchData();
+  }, [isAuthLoading, user, userId]);
 
   useEffect(() => {
     if (productForm.price && productForm.original_price) {
@@ -71,18 +72,16 @@ export default function SupplierDashboard() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        navigate("/supplier/auth");
+      if (!user || !userId) {
+        navigate("/");
         return;
       }
-      setUser(session.user);
 
       // First check role in profiles table to avoid mis-redirection
       const { data: profileData } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profileData && profileData.role !== "supplier") {
@@ -93,7 +92,7 @@ export default function SupplierDashboard() {
       const { data: supplier, error: supplierErr } = await supabase
         .from("suppliers")
         .select("*")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (supplierErr) throw supplierErr;
@@ -101,29 +100,39 @@ export default function SupplierDashboard() {
         navigate("/supplier/setup");
         return;
       }
-      setSupplierData(supplier);
+      const supplierData = supplier as {
+        business_name?: string | null;
+        owner_name?: string | null;
+        phone?: string | null;
+        city?: string | null;
+        address?: string | null;
+        pincode?: string | null;
+        gst_number?: string | null;
+        business_type?: string | null;
+      };
+      setSupplierData(supplierData);
       setProfileForm({
-        business_name: supplier.business_name || "",
-        owner_name: supplier.owner_name || "",
-        phone: supplier.phone || "",
-        city: supplier.city || "",
-        address: supplier.address || "",
-        pincode: supplier.pincode || "",
-        gst_number: supplier.gst_number || "",
-        business_type: supplier.business_type || ""
+        business_name: supplierData.business_name || "",
+        owner_name: supplierData.owner_name || "",
+        phone: supplierData.phone || "",
+        city: supplierData.city || "",
+        address: supplierData.address || "",
+        pincode: supplierData.pincode || "",
+        gst_number: supplierData.gst_number || "",
+        business_type: supplierData.business_type || ""
       });
 
       const { data: prods } = await supabase
         .from("supplier_products")
         .select("*")
-        .eq("supplier_id", session.user.id)
+        .eq("supplier_id", userId)
         .order("created_at", { ascending: false });
       setProducts(prods || []);
 
       const { data: inqs } = await supabase
         .from("bulk_inquiries")
         .select("*, supplier_products(name)")
-        .eq("supplier_id", session.user.id)
+        .eq("supplier_id", userId)
         .order("created_at", { ascending: false });
       setInquiries(inqs || []);
 
@@ -151,7 +160,7 @@ export default function SupplierDashboard() {
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!userId) return;
     try {
       const { error: supplierError } = await supabase
         .from("suppliers")
@@ -165,14 +174,14 @@ export default function SupplierDashboard() {
           gst_number: profileForm.gst_number,
           business_type: profileForm.business_type
         })
-        .eq("id", user.id);
+        .eq("id", userId);
       if (supplierError) throw supplierError;
 
       if (profileForm.owner_name) {
         const { error: profileError } = await supabase
           .from('profiles')
           .update({ full_name: profileForm.owner_name })
-          .eq('id', user.id);
+          .eq('id', userId);
         if (profileError) throw profileError;
       }
       toast({ title: "Profile Synchronized! ✨", description: "Your business identity has been updated." });
@@ -183,12 +192,12 @@ export default function SupplierDashboard() {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await signOut();
     navigate("/");
   };
 
   const submitProduct = async (isPublished: boolean) => {
-    if (!user) return;
+    if (!userId) return;
     try {
       setIsUploading(true);
       const imageUrls: string[] = [...existingImages];
@@ -196,7 +205,7 @@ export default function SupplierDashboard() {
       for (const file of productImages) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-        const filePath = `products/${user.id}/${fileName}`;
+        const filePath = `products/${userId}/${fileName}`;
         
         const { error: uploadError } = await supabase.storage
           .from('product-images')
@@ -213,7 +222,7 @@ export default function SupplierDashboard() {
       const tagsArray = productForm.tags ? productForm.tags.split(',').map(t => t.trim()).filter(t => t) : [];
 
       const productPayload = {
-        supplier_id: user.id,
+        supplier_id: userId,
         name: productForm.name,
         brand: productForm.brand,
         category: productForm.category,
@@ -245,7 +254,7 @@ export default function SupplierDashboard() {
       } else {
         const { error } = await supabase.from("supplier_products").insert(productPayload);
         if (error) throw error;
-        await supabase.from("suppliers").update({ total_products: (supplierData?.total_products || 0) + 1 }).eq("id", user.id);
+        await supabase.from("suppliers").update({ total_products: (supplierData?.total_products || 0) + 1 }).eq("id", userId);
         toast({ title: isPublished ? "Published to Marketplace! 🚀" : "Archived in Drafts." });
       }
 

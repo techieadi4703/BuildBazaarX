@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
 import { ArrowRight, Mail, Lock, Wrench, ShieldCheck, MapPin, Phone, User, Briefcase } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { authClient } from "@/lib/auth-client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ProfessionalAuth() {
   const [searchParams] = useSearchParams();
@@ -22,6 +23,7 @@ export default function ProfessionalAuth() {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { refreshSession } = useAuth();
 
   const resolveProfessionalDestination = async (userId: string) => {
     const { data: profData, error: profError } = await supabase
@@ -35,39 +37,21 @@ export default function ProfessionalAuth() {
     return profData ? "/professional/dashboard" : "/professional/setup";
   };
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) return;
-
-      window.setTimeout(() => {
-        resolveProfessionalDestination(session.user.id)
-          .then((path) => navigate(path))
-          .catch((error) => {
-            console.error("Professional auth redirect error:", error);
-            navigate("/professional/setup");
-          });
-      }, 500);
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        const sessionData = await supabase.auth.getSession();
-        const userId = sessionData.data.session?.user.id;
-        if (userId) {
-          const nextPath = await resolveProfessionalDestination(userId);
+        const { user } = await authClient.signInWithPassword(email, password);
+        await refreshSession();
+        if (user) {
+          const nextPath = await resolveProfessionalDestination(user.id);
           navigate(nextPath);
         } else {
           navigate("/professional/dashboard");
         }
       } else {
-        const { data, error } = await supabase.auth.signUp({
+        const { user } = await authClient.signUp({
           email,
           password,
           options: {
@@ -78,16 +62,15 @@ export default function ProfessionalAuth() {
           },
         });
 
-        if (error) throw error;
-
-        if (data.user) {
+        await refreshSession();
+        if (user) {
           // Safety Sync: Explicitly update the profiles table to ensure role, contact and location info are attached first
           await supabase.from('profiles').update({ 
             role: 'professional', 
             full_name: fullName,
             phone: phone,
             city: city
-          }).eq('id', data.user.id);
+          }).eq('id', user.id);
 
           toast({ title: "Identity Synchronized", description: "Proceeding to professional setup..." });
           navigate("/professional/setup");

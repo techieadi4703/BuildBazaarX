@@ -21,7 +21,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   // No session — redirect to auth page
-  if (!isAuthenticated) return <Navigate to="/auth" replace />;
+  if (!isAuthenticated) return <Navigate to="/" replace />;
 
   // Authenticated — render protected content
   return <>{children}</>;

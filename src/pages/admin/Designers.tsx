@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { MoreHorizontal, Search, CheckCircle, XCircle, Image as ImageIcon, ShieldAlert } from 'lucide-react';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminDesigners() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,6 +20,7 @@ export default function AdminDesigners() {
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { userId } = useAuth();
 
   const { data: designers, isLoading } = useQuery({
     queryKey: ['admin-designers'],
@@ -41,16 +43,13 @@ export default function AdminDesigners() {
       const { error } = await supabase.from('designers').update({ is_verified }).eq('id', id);
       if (error) throw error;
 
-      if (is_verified) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          await supabase.from('admin_logs').insert({
-            admin_id: session.user.id,
+      if (is_verified && userId) {
+        await supabase.from('admin_logs').insert({
+            admin_id: userId,
             action: 'verify_designer',
             target_type: 'designer',
             target_id: id
           });
-        }
       }
     },
     onSuccess: () => {

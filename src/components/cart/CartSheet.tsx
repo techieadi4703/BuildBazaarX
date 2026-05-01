@@ -55,7 +55,19 @@ export const CartSheet = () => {
             <div className="flex-1 overflow-y-auto -mx-6 px-6 space-y-4 py-4">
               {items.map((item) => (
                 <div key={item.id} className="flex gap-3 p-3 rounded-xl border border-border bg-card animate-fade-in">
-                  <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg flex-shrink-0" />
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-20 h-20 object-cover rounded-lg flex-shrink-0 bg-secondary"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      target.style.display = "none";
+                      const placeholder = document.createElement("div");
+                      placeholder.className = "w-20 h-20 rounded-lg flex-shrink-0 bg-secondary flex items-center justify-center text-muted-foreground text-xs font-bold";
+                      placeholder.textContent = item.brand?.charAt(0) || "?";
+                      target.parentNode?.insertBefore(placeholder, target);
+                    }}
+                  />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-primary font-medium uppercase">{item.brand}</p>
                     <h4 className="text-sm font-semibold text-foreground truncate">{item.name}</h4>

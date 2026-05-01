@@ -35,6 +35,7 @@ import { DesignPricingCalculator } from "@/components/design-detail/DesignPricin
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion, AnimatePresence } from "framer-motion";
 import { autoClassifyMaterial } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 import kitchenImage from "@/assets/kitchen-design.jpg";
 import bedroomImage from "@/assets/bedroom-design.jpg";
@@ -53,6 +54,7 @@ const DesignDetail = () => {
   const [dbMaterials, setDbMaterials] = useState<any[]>([]);
   const { isInWishlist, addToWishlist, removeFromWishlist, isAuthenticated } = useWishlist();
   const { items: cartItems, addToCart, updateQuantity } = useCart();
+  const { user, userId } = useAuth();
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [formData, setFormData] = useState({
@@ -65,17 +67,16 @@ const DesignDetail = () => {
 
   useEffect(() => {
     const prefillData = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
+      if (user && userId) {
         setFormData(prev => ({
           ...prev,
-          name: session.user.user_metadata?.full_name || prev.name,
+          name: user.user_metadata?.full_name || prev.name,
         }));
 
         const response = await supabase
           .from("profiles")
           .select("*")
-          .eq("id", session.user.id)
+          .eq("id", userId)
           .single();
           
         const profile = response.data as any;
@@ -90,8 +91,8 @@ const DesignDetail = () => {
         }
       }
     };
-    prefillData();
-  }, []);
+    void prefillData();
+  }, [user, userId]);
 
   useEffect(() => {
     const fetchDbDesign = async () => {

@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LogIn, LogOut, User, Package, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import logoIcon from "@/assets/logo-icon.png";
 import { CartSheet } from "@/components/cart/CartSheet";
 import { useWishlist } from "@/contexts/WishlistContext";
@@ -18,7 +17,7 @@ const navLinks = [
 ];
 
 export const Header = () => {
-  const { user, userRole } = useAuth();
+  const { user, userRole, signOut } = useAuth();
   const { totalItems: wishlistCount } = useWishlist();
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,7 +31,7 @@ export const Header = () => {
   }, [userRole]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await signOut();
     navigate("/");
   };
 

@@ -34,13 +34,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // ─── Sync helpers ────────────────────────────────────────────────────
   const saveCartToDb = useCallback(async (uid: string, cartItems: CartItem[]) => {
-    await supabase
+    const { error } = await supabase
       .from("profiles")
       .update({
         last_cart_snapshot: cartItems as any,
         last_cart_updated_at: new Date().toISOString(),
       } as any)
       .eq("id", uid);
+    if (error) {
+      console.warn("Cart save failed:", error.message);
+    }
   }, []);
 
   const loadCartFromDb = useCallback(async (uid: string) => {

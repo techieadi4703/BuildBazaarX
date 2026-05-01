@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { autoClassifyMaterial } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function DesignerDashboard() {
   const [activeTab, setActiveTab] = useState("gallery");
@@ -21,13 +22,13 @@ export default function DesignerDashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { userId, isLoading: isAuthLoading, signOut } = useAuth();
 
   const fetchDesigner = async () => {
     setIsLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/designer/auth");
+      if (!userId) {
+        navigate("/");
         return;
       }
 
@@ -35,7 +36,7 @@ export default function DesignerDashboard() {
       const { data: profileData } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profileData && profileData.role !== "designer") {
@@ -47,7 +48,7 @@ export default function DesignerDashboard() {
       const { data: designerData, error: designerError } = await supabase
         .from("designers")
         .select("*")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (designerError) throw designerError;
@@ -68,8 +69,9 @@ export default function DesignerDashboard() {
   };
 
   useEffect(() => {
-    fetchDesigner();
-  }, []);
+    if (isAuthLoading) return;
+    void fetchDesigner();
+  }, [isAuthLoading, userId]);
 
   const fetchDesigns = async () => {
     if (!designer?.id) return;
@@ -116,7 +118,7 @@ export default function DesignerDashboard() {
 
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await signOut();
     navigate("/");
   };
 

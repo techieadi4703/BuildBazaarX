@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
 import { ArrowRight, Mail, Lock, Palette, User, Check, Phone, MapPin } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { authClient } from "@/lib/auth-client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const SPECIALIZATIONS = [
   "Modular Kitchen", "Bedroom", "Living Room", "Bathroom",
@@ -27,6 +28,7 @@ export default function DesignerAuth() {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { refreshSession } = useAuth();
 
   const resolveDesignerDestination = async (userId: string) => {
     const { data: designerData, error: designerError } = await supabase
@@ -40,22 +42,6 @@ export default function DesignerAuth() {
     return designerData ? "/designer/dashboard" : "/designer/setup";
   };
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) return;
-
-      window.setTimeout(() => {
-        resolveDesignerDestination(session.user.id)
-          .then((path) => navigate(path))
-          .catch((error) => {
-            console.error("Designer auth redirect error:", error);
-            navigate("/designer/setup");
-          });
-      }, 500);
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
   const toggleSpec = (spec: string) => {
     setSelectedSpecs(prev => 
       prev.includes(spec) ? prev.filter(s => s !== spec) : [...prev, spec]
@@ -67,17 +53,18 @@ export default function DesignerAuth() {
     setIsLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        const { user } = await authClient.signInWithPassword(email, password);
+        await refreshSession();
         toast({ title: "Authorized", description: "Entering Designer Studio..." });
-        const nextPath = await resolveDesignerDestination((await supabase.auth.getSession()).data.session!.user.id);
+        if (!user) throw new Error("Designer session could not be restored.");
+        const nextPath = await resolveDesignerDestination(user.id);
         navigate(nextPath);
       } else {
         if (selectedSpecs.length === 0) {
           throw new Error("Please select at least one specialization.");
         }
 
-        const { data, error } = await supabase.auth.signUp({
+        const { user } = await authClient.signUp({
           email,
           password,
           options: {
@@ -91,16 +78,15 @@ export default function DesignerAuth() {
           },
         });
 
-        if (error) throw error;
-
-        if (data.user) {
+        await refreshSession();
+        if (user) {
           // Safety Sync: Explicitly update the profiles table to ensure role and contact info are attached first
           await supabase.from('profiles').update({ 
             role: 'designer', 
             full_name: fullName,
             phone: phone,
             city: city,
-          }).eq('id', data.user.id);
+          }).eq('id', user.id);
 
           toast({ title: "Studio Access Synchronized", description: "Configuring your creative workspace..." });
           navigate("/designer/setup");

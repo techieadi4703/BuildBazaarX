@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useToast } from '@/hooks/use-toast';
 import { MoreHorizontal, Search, CheckCircle, XCircle, ShoppingBag, ShieldAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminSuppliers() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,6 +19,7 @@ export default function AdminSuppliers() {
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { userId } = useAuth();
 
   const { data: suppliers, isLoading, error } = useQuery({
     queryKey: ['admin-suppliers'],
@@ -44,16 +46,13 @@ export default function AdminSuppliers() {
       const { error } = await supabase.from('suppliers').update({ is_verified }).eq('id', id);
       if (error) throw error;
 
-      if (is_verified) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          await supabase.from('admin_logs').insert({
-            admin_id: session.user.id,
+      if (is_verified && userId) {
+        await supabase.from('admin_logs').insert({
+            admin_id: userId,
             action: 'verify_supplier',
             target_type: 'supplier',
             target_id: id
           });
-        }
       }
     },
     onSuccess: () => {

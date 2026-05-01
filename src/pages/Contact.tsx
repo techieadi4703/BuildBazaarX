@@ -28,6 +28,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 const contactInfo = [
   {
@@ -93,21 +94,21 @@ const Contact = () => {
     budget: "",
     message: "",
   });
+  const { user, userId } = useAuth();
 
   useEffect(() => {
     const prefillData = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
+      if (user && userId) {
         setFormData(prev => ({
           ...prev,
-          email: session.user.email || prev.email,
-          name: session.user.user_metadata?.full_name || prev.name,
+          email: user.email || prev.email,
+          name: user.user_metadata?.full_name || prev.name,
         }));
 
         const { data: profile } = await supabase
           .from("profiles")
           .select("*")
-          .eq("id", session.user.id)
+          .eq("id", userId)
           .single() as any;
 
         if (profile) {
@@ -120,8 +121,8 @@ const Contact = () => {
         }
       }
     };
-    prefillData();
-  }, []);
+    void prefillData();
+  }, [user, userId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

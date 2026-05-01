@@ -9,25 +9,28 @@ import { Loader2, Package, Calendar, MapPin, ArrowRight, ArrowLeft, ShoppingBag 
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Orders = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { userId, isLoading: isAuthLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {
+    if (isAuthLoading) return;
+
+    if (!isAuthenticated) {
+      navigate("/");
+      return;
+    }
+
     const fetchOrders = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          navigate("/auth");
-          return;
-        }
-
         const { data, error } = await supabase
           .from("orders")
           .select("*")
-          .eq("user_id", session.user.id)
+          .eq("user_id", userId)
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -39,8 +42,8 @@ export const Orders = () => {
       }
     };
 
-    fetchOrders();
-  }, [navigate]);
+    void fetchOrders();
+  }, [isAuthLoading, navigate, userId, isAuthenticated]);
 
   if (isLoading) {
     return (

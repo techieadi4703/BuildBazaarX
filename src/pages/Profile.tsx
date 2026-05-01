@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { User, Phone, MapPin, Mail, Save, Loader2, Package, ArrowRight, LogOut } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Profile = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user: authUser, userId, isLoading: isAuthLoading, signOut } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [currentRole, setCurrentRole] = useState("customer");
   const [profile, setProfile] = useState({
     full_name: "",
@@ -25,60 +25,69 @@ const Profile = () => {
 
   const handleLogout = async () => {
     setIsSaving(true);
-    await supabase.auth.signOut();
+    await signOut();
     navigate("/");
   };
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
+      if (isAuthLoading) return;
+
+      if (!authUser || !userId) {
+        navigate("/");
         return;
       }
-      setUser(session.user);
 
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .single();
 
       if (error) {
         console.error("Error fetching profile:", error);
       } else if (data) {
-        setCurrentRole(data.role || "customer");
+        const profileData = data as {
+          role?: string | null;
+          full_name?: string | null;
+          phone?: string | null;
+          address?: string | null;
+          city?: string | null;
+          state?: string | null;
+          pincode?: string | null;
+        };
+        setCurrentRole(profileData.role || "customer");
         setProfile({
-          full_name: data.full_name || "",
-          phone: data.phone || "",
-          address: data.address || "",
-          city: data.city || "",
-          state: data.state || "",
-          pincode: data.pincode || "",
+          full_name: profileData.full_name || "",
+          phone: profileData.phone || "",
+          address: profileData.address || "",
+          city: profileData.city || "",
+          state: profileData.state || "",
+          pincode: profileData.pincode || "",
         });
       }
       setIsLoading(false);
     };
 
-    fetchProfile();
-  }, [navigate]);
+    void fetchProfile();
+  }, [authUser, isAuthLoading, navigate, userId]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!userId) return;
     setIsSaving(true);
 
     const { error } = await supabase
       .from("profiles")
-      .upsert({
-        id: user.id,
+      .update({
         full_name: profile.full_name,
         phone: profile.phone,
         address: profile.address,
         city: profile.city,
         state: profile.state,
         pincode: profile.pincode,
-        role: currentRole || "customer",
-      });
+      })
+      .eq("id", userId);
 
     if (error) {
       console.error("Profile update error:", error);
@@ -215,7 +224,7 @@ const Profile = () => {
                       <div className="relative">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
                         <input
-                          value={user?.email || ""}
+                          value={authUser?.email || ""}
                           disabled
                           className="w-full pl-10 pr-4 py-4 bg-[#fcf9f6] border border-[#e5e2df] text-[#74777d] rounded-sm text-sm font-body cursor-not-allowed opacity-60"
                         />

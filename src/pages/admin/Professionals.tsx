@@ -12,6 +12,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescri
 import { useToast } from '@/hooks/use-toast';
 import { MoreHorizontal, Search, CheckCircle, XCircle, Eye, ShieldAlert } from 'lucide-react';
 import { format } from 'date-fns';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminProfessionals() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,6 +21,7 @@ export default function AdminProfessionals() {
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { userId } = useAuth();
 
   // Fetch professionals and their related profile for name/blocked status
   const { data: professionals, isLoading } = useQuery({
@@ -43,16 +45,13 @@ export default function AdminProfessionals() {
       const { error } = await supabase.from('professionals').update({ is_verified }).eq('id', id);
       if (error) throw error;
 
-      if (is_verified) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          await supabase.from('admin_logs').insert({
-            admin_id: session.user.id,
+      if (is_verified && userId) {
+        await supabase.from('admin_logs').insert({
+            admin_id: userId,
             action: 'verify_professional',
             target_type: 'professional',
             target_id: id
           });
-        }
       }
     },
     onSuccess: () => {

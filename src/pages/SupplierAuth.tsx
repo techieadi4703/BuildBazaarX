@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
 import { ArrowRight, Mail, Lock, Store, ShieldCheck, MapPin, Phone, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { authClient } from "@/lib/auth-client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function SupplierAuth() {
   const [searchParams] = useSearchParams();
@@ -22,6 +23,7 @@ export default function SupplierAuth() {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { refreshSession } = useAuth();
 
   const resolveSupplierDestination = async (userId: string) => {
     const { data: supplierData, error: supplierError } = await supabase
@@ -35,39 +37,21 @@ export default function SupplierAuth() {
     return supplierData ? "/supplier/dashboard" : "/supplier/setup";
   };
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) return;
-
-      window.setTimeout(() => {
-        resolveSupplierDestination(session.user.id)
-          .then((path) => navigate(path))
-          .catch((error) => {
-            console.error("Supplier auth redirect error:", error);
-            navigate("/supplier/setup");
-          });
-      }, 500);
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        const sessionData = await supabase.auth.getSession();
-        const userId = sessionData.data.session?.user.id;
-        if (userId) {
-          const nextPath = await resolveSupplierDestination(userId);
+        const { user } = await authClient.signInWithPassword(email, password);
+        await refreshSession();
+        if (user) {
+          const nextPath = await resolveSupplierDestination(user.id);
           navigate(nextPath);
         } else {
           navigate("/supplier/dashboard");
         }
       } else {
-        const { data, error } = await supabase.auth.signUp({
+        const { user } = await authClient.signUp({
           email,
           password,
           options: {
@@ -80,16 +64,15 @@ export default function SupplierAuth() {
           }
         });
 
-        if (error) throw error;
-
-        if (data.user) {
+        await refreshSession();
+        if (user) {
           // Safety Sync: Explicitly update the profiles table to ensure role and basic info are attached first
           await supabase.from('profiles').update({ 
             role: 'supplier', 
             full_name: ownerName,
             phone: phone,
             city: city
-          }).eq('id', data.user.id);
+          }).eq('id', user.id);
 
           toast({ title: "Logistics Syncing", description: "Configuring your supply chain workspace..." });
           navigate("/supplier/setup");

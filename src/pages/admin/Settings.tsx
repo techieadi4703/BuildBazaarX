@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { Save, Activity } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -24,6 +25,7 @@ export default function AdminSettings() {
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { userId } = useAuth();
 
   const { data: dbSettings, isLoading: isLoadingSettings } = useQuery({
     queryKey: ['admin-settings'],
@@ -71,10 +73,9 @@ export default function AdminSettings() {
       const { error } = await supabase.from('platform_settings').upsert(updates, { onConflict: 'key' });
       if (error) throw error;
       
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      if (userId) {
         await supabase.from('admin_logs').insert({
-          admin_id: session.user.id,
+          admin_id: userId,
           action: 'update_settings',
           target_type: 'platform_settings'
         });

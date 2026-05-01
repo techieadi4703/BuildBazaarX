@@ -7,15 +7,16 @@ import { Star, Clock, Calendar, CheckCircle, Mail, User, ListTodo, Wallet, Messa
 import { Layout } from "@/components/layout/Layout";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ProfessionalDashboard() {
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [slots, setSlots] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, userId, isLoading: isAuthLoading, signOut } = useAuth();
 
   const [activeTab, setActiveTab] = useState("profile");
 
@@ -30,24 +31,22 @@ export default function ProfessionalDashboard() {
   const [portfolioInput, setPortfolioInput] = useState("");
 
   useEffect(() => {
-    fetchData();
-  }, [navigate]);
+    if (isAuthLoading) return;
+    void fetchData();
+  }, [isAuthLoading, navigate, user, userId]);
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/professional/auth");
+      if (!user || !userId) {
+        navigate("/");
         return;
       }
-      setUser(session.user);
-
       // First check role in profiles table to avoid mis-redirection
       const { data: profileData } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profileData && profileData.role !== "professional") {
@@ -58,7 +57,7 @@ export default function ProfessionalDashboard() {
       const { data: profData, error: profError } = await supabase
         .from("professionals")
         .select("*")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profError || !profData) {
@@ -66,16 +65,23 @@ export default function ProfessionalDashboard() {
         return;
       }
       
-      setProfile(profData);
-      setSkillsInput((profData.skills || []).join(", "));
-      setLanguagesInput((profData.languages || []).join(", "));
-      setPortfolioInput((profData.portfolio_urls || []).join(", "));
+      const prof = profData as {
+        skills?: string[] | null;
+        languages?: string[] | null;
+        portfolio_urls?: string[] | null;
+        [key: string]: any;
+      };
+      
+      setProfile(prof);
+      setSkillsInput((prof.skills || []).join(", "));
+      setLanguagesInput((prof.languages || []).join(", "));
+      setPortfolioInput((prof.portfolio_urls || []).join(", "));
 
       const today = new Date().toISOString().split('T')[0];
       const { data: slotsData } = await supabase
         .from("professional_slots")
         .select("*")
-        .eq("professional_id", session.user.id)
+        .eq("professional_id", userId)
         .gte("date", today)
         .order("date", { ascending: true })
         .order("start_time", { ascending: true });
@@ -85,7 +91,7 @@ export default function ProfessionalDashboard() {
       const { data: reviewsData } = await supabase
         .from("professional_reviews")
         .select("*")
-        .eq("professional_id", session.user.id)
+        .eq("professional_id", userId)
         .order("created_at", { ascending: false });
 
       if (reviewsData) setReviews(reviewsData);
@@ -191,7 +197,7 @@ export default function ProfessionalDashboard() {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await signOut();
     navigate("/");
   };
 

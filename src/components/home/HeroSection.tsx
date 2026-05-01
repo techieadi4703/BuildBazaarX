@@ -54,11 +54,11 @@ export const HeroSection = () => {
           <div className="relative rounded-[1rem] p-2 bg-[#0A1128] border border-white/10 shadow-[0_0_100px_rgba(197,165,114,0.05)] mx-auto overflow-hidden">
             <div className="absolute inset-0 bg-[#C5A572]/10 mix-blend-overlay z-10 pointer-events-none" />
             <div className="relative w-full h-[400px] md:h-[500px]">
-              {/* Single Image with fetchpriority */}
+              {/* Use the lowercase DOM attribute name so React passes it through cleanly */}
               <img
                 src={heroImage}
                 alt="Architectural Render"
-                fetchPriority="high"
+                fetchpriority="high"
                 className="absolute inset-0 w-full h-full object-cover rounded-lg"
               />
 

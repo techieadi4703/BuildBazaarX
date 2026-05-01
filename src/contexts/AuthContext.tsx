@@ -1,21 +1,22 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Session, User } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 import { logger } from "@/lib/logger";
+import { authClient } from "@/lib/auth-client";
 
 interface AuthContextType {
-  session: Session | null;
   user: User | null;
   userId: string | null;
   userRole: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  refreshSession: () => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,24 +36,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return 'customer'; // Default role
   };
 
+  const applySession = async (
+    sessionUser: User | null,
+    accessToken: string | null,
+    refreshToken: string | null
+  ) => {
+    // Set the session on the Supabase data client so RLS policies work
+    if (sessionUser && accessToken) {
+      await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken ?? "",
+      });
+    } else {
+      // Clear session on the data client
+      await supabase.auth.signOut({ scope: "local" });
+    }
+    setUser(sessionUser);
+  };
+
   useEffect(() => {
     let mounted = true;
 
-    const initializeAuth = async () => {
+    const syncSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { user, accessToken, refreshToken } = await authClient.getCurrentUser();
         if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
-          if (session?.user) {
-             const role = await fetchUserRole(session.user.id);
-             if (mounted) setUserRole(role);
+          await applySession(user, accessToken, refreshToken);
+          if (user) {
+            const role = await fetchUserRole(user.id);
+            if (mounted) setUserRole(role);
           } else {
-             if (mounted) setUserRole(null);
+            if (mounted) setUserRole(null);
           }
         }
       } catch (error) {
-        logger.error("Error getting session:", error);
+        logger.error("Error getting current user:", error);
       } finally {
         if (mounted) {
           setIsLoading(false);
@@ -60,37 +78,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    initializeAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
-          if (session?.user) {
-            const role = await fetchUserRole(session.user.id);
-            if (mounted) setUserRole(role);
-          } else {
-            if (mounted) setUserRole(null);
-          }
-          setIsLoading(false);
-        }
-      }
-    );
+    syncSession();
+    const unsubscribe = authClient.onChange(() => {
+      void syncSession();
+    });
 
     return () => {
       mounted = false;
-      subscription.unsubscribe();
+      unsubscribe();
     };
   }, []);
 
+  const refreshSession = async () => {
+    const { user, accessToken, refreshToken } = await authClient.getCurrentUser();
+    await applySession(user, accessToken, refreshToken);
+    if (user) {
+      setUserRole(await fetchUserRole(user.id));
+    } else {
+      setUserRole(null);
+    }
+  };
+
+  const signOut = async () => {
+    await authClient.signOut();
+    await supabase.auth.signOut({ scope: "local" });
+    setUser(null);
+    setUserRole(null);
+  };
+
   const value = {
-    session,
     user,
     userId: user?.id ?? null,
     userRole,
     isAuthenticated: !!user,
     isLoading,
+    refreshSession,
+    signOut,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

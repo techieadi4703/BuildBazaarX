@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { MoreHorizontal, Search, Settings, ShieldAlert, ShieldCheck, Eye, ShoppingCart, Phone, Mail, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -110,6 +111,7 @@ export default function AdminUsers() {
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { userId } = useAuth();
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-users-unified'],
@@ -198,17 +200,14 @@ export default function AdminUsers() {
       const { error } = await supabase.from('profiles').update({ is_blocked }).eq('id', id);
       if (error) throw error;
 
-      if (is_blocked) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          await supabase.from('admin_logs').insert({
-            admin_id: session.user.id,
+      if (is_blocked && userId) {
+        await supabase.from('admin_logs').insert({
+            admin_id: userId,
             action: 'block_user',
             target_type: 'user',
             target_id: id,
             details: { is_blocked: true },
           });
-        }
       }
     },
     onSuccess: () => {

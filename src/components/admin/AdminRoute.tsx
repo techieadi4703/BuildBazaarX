@@ -2,26 +2,28 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const [status, setStatus] = useState<'loading' | 'allowed' | 'denied'>('loading');
   const navigate = useNavigate();
+  const { userId, isLoading } = useAuth();
 
   useEffect(() => {
     const check = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { setStatus('denied'); return; }
+      if (isLoading) return;
+      if (!userId) { setStatus('denied'); return; }
       const { data: profile, error } = await supabase
-        .from('profiles').select('role').eq('id', session.user.id).single();
+        .from('profiles').select('role').eq('id', userId).single();
         
-      console.log('Admin Check - Session User ID:', session.user.id);
+      console.log('Admin Check - Session User ID:', userId);
       console.log('Admin Check - Profile Data:', profile);
       console.log('Admin Check - Error if any:', error);
       
       setStatus(profile?.role === 'admin' ? 'allowed' : 'denied');
     };
-    check();
-  }, []);
+    void check();
+  }, [isLoading, userId]);
 
   if (status === 'loading') return <div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>;
   if (status === 'denied') return (

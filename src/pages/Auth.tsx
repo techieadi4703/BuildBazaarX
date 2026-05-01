@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
 import { ArrowRight, Mail, Lock, User, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { authClient } from "@/lib/auth-client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
@@ -18,31 +19,21 @@ export default function Auth() {
   
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        // Don't navigate here — handleAuth already handles it for login
-        // This handles the case of returning authenticated users
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+  const { refreshSession } = useAuth();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        const { user } = await authClient.signInWithPassword(email, password);
+        await refreshSession();
         // Role-based redirect
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+        if (user) {
           const { data: profile } = await supabase
             .from('profiles')
             .select('role')
-            .eq('id', session.user.id)
+            .eq('id', user.id)
             .maybeSingle();
           if (profile?.role === 'admin') {
             navigate("/admin");
@@ -53,7 +44,7 @@ export default function Auth() {
           navigate("/");
         }
       } else {
-        const { data, error } = await supabase.auth.signUp({
+        const { user } = await authClient.signUp({
           email,
           password,
           options: {
@@ -63,15 +54,15 @@ export default function Auth() {
             },
           },
         });
-        if (error) throw error;
-        if (data.user) {
+        await refreshSession();
+        if (user) {
           await supabase
             .from("profiles")
             .update({
               role: "customer",
               full_name: fullName,
             })
-            .eq("id", data.user.id);
+            .eq("id", user.id);
 
           toast({ title: "Identity Established", description: "Verification email dispatched." });
           navigate("/");

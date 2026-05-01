@@ -12,6 +12,7 @@ import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { Wrench, MapPin, User, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PROFESSIONS = [
   "Electrician",
@@ -29,9 +30,9 @@ const PROFESSIONS = [
 
 export default function ProfessionalSetup() {
   const [isLoading, setIsLoading] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { userId, isLoading: isAuthLoading } = useAuth();
 
   const [form, setForm] = useState({
     fullName: "",
@@ -47,17 +48,17 @@ export default function ProfessionalSetup() {
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      if (isAuthLoading) return;
+
+      if (!userId) {
         navigate("/professional/auth");
         return;
       }
-      setUserId(session.user.id);
       
       const { data: profileData } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profileData && profileData.role !== "professional") {
@@ -68,7 +69,7 @@ export default function ProfessionalSetup() {
       const { data: profileInfo } = await supabase
         .from("profiles")
         .select("full_name, phone, city")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profileInfo) {
@@ -83,15 +84,15 @@ export default function ProfessionalSetup() {
       const { data } = await supabase
         .from("professionals")
         .select("id")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
       
       if (data) {
         navigate("/professional/dashboard");
       }
     };
-    checkUser();
-  }, [navigate]);
+    void checkUser();
+  }, [isAuthLoading, navigate, userId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -19,6 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Razorpay window type
 declare global {
@@ -44,43 +45,49 @@ const Checkout = () => {
   const { items, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user, userId } = useAuth();
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState("");
   const [form, setForm] = useState({
     name: "", phone: "", email: "", address: "", city: "", state: "", pincode: "",
   });
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUserId(session?.user?.id ?? null);
-      setUserEmail(session?.user?.email ?? "");
-      
-      if (session?.user) {
-        supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single()
-          .then(({ data: profile }) => {
-            if (profile) {
-              setForm((f) => ({
-                ...f,
-                name: profile.full_name || "",
-                phone: profile.phone || "",
-                email: session.user.email || "",
-                address: profile.address || "",
-                city: profile.city || "",
-                state: profile.state || "",
-                pincode: profile.pincode || "",
-              }));
-            }
-          });
-      }
-    });
+    if (user && userId) {
+      setUserEmail(user.email ?? "");
+
+      supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single()
+        .then(({ data }) => {
+          const profile = data as {
+            full_name?: string | null;
+            phone?: string | null;
+            address?: string | null;
+            city?: string | null;
+            state?: string | null;
+            pincode?: string | null;
+          } | null;
+          if (profile) {
+            setForm((f) => ({
+              ...f,
+              name: profile.full_name || "",
+              phone: profile.phone || "",
+              email: user.email || "",
+              address: profile.address || "",
+              city: profile.city || "",
+              state: profile.state || "",
+              pincode: profile.pincode || "",
+            }));
+          }
+        });
+    }
     loadRazorpayScript();
-  }, []);
+  }, [user, userId]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -152,7 +159,7 @@ const Checkout = () => {
 
     await new Promise<void>((resolve, reject) => {
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID_TEST,
         amount: rzpOrder.amount,
         currency: rzpOrder.currency,
         name: "BuildBazaarX",
@@ -406,7 +413,19 @@ const Checkout = () => {
                               whileHover={{ x: 5 }}
                             >
                               <div className="relative w-24 h-24 rounded-[1.5rem] bg-white overflow-hidden shrink-0 border border-border/50">
-                                <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                <img
+                                  src={item.image}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 bg-secondary"
+                                  onError={(e) => {
+                                    const target = e.currentTarget;
+                                    target.style.display = "none";
+                                    const placeholder = document.createElement("div");
+                                    placeholder.className = "w-full h-full flex items-center justify-center bg-secondary text-muted-foreground text-lg font-black";
+                                    placeholder.textContent = (item.brand || item.name || "?").charAt(0).toUpperCase();
+                                    target.parentNode?.insertBefore(placeholder, target);
+                                  }}
+                                />
                                 <div className="absolute inset-0 bg-black/5" />
                               </div>
                               <div className="flex-1 py-1 flex flex-col justify-between">

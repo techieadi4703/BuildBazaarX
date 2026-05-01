@@ -8,10 +8,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
-import { User } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { Store, User as UserIcon, Phone, MapPin, ShieldCheck, Sparkles, ArrowRight, Briefcase, Building } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const BUSINESS_TYPES = [
   "Manufacturer", "Wholesaler", "Retailer", "Distributor", "Importer"
@@ -20,9 +20,9 @@ const BUSINESS_TYPES = [
 export default function SupplierSetup() {
   const [isLoading, setIsLoading] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, userId, isLoading: isAuthLoading } = useAuth();
 
   const [setupForm, setSetupForm] = useState({
     businessName: "",
@@ -35,18 +35,17 @@ export default function SupplierSetup() {
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
+      if (isAuthLoading) return;
+
+      if (!user || !userId) {
         navigate("/supplier/auth");
         return;
       }
 
-      setUser(session.user);
-
       const { data: profileData } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profileData && profileData.role !== "supplier") {
@@ -57,12 +56,12 @@ export default function SupplierSetup() {
       const { data: profileInfo } = await supabase
         .from("profiles")
         .select("full_name, phone")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profileInfo) {
         // Pull business_name from auth metadata as it's not in the generic profile table
-        const metadata = (session.user as any).user_metadata;
+        const metadata = (user as any).user_metadata;
         const businessName = metadata?.business_name || "";
 
         setSetupForm(prev => ({
@@ -77,7 +76,7 @@ export default function SupplierSetup() {
       const { data } = await supabase
         .from("suppliers")
         .select("id")
-        .eq("id", session.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (data) {
@@ -86,12 +85,12 @@ export default function SupplierSetup() {
         setIsPageLoading(false);
       }
     };
-    checkUser();
-  }, [navigate]);
+    void checkUser();
+  }, [isAuthLoading, navigate, user, userId]);
 
   const handleSetup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !userId) return;
     
     if (!setupForm.businessType) {
       toast({
@@ -107,7 +106,7 @@ export default function SupplierSetup() {
       const { error } = await supabase
         .from("suppliers")
         .upsert({
-          id: user.id,
+          id: userId,
           business_name: setupForm.businessName,
           owner_name: setupForm.ownerName,
           phone: setupForm.phone,

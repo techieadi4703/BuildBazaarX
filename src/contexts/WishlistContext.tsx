@@ -24,16 +24,18 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 
 export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<WishlistItem[]>([]);
-  const { userId, user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const { userId, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const previousUserId = useRef<string | null>(null);
 
   // ─── Sync helpers ────────────────────────────────────────────────────
   const saveWishlistToDb = useCallback(async (uid: string, wishlistItems: WishlistItem[]) => {
-    // Store wishlist in the profiles table exactly like the cart does
-    await supabase.from("profiles").upsert({
-      id: uid,
-      wishlist: wishlistItems
-    }, { onConflict: "id" });
+    const { error } = await supabase
+      .from("profiles")
+      .update({ wishlist: wishlistItems as any })
+      .eq("id", uid);
+    if (error) {
+      console.warn("Wishlist save failed:", error.message);
+    }
   }, []);
 
   const loadWishlistFromDb = useCallback(async (uid: string) => {
@@ -42,7 +44,7 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
       .select("wishlist")
       .eq("id", uid)
       .maybeSingle();
-      
+
     if (!error && data && Array.isArray(data.wishlist)) {
       setItems(data.wishlist as WishlistItem[]);
     } else {
@@ -56,14 +58,11 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
 
     if (!isAuthenticated || !userId) {
       if (previousUserId.current !== null) {
-        // Clear wishlist on logout
         setItems([]);
       }
       previousUserId.current = null;
     } else if (userId !== previousUserId.current) {
-      // User signed in or switched user
       previousUserId.current = userId;
-      // Load wishlist from DB only on fresh sign in
       loadWishlistFromDb(userId);
     }
   }, [userId, isAuthenticated, isAuthLoading, loadWishlistFromDb]);
@@ -71,7 +70,6 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   // ─── Persist wishlist to DB whenever items change (for logged-in users) ──
   useEffect(() => {
     if (!userId) return;
-    // Debounce slightly to avoid hammering on rapid changes
     const timer = setTimeout(() => {
       saveWishlistToDb(userId, items);
     }, 500);
@@ -80,12 +78,10 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
 
   // ─── Wishlist actions ─────────────────────────────────────────────────────
   const addToWishlist = (item: WishlistItem): boolean => {
-    if (!isAuthenticated || !userId) {
-      return false;
-    }
+    if (!isAuthenticated || !userId) return false;
     setItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
-      if (existing) return prev; // Already in wishlist
+      if (existing) return prev;
       return [...prev, item];
     });
     return true;
@@ -95,9 +91,7 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
-  const isInWishlist = (id: string) => {
-    return items.some(item => item.id === id);
-  }
+  const isInWishlist = (id: string) => items.some((item) => item.id === id);
 
   const clearWishlist = () => {
     setItems([]);

@@ -41,7 +41,7 @@ const Wishlist = () => {
   const navigate = useNavigate();
 
   if (!isAuthenticated) {
-    navigate("/auth/select-role?mode=login");
+    navigate("/");
     return null;
   }
 
