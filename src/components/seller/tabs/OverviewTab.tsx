@@ -60,7 +60,7 @@ export function OverviewTab({ supplierData, products, orders, inquiries, setActi
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Gross Sales', value: `₹${totalGross.toLocaleString()}`, icon: IndianRupee, color: 'text-blue-600' },
-          { label: 'Platform Fees', value: `-₹${totalFees.toLocaleString()}`, icon: ArrowRight, color: 'text-red-600' },
+          { label: 'Commission', value: `-₹${totalFees.toLocaleString()}`, icon: ArrowRight, color: 'text-red-600' },
           { label: 'Net Earnings', value: `₹${totalRevenue.toLocaleString()}`, icon: IndianRupee, color: 'text-green-600' },
           { label: 'Active Listings', value: activeListings, icon: Package, color: 'text-[#735c00]' },
         ].map((stat, i) => (
@@ -93,7 +93,7 @@ export function OverviewTab({ supplierData, products, orders, inquiries, setActi
                 <TableHeader>
                   <TableRow>
                     <TableHead>Order ID</TableHead>
-                    <TableHead>Amount</TableHead>
+                    <TableHead>Net Payout</TableHead>
                     <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>

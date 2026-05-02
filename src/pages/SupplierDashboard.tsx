@@ -495,6 +495,7 @@ export default function SupplierDashboard() {
                 orders={orders} 
                 isLoading={isOrdersLoading} 
                 updateOrderStatus={(id, status) => orderMutation.mutate({ id, status })} 
+                settings={dashboardSettings}
               />
             )}
 

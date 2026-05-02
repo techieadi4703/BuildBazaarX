@@ -90,7 +90,8 @@ export function OrdersTab({ orders, isLoading, updateOrderStatus, settings }: Or
               <TableHead>Order ID</TableHead>
               <TableHead>Customer</TableHead>
               <TableHead>Product(s)</TableHead>
-              <TableHead>Amount</TableHead>
+              <TableHead>Gross Amount</TableHead>
+              <TableHead>Net Earnings</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="text-right">Action</TableHead>
@@ -111,7 +112,7 @@ export function OrdersTab({ orders, isLoading, updateOrderStatus, settings }: Or
               ))
             ) : filteredOrders.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-48 text-center">
+                <TableCell colSpan={8} className="h-48 text-center">
                   <div className="flex flex-col items-center justify-center text-[#74777d]">
                     <Warehouse className="w-12 h-12 mb-4 opacity-20" />
                     <p className="font-medium text-[#1c1c1a]">No orders yet.</p>
@@ -127,7 +128,8 @@ export function OrdersTab({ orders, isLoading, updateOrderStatus, settings }: Or
                   </TableCell>
                   <TableCell>{order.delivery_address?.name || 'Unknown User'}</TableCell>
                   <TableCell>{calculateItemsCount(order.items)} items</TableCell>
-                  <TableCell className="font-semibold">₹{order.total?.toLocaleString() || 0}</TableCell>
+                  <TableCell className="font-semibold text-[#1c1c1a]">₹{order.total?.toLocaleString() || 0}</TableCell>
+                  <TableCell className="font-bold text-green-700">₹{((order.total || 0) * (1 - commissionRate)).toLocaleString()}</TableCell>
                   <TableCell>
                     <Badge variant="secondary" className={`capitalize ${getStatusColor(order.status)}`}>
                       {order.status || 'pending'}
@@ -260,7 +262,7 @@ export function OrdersTab({ orders, isLoading, updateOrderStatus, settings }: Or
                                     <span className="font-medium text-sm text-[#1c1c1a]">₹{selectedOrder.total?.toLocaleString()}</span>
                                   </div>
                                   <div className="flex justify-between items-center">
-                                    <span className="font-medium text-sm text-red-600">Platform Fee ({commissionRate * 100}%)</span>
+                                    <span className="font-medium text-sm text-red-600">Commission ({commissionRate * 100}%)</span>
                                     <span className="font-medium text-sm text-red-600">-₹{(selectedOrder.total * commissionRate).toLocaleString()}</span>
                                   </div>
                                   <div className="flex justify-between items-center pt-2 mt-2 border-t border-[#f0efee]">
