@@ -58,7 +58,6 @@ export const HeroSection = () => {
               <img
                 src={heroImage}
                 alt="Architectural Render"
-                fetchPriority="high"
                 className="absolute inset-0 w-full h-full object-cover rounded-lg"
               />
 

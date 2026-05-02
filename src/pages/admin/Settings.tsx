@@ -19,7 +19,8 @@ export default function AdminSettings() {
     supplier_commission_pct: '',
     gst_pct: '',
     featured_listing_price: '',
-    min_payout_amount: ''
+    min_payout_amount: '',
+    payout_trigger_statuses: 'paid,pending,processing,shipped'
   });
 
   const { toast } = useToast();
@@ -123,6 +124,7 @@ export default function AdminSettings() {
                       <Label>Professional Commission (%)</Label>
                       <Input 
                         type="number" 
+                        className="border-gray-300 focus:border-[#735c00]"
                         value={settings.professional_commission_pct} 
                         onChange={(e) => handleInputChange('professional_commission_pct', e.target.value)} 
                       />
@@ -131,6 +133,7 @@ export default function AdminSettings() {
                       <Label>Designer Commission (%)</Label>
                       <Input 
                         type="number" 
+                        className="border-gray-300 focus:border-[#735c00]"
                         value={settings.designer_commission_pct} 
                         onChange={(e) => handleInputChange('designer_commission_pct', e.target.value)} 
                       />
@@ -142,6 +145,7 @@ export default function AdminSettings() {
                       <Label>Supplier Commission (%)</Label>
                       <Input 
                         type="number" 
+                        className="border-gray-300 focus:border-[#735c00]"
                         value={settings.supplier_commission_pct} 
                         onChange={(e) => handleInputChange('supplier_commission_pct', e.target.value)} 
                       />
@@ -150,6 +154,7 @@ export default function AdminSettings() {
                       <Label>GST Percentage (%)</Label>
                       <Input 
                         type="number" 
+                        className="border-gray-300 focus:border-[#735c00]"
                         value={settings.gst_pct} 
                         onChange={(e) => handleInputChange('gst_pct', e.target.value)} 
                       />
@@ -161,6 +166,7 @@ export default function AdminSettings() {
                       <Label>Featured Listing Price (₹)</Label>
                       <Input 
                         type="number" 
+                        className="border-gray-300 focus:border-[#735c00]"
                         value={settings.featured_listing_price} 
                         onChange={(e) => handleInputChange('featured_listing_price', e.target.value)} 
                       />
@@ -169,10 +175,22 @@ export default function AdminSettings() {
                       <Label>Minimum Payout Amount (₹)</Label>
                       <Input 
                         type="number" 
+                        className="border-gray-300 focus:border-[#735c00]"
                         value={settings.min_payout_amount} 
                         onChange={(e) => handleInputChange('min_payout_amount', e.target.value)} 
                       />
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Payout Trigger Statuses (comma separated)</Label>
+                    <Input 
+                      placeholder="e.g. paid,pending,processing,shipped"
+                      className="border-gray-300 focus:border-[#735c00]"
+                      value={settings.payout_trigger_statuses} 
+                      onChange={(e) => handleInputChange('payout_trigger_statuses', e.target.value)} 
+                    />
+                    <p className="text-[10px] text-muted-foreground italic">Orders with these statuses will show in the supplier's "Pending Payout" section.</p>
                   </div>
 
                   <Button type="submit" className="w-full mt-4" disabled={saveMutation.isPending}>

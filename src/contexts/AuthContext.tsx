@@ -20,19 +20,49 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchUserRole = async (userId: string) => {
-    // Run checks in parallel
-    const [profileRes, designerRes, professionalRes, supplierRes] = await Promise.all([
-      supabase.from('profiles').select('role').eq('id', userId).maybeSingle(),
-      supabase.from('designers').select('id').eq('id', userId).maybeSingle(),
-      supabase.from('professionals').select('id').eq('id', userId).maybeSingle(),
-      supabase.from('suppliers').select('id').eq('id', userId).maybeSingle()
-    ]);
+  const fetchUserRole = async (user: User) => {
+    try {
+      // 0. Check user metadata first (instant, no DB call)
+      if (user.user_metadata?.role) {
+        console.log("Role found in metadata:", user.user_metadata.role);
+        return user.user_metadata.role;
+      }
 
-    if (profileRes.data?.role === 'designer' || designerRes.data) return 'designer';
-    if (profileRes.data?.role === 'professional' || professionalRes.data) return 'professional';
-    if (profileRes.data?.role === 'supplier' || supplierRes.data) return 'supplier';
-    return 'customer'; // Default role
+      const userId = user.id;
+      // Add a timeout to ensure auth doesn't hang forever
+      const timeoutPromise = new Promise<null>((_, reject) => 
+        setTimeout(() => reject(new Error("Role fetch timeout")), 5000)
+      );
+
+      const fetchPromise = (async () => {
+        // 1. Check profiles table first (it's the source of truth for most)
+        const { data: profileData } = await supabase.from('profiles').select('role').eq('id', userId).maybeSingle();
+        
+        if (profileData?.role) {
+          console.log("Role found in profile:", profileData.role);
+          return profileData.role;
+        }
+
+        // 2. Fallback to checking other tables in parallel only if profile role is missing
+        console.log("Role missing in profile, checking specialized tables...");
+        const [designerRes, professionalRes, supplierRes] = await Promise.all([
+          supabase.from('designers').select('id').eq('id', userId).maybeSingle(),
+          supabase.from('professionals').select('id').eq('id', userId).maybeSingle(),
+          supabase.from('suppliers').select('id').eq('id', userId).maybeSingle()
+        ]);
+
+        if (designerRes.data) return 'designer';
+        if (professionalRes.data) return 'professional';
+        if (supplierRes.data) return 'supplier';
+        
+        return 'customer';
+      })();
+
+      return await Promise.race([fetchPromise, timeoutPromise]) as string;
+    } catch (err) {
+      console.error("fetchUserRole failed or timed out:", err);
+      return 'customer'; // Safe fallback to allow app to load
+    }
   };
 
   useEffect(() => {
@@ -45,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setSession(session);
           setUser(session?.user ?? null);
           if (session?.user) {
-             const role = await fetchUserRole(session.user.id);
+             const role = await fetchUserRole(session.user);
              if (mounted) setUserRole(role);
           } else {
              if (mounted) setUserRole(null);
@@ -68,7 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setSession(session);
           setUser(session?.user ?? null);
           if (session?.user) {
-            const role = await fetchUserRole(session.user.id);
+            const role = await fetchUserRole(session.user);
             if (mounted) setUserRole(role);
           } else {
             if (mounted) setUserRole(null);

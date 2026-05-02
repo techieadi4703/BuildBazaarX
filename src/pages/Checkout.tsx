@@ -63,7 +63,8 @@ const Checkout = () => {
           .select("*")
           .eq("id", session.user.id)
           .single()
-          .then(({ data: profile }) => {
+          .then(({ data }) => {
+            const profile = data as any;
             if (profile) {
               setForm((f) => ({
                 ...f,
@@ -108,7 +109,9 @@ const Checkout = () => {
   };
 
   const insertOrder = async (status: string = "pending") => {
-    const { data, error } = await supabase
+    console.log("DB: Starting order insertion...");
+    
+    const insertPromise = supabase
       .from("orders")
       .insert({
         user_id: userId,
@@ -119,11 +122,19 @@ const Checkout = () => {
       })
       .select("id")
       .single();
-    if (error) throw new Error(error.message);
-    return data.id as string;
+
+    const timeoutPromise = new Promise<{ data: null, error: Error }>((_, reject) => 
+      setTimeout(() => reject(new Error("Database insertion timed out")), 10000)
+    );
+
+    const result = await Promise.race([insertPromise, timeoutPromise]) as any;
+    if (result.error) throw new Error(result.error.message);
+    console.log("DB: Order inserted successfully with ID:", result.data.id);
+    return result.data.id as string;
   };
 
   const handleCOD = async () => {
+    console.log("Processing COD order...");
     const orderId = await insertOrder("pending");
     sendConfirmationEmail(orderId);
     toast({
@@ -135,63 +146,90 @@ const Checkout = () => {
   };
 
   const handleRazorpayPayment = async () => {
+    console.log("1. Loading Razorpay script...");
     const loaded = await loadRazorpayScript();
     if (!loaded || !window.Razorpay) {
-      throw new Error("Failed to load Razorpay. Check your internet connection.");
+      throw new Error("Failed to load Razorpay SDK. Please check your connection.");
     }
 
-    const { data: rzpOrder, error: rzpErr } = await supabase.functions.invoke(
+    console.log("2. Creating Razorpay order via Edge Function...");
+    const createOrderPromise = supabase.functions.invoke(
       "create-razorpay-order",
       { body: { amount: totalPrice, currency: "INR" } }
     );
+    
+    const timeoutPromise = new Promise<{ data: null, error: Error }>((_, reject) => 
+      setTimeout(() => reject(new Error("Payment gateway request timed out")), 15000)
+    );
+
+    let result;
+    try {
+      result = await Promise.race([createOrderPromise, timeoutPromise]);
+    } catch (err) {
+      console.error("Razorpay order creation timeout/error:", err);
+      throw new Error("Payment initialization timed out. Please try again.");
+    }
+    
+    const { data: rzpOrder, error: rzpErr } = result as any;
+    console.log("3. Razorpay order result:", { rzpOrder, rzpErr });
+    
     if (rzpErr || !rzpOrder?.id) {
       throw new Error("Could not create payment order. Please try again.");
     }
 
+    console.log("4. Inserting pending order into database...");
     const dbOrderId = await insertOrder("pending");
 
+    console.log("5. Opening Razorpay modal...");
     await new Promise<void>((resolve, reject) => {
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: rzpOrder.amount,
-        currency: rzpOrder.currency,
-        name: "BuildBazaarX",
-        description: "Order Payment",
-        order_id: rzpOrder.id,
-        prefill: {
-          name: form.name,
-          email: form.email || userEmail,
-          contact: form.phone,
-        },
-        theme: { color: "#735c00" },
-        modal: {
-          ondismiss: () => reject(new Error("Payment cancelled by user")),
-        },
-        handler: async (response: {
-          razorpay_payment_id: string;
-          razorpay_order_id: string;
-          razorpay_signature: string;
-        }) => {
-          try {
-            const { error: verifyErr } = await supabase.functions.invoke("process-payment", {
-              body: {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                order_db_id: dbOrderId,
-              },
-            });
-            if (verifyErr) throw new Error("Payment verification failed.");
-            sendConfirmationEmail(dbOrderId);
-            resolve();
-          } catch (err) {
-            reject(err);
-          }
-        },
-      };
+      try {
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || import.meta.env.VITE_RAZORPAY_KEY_ID_TEST || import.meta.env.VITE_RAZORPAY_KEY_ID_LIVE,
+          amount: rzpOrder.amount,
+          currency: rzpOrder.currency,
+          name: "BuildBazaarX",
+          description: "Order Payment",
+          order_id: rzpOrder.id,
+          prefill: {
+            name: form.name,
+            email: form.email || userEmail,
+            contact: form.phone,
+          },
+          theme: { color: "#735c00" },
+          modal: {
+            ondismiss: () => {
+              console.log("Razorpay modal dismissed by user");
+              reject(new Error("Payment cancelled by user"));
+            },
+          },
+          handler: async (response: any) => {
+            console.log("6. Payment authorized, verifying signature...");
+            try {
+              const { error: verifyErr } = await supabase.functions.invoke("process-payment", {
+                body: {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  order_db_id: dbOrderId,
+                },
+              });
+              if (verifyErr) throw new Error("Payment verification failed.");
+              console.log("7. Payment verified successfully!");
+              sendConfirmationEmail(dbOrderId);
+              resolve();
+            } catch (err) {
+              console.error("Payment verification error:", err);
+              reject(err);
+            }
+          },
+        };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } catch (err) {
+        console.error("Error opening Razorpay modal:", err);
+        reject(err);
+      }
     });
   };
 

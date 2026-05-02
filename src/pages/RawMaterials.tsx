@@ -47,7 +47,8 @@ const categories = [
 ];
 
 type Product = {
-  id: number;
+  id: number | string;
+  supplier_id?: string;
   name: string | null;
   brand: string | null;
   category: string | null;
@@ -117,14 +118,18 @@ const RawMaterials = () => {
       if (error) throw error;
       return (data || []).map((dbProd: any) => ({
         id: dbProd.id,
+        supplier_id: dbProd.supplier_id,
         name: dbProd.name,
         brand: dbProd.brand || (dbProd.suppliers?.business_name),
         category: dbProd.category,
         price: dbProd.price,
+        original_price: dbProd.original_price || dbProd.price,
         discount: dbProd.discount,
         specs: dbProd.specs,
         in_stock: dbProd.in_stock,
         image_url: dbProd.images?.[0] || null,
+        rating: dbProd.rating || 0,
+        reviews: dbProd.total_reviews || 0,
       })) as Product[];
     },
     staleTime: 5 * 60 * 1000,
@@ -142,11 +147,12 @@ const RawMaterials = () => {
     e.stopPropagation();
     const added = addToCart({
       id: product.id,
+      supplier_id: product.supplier_id,
       name: product.name ?? "Raw Material",
-      brand: product.brand ?? "Premium Brand",
-      image: getProductImage(product),
+      brand: product.brand ?? "Unknown",
+      image: product.image_url ?? "",
       price: product.price ?? 0,
-      originalPrice: product.original_price ?? 0,
+      originalPrice: product.price ?? 0,
       specs: product.specs ?? "",
     });
     if (added) {
@@ -307,8 +313,18 @@ const RawMaterials = () => {
 
             {/* Catalog Grid */}
             <div className="flex-grow">
-              <AnimatePresence>
-                {filteredProducts.length === 0 ? (
+              <AnimatePresence mode="wait">
+                {isLoadingReq || isLoadingSup ? (
+                   <motion.div 
+                     initial={{ opacity: 0 }} 
+                     animate={{ opacity: 1 }} 
+                     exit={{ opacity: 0 }}
+                     className="flex flex-col items-center justify-center p-24 text-center"
+                   >
+                      <div className="w-10 h-10 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent mb-4"></div>
+                      <p className="font-body text-sm text-[#74777d]">Loading materials inventory...</p>
+                   </motion.div>
+                ) : filteredProducts.length === 0 ? (
                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center p-20 text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]">
                       <span className="font-headline text-2xl italic mb-2 text-[#1c1c1a]">No Elements Active</span>
                       <p className="font-body text-sm text-[#74777d]">Shift curation filters to uncover available components.</p>

@@ -54,7 +54,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 60 * 1000,       // 1 minute default cache
-      retry: 1,                   // only 1 retry on failure
+      retry: 2,                   // more retries for resilience
       refetchOnWindowFocus: false,
     },
   },

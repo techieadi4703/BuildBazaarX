@@ -4,6 +4,7 @@ import { useAuth } from "./AuthContext";
 
 export interface CartItem {
   id: number | string;
+  supplier_id?: string;
   name: string;
   brand: string;
   image: string;

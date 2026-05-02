@@ -25,14 +25,11 @@ export default function AdminOrders() {
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
-    queryFn: async () => {
+    queryFn: async (): Promise<any[]> => {
       // Ensure orders table exists in your DB or this will fail gracefully
       const { data, error } = await supabase
         .from('orders')
-        .select(`
-          *,
-          profiles (full_name, email, phone)
-        `)
+        .select(`*`)
         .order('created_at', { ascending: false });
       
       if (error) {
@@ -42,7 +39,7 @@ export default function AdminOrders() {
         }
         throw error;
       }
-      return data;
+      return data || [];
     }
   });
 
@@ -75,7 +72,7 @@ export default function AdminOrders() {
     // Search filter
     if (searchTerm) {
       const orderIdMatch = order.id?.toLowerCase().includes(searchTerm.toLowerCase());
-      const customerNameMatch = order.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      const customerNameMatch = order.delivery_address?.name?.toLowerCase().includes(searchTerm.toLowerCase());
       return orderIdMatch || customerNameMatch;
     }
     return true;
@@ -170,7 +167,7 @@ export default function AdminOrders() {
                       #{order.id?.substring(0, 8)}
                     </TableCell>
                     <TableCell>
-                      {order.profiles?.full_name || 'Unknown User'}
+                      {order.delivery_address?.name || 'Unknown User'}
                     </TableCell>
                     <TableCell>
                       {calculateItemsCount(order.items)} items
@@ -221,7 +218,7 @@ export default function AdminOrders() {
                                       <MapPin className="h-4 w-4 text-muted-foreground" /> Delivery Details
                                     </h4>
                                     <div className="text-sm space-y-1 p-3 border rounded-md">
-                                      <p><span className="font-medium">Name:</span> {selectedOrder.profiles?.full_name}</p>
+                                      <p><span className="font-medium">Name:</span> {selectedOrder.delivery_address?.name}</p>
                                       {selectedOrder.delivery_address && (
                                         <>
                                           <p><span className="font-medium">Address:</span> {selectedOrder.delivery_address.street}</p>
