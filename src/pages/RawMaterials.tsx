@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Plus, Minus, Zap, ArrowUpRight, SlidersHorizontal, Sliders, ChevronDown, X, Heart, Hammer, Droplets, HardHat, Grid3X3, Settings, Pipette } from "lucide-react";
+import { Search, Plus, Minus, Zap, ArrowUpRight, SlidersHorizontal, Sliders, ChevronDown, X, Heart, Hammer, Droplets, HardHat, Grid3X3, Settings, Pipette, BadgeCheck } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Layout } from "@/components/layout/Layout";
 import { useToast } from "@/hooks/use-toast";
@@ -330,35 +330,42 @@ const RawMaterials = () => {
                       <p className="font-body text-sm text-[#74777d]">Shift curation filters to uncover available components.</p>
                    </motion.div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-y-16 gap-x-8">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 px-2 md:px-0">
                     {filteredProducts.map((product) => (
                       <motion.article 
                         key={product.id} 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="group flex flex-col h-full"
+                        className="group flex flex-col h-full bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-sm border border-[#e5e2df] hover:shadow-md transition-all relative"
                       >
                         {/* Image Box */}
-                        <div className="relative aspect-[4/5] mb-6 overflow-hidden bg-[#f6f3f0] rounded-sm cursor-pointer border border-transparent group-hover:border-[#e5e2df] transition-all">
+                        <div className="relative aspect-[4/5] overflow-hidden bg-[#f6f3f0]">
                           <img 
                             src={getProductImage(product)} 
                             alt={product.brand || "Material"} 
-                            className="w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105 p-4" 
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                           />
-                          <div className="absolute top-4 left-4 z-10">
-                            <span className="px-3 py-1 bg-white border border-[#eae8e5] text-[#1c1c1a] text-[9px] font-body font-bold uppercase tracking-widest rounded-full shadow-sm">
-                              {product.in_stock ? 'In Stock' : 'Pre-Order'}
+                          <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
+                            <span className="bg-white/95 backdrop-blur-md px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm border border-[#e5e2df] text-[#1c1c1a]">
+                              <BadgeCheck className={`w-3 h-3 ${product.in_stock ? 'text-[#735c00]' : 'text-orange-500'} shrink-0`} />
+                              <span>{product.in_stock ? 'Verified' : 'Limited'}</span>
                             </span>
                           </div>
+                          <div className="absolute bottom-2 left-2 md:bottom-3 md:left-3 z-10">
+                            <span className="bg-[#735c00] text-white px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded-sm shadow-md">
+                              {product.category?.toUpperCase() || 'MATERIAL'}
+                            </span>
+                          </div>
+
                           {/* Hover FAB - Add to Cart / Quantity Controller */}
-                          <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300 z-20">
+                          <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 z-20">
                             {(() => {
                               const cartItem = cartItems.find(i => i.id === product.id);
                               if (cartItem) {
                                 return (
                                   <motion.div 
                                     layout
-                                    className="bg-[#1c1c1a] text-white rounded-full flex items-center gap-4 p-1 shadow-lg border border-white/10"
+                                    className="bg-[#1c1c1a] text-white rounded-full flex items-center gap-1 py-[2px] shadow-lg border border-white/10"
                                   >
                                     <button 
                                       onClick={(e) => {
@@ -366,20 +373,20 @@ const RawMaterials = () => {
                                         e.stopPropagation();
                                         updateQuantity(product.id, cartItem.quantity - 1);
                                       }}
-                                      className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
+                                      className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
                                     >
-                                      <Minus className="w-4 h-4" />
+                                      <Minus className="w-3 h-3" />
                                     </button>
-                                    <span className="text-[10px] font-black uppercase tracking-widest">{cartItem.quantity}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest min-w-[8px] text-center">{cartItem.quantity}</span>
                                     <button 
                                       onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
                                         updateQuantity(product.id, cartItem.quantity + 1);
                                       }}
-                                      className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
+                                      className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
                                     >
-                                      <Plus className="w-4 h-4" />
+                                      <Plus className="w-3 h-3" />
                                     </button>
                                   </motion.div>
                                 );
@@ -387,36 +394,26 @@ const RawMaterials = () => {
                               return (
                                 <button 
                                   onClick={(e) => handleAddToCart(e, product)}
-                                  className="w-12 h-12 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
+                                  className="w-8 h-8 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
                                 >
-                                  <Plus className="w-5 h-5" />
+                                  <Plus className="w-4 h-4" />
                                 </button>
                               );
                             })()}
                           </div>
                         </div>
 
-                        {/* Title & Price */}
-                        <div className="flex justify-between items-start mb-2 gap-4">
-                          <h3 className="text-xl font-headline font-semibold leading-tight text-[#1c1c1a]">{product.name}</h3>
-                          <span className="font-body font-medium text-[#1c1c1a] text-lg whitespace-nowrap pt-1">
-                            ₹{product.price?.toLocaleString() || "0"} <span className="text-[10px] text-[#74777d] font-normal">/unit</span>
-                          </span>
-                        </div>
-
-                        {/* Specs */}
-                        <p className="text-sm font-body text-[#44474c] mb-6 line-clamp-2 leading-relaxed flex-grow">
-                          {product.specs || "Premium structural material sourced from trusted aggregators."}
-                        </p>
-
-                        {/* Footer tags */}
-                        <div className="flex items-center gap-4 mt-auto">
-                          <span className="flex items-center gap-1 text-[9px] font-body font-bold uppercase tracking-tighter text-[#735c00] bg-[#f5e1ae]/30 px-2 py-1 rounded">
-                            <Zap className="w-3 h-3 fill-current" /> Priority Match
-                          </span>
-                          <span className="text-[10px] font-body uppercase tracking-tighter text-[#74777d] italic font-medium">
-                            {product.brand}
-                          </span>
+                        {/* Content Area */}
+                        <div className="p-3 md:p-4 flex flex-col flex-grow">
+                          <h3 className="text-sm md:text-base font-headline font-bold leading-tight text-[#1c1c1a] mb-1 line-clamp-1">{product.name}</h3>
+                          <div className="flex justify-between items-end mt-auto pt-2">
+                            <span className="text-[10px] text-[#74777d] font-body lowercase line-clamp-1 mr-2">
+                              {product.category?.replace("-", " ")}
+                            </span>
+                            <span className="font-body font-bold text-[#1c1c1a] text-sm whitespace-nowrap">
+                              ₹{product.price?.toLocaleString() || "0"}
+                            </span>
+                          </div>
                         </div>
                       </motion.article>
                     ))}
