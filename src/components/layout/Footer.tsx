@@ -155,9 +155,6 @@ export const Footer = () => {
                 <Link to="/designer/auth" className="text-[10px] uppercase font-black tracking-widest text-white/40 hover:text-[#735c00] transition-colors">
                   Join Registry: Designer
                 </Link>
-                <Link to="/supplier/auth" className="text-[10px] uppercase font-black tracking-widest text-white/40 hover:text-[#735c00] transition-colors">
-                  Join Registry: Supplier
-                </Link>
               </div>
             </div>
           </motion.div>

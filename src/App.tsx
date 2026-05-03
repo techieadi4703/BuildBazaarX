@@ -31,9 +31,6 @@ const ProfessionalSetup = React.lazy(() => import("./pages/ProfessionalSetup"));
 const DesignerAuth = React.lazy(() => import("./pages/DesignerAuth"));
 const DesignerDashboard = React.lazy(() => import("./pages/DesignerDashboard"));
 const DesignerSetup = React.lazy(() => import("./pages/DesignerSetup"));
-const SupplierAuth = React.lazy(() => import("./pages/SupplierAuth"));
-const SupplierDashboard = React.lazy(() => import("./pages/SupplierDashboard"));
-const SupplierSetup = React.lazy(() => import("./pages/SupplierSetup"));
 
 const AdminDashboard = React.lazy(() => import("./pages/admin/Dashboard"));
 const AdminUsers = React.lazy(() => import("./pages/admin/Users"));
@@ -104,10 +101,7 @@ const AnimatedRoutes = () => {
         <Route path="/designer/auth" element={<PageTransition><DesignerAuth /></PageTransition>} />
         <Route path="/designer/dashboard" element={<PageTransition><DesignerDashboard /></PageTransition>} />
         <Route path="/designer/setup" element={<PageTransition><DesignerSetup /></PageTransition>} />
-        <Route path="/supplier/auth" element={<PageTransition><SupplierAuth /></PageTransition>} />
-        <Route path="/supplier/dashboard" element={<PageTransition><SupplierDashboard /></PageTransition>} />
-        <Route path="/supplier/setup" element={<PageTransition><SupplierSetup /></PageTransition>} />
-        
+
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />

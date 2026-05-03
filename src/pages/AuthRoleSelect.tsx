@@ -31,13 +31,7 @@ export const AuthRoleSelect = () => {
       description: "Secure contracts for execution and structural implementation.",
       path: "/professional/auth",
     },
-    {
-      id: "supplier",
-      icon: Package,
-      title: "Logistics & Supply Chain",
-      description: "Fulfill premium material requisitions directly to verified sites.",
-      path: "/supplier/auth",
-    },
+
   ];
 
   return (
