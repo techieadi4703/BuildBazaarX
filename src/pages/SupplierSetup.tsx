@@ -35,59 +35,76 @@ export default function SupplierSetup() {
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        navigate("/supplier/auth");
-        return;
-      }
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
+          navigate("/supplier/auth");
+          return;
+        }
 
-      setUser(session.user);
+        setUser(session.user);
 
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", session.user.id)
-        .maybeSingle();
+        const { data: profileData, error: roleError } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", session.user.id)
+          .maybeSingle();
 
-      if (profileData && profileData.role !== "supplier") {
-        navigate("/");
-        return;
-      }
-      
-      const { data: profileInfo } = await supabase
-        .from("profiles")
-        .select("full_name, phone")
-        .eq("id", session.user.id)
-        .maybeSingle();
+        if (roleError) throw roleError;
 
-      if (profileInfo) {
-        // Pull business_name from auth metadata as it's not in the generic profile table
-        const metadata = (session.user as any).user_metadata;
-        const businessName = metadata?.business_name || "";
+        if (profileData && profileData.role !== "supplier") {
+          navigate("/");
+          return;
+        }
+        
+        const { data: profileInfo, error: infoError } = await supabase
+          .from("profiles")
+          .select("full_name, phone")
+          .eq("id", session.user.id)
+          .maybeSingle();
 
-        setSetupForm(prev => ({
-          ...prev,
-          ownerName: profileInfo.full_name || prev.ownerName,
-          phone: profileInfo.phone || prev.phone,
-          city: (profileInfo as any).city || prev.city,
-          businessName: businessName || prev.businessName
-        }));
-      }
+        if (infoError) throw infoError;
 
-      const { data } = await supabase
-        .from("suppliers")
-        .select("id")
-        .eq("id", session.user.id)
-        .maybeSingle();
+        if (profileInfo) {
+          const metadata = (session.user as any).user_metadata;
+          const businessName = metadata?.business_name || "";
 
-      if (data) {
-        navigate("/supplier/dashboard");
-      } else {
-        setIsPageLoading(false);
+          setSetupForm(prev => ({
+            ...prev,
+            ownerName: profileInfo.full_name || prev.ownerName,
+            phone: profileInfo.phone || prev.phone,
+            city: (profileInfo as any).city || prev.city,
+            businessName: businessName || prev.businessName
+          }));
+        }
+
+        const { data, error: supplierError } = await supabase
+          .from("suppliers")
+          .select("id")
+          .eq("id", session.user.id)
+          .maybeSingle();
+
+        if (supplierError) throw supplierError;
+
+        if (data) {
+          navigate("/supplier/dashboard");
+        } else {
+          setIsPageLoading(false);
+        }
+      } catch (err: any) {
+        if (err.name !== 'AbortError' && !err.message?.includes('aborted')) {
+          console.error("Setup page check error:", err);
+          toast({
+            variant: "destructive",
+            title: "Authentication Error",
+            description: "Could not verify business credentials. Please try logging in again.",
+          });
+          navigate("/supplier/auth");
+        }
       }
     };
     checkUser();
-  }, [navigate]);
+  }, [navigate, toast]);
 
   const handleSetup = async (e: React.FormEvent) => {
     e.preventDefault();

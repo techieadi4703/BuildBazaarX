@@ -36,32 +36,33 @@ export default function ProfessionalAuth() {
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) return;
-
-      window.setTimeout(() => {
-        resolveProfessionalDestination(session.user.id)
-          .then((path) => navigate(path))
-          .catch((error) => {
-            console.error("Professional auth redirect error:", error);
-            navigate("/professional/setup");
-          });
-      }, 500);
-    });
-    return () => subscription.unsubscribe();
+    const checkExistingSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        try {
+          const path = await resolveProfessionalDestination(session.user.id);
+          navigate(path);
+        } catch (error) {
+          console.error("Existing session check error:", error);
+          navigate("/professional/setup");
+        }
+      }
+    };
+    checkExistingSession();
   }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
+    
     setIsLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        const sessionData = await supabase.auth.getSession();
-        const userId = sessionData.data.session?.user.id;
-        if (userId) {
-          const nextPath = await resolveProfessionalDestination(userId);
+        
+        if (authData.user) {
+          const nextPath = await resolveProfessionalDestination(authData.user.id);
           navigate(nextPath);
         } else {
           navigate("/professional/dashboard");
@@ -94,7 +95,18 @@ export default function ProfessionalAuth() {
         }
       }
     } catch (error: any) {
-      toast({ variant: "destructive", title: "Access Denied", description: error.message });
+      // Ignore errors caused by component unmounting/request abortion during navigation
+      if (error.name === 'AbortError' || error.message?.includes('aborted')) {
+        console.log("Auth request aborted during navigation - ignoring");
+        return;
+      }
+
+      console.error("Auth error:", error);
+      toast({ 
+        variant: "destructive", 
+        title: "Access Denied", 
+        description: error.message || "Authentication failed. Please check your credentials." 
+      });
     } finally {
       setIsLoading(false);
     }

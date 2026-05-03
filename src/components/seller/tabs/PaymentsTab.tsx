@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 interface PaymentsTabProps {
   orders: any[];
   settings?: {
+    supplierId?: string;
     commissionRate: number;
     payoutStatuses: string[];
   };
@@ -20,10 +21,15 @@ export function PaymentsTab({ orders, settings }: PaymentsTabProps) {
   
   const commissionRate = settings?.commissionRate ?? 0.10;
   const payoutStatuses = settings?.payoutStatuses ?? ['paid', 'pending', 'processing', 'shipped'];
+  const supplierId = settings?.supplierId;
 
   const totalEarned = orders.reduce((sum, order) => {
     if (order.status === 'delivered') {
-      const netAmount = (order.total || 0) * (1 - commissionRate);
+      const supplierItems = Array.isArray(order.items) 
+        ? order.items.filter((item: any) => item.supplier_id === supplierId)
+        : [];
+      const supplierGross = supplierItems.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
+      const netAmount = supplierGross * (1 - commissionRate);
       return sum + netAmount;
     }
     return sum;
@@ -31,7 +37,11 @@ export function PaymentsTab({ orders, settings }: PaymentsTabProps) {
 
   const pendingPayout = orders.reduce((sum, order) => {
     if (payoutStatuses.includes(order.status)) {
-      const netAmount = (order.total || 0) * (1 - commissionRate);
+      const supplierItems = Array.isArray(order.items) 
+        ? order.items.filter((item: any) => item.supplier_id === supplierId)
+        : [];
+      const supplierGross = supplierItems.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
+      const netAmount = supplierGross * (1 - commissionRate);
       return sum + netAmount;
     }
     return sum;
@@ -47,26 +57,34 @@ export function PaymentsTab({ orders, settings }: PaymentsTabProps) {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Earnings Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[#735c00] text-white p-6 rounded-xl shadow-md">
-          <div className="flex items-center gap-2 text-white/80 mb-2">
-            <IndianRupee className="w-5 h-5" />
-            <h3 className="font-medium">Total Earned</h3>
+        <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-bold uppercase tracking-wider text-emerald-800/60">Total Earned</span>
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm text-emerald-600">
+              <IndianRupee className="w-5 h-5" />
+            </div>
           </div>
-          <p className="text-4xl font-headline font-bold">₹{totalEarned.toLocaleString()}</p>
+          <p className="text-4xl font-headline font-bold text-emerald-600">₹{totalEarned.toLocaleString()}</p>
         </div>
-        <div className="bg-white p-6 rounded-xl border border-[#e5e2df] shadow-sm">
-          <div className="flex items-center gap-2 text-[#74777d] mb-2">
-            <TrendingUp className="w-5 h-5" />
-            <h3 className="font-medium">This Month</h3>
+        
+        <div className="bg-blue-50 border border-blue-100 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-bold uppercase tracking-wider text-blue-800/60">This Month</span>
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm text-blue-600">
+              <TrendingUp className="w-5 h-5" />
+            </div>
           </div>
-          <p className="text-4xl font-headline font-bold text-[#1c1c1a]">₹0</p>
+          <p className="text-4xl font-headline font-bold text-blue-600">₹0</p>
         </div>
-        <div className="bg-white p-6 rounded-xl border border-[#e5e2df] shadow-sm">
-          <div className="flex items-center gap-2 text-[#74777d] mb-2">
-            <AlertCircle className="w-5 h-5 text-yellow-600" />
-            <h3 className="font-medium">Pending Payout</h3>
+
+        <div className="bg-amber-50 border border-amber-100 p-6 rounded-xl shadow-sm transition-all hover:shadow-md">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-bold uppercase tracking-wider text-amber-800/60">Pending Payout</span>
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm text-amber-600">
+              <AlertCircle className="w-5 h-5" />
+            </div>
           </div>
-          <p className="text-4xl font-headline font-bold text-[#1c1c1a]">₹{pendingPayout.toLocaleString()}</p>
+          <p className="text-4xl font-headline font-bold text-amber-600">₹{pendingPayout.toLocaleString()}</p>
         </div>
       </div>
 

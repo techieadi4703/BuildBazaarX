@@ -110,6 +110,7 @@ const Checkout = () => {
 
   const insertOrder = async (status: string = "pending") => {
     console.log("DB: Starting order insertion...");
+    console.log("DB: Target Supplier ID:", items[0]?.supplier_id);
     
     const insertPromise = supabase
       .from("orders")

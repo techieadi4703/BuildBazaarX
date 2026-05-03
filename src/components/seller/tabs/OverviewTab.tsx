@@ -11,6 +11,7 @@ interface OverviewTabProps {
   inquiries: any[];
   setActiveTab: (tab: string) => void;
   settings?: {
+    supplierId?: string;
     commissionRate: number;
     payoutStatuses: string[];
   };
@@ -26,7 +27,12 @@ export function OverviewTab({ supplierData, products, orders, inquiries, setActi
   
   const totalGross = orders.reduce((sum, order) => {
     if (order.status === 'cancelled') return sum;
-    return sum + (order.total || 0);
+    // Only sum items belonging to this supplier
+    const supplierItems = Array.isArray(order.items) 
+      ? order.items.filter((item: any) => item.supplier_id === settings?.supplierId)
+      : [];
+    const supplierTotal = supplierItems.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
+    return sum + supplierTotal;
   }, 0);
 
   const totalFees = totalGross * commissionRate;
@@ -57,21 +63,49 @@ export function OverviewTab({ supplierData, products, orders, inquiries, setActi
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Gross Sales', value: `₹${totalGross.toLocaleString()}`, icon: IndianRupee, color: 'text-blue-600' },
-          { label: 'Commission', value: `-₹${totalFees.toLocaleString()}`, icon: ArrowRight, color: 'text-red-600' },
-          { label: 'Net Earnings', value: `₹${totalRevenue.toLocaleString()}`, icon: IndianRupee, color: 'text-green-600' },
-          { label: 'Active Listings', value: activeListings, icon: Package, color: 'text-[#735c00]' },
+          { 
+            label: 'Gross Sales', 
+            value: `₹${totalGross.toLocaleString()}`, 
+            icon: IndianRupee, 
+            color: 'text-blue-600', 
+            bgColor: 'bg-blue-50',
+            borderColor: 'border-blue-100'
+          },
+          { 
+            label: 'Commission', 
+            value: `-₹${totalFees.toLocaleString()}`, 
+            icon: ArrowRight, 
+            color: 'text-red-600', 
+            bgColor: 'bg-red-50',
+            borderColor: 'border-red-100'
+          },
+          { 
+            label: 'Net Earnings', 
+            value: `₹${totalRevenue.toLocaleString()}`, 
+            icon: IndianRupee, 
+            color: 'text-emerald-600', 
+            bgColor: 'bg-emerald-50',
+            borderColor: 'border-emerald-100'
+          },
+          { 
+            label: 'Active Listings', 
+            value: activeListings, 
+            icon: Package, 
+            color: 'text-[#735c00]', 
+            bgColor: 'bg-[#fcf9f6]',
+            borderColor: 'border-[#e5e2df]'
+          },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-6 border border-[#e5e2df] rounded-lg shadow-sm">
+          <div key={i} className={`p-6 border ${stat.borderColor} rounded-xl shadow-sm ${stat.bgColor} transition-all hover:shadow-md group`}>
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-[#74777d]">{stat.label}</span>
-              <div className={`w-8 h-8 rounded-full bg-[#fcf9f6] flex items-center justify-center ${stat.color}`}>
-                <stat.icon className="w-4 h-4" />
+              <span className="text-sm font-bold uppercase tracking-wider text-[#74777d]">{stat.label}</span>
+              <div className={`w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm ${stat.color} group-hover:scale-110 transition-transform`}>
+                <stat.icon className="w-5 h-5" />
               </div>
             </div>
-            <h3 className="text-2xl font-headline font-semibold text-[#1c1c1a]">{stat.value}</h3>
+            <h3 className={`text-3xl font-headline font-bold ${stat.color}`}>{stat.value}</h3>
           </div>
         ))}
       </div>
@@ -101,9 +135,28 @@ export function OverviewTab({ supplierData, products, orders, inquiries, setActi
                     {orders.slice(0, 5).map((order) => (
                       <TableRow key={order.id}>
                         <TableCell className="font-medium">#{order.id.substring(0, 8)}</TableCell>
-                        <TableCell>₹{((order.total || 0) * (1 - commissionRate)).toLocaleString()}</TableCell>
                         <TableCell>
-                          <Badge variant="secondary" className={`capitalize ${order.status === 'pending' || order.status === 'paid' ? 'bg-yellow-100 text-yellow-800' : ''}`}>
+                          ₹{(() => {
+                            const supplierItems = Array.isArray(order.items) 
+                              ? order.items.filter((item: any) => item.supplier_id === settings?.supplierId)
+                              : [];
+                            const supplierGross = supplierItems.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
+                            return (supplierGross * (1 - commissionRate)).toLocaleString();
+                          })()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge 
+                            variant="secondary" 
+                            className={`capitalize px-3 py-1 rounded-full border ${
+                              order.status === 'paid' || order.status === 'delivered' 
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
+                                : order.status === 'pending' || order.status === 'processing'
+                                ? 'bg-amber-50 text-amber-700 border-amber-100'
+                                : order.status === 'cancelled'
+                                ? 'bg-rose-50 text-rose-700 border-rose-100'
+                                : 'bg-blue-50 text-blue-700 border-blue-100'
+                            }`}
+                          >
                             {order.status}
                           </Badge>
                         </TableCell>

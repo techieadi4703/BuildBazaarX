@@ -13,6 +13,7 @@ interface OrdersTabProps {
   isLoading: boolean;
   updateOrderStatus: (id: string, status: string) => void;
   settings?: {
+    supplierId?: string;
     commissionRate: number;
     payoutStatuses: string[];
   };
@@ -50,7 +51,10 @@ export function OrdersTab({ orders, isLoading, updateOrderStatus, settings }: Or
   const calculateItemsCount = (items: any) => {
     if (!items) return 0;
     if (Array.isArray(items)) {
-      return items.reduce((acc, item) => acc + (item.quantity || 1), 0);
+      // Filter by supplier
+      return items
+        .filter((item: any) => item.supplier_id === settings?.supplierId)
+        .reduce((acc, item) => acc + (item.quantity || 1), 0);
     }
     return 0;
   };
@@ -128,8 +132,23 @@ export function OrdersTab({ orders, isLoading, updateOrderStatus, settings }: Or
                   </TableCell>
                   <TableCell>{order.delivery_address?.name || 'Unknown User'}</TableCell>
                   <TableCell>{calculateItemsCount(order.items)} items</TableCell>
-                  <TableCell className="font-semibold text-[#1c1c1a]">₹{order.total?.toLocaleString() || 0}</TableCell>
-                  <TableCell className="font-bold text-green-700">₹{((order.total || 0) * (1 - commissionRate)).toLocaleString()}</TableCell>
+                  <TableCell className="font-semibold text-[#1c1c1a]">
+                    ₹{(() => {
+                      const supplierItems = Array.isArray(order.items) 
+                        ? order.items.filter((item: any) => item.supplier_id === settings?.supplierId)
+                        : [];
+                      return supplierItems.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0).toLocaleString();
+                    })()}
+                  </TableCell>
+                  <TableCell className="font-bold text-green-700">
+                    ₹{(() => {
+                      const supplierItems = Array.isArray(order.items) 
+                        ? order.items.filter((item: any) => item.supplier_id === settings?.supplierId)
+                        : [];
+                      const supplierGross = supplierItems.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
+                      return (supplierGross * (1 - commissionRate)).toLocaleString();
+                    })()}
+                  </TableCell>
                   <TableCell>
                     <Badge variant="secondary" className={`capitalize ${getStatusColor(order.status)}`}>
                       {order.status || 'pending'}
@@ -207,6 +226,15 @@ export function OrdersTab({ orders, isLoading, updateOrderStatus, settings }: Or
                                     >
                                       Shipped
                                     </Button>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      disabled={getStepIndex(selectedOrder.status) >= 3}
+                                      onClick={() => updateOrderStatus(selectedOrder.id, 'delivered')}
+                                      className={selectedOrder.status === 'delivered' ? 'border-[#735c00] text-[#735c00] bg-[#fffdfa]' : ''}
+                                    >
+                                      Delivered
+                                    </Button>
                                   </div>
                                 </div>
                               )}
@@ -237,7 +265,9 @@ export function OrdersTab({ orders, isLoading, updateOrderStatus, settings }: Or
                                 <Package className="h-4 w-4 text-[#735c00]" /> Ordered Items
                               </h4>
                               <div className="space-y-4">
-                                {Array.isArray(selectedOrder.items) && selectedOrder.items.map((item: any, idx: number) => (
+                                {Array.isArray(selectedOrder.items) && selectedOrder.items
+                                  .filter((item: any) => item.supplier_id === settings?.supplierId)
+                                  .map((item: any, idx: number) => (
                                   <div key={idx} className="flex items-start gap-4 pb-4 border-b border-[#fcf9f6] last:border-0 last:pb-0">
                                     {item.image ? (
                                       <img src={item.image} alt={item.name} className="w-16 h-16 rounded-md object-cover border border-[#e5e2df]" />
@@ -257,18 +287,31 @@ export function OrdersTab({ orders, isLoading, updateOrderStatus, settings }: Or
                                 ))}
                                 
                                 <div className="space-y-2 pt-4 border-t border-[#e5e2df]">
-                                  <div className="flex justify-between items-center">
-                                    <span className="font-medium text-sm text-[#74777d]">Gross Total</span>
-                                    <span className="font-medium text-sm text-[#1c1c1a]">₹{selectedOrder.total?.toLocaleString()}</span>
-                                  </div>
-                                  <div className="flex justify-between items-center">
-                                    <span className="font-medium text-sm text-red-600">Commission ({commissionRate * 100}%)</span>
-                                    <span className="font-medium text-sm text-red-600">-₹{(selectedOrder.total * commissionRate).toLocaleString()}</span>
-                                  </div>
-                                  <div className="flex justify-between items-center pt-2 mt-2 border-t border-[#f0efee]">
-                                    <span className="font-bold text-[#1c1c1a]">Your Net Payout</span>
-                                    <span className="font-headline font-bold text-xl text-[#735c00]">₹{(selectedOrder.total * (1 - commissionRate)).toLocaleString()}</span>
-                                  </div>
+                                  {(() => {
+                                    const supplierItems = Array.isArray(selectedOrder.items) 
+                                      ? selectedOrder.items.filter((item: any) => item.supplier_id === settings?.supplierId)
+                                      : [];
+                                    const supplierGross = supplierItems.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
+                                    const supplierFees = supplierGross * commissionRate;
+                                    const supplierNet = supplierGross - supplierFees;
+
+                                    return (
+                                      <>
+                                        <div className="flex justify-between items-center">
+                                          <span className="font-medium text-sm text-[#74777d]">Gross Total</span>
+                                          <span className="font-medium text-sm text-[#1c1c1a]">₹{supplierGross.toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                          <span className="font-medium text-sm text-red-600">Commission ({commissionRate * 100}%)</span>
+                                          <span className="font-medium text-sm text-red-600">-₹{supplierFees.toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center pt-2 mt-2 border-t border-[#f0efee]">
+                                          <span className="font-bold text-[#1c1c1a]">Your Net Payout</span>
+                                          <span className="font-headline font-bold text-xl text-[#735c00]">₹{supplierNet.toLocaleString()}</span>
+                                        </div>
+                                      </>
+                                    );
+                                  })()}
                                 </div>
                               </div>
                             </div>
