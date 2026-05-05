@@ -4,36 +4,114 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Plus, Minus, Zap, ArrowUpRight, SlidersHorizontal, Sliders, ChevronDown, X, Heart, Hammer, Droplets, HardHat, Grid3X3, Settings, Pipette, BadgeCheck } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import {
+  Search,
+  Plus,
+  Minus,
+  Zap,
+  ArrowUpRight,
+  SlidersHorizontal,
+  Sliders,
+  ChevronDown,
+  X,
+  Heart,
+  Hammer,
+  Droplets,
+  HardHat,
+  Grid3X3,
+  Settings,
+  Pipette,
+  BadgeCheck,
+} from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { Layout } from "@/components/layout/Layout";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Fallback images
-import plywoodImg from "@/assets/products/plywood.jpg";
-import paintImg from "@/assets/products/paint.jpg";
-import tilesImg from "@/assets/products/tiles.jpg";
-import ledLightImg from "@/assets/products/led-light.jpg";
+import woodPlanksImg from "@/assets/products/wood_planks.png";
+import luxuryPaintImg from "@/assets/products/luxury_paint.png";
+import italianMarbleImg from "@/assets/products/italian_marble.png";
+import smartSwitchImg from "@/assets/products/smart_switch.png";
+
+// E-commerce product shots
+import plywoodBoardImg from "@/assets/products/plywood_board.png";
+import cementBagImg from "@/assets/products/cement_bag.png";
+import paintBucketImg from "@/assets/products/paint_bucket.png";
+import vitrifiedTileImg from "@/assets/products/vitrified_tile.png";
+import wireCoilImg from "@/assets/products/wire_coil.png";
+import steelRebarImg from "@/assets/products/steel_rebar.png";
+
+import ultratechCementImg from "@/assets/products/ultratech_cements.png";
+import birlaCementImg from "@/assets/products/birla_cement.png";
+import asianPaintsImg from "@/assets/products/asian_paints.png";
+import duluxPaintImg from "@/assets/products/dulux_paints.png";
+
+import glassFittingImg from "@/assets/products/glass_fitting.png";
+import cabinetHingeImg from "@/assets/products/hafles_hinges.png";
+import drawerSlideImg from "@/assets/products/drawer_slide.png";
+
+// Placeholders for the images you will upload:
+import astralPipeImg from "@/assets/products/astral_pipes.png";
+import finolexPipeImg from "@/assets/products/finolex_pipes.png";
+import indigoPaintImg from "@/assets/products/indigo_exterior_wall_primer.png";
+import bergerPaintImg from "@/assets/products/berger_weathercoat_paint.png";
+import duroPlywoodImg from "@/assets/products/duro_pumaply.png";
+import virgoLaminateImg from "@/assets/products/virgo_ply.png";
+import jswCementImg from "@/assets/products/jsw_cement.jpeg";
+import dalmiaCementImg from "@/assets/products/dalmia_cement.png";
+import godrejLockImg from "@/assets/products/godrej_digital_locker.png";
+import doorHandleImg from "@/assets/products/glass_fitting.png";
+import dorsetLockImg from "@/assets/products/cylinder_lock.png";
+import jaquarFaucetImg from "@/assets/products/jaguar_faucet.png";
+import rrKabelImg from "@/assets/products/rr_kabel.png";
+import groundLightsImg from "@/assets/products/inground_light.png";
+import polycabWireImg from "@/assets/products/polycab_wires.png";
+import anchorSwitchImg from "@/assets/products/anchor_switch-sockets.png";
+import ozoneFittingImg from "@/assets/products/ozone_wall-to-glass-connector.png";
+
+// Adding all other uploaded images
+import actionTesaImg from "@/assets/products/action_tesla_ply.png";
+import ambujaCementImg from "@/assets/products/ambuja_cement.png";
+import legrandSwitchImg from "@/assets/products/legrand_advance-switches.png";
+import nerolacPaintImg from "@/assets/products/nerolac_beauty_paint.png";
+import kingkonreeTileImg from "@/assets/products/kingkonree_tiles.png";
+import vinylFlooringImg from "@/assets/products/vinyl_flooring_sheet.png";
+import indigoPlatinumImg from "@/assets/products/indigo_platinum_paints.png";
 import showerImg from "@/assets/products/shower.jpg";
-import cementImg from "@/assets/products/cement.jpg";
-import laminateImg from "@/assets/products/laminate.jpg";
-import switchesImg from "@/assets/products/switches.jpg";
+import ledLightImg from "@/assets/products/led-light.jpg";
+
+import genericPaintImg from "@/assets/products/paint.jpg";
+import genericSwitchesImg from "@/assets/products/switches.jpg";
+import genericLaminateImg from "@/assets/products/laminate.jpg";
+import genericCementImg from "@/assets/products/cement.jpg";
+import genericTilesImg from "@/assets/products/tiles.jpg";
+import genericPlywoodImg from "@/assets/products/plywood.jpg";
 
 const categoryFallbackImages: Record<string, string> = {
-  wood: plywoodImg,
-  paints: paintImg,
-  tiles: tilesImg,
-  electrical: ledLightImg,
-  plumbing: showerImg,
-  construction: cementImg,
-  hardware: laminateImg,
+  wood: plywoodBoardImg,
+  paints: paintBucketImg,
+  tiles: vitrifiedTileImg,
+  electrical: wireCoilImg,
+  plumbing: italianMarbleImg,
+  construction: cementBagImg, 
+  hardware: smartSwitchImg,
 };
 
-function getProductImage(product: { image_url: string | null; category: string | null }): string {
+function getProductImage(product: {
+  image_url: string | null;
+  category: string | null;
+}): string {
   if (product.image_url) return product.image_url;
-  if (product.category && categoryFallbackImages[product.category]) return categoryFallbackImages[product.category];
-  return plywoodImg;
+  if (product.category && categoryFallbackImages[product.category])
+    return categoryFallbackImages[product.category];
+  return woodPlanksImg;
 }
 
 const categories = [
@@ -62,17 +140,68 @@ type Product = {
   image_url: string | null;
 };
 
+const premiumProducts: Product[] = [
+  { id: "new1", name: "Premium Commercial Plywood 18mm", brand: "CenturyPly", category: "wood", price: 2100, original_price: 2400, discount: 12, rating: 4.8, reviews: 312, specs: "18mm, Commercial Grade", in_stock: true, image_url: plywoodBoardImg },
+  { id: "new2", name: "UltraTech Super Cement 50kg", brand: "UltraTech", category: "construction", price: 420, original_price: 450, discount: 6, rating: 4.9, reviews: 856, specs: "50kg, Premium Grade", in_stock: true, image_url: ultratechCementImg },
+  { id: "new3", name: "Birla Shakti Cement 50kg", brand: "Birla", category: "construction", price: 410, original_price: 440, discount: 7, rating: 4.7, reviews: 345, specs: "50kg, Portland Pozzolana", in_stock: true, image_url: birlaCementImg },
+  { id: "new4", name: "Tractor Emulsion Paint 20L", brand: "Asian Paints", category: "paints", price: 3200, original_price: 3600, discount: 11, rating: 4.8, reviews: 654, specs: "20L, Smooth Finish", in_stock: true, image_url: asianPaintsImg },
+  { id: "new5", name: "Luxury Interior Emulsion 20L", brand: "Dulux", category: "paints", price: 3400, original_price: 3800, discount: 10, rating: 4.6, reviews: 432, specs: "20L, Matte Finish", in_stock: true, image_url: duluxPaintImg },
+  { id: "new6", name: "Polycab FR Wire 1.5 sq mm", brand: "Polycab", category: "electrical", price: 1450, original_price: 1600, discount: 9, rating: 4.8, reviews: 567, specs: "90m Coil, FR Grade Red", in_stock: true, image_url: polycabWireImg },
+  { id: "new7", name: "Anchor 6A Switch & Socket", brand: "Anchor", category: "electrical", price: 120, original_price: 150, discount: 20, rating: 4.5, reviews: 890, specs: "White, Polycarbonate", in_stock: true, image_url: anchorSwitchImg },
+  { id: "new8", name: "Stainless Glass Patch Fitting", brand: "Ozone", category: "hardware", price: 1250, original_price: 1400, discount: 10, rating: 4.7, reviews: 210, specs: "SS 304, Frameless Doors", in_stock: true, image_url: ozoneFittingImg },
+  { id: "new9", name: "Hafele Concealed Hinge", brand: "Hafele", category: "hardware", price: 250, original_price: 300, discount: 16, rating: 4.9, reviews: 540, specs: "Soft Close, Nickel Plated", in_stock: true, image_url: cabinetHingeImg },
+  { id: "new10", name: "Telescopic Drawer Slides 20\"", brand: "Godrej", category: "hardware", price: 450, original_price: 520, discount: 13, rating: 4.6, reviews: 320, specs: "Pair, Heavy Duty Steel", in_stock: true, image_url: drawerSlideImg },
+  { id: "new11", name: "Astral Aquarius uPVC Pipe", brand: "Astral", category: "plumbing", price: 850, original_price: 950, discount: 10, rating: 4.8, reviews: 410, specs: "3m length, Lead-Free", in_stock: true, image_url: astralPipeImg },
+  { id: "new12", name: "Finolex PVC Pipe", brand: "Finolex", category: "plumbing", price: 780, original_price: 880, discount: 11, rating: 4.7, reviews: 380, specs: "3m length, High Pressure", in_stock: true, image_url: finolexPipeImg },
+  { id: "new13", name: "Polished Vitrified Floor Tile", brand: "Kajaria", category: "tiles", price: 850, original_price: 950, discount: 10, rating: 4.6, reviews: 234, specs: "600x600mm, Box of 4", in_stock: true, image_url: vitrifiedTileImg },
+  { id: "new14", name: "MDF Board 18mm", brand: "Action Tesa", category: "wood", price: 1800, original_price: 2100, discount: 14, rating: 4.7, reviews: 189, specs: "18mm, Interior Grade", in_stock: true, image_url: actionTesaImg },
+  { id: "new15", name: "Calacatta Gold Quartz Slab", brand: "Silestone", category: "tiles", price: 8500, original_price: 9500, discount: 10, rating: 4.8, reviews: 89, specs: "Jumbo Slab, 20mm thickness", in_stock: true, image_url: italianMarbleImg },
+  { id: "new16", name: "SmartControl Concealed Shower", brand: "Grohe", category: "plumbing", price: 45000, original_price: 52000, discount: 13, rating: 4.9, reviews: 56, specs: "Thermostatic, 3 Valves", in_stock: true, image_url: showerImg },
+  { id: "new17", name: "Veil Intelligent Toilet", brand: "Kohler", category: "plumbing", price: 120000, original_price: 135000, discount: 11, rating: 4.7, reviews: 34, specs: "Auto flush, Bidet, Heated seat", in_stock: true, image_url: italianMarbleImg },
+  { id: "new18", name: "Hue Play Gradient Lightstrip", brand: "Philips Hue", category: "electrical", price: 18000, original_price: 21000, discount: 14, rating: 4.9, reviews: 450, specs: "2m base kit, 16M colors", in_stock: true, image_url: ledLightImg },
+  { id: "new19", name: "Canadian Pine Wood Logs", brand: "Global Woods", category: "wood", price: 3200, original_price: 3600, discount: 11, rating: 4.7, reviews: 45, specs: "Per cubic foot, Kiln Dried", in_stock: true, image_url: woodPlanksImg },
+  { id: "new20", name: "Estate Emulsion - Hague Blue", brand: "Farrow & Ball", category: "paints", price: 14000, original_price: 15500, discount: 9, rating: 4.9, reviews: 78, specs: "5L, Signature matte", in_stock: true, image_url: luxuryPaintImg },
+  { id: "new21", name: "Duro Lifetime Guarantee Plywood", brand: "Duro", category: "wood", price: 2800, original_price: 3200, discount: 12, rating: 4.8, reviews: 156, specs: "19mm, Marine Grade", in_stock: true, image_url: duroPlywoodImg },
+  { id: "new22", name: "Virgo Premium Wood Laminate", brand: "Virgo Group", category: "wood", price: 1250, original_price: 1400, discount: 10, rating: 4.6, reviews: 98, specs: "1mm, Textured Finish", in_stock: true, image_url: virgoLaminateImg },
+  { id: "new23", name: "JSW Cement GGBS 50kg", brand: "JSW", category: "construction", price: 390, original_price: 430, discount: 9, rating: 4.7, reviews: 412, specs: "50kg, Eco-friendly", in_stock: true, image_url: jswCementImg },
+  { id: "new24", name: "Dalmia Infra Pro Cement 50kg", brand: "Dalmia", category: "construction", price: 430, original_price: 470, discount: 8, rating: 4.9, reviews: 532, specs: "50kg, High Strength", in_stock: true, image_url: dalmiaCementImg },
+  { id: "new25", name: "Smart Digital Lock", brand: "Godrej", category: "hardware", price: 8500, original_price: 9500, discount: 10, rating: 4.8, reviews: 215, specs: "RFID, Pin, Fingerprint", in_stock: true, image_url: godrejLockImg },
+  { id: "new26", name: "Exterior Wall Primer Gold Series", brand: "Indigo", category: "paints", price: 1500, original_price: 1800, discount: 16, rating: 4.6, reviews: 145, specs: "20L, High Coverage", in_stock: true, image_url: indigoPaintImg },
+  { id: "new27", name: "Weathercoat Exterior Acrylic", brand: "Berger Paints", category: "paints", price: 3600, original_price: 4000, discount: 10, rating: 4.8, reviews: 310, specs: "16L, Lead Free", in_stock: true, image_url: bergerPaintImg },
+  { id: "new28", name: "Stainless Steel Pull Handle", brand: "Dorma", category: "hardware", price: 1200, original_price: 1450, discount: 17, rating: 4.5, reviews: 112, specs: "D-Type, SS 304 Grade", in_stock: true, image_url: doorHandleImg },
+  { id: "new29", name: "Dorset Euro Profile Cylinder Lock", brand: "Dorset", category: "hardware", price: 850, original_price: 1000, discount: 15, rating: 4.7, reviews: 345, specs: "60mm, With 3 Keys", in_stock: true, image_url: dorsetLockImg },
+  { id: "new30", name: "Jaquar Gold Faucet Basin Mixer", brand: "Jaquar", category: "plumbing", price: 4200, original_price: 4800, discount: 12, rating: 4.9, reviews: 256, specs: "PVD Gold Finish, Pillar Tap", in_stock: true, image_url: jaquarFaucetImg },
+  { id: "new31", name: "RR Kabel FR Wire 1.5 sq mm", brand: "RR Kabel", category: "electrical", price: 1350, original_price: 1550, discount: 12, rating: 4.8, reviews: 412, specs: "90m Coil, Red, Lead Free", in_stock: true, image_url: rrKabelImg },
+  { id: "new32", name: "LED Ground Uplighter 5W", brand: "Havells", category: "electrical", price: 950, original_price: 1150, discount: 17, rating: 4.6, reviews: 188, specs: "IP67 Waterproof, Warm White", in_stock: true, image_url: groundLightsImg },
+  { id: "new33", name: "Ambuja Cement 50kg", brand: "Ambuja", category: "construction", price: 395, original_price: 430, discount: 8, rating: 4.8, reviews: 620, specs: "50kg, Portland Pozzolana", in_stock: true, image_url: ambujaCementImg },
+  { id: "new34", name: "Advance Modular Switches", brand: "Legrand", category: "electrical", price: 180, original_price: 220, discount: 18, rating: 4.9, reviews: 340, specs: "10A, Polycarbonate", in_stock: true, image_url: legrandSwitchImg },
+  { id: "new35", name: "Beauty Smooth Emulsion", brand: "Nerolac", category: "paints", price: 2800, original_price: 3100, discount: 10, rating: 4.6, reviews: 195, specs: "20L, Washable Finish", in_stock: true, image_url: nerolacPaintImg },
+  { id: "new36", name: "Premium Designer Tiles", brand: "Kingkonree", category: "tiles", price: 1450, original_price: 1600, discount: 9, rating: 4.7, reviews: 112, specs: "800x800mm, Glossy", in_stock: true, image_url: kingkonreeTileImg },
+  { id: "new37", name: "Luxury Vinyl Flooring", brand: "Armstrong", category: "tiles", price: 2100, original_price: 2400, discount: 12, rating: 4.8, reviews: 87, specs: "Box of 10 Sq Ft, Wooden Texture", in_stock: true, image_url: vinylFlooringImg },
+  { id: "new38", name: "Platinum Interior Paint", brand: "Indigo", category: "paints", price: 4200, original_price: 4800, discount: 12, rating: 4.9, reviews: 250, specs: "20L, Stain Resistant", in_stock: true, image_url: indigoPlatinumImg },
+  { id: "new39", name: "Premium Interior Paint", brand: "Generic", category: "paints", price: 1200, original_price: 1500, discount: 20, rating: 4.5, reviews: 89, specs: "10L, Matte", in_stock: true, image_url: genericPaintImg },
+  { id: "new40", name: "Modular Switch Plate", brand: "Generic", category: "electrical", price: 450, original_price: 500, discount: 10, rating: 4.6, reviews: 112, specs: "8 Module, White", in_stock: true, image_url: genericSwitchesImg },
+  { id: "new41", name: "Decorative Laminate Sheet", brand: "Generic", category: "wood", price: 800, original_price: 950, discount: 15, rating: 4.7, reviews: 67, specs: "1mm, Suede Finish", in_stock: true, image_url: genericLaminateImg },
+  { id: "new42", name: "Portland Cement 50kg", brand: "Generic", category: "construction", price: 380, original_price: 400, discount: 5, rating: 4.8, reviews: 230, specs: "50kg, Grade 43", in_stock: true, image_url: genericCementImg },
+  { id: "new43", name: "Ceramic Wall Tiles", brand: "Generic", category: "tiles", price: 450, original_price: 550, discount: 18, rating: 4.5, reviews: 145, specs: "300x450mm, Box of 6", in_stock: true, image_url: genericTilesImg },
+  { id: "new44", name: "Commercial Plywood 12mm", brand: "Generic", category: "wood", price: 1200, original_price: 1400, discount: 14, rating: 4.6, reviews: 198, specs: "12mm, Moisture Resistant", in_stock: true, image_url: genericPlywoodImg },
+];
+
 const RawMaterials = () => {
   const { toast } = useToast();
   const { addToCart, items: cartItems, updateQuantity } = useCart();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryFromUrl);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    categoryFromUrl,
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-  const [expandedMobileDropdown, setExpandedMobileDropdown] = useState<string | null>(null);
+  const [expandedMobileDropdown, setExpandedMobileDropdown] = useState<
+    string | null
+  >(null);
   const [draftCategory, setDraftCategory] = useState<string | null>(null);
 
   useEffect(() => {
@@ -95,15 +224,14 @@ const RawMaterials = () => {
   };
 
   const toggleDropdown = (dropdown: string) => {
-    setExpandedMobileDropdown(prev => prev === dropdown ? null : dropdown);
+    setExpandedMobileDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
 
   const { data: regularProducts = [], isLoading: isLoadingReq } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("products").select("*");
-      if (error) throw error;
-      return data as Product[];
+      // Shuffle products randomly on load
+      return [...premiumProducts].sort(() => Math.random() - 0.5);
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -111,34 +239,18 @@ const RawMaterials = () => {
   const { data: supplierProducts = [], isLoading: isLoadingSup } = useQuery({
     queryKey: ["supplier-products"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('supplier_products')
-        .select(`*, suppliers(business_name)`)
-        .eq('is_published', true);
-      if (error) throw error;
-      return (data || []).map((dbProd: any) => ({
-        id: dbProd.id,
-        supplier_id: dbProd.supplier_id,
-        name: dbProd.name,
-        brand: dbProd.brand || (dbProd.suppliers?.business_name),
-        category: dbProd.category,
-        price: dbProd.price,
-        original_price: dbProd.original_price || dbProd.price,
-        discount: dbProd.discount,
-        specs: dbProd.specs,
-        in_stock: dbProd.in_stock,
-        image_url: dbProd.images?.[0] || null,
-        rating: dbProd.rating || 0,
-        reviews: dbProd.total_reviews || 0,
-      })) as Product[];
+      // Removed supplier raw materials for now as requested
+      return [] as Product[];
     },
     staleTime: 5 * 60 * 1000,
   });
 
-  const allProducts = [...regularProducts, ...supplierProducts];
+  const allProducts: Product[] = [...regularProducts, ...supplierProducts];
   const filteredProducts = allProducts.filter((product) => {
     const matchCat = !selectedCategory || product.category === selectedCategory;
-    const matchSearch = product.name?.toLowerCase().includes(searchQuery.toLowerCase()) || product.brand?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchSearch =
+      product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.brand?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -156,7 +268,10 @@ const RawMaterials = () => {
       specs: product.specs ?? "",
     });
     if (added) {
-      toast({ title: "Module Added", description: `${product.name} initialized in cart.` });
+      toast({
+        title: "Module Added",
+        description: `${product.name} initialized in cart.`,
+      });
     } else {
       toast({
         variant: "destructive",
@@ -170,33 +285,49 @@ const RawMaterials = () => {
   return (
     <Layout>
       <Helmet>
-        <title>Buy Raw Materials Online | BuildBazaarX – Cement, Tiles, Wood & More</title>
-        <meta name="description" content="Source premium construction raw materials at BuildBazaarX. Shop cement, tiles, plywood, paints, plumbing, electrical & hardware from verified suppliers. Direct to site delivery across India." />
+        <title>
+          Buy Raw Materials Online | BuildBazaarX – Cement, Tiles, Wood & More
+        </title>
+        <meta
+          name="description"
+          content="Source premium construction raw materials at BuildBazaarX. Shop cement, tiles, plywood, paints, plumbing, electrical & hardware from verified suppliers. Direct to site delivery across India."
+        />
         <link rel="canonical" href="https://buildbazaarx.com/raw-materials" />
-        <meta property="og:url" content="https://buildbazaarx.com/raw-materials" />
-        <meta property="og:title" content="Buy Raw Materials Online | BuildBazaarX" />
-        <meta property="og:description" content="Shop premium construction raw materials from verified Indian suppliers. Cement, tiles, wood, paints & more — delivered direct to site." />
-        <meta property="og:image" content="https://buildbazaarx.com/og-image.png" />
+        <meta
+          property="og:url"
+          content="https://buildbazaarx.com/raw-materials"
+        />
+        <meta
+          property="og:title"
+          content="Buy Raw Materials Online | BuildBazaarX"
+        />
+        <meta
+          property="og:description"
+          content="Shop premium construction raw materials from verified Indian suppliers. Cement, tiles, wood, paints & more — delivered direct to site."
+        />
+        <meta
+          property="og:image"
+          content="https://buildbazaarx.com/og-image.png"
+        />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
       </Helmet>
-      
+
       <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative">
-        
         {/* Mobile Top Navigation (Search + Button) */}
         <div className="md:hidden flex flex-col px-4 pt-4 pb-2 bg-[#fcf9f6] space-y-4 sticky top-0 z-20 shadow-sm border-b border-[#e5e2df]">
           <div className="flex items-center gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
-              <input 
-                className="w-full pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded-xl text-sm outline-none shadow-sm font-body" 
-                placeholder="Search materials..." 
+              <input
+                className="w-full pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded-xl text-sm outline-none shadow-sm font-body"
+                placeholder="Search materials..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 type="text"
               />
             </div>
-            <button 
+            <button
               onClick={openFilterSheet}
               className="flex items-center justify-center gap-2 px-5 py-3 bg-[#f6f3f0] border border-[#e5e2df] rounded-xl text-sm font-medium whitespace-nowrap hover:bg-[#eae8e5] transition-colors shadow-sm font-body"
             >
@@ -204,20 +335,24 @@ const RawMaterials = () => {
               Filter
             </button>
           </div>
-          
+
           {/* Active filter pills */}
           {selectedCategory && (
             <div className="flex flex-wrap gap-2 pt-1 pb-1">
               <span className="bg-[#f6f3f0] border border-[#e5e2df] text-[#1c1c1a] px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 font-body">
-                {categories.find(c => c.id === selectedCategory)?.name || selectedCategory}
-                <X className="w-3 h-3 cursor-pointer opacity-50 hover:opacity-100 transition-opacity" onClick={() => setSelectedCategory(null)} />
+                {categories.find((c) => c.id === selectedCategory)?.name ||
+                  selectedCategory}
+                <X
+                  className="w-3 h-3 cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
+                  onClick={() => setSelectedCategory(null)}
+                />
               </span>
             </div>
           )}
         </div>
 
         {/* Floating Action Button for Mobile */}
-        <button 
+        <button
           onClick={openFilterSheet}
           className="md:hidden fixed bottom-24 right-6 z-30 bg-[#735c00] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform"
         >
@@ -225,7 +360,6 @@ const RawMaterials = () => {
         </button>
 
         <main className="max-w-[1440px] mx-auto px-4 md:px-12 py-0 md:py-20">
-          
           {/* Header */}
           <header className="hidden md:flex mb-16 md:mb-24 flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="max-w-2xl">
@@ -235,35 +369,43 @@ const RawMaterials = () => {
             </div>
             <div className="hidden md:flex items-center gap-4">
               <div className="flex flex-col text-right">
-                <span className="font-body text-[10px] uppercase tracking-widest text-[#74777d]">Current Inventory</span>
-                <span className="text-2xl font-headline font-medium">{allProducts.length} Items</span>
+                <span className="font-body text-[10px] uppercase tracking-widest text-[#74777d]">
+                  Current Inventory
+                </span>
+                <span className="text-2xl font-headline font-medium">
+                  {allProducts.length} Items
+                </span>
               </div>
               <div className="w-12 h-[1px] bg-[#c4c6cc] opacity-50"></div>
             </div>
             {/* Search Input inline with header */}
             <div className="hidden md:block relative w-full md:w-64 -mt-4 md:mt-0">
-               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
-               <input 
-                 className="pl-12 pr-4 py-3 bg-[#f6f3f0] border-none focus:ring-1 focus:ring-[#735c00] rounded-full text-sm w-full outline-none font-body shadow-inner" 
-                 placeholder="Search materials..." 
-                 value={searchQuery}
-                 onChange={(e) => setSearchQuery(e.target.value)}
-                 type="text"
-               />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+              <input
+                className="pl-12 pr-4 py-3 bg-[#f6f3f0] border-none focus:ring-1 focus:ring-[#735c00] rounded-full text-sm w-full outline-none font-body shadow-inner"
+                placeholder="Search materials..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                type="text"
+              />
             </div>
           </header>
 
           {/* Bento Features Removed as per request */}
 
           <div className="flex flex-col lg:flex-row gap-12 mt-4 md:mt-12">
-            
             {/* Sidebar Categories */}
             <aside className="hidden lg:block lg:w-64 flex-shrink-0">
               <div className="sticky top-32">
                 <div className="flex justify-between items-end mb-8">
-                  <h4 className="font-body text-[10px] uppercase tracking-[0.2em] text-[#74777d] font-bold">Categories</h4>
+                  <h4 className="font-body text-[10px] uppercase tracking-[0.2em] text-[#74777d] font-bold">
+                    Categories
+                  </h4>
                   {selectedCategory && (
-                    <button onClick={() => setSelectedCategory(null)} className="text-[10px] text-[#74777d] border-b border-[#74777d] pb-[1px] hover:text-black">
+                    <button
+                      onClick={() => setSelectedCategory(null)}
+                      className="text-[10px] text-[#74777d] border-b border-[#74777d] pb-[1px] hover:text-black"
+                    >
                       Clear
                     </button>
                   )}
@@ -273,24 +415,29 @@ const RawMaterials = () => {
                     const Icon = cat.icon;
                     return (
                       <li key={cat.id}>
-                        <button 
+                        <button
                           onClick={() => setSelectedCategory(cat.id)}
-                          className={`flex items-center justify-between w-full group relative py-1 ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#1c1c1a]'}`}
+                          className={`flex items-center justify-between w-full group relative py-1 ${selectedCategory === cat.id ? "text-[#735c00]" : "text-[#1c1c1a]"}`}
                         >
                           <div className="flex items-center gap-3 relative z-10">
-                            <Icon className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#74777d] group-hover:text-[#735c00]'}`} />
-                            <span className={`font-headline text-xl italic group-hover:text-[#735c00] transition-colors`}>
+                            <Icon
+                              className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? "text-[#735c00]" : "text-[#74777d] group-hover:text-[#735c00]"}`}
+                            />
+                            <span
+                              className={`font-headline text-xl italic group-hover:text-[#735c00] transition-colors`}
+                            >
                               {cat.name}
                             </span>
                           </div>
-                          <span className="text-[10px] font-body text-[#74777d] font-bold opacity-60 group-hover:opacity-100 relative z-10">
-                            {cat.count}
-                          </span>
                           {selectedCategory === cat.id && (
                             <motion.div
                               layoutId="active-category-underline"
                               className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#735c00] z-0"
-                              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                              transition={{
+                                type: "spring",
+                                bounce: 0.2,
+                                duration: 0.6,
+                              }}
                             />
                           )}
                         </button>
@@ -301,10 +448,22 @@ const RawMaterials = () => {
 
                 {/* Featured Ad inside Sidebar */}
                 <div className="mt-16 p-6 bg-[#f6f3f0] rounded-lg">
-                  <h5 className="font-bold mb-3 font-headline italic text-lg">Featured Material</h5>
-                  <img src={laminateImg} alt="Veneer" className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply" />
-                  <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">Discover the 2024 Architectural Digest choice for sustainable veneers.</p>
-                  <a href="#" className="font-body text-[10px] font-bold uppercase text-[#735c00] flex items-center gap-1 hover:underline">
+                  <h5 className="font-bold mb-3 font-headline italic text-lg">
+                    Featured Material
+                  </h5>
+                  <img
+                    src={woodPlanksImg}
+                    alt="Veneer"
+                    className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply"
+                  />
+                  <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">
+                    Discover the 2024 Architectural Digest choice for
+                    sustainable veneers.
+                  </p>
+                  <a
+                    href="#"
+                    className="font-body text-[10px] font-bold uppercase text-[#735c00] flex items-center gap-1 hover:underline"
+                  >
                     Read Monograph <ArrowUpRight className="w-3 h-3" />
                   </a>
                 </div>
@@ -315,74 +474,98 @@ const RawMaterials = () => {
             <div className="flex-grow">
               <AnimatePresence mode="wait">
                 {isLoadingReq || isLoadingSup ? (
-                   <motion.div 
-                     initial={{ opacity: 0 }} 
-                     animate={{ opacity: 1 }} 
-                     exit={{ opacity: 0 }}
-                     className="flex flex-col items-center justify-center p-24 text-center"
-                   >
-                      <div className="w-10 h-10 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent mb-4"></div>
-                      <p className="font-body text-sm text-[#74777d]">Loading materials inventory...</p>
-                   </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex flex-col items-center justify-center p-24 text-center"
+                  >
+                    <div className="w-10 h-10 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent mb-4"></div>
+                    <p className="font-body text-sm text-[#74777d]">
+                      Loading materials inventory...
+                    </p>
+                  </motion.div>
                 ) : filteredProducts.length === 0 ? (
-                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center p-20 text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]">
-                      <span className="font-headline text-2xl italic mb-2 text-[#1c1c1a]">No Elements Active</span>
-                      <p className="font-body text-sm text-[#74777d]">Shift curation filters to uncover available components.</p>
-                   </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex flex-col items-center justify-center p-20 text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]"
+                  >
+                    <span className="font-headline text-2xl italic mb-2 text-[#1c1c1a]">
+                      No Elements Active
+                    </span>
+                    <p className="font-body text-sm text-[#74777d]">
+                      Shift curation filters to uncover available components.
+                    </p>
+                  </motion.div>
                 ) : (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 px-2 md:px-0">
                     {filteredProducts.map((product) => (
-                      <motion.article 
-                        key={product.id} 
+                      <motion.article
+                        key={product.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="group flex flex-col h-full bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-sm border border-[#e5e2df] hover:shadow-md transition-all relative"
                       >
                         {/* Image Box */}
                         <div className="relative aspect-[4/5] overflow-hidden bg-[#f6f3f0]">
-                          <img 
-                            src={getProductImage(product)} 
-                            alt={product.brand || "Material"} 
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                          <img
+                            src={getProductImage(product)}
+                            alt={product.brand || "Material"}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                           <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
                             <span className="bg-white/95 backdrop-blur-md px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm border border-[#e5e2df] text-[#1c1c1a]">
-                              <BadgeCheck className={`w-3 h-3 ${product.in_stock ? 'text-[#735c00]' : 'text-orange-500'} shrink-0`} />
-                              <span>{product.in_stock ? 'Verified' : 'Limited'}</span>
+                              <BadgeCheck
+                                className={`w-3 h-3 ${product.in_stock ? "text-[#735c00]" : "text-orange-500"} shrink-0`}
+                              />
+                              <span>
+                                {product.in_stock ? "Verified" : "Limited"}
+                              </span>
                             </span>
                           </div>
                           <div className="absolute bottom-2 left-2 md:bottom-3 md:left-3 z-10">
                             <span className="bg-[#735c00] text-white px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded-sm shadow-md">
-                              {product.category?.toUpperCase() || 'MATERIAL'}
+                              {product.category?.toUpperCase() || "MATERIAL"}
                             </span>
                           </div>
 
                           {/* Hover FAB - Add to Cart / Quantity Controller */}
                           <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 z-20">
                             {(() => {
-                              const cartItem = cartItems.find(i => i.id === product.id);
+                              const cartItem = cartItems.find(
+                                (i) => i.id === product.id,
+                              );
                               if (cartItem) {
                                 return (
-                                  <motion.div 
+                                  <motion.div
                                     layout
                                     className="bg-[#1c1c1a] text-white rounded-full flex items-center gap-1 py-[2px] shadow-lg border border-white/10"
                                   >
-                                    <button 
+                                    <button
                                       onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
-                                        updateQuantity(product.id, cartItem.quantity - 1);
+                                        updateQuantity(
+                                          product.id,
+                                          cartItem.quantity - 1,
+                                        );
                                       }}
                                       className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
                                     >
                                       <Minus className="w-3 h-3" />
                                     </button>
-                                    <span className="text-[10px] font-black uppercase tracking-widest min-w-[8px] text-center">{cartItem.quantity}</span>
-                                    <button 
+                                    <span className="text-[10px] font-black uppercase tracking-widest min-w-[8px] text-center">
+                                      {cartItem.quantity}
+                                    </span>
+                                    <button
                                       onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
-                                        updateQuantity(product.id, cartItem.quantity + 1);
+                                        updateQuantity(
+                                          product.id,
+                                          cartItem.quantity + 1,
+                                        );
                                       }}
                                       className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
                                     >
@@ -392,7 +575,7 @@ const RawMaterials = () => {
                                 );
                               }
                               return (
-                                <button 
+                                <button
                                   onClick={(e) => handleAddToCart(e, product)}
                                   className="w-8 h-8 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
                                 >
@@ -405,7 +588,9 @@ const RawMaterials = () => {
 
                         {/* Content Area */}
                         <div className="p-3 md:p-4 flex flex-col flex-grow">
-                          <h3 className="text-sm md:text-base font-headline font-bold leading-tight text-[#1c1c1a] mb-1 line-clamp-1">{product.name}</h3>
+                          <h3 className="text-sm md:text-base font-headline font-bold leading-tight text-[#1c1c1a] mb-1 line-clamp-1">
+                            {product.name}
+                          </h3>
                           <div className="flex justify-between items-end mt-auto pt-2">
                             <span className="text-[10px] text-[#74777d] font-body lowercase line-clamp-1 mr-2">
                               {product.category?.replace("-", " ")}
@@ -420,56 +605,83 @@ const RawMaterials = () => {
                   </div>
                 )}
               </AnimatePresence>
-
-
-
             </div>
           </div>
 
           {/* Mobile Bottom Sheet for Filters */}
           <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
-             <SheetContent className="overflow-y-auto w-full md:hidden bg-[#fcf9f6] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl" side="bottom">
-               <SheetHeader className="mb-6 pb-2 block">
-                 <SheetTitle className="font-headline text-2xl text-left bg-gradient-to-r from-[#1c1c1a] to-[#735c00] bg-clip-text text-transparent">Material Filters</SheetTitle>
-                 <SheetDescription className="hidden">Filter options to refine the catalog of premium raw materials.</SheetDescription>
-               </SheetHeader>
-               
-                <div className="space-y-4 md:space-y-3 pb-32">
-                  <div className="flex flex-col gap-4">
-                    <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
-                      <input 
-                        type="radio" 
-                        name="draftCategory"
-                        checked={draftCategory === null}
-                        onChange={() => setDraftCategory(null)}
-                        className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                      />
-                      <span className={`text-sm font-medium transition-colors ${draftCategory === null ? 'text-[#735c00]' : 'text-[#44474c]'}`}>All Materials</span>
-                    </label>
-                    {categories.map(cat => {
-                      const Icon = cat.icon;
-                      return (
-                        <label key={cat.id} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
-                          <input 
-                            type="radio" 
-                            name="draftCategory"
-                            checked={draftCategory === cat.id}
-                            onChange={() => setDraftCategory(cat.id)}
-                            className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                          />
-                          <Icon className={`w-4 h-4 ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#74777d]'}`} />
-                          <span className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{cat.name}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
+            <SheetContent
+              className="overflow-y-auto w-full md:hidden bg-[#fcf9f6] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl"
+              side="bottom"
+            >
+              <SheetHeader className="mb-6 pb-2 block">
+                <SheetTitle className="font-headline text-2xl text-left bg-gradient-to-r from-[#1c1c1a] to-[#735c00] bg-clip-text text-transparent">
+                  Material Filters
+                </SheetTitle>
+                <SheetDescription className="hidden">
+                  Filter options to refine the catalog of premium raw materials.
+                </SheetDescription>
+              </SheetHeader>
 
-               <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t border-[#e5e2df] flex gap-4 pb-12">
-                  <button onClick={resetFilters} className="w-1/3 py-4 border border-[#e5e2df] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] bg-white transition-colors font-body">Reset</button>
-                  <button onClick={applyFilters} className="flex-1 py-4 bg-[#1c1c1a] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#735c00] transition-colors shadow-xl font-body">Apply Filters</button>
-               </div>
-             </SheetContent>
+              <div className="space-y-4 md:space-y-3 pb-32">
+                <div className="flex flex-col gap-4">
+                  <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                    <input
+                      type="radio"
+                      name="draftCategory"
+                      checked={draftCategory === null}
+                      onChange={() => setDraftCategory(null)}
+                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                    />
+                    <span
+                      className={`text-sm font-medium transition-colors ${draftCategory === null ? "text-[#735c00]" : "text-[#44474c]"}`}
+                    >
+                      All Materials
+                    </span>
+                  </label>
+                  {categories.map((cat) => {
+                    const Icon = cat.icon;
+                    return (
+                      <label
+                        key={cat.id}
+                        className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors"
+                      >
+                        <input
+                          type="radio"
+                          name="draftCategory"
+                          checked={draftCategory === cat.id}
+                          onChange={() => setDraftCategory(cat.id)}
+                          className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                        />
+                        <Icon
+                          className={`w-4 h-4 ${draftCategory === cat.id ? "text-[#735c00]" : "text-[#74777d]"}`}
+                        />
+                        <span
+                          className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? "text-[#735c00]" : "text-[#44474c]"}`}
+                        >
+                          {cat.name}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t border-[#e5e2df] flex gap-4 pb-12">
+                <button
+                  onClick={resetFilters}
+                  className="w-1/3 py-4 border border-[#e5e2df] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] bg-white transition-colors font-body"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={applyFilters}
+                  className="flex-1 py-4 bg-[#1c1c1a] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#735c00] transition-colors shadow-xl font-body"
+                >
+                  Apply Filters
+                </button>
+              </div>
+            </SheetContent>
           </Sheet>
         </main>
       </div>
