@@ -30,6 +30,13 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+} from "@/components/ui/drawer";
 import { Layout } from "@/components/layout/Layout";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
@@ -50,6 +57,13 @@ const RawMaterialDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth > 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     // Simulate fetching data
@@ -172,6 +186,73 @@ const RawMaterialDetail = () => {
     setIsShareModalOpen(false);
   };
 
+  const ShareContent = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-3 gap-y-8 gap-x-4 py-2">
+        <button 
+          onClick={() => shareToPlatform("whatsapp")}
+          className="flex flex-col items-center gap-2 group"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-green-50 text-[#25D366] flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-all shadow-sm border border-green-100">
+            <MessageCircle className="w-7 h-7" />
+          </div>
+          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">WhatsApp</span>
+        </button>
+        <button 
+          onClick={() => shareToPlatform("facebook")}
+          className="flex flex-col items-center gap-2 group"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#1877F2] flex items-center justify-center group-hover:bg-[#1877F2] group-hover:text-white transition-all shadow-sm border border-blue-100">
+            <Facebook className="w-7 h-7" />
+          </div>
+          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">Facebook</span>
+        </button>
+        <button 
+          onClick={() => shareToPlatform("twitter")}
+          className="flex flex-col items-center gap-2 group"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-gray-50 text-gray-900 flex items-center justify-center group-hover:bg-gray-900 group-hover:text-white transition-all shadow-sm border border-gray-200">
+            <Twitter className="w-7 h-7" />
+          </div>
+          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">Twitter</span>
+        </button>
+        <button 
+          onClick={() => shareToPlatform("linkedin")}
+          className="flex flex-col items-center gap-2 group"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#0A66C2] flex items-center justify-center group-hover:bg-[#0A66C2] group-hover:text-white transition-all shadow-sm border border-blue-100">
+            <Linkedin className="w-7 h-7" />
+          </div>
+          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">LinkedIn</span>
+        </button>
+        <button 
+          onClick={() => shareToPlatform("native")}
+          className="flex flex-col items-center gap-2 group"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#735c00] flex items-center justify-center group-hover:bg-[#735c00] group-hover:text-white transition-all shadow-sm border border-amber-100">
+            <MoreHorizontal className="w-7 h-7" />
+          </div>
+          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">More</span>
+        </button>
+        <button 
+          onClick={() => shareToPlatform("copy")}
+          className="flex flex-col items-center gap-2 group"
+        >
+          <div className="w-14 h-14 rounded-2xl bg-gray-50 text-[#1c1c1a] flex items-center justify-center group-hover:bg-[#1c1c1a] group-hover:text-white transition-all shadow-sm border border-gray-200">
+            <Copy className="w-7 h-7" />
+          </div>
+          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">Copy Link</span>
+        </button>
+      </div>
+      <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100 flex items-center justify-between">
+        <span className="text-[10px] font-bold text-gray-400 truncate mr-4 italic">{window.location.href}</span>
+        <Button variant="ghost" size="sm" className="font-black text-[#735c00] uppercase text-[10px] tracking-widest h-8 hover:bg-amber-50" onClick={() => shareToPlatform("copy")}>
+          Copy
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <Layout>
       {/* Navigation Header */}
@@ -187,7 +268,7 @@ const RawMaterialDetail = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 md:py-12">
+      <div className="container mx-auto px-5 py-8 md:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
           
           {/* Left Column: Image Gallery (5 cols) */}
@@ -278,7 +359,7 @@ const RawMaterialDetail = () => {
             </Reveal>
 
             <Reveal width="100%" direction="up" delay={0.1}>
-              <div className="bg-gray-50 rounded-3xl p-6 md:p-8 space-y-6">
+              <div className="bg-gray-50 rounded-3xl p-4 md:p-8 space-y-6">
                 <div className="flex items-baseline gap-4">
                   <span className="text-4xl font-black text-gray-900">₹{product.price?.toLocaleString()}</span>
                   {product.original_price && product.original_price > (product.price ?? 0) && (
@@ -291,9 +372,9 @@ const RawMaterialDetail = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 text-sm font-bold text-gray-600">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                <div className="grid grid-cols-2 gap-2 md:gap-4">
+                  <div className="flex items-center gap-2 md:gap-3 text-sm font-bold text-gray-600">
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
                       <Truck className="w-5 h-5" />
                     </div>
                     <div>
@@ -301,8 +382,8 @@ const RawMaterialDetail = () => {
                       <p className="text-[10px] uppercase text-gray-400 tracking-tighter">In 2-4 business days</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 text-sm font-bold text-gray-600">
-                    <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                  <div className="flex items-center gap-2 md:gap-3 text-sm font-bold text-gray-600">
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
                       <RotateCcw className="w-5 h-5" />
                     </div>
                     <div>
@@ -316,19 +397,19 @@ const RawMaterialDetail = () => {
 
                 <Separator className="bg-gray-200" />
 
-                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                <div className="flex items-center gap-2">
                   {isInCart ? (
-                    <div className="flex items-center bg-white border border-gray-200 rounded-2xl p-1 shadow-sm w-full sm:w-auto">
+                    <div className="flex items-center bg-white border border-gray-200 rounded-2xl p-1 shadow-sm shrink-0">
                       <button 
                         onClick={() => updateQuantity(product.id, cartItem.quantity - 1)}
-                        className="w-12 h-12 flex items-center justify-center hover:bg-gray-50 rounded-xl transition-colors"
+                        className="w-8 h-9 md:h-[54px] md:w-12 flex items-center justify-center hover:bg-gray-50 rounded-xl transition-colors"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="w-12 text-center font-black text-lg">{cartItem.quantity}</span>
+                      <span className="w-8 text-center font-black text-lg">{cartItem.quantity}</span>
                       <button 
                         onClick={() => updateQuantity(product.id, cartItem.quantity + 1)}
-                        className="w-12 h-12 flex items-center justify-center hover:bg-gray-50 rounded-xl transition-colors"
+                        className="w-8 h-9  md:h-[54px] md:w-12 flex items-center justify-center hover:bg-gray-50 rounded-xl transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -338,7 +419,7 @@ const RawMaterialDetail = () => {
                   <Button 
                     onClick={handleCartAction}
                     size="lg" 
-                    className={`w-full h-16 rounded-2xl text-lg font-black transition-all shadow-lg ${
+                    className={`flex-1 h-11 md:h-16 rounded-2xl text-base md:text-lg font-black transition-all shadow-lg ${
                       isInCart ? "bg-green-600 hover:bg-green-700" : "bg-gray-900 hover:bg-gray-800"
                     }`}
                   >
@@ -421,79 +502,32 @@ const RawMaterialDetail = () => {
         </section>
       </div>
 
-      {/* Share Modal */}
-      <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-3xl p-6">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-black text-center">Share this Material</DialogTitle>
-            <DialogDescription className="text-center font-medium">
-              Choose a platform to share {product.brand} {product.name}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid grid-cols-3 gap-4 py-6">
-            <button 
-              onClick={() => shareToPlatform("whatsapp")}
-              className="flex flex-col items-center gap-2 group"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center group-hover:bg-green-600 group-hover:text-white transition-all shadow-sm">
-                <MessageCircle className="w-7 h-7" />
-              </div>
-              <span className="text-xs font-bold text-gray-600 uppercase tracking-tighter">WhatsApp</span>
-            </button>
-            <button 
-              onClick={() => shareToPlatform("facebook")}
-              className="flex flex-col items-center gap-2 group"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
-                <Facebook className="w-7 h-7" />
-              </div>
-              <span className="text-xs font-bold text-gray-600 uppercase tracking-tighter">Facebook</span>
-            </button>
-            <button 
-              onClick={() => shareToPlatform("twitter")}
-              className="flex flex-col items-center gap-2 group"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-gray-50 text-gray-900 flex items-center justify-center group-hover:bg-gray-900 group-hover:text-white transition-all shadow-sm">
-                <Twitter className="w-7 h-7" />
-              </div>
-              <span className="text-xs font-bold text-gray-600 uppercase tracking-tighter">Twitter</span>
-            </button>
-            <button 
-              onClick={() => shareToPlatform("linkedin")}
-              className="flex flex-col items-center gap-2 group"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-800 flex items-center justify-center group-hover:bg-blue-800 group-hover:text-white transition-all shadow-sm">
-                <Linkedin className="w-7 h-7" />
-              </div>
-              <span className="text-xs font-bold text-gray-600 uppercase tracking-tighter">LinkedIn</span>
-            </button>
-            <button 
-              onClick={() => shareToPlatform("native")}
-              className="flex flex-col items-center gap-2 group"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
-                <MoreHorizontal className="w-7 h-7" />
-              </div>
-              <span className="text-xs font-bold text-gray-600 uppercase tracking-tighter">More</span>
-            </button>
-            <button 
-              onClick={() => shareToPlatform("copy")}
-              className="flex flex-col items-center gap-2 group"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-gray-100 text-gray-600 flex items-center justify-center group-hover:bg-gray-600 group-hover:text-white transition-all shadow-sm">
-                <Copy className="w-7 h-7" />
-              </div>
-              <span className="text-xs font-bold text-gray-600 uppercase tracking-tighter">Copy Link</span>
-            </button>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center justify-between">
-            <span className="text-xs font-medium text-gray-500 truncate mr-4">{window.location.href}</span>
-            <Button variant="ghost" size="sm" className="font-black text-primary uppercase text-[10px] tracking-widest" onClick={() => shareToPlatform("copy")}>
-              Copy
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Responsive Share Modal */}
+      {isDesktop ? (
+        <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
+          <DialogContent className="sm:max-w-md rounded-3xl p-6">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black text-center">Share this Material</DialogTitle>
+              <DialogDescription className="text-center font-medium">
+                Choose a platform to share {product.brand} {product.name}
+              </DialogDescription>
+            </DialogHeader>
+            <ShareContent />
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Drawer open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
+          <DrawerContent className="rounded-t-[32px] p-6 pb-10">
+            <DrawerHeader className="px-0 pb-6">
+              <DrawerTitle className="text-2xl font-black text-center">Share Material</DrawerTitle>
+              <DrawerDescription className="text-center font-medium">
+                Spread the word about {product.name}
+              </DrawerDescription>
+            </DrawerHeader>
+            <ShareContent />
+          </DrawerContent>
+        </Drawer>
+      )}
     </Layout>
   );
 };
