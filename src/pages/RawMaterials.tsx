@@ -84,8 +84,36 @@ const RawMaterials = () => {
   const { data: supplierProducts = [], isLoading: isLoadingSup } = useQuery({
     queryKey: ["supplier-products"],
     queryFn: async () => {
-      // Removed supplier raw materials for now as requested
-      return [] as Product[];
+      const { data, error } = await supabase
+        .from("supplier_products")
+        .select("*")
+        .eq("is_published", true);
+      
+      if (error) {
+        console.error("Error fetching supplier products:", error);
+        return [];
+      }
+
+      // Map Supabase data to our Product interface
+      return (data || []).map((p: any) => ({
+        id: p.id,
+        supplier_id: p.supplier_id,
+        name: p.name,
+        brand: p.brand,
+        category: p.category,
+        price: p.price,
+        original_price: p.original_price,
+        discount: p.discount,
+        rating: 4.5, // Default rating
+        reviews: Math.floor(Math.random() * 100) + 10, // Default reviews
+        specs: p.specs,
+        in_stock: (p.stock_qty || 0) > 0,
+        image_url: p.images && p.images.length > 0 ? p.images[0] : null,
+        images: p.images || [],
+        return_policy: p.return_policy,
+        quality_details: p.quality_details,
+        description: p.description
+      })) as Product[];
     },
     staleTime: 5 * 60 * 1000,
   });

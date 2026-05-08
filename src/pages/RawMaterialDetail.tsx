@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, 
   ChevronLeft, 
@@ -66,12 +67,55 @@ const RawMaterialDetail = () => {
   }, []);
 
   useEffect(() => {
-    // Simulate fetching data
-    const foundProduct = allProducts.find(p => p.id === id);
-    if (foundProduct) {
-      setProduct(foundProduct);
-    }
-    setIsLoading(false);
+    const fetchProduct = async () => {
+      setIsLoading(true);
+      // 1. Try static data first
+      const foundProduct = allProducts.find(p => p.id === id);
+      if (foundProduct) {
+        setProduct(foundProduct);
+        setIsLoading(false);
+        return;
+      }
+
+      // 2. Try Supabase if not in static list
+      try {
+        const { data, error } = await supabase
+          .from("supplier_products")
+          .select("*")
+          .eq("id", id)
+          .maybeSingle();
+
+        const typedData = data as any;
+
+        if (typedData && !error) {
+          setProduct({
+            id: typedData.id,
+            supplier_id: typedData.supplier_id,
+            name: typedData.name,
+            brand: typedData.brand,
+            category: typedData.category,
+            price: typedData.price,
+            original_price: typedData.original_price,
+            discount: typedData.discount,
+            rating: 4.5,
+            reviews: 128,
+            specs: typedData.specs,
+            in_stock: (typedData.stock_qty || 0) > 0,
+            image_url: typedData.images && typedData.images.length > 0 ? typedData.images[0] : null,
+            images: typedData.images || [],
+            return_policy: typedData.return_policy,
+            quality_details: typedData.quality_details,
+            description: typedData.description
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching supplier product:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProduct();
   }, [id]);
 
   if (isLoading) {
