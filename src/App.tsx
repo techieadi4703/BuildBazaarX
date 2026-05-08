@@ -16,6 +16,7 @@ const Index = React.lazy(() => import("./pages/Index"));
 const DesignsCatalog = React.lazy(() => import("./pages/DesignsCatalog"));
 const DesignDetail = React.lazy(() => import("./pages/DesignDetail"));
 const RawMaterials = React.lazy(() => import("./pages/RawMaterials"));
+const RawMaterialDetail = React.lazy(() => import("./pages/RawMaterialDetail"));
 const About = React.lazy(() => import("./pages/About"));
 const Contact = React.lazy(() => import("./pages/Contact"));
 const Auth = React.lazy(() => import("./pages/Auth"));
@@ -71,6 +72,7 @@ const AnimatedRoutes = () => {
         <Route path="/designs" element={<PageTransition><DesignsCatalog /></PageTransition>} />
         <Route path="/designs/:id" element={<PageTransition><DesignDetail /></PageTransition>} />
         <Route path="/materials" element={<PageTransition><RawMaterials /></PageTransition>} />
+        <Route path="/materials/:id" element={<PageTransition><RawMaterialDetail /></PageTransition>} />
         <Route path="/about" element={<PageTransition><About /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
