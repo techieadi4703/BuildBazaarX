@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./AuthContext";
+import { allProducts, getProductImage } from "@/lib/rawMaterialsData";
 
 export interface CartItem {
   id: number | string;
@@ -52,7 +53,25 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       .maybeSingle();
 
     if (data?.last_cart_snapshot && Array.isArray(data.last_cart_snapshot)) {
-      setItems(data.last_cart_snapshot as CartItem[]);
+      const loadedItems = data.last_cart_snapshot as CartItem[];
+      
+      // Hydrate items: If it's a static product, refresh its image from the local bundle
+      const hydratedItems = loadedItems.map(item => {
+        const staticMatch = allProducts.find(p => p.id === item.id);
+        if (staticMatch) {
+          return {
+            ...item,
+            image: getProductImage(staticMatch),
+            name: staticMatch.name || item.name,
+            brand: staticMatch.brand || item.brand,
+            price: staticMatch.price || item.price,
+            specs: staticMatch.specs || item.specs
+          };
+        }
+        return item;
+      });
+
+      setItems(hydratedItems);
     } else {
       setItems([]);
     }
