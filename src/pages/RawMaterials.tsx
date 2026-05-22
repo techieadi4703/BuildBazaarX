@@ -29,7 +29,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { premiumProducts, otherProducts, allProducts as rawMaterialsData, Product, categories, getProductImage, woodPlanksImg } from "@/lib/rawMaterialsData";
 import { Link } from "react-router-dom";
 
-const allProductsList: Product[] = [...rawMaterialsData];
+const allProductsList: Product[] = [...rawMaterialsData].sort(() => Math.random() - 0.5);
 
 
 const RawMaterials = () => {
