@@ -1,51 +1,51 @@
 
-import woodPlanksImg from "@/assets/products/wood_planks.png";
-import luxuryPaintImg from "@/assets/products/luxury_paint.png";
-import italianMarbleImg from "@/assets/products/italian_marble.png";
-import smartSwitchImg from "@/assets/products/smart_switch.png";
-import plywoodBoardImg from "@/assets/products/plywood_board.png";
-import cementBagImg from "@/assets/products/cement_bag.png";
-import paintBucketImg from "@/assets/products/paint_bucket.png";
-import vitrifiedTileImg from "@/assets/products/vitrified_tile.png";
-import wireCoilImg from "@/assets/products/wire_coil.png";
-import ultratechCementImg from "@/assets/products/ultratech_cements.png";
-import birlaCementImg from "@/assets/products/birla_cement.png";
-import asianPaintsImg from "@/assets/products/asian_paints.png";
-import duluxPaintImg from "@/assets/products/dulux_paints.png";
-import cabinetHingeImg from "@/assets/products/hafles_hinges.png";
-import drawerSlideImg from "@/assets/products/drawer_slide.png";
-import astralPipeImg from "@/assets/products/astral_pipes.png";
-import finolexPipeImg from "@/assets/products/finolex_pipes.png";
-import indigoPaintImg from "@/assets/products/indigo_exterior_wall_primer.png";
-import bergerPaintImg from "@/assets/products/berger_weathercoat_paint.png";
-import duroPlywoodImg from "@/assets/products/duro_pumaply.png";
-import virgoLaminateImg from "@/assets/products/virgo_ply.png";
-import jswCementImg from "@/assets/products/jsw_cement.jpeg";
-import dalmiaCementImg from "@/assets/products/dalmia_cement.png";
-import godrejLockImg from "@/assets/products/godrej_digital_locker.png";
-import doorHandleImg from "@/assets/products/glass_fitting.png";
-import dorsetLockImg from "@/assets/products/cylinder_lock.png";
-import jaquarFaucetImg from "@/assets/products/jaguar_faucet.png";
-import rrKabelImg from "@/assets/products/rr_kabel.png";
-import groundLightsImg from "@/assets/products/inground_light.png";
-import polycabWireImg from "@/assets/products/polycab_wires.png";
-import anchorSwitchImg from "@/assets/products/anchor_switch-sockets.png";
-import ozoneFittingImg from "@/assets/products/ozone_wall-to-glass-connector.png";
-import actionTesaImg from "@/assets/products/action_tesla_ply.png";
-import ambujaCementImg from "@/assets/products/ambuja_cement.png";
-import legrandSwitchImg from "@/assets/products/legrand_advance-switches.png";
-import nerolacPaintImg from "@/assets/products/nerolac_beauty_paint.png";
-import kingkonreeTileImg from "@/assets/products/kingkonree_tiles.png";
-import vinylFlooringImg from "@/assets/products/vinyl_flooring_sheet.png";
-import indigoPlatinumImg from "@/assets/products/indigo_platinum_paints.png";
-import showerImg from "@/assets/products/shower.jpg";
-import ledLightImg from "@/assets/products/led-light.jpg";
-import genericPaintImg from "@/assets/products/paint.jpg";
-import genericSwitchesImg from "@/assets/products/switches.jpg";
-import genericLaminateImg from "@/assets/products/laminate.jpg";
-import genericCementImg from "@/assets/products/cement.jpg";
-import genericTilesImg from "@/assets/products/tiles.jpg";
-import genericPlywoodImg from "@/assets/products/plywood.jpg";
+const woodPlanksImg = "/products/wood_planks.webp";
+const luxuryPaintImg = "/products/luxury_paint.webp";
+const italianMarbleImg = "/products/italian_marble.webp";
+const smartSwitchImg = "/products/smart_switch.webp";
+const plywoodBoardImg = "/products/plywood_board.webp";
+const cementBagImg = "/products/cement_bag.webp";
+const paintBucketImg = "/products/paint_bucket.webp";
+const vitrifiedTileImg = "/products/vitrified_tile.webp";
+const wireCoilImg = "/products/wire_coil.webp";
+const ultratechCementImg = "/products/ultratech_cements.webp";
+const birlaCementImg = "/products/birla_cement.webp";
+const asianPaintsImg = "/products/asian_paints.webp";
+const duluxPaintImg = "/products/dulux_paints.webp";
+const cabinetHingeImg = "/products/hafles_hinges.webp";
+const drawerSlideImg = "/products/drawer_slide.webp";
+const astralPipeImg = "/products/astral_pipes.webp";
+const finolexPipeImg = "/products/finolex_pipes.webp";
+const indigoPaintImg = "/products/indigo_exterior_wall_primer.webp";
+const bergerPaintImg = "/products/berger_weathercoat_paint.webp";
+const duroPlywoodImg = "/products/duro_pumaply.webp";
+const virgoLaminateImg = "/products/virgo_ply.webp";
+const jswCementImg = "/products/jsw_cement.webp";
+const dalmiaCementImg = "/products/dalmia_cement.webp";
+const godrejLockImg = "/products/godrej_digital_locker.webp";
+const doorHandleImg = "/products/glass_fitting.webp";
+const dorsetLockImg = "/products/cylinder_lock.webp";
+const jaquarFaucetImg = "/products/jaguar_faucet.webp";
+const rrKabelImg = "/products/rr_kabel.webp";
+const groundLightsImg = "/products/inground_light.webp";
+const polycabWireImg = "/products/polycab_wires.webp";
+const anchorSwitchImg = "/products/anchor_switch-sockets.webp";
+const ozoneFittingImg = "/products/ozone_wall-to-glass-connector.webp";
+const actionTesaImg = "/products/action_tesla_ply.webp";
+const ambujaCementImg = "/products/ambuja_cement.webp";
+const legrandSwitchImg = "/products/legrand_advance-switches.webp";
+const nerolacPaintImg = "/products/nerolac_beauty_paint.webp";
+const kingkonreeTileImg = "/products/kingkonree_tiles.webp";
+const vinylFlooringImg = "/products/vinyl_flooring_sheet.webp";
+const indigoPlatinumImg = "/products/indigo_platinum_paints.webp";
+const showerImg = "/products/shower.webp";
+const ledLightImg = "/products/led-light.webp";
+const genericPaintImg = "/products/paint.webp";
+const genericSwitchesImg = "/products/switches.webp";
+const genericLaminateImg = "/products/laminate.webp";
+const genericCementImg = "/products/cement.webp";
+const genericTilesImg = "/products/tiles.webp";
+const genericPlywoodImg = "/products/plywood.webp";
 
 export {
   woodPlanksImg,
@@ -283,7 +283,6 @@ export const otherProducts: Product[] = [
   { id: "new34", name: "Advance Modular Switches", brand: "Legrand", category: "electrical", price: 180, original_price: 220, discount: 18, rating: 4.9, reviews: 340, specs: "10A, Polycarbonate", in_stock: true, image_url: legrandSwitchImg },
   { id: "new35", name: "Beauty Smooth Emulsion", brand: "Nerolac", category: "paints", price: 2800, original_price: 3100, discount: 10, rating: 4.6, reviews: 195, specs: "20L, Washable Finish", in_stock: true, image_url: nerolacPaintImg },
   { id: "new36", name: "Premium Designer Tiles", brand: "Kingkonree", category: "tiles", price: 1450, original_price: 1600, discount: 9, rating: 4.7, reviews: 112, specs: "800x800mm, Glossy", in_stock: true, image_url: kingkonreeTileImg },
-  { id: "new37", name: "Luxury Vinyl Flooring", brand: "Armstrong", category: "tiles", price: 2100, original_price: 2400, discount: 12, rating: 4.8, reviews: 87, specs: "Box of 10 Sq Ft, Wooden Texture", in_stock: true, image_url: vinylFlooringImg },
   { id: "new37", name: "Luxury Vinyl Flooring", brand: "Armstrong", category: "tiles", price: 2100, original_price: 2400, discount: 12, rating: 4.8, reviews: 87, specs: "Box of 10 Sq Ft, Wooden Texture", in_stock: true, image_url: vinylFlooringImg },
   { id: "new38", name: "Platinum Interior Paint", brand: "Indigo", category: "paints", price: 4200, original_price: 4800, discount: 12, rating: 4.9, reviews: 250, specs: "20L, Stain Resistant", in_stock: true, image_url: indigoPlatinumImg },
   { id: "new39", name: "Premium Interior Paint", brand: "Generic", category: "paints", price: 1200, original_price: 1500, discount: 20, rating: 4.5, reviews: 89, specs: "10L, Matte", in_stock: true, image_url: genericPaintImg },

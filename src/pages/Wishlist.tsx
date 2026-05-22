@@ -8,13 +8,15 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 // Material Fallback Images
-import plywoodImg from "@/assets/products/plywood.jpg";
-import paintImg from "@/assets/products/paint.jpg";
-import tilesImg from "@/assets/products/tiles.jpg";
-import ledLightImg from "@/assets/products/led-light.jpg";
-import showerImg from "@/assets/products/shower.jpg";
-import cementImg from "@/assets/products/cement.jpg";
-import laminateImg from "@/assets/products/laminate.jpg";
+import {
+  genericPlywoodImg as plywoodImg,
+  genericPaintImg as paintImg,
+  genericTilesImg as tilesImg,
+  ledLightImg,
+  showerImg,
+  genericCementImg as cementImg,
+  genericLaminateImg as laminateImg,
+} from "@/lib/rawMaterialsData";
 
 // Design Fallback Images
 import fullhomeImage from "@/assets/fullhome-design.jpg";
@@ -92,6 +94,9 @@ const Wishlist = () => {
                     <img 
                       src={design.image} 
                       alt={design.name} 
+                      loading="lazy"
+                      width={400}
+                      height={300}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = getFallbackImage(design);
                       }}

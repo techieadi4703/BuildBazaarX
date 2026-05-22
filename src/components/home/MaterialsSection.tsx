@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion } from "framer-motion";
 
-import woodPlanksImg from "@/assets/products/wood_planks.png";
-import luxuryPaintImg from "@/assets/products/luxury_paint.png";
-import italianMarbleImg from "@/assets/products/italian_marble.png";
-import smartSwitchImg from "@/assets/products/smart_switch.png";
+import {
+  woodPlanksImg,
+  luxuryPaintImg,
+  italianMarbleImg,
+  smartSwitchImg,
+} from "@/lib/rawMaterialsData";
 
 const products = [
   {
@@ -80,6 +82,9 @@ export const MaterialsSection = () => {
                         <img
                           src={product.image}
                           alt={product.brand}
+                          loading="lazy"
+                          width={200}
+                          height={128}
                           className="w-full h-auto object-contain mix-blend-multiply max-h-32"
                         />
                       </div>

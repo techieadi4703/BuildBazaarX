@@ -37,6 +37,7 @@ const DesignsCatalog = () => {
   const [selectedStyle, setSelectedStyle] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedMobileDropdown, setExpandedMobileDropdown] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
 
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [draftCategory, setDraftCategory] = useState("all");
@@ -123,17 +124,64 @@ const DesignsCatalog = () => {
     setExpandedMobileDropdown(prev => prev === dropdown ? null : dropdown);
   };
 
-  const { data: dbDesigns, isLoading } = useQuery({
-    queryKey: ['designs'],
+  React.useEffect(() => {
+    setPage(1);
+  }, [selectedCategory, selectedStyle, searchQuery]);
+
+  const { data: dbDesignsData = { designs: [], totalCount: 0 }, isLoading } = useQuery({
+    queryKey: ['designs', selectedCategory, selectedStyle, searchQuery, page],
     queryFn: async () => {
-      const { data } = await supabase
+      let query = supabase
         .from('designs')
-        .select('*, designers(full_name)')
+        .select('*, designers(full_name)', { count: 'exact' })
         .eq('is_published', true);
-      return data || [];
+      
+      if (selectedCategory !== "all") {
+        const mappedCat = categories.find(c => c.id === selectedCategory)?.name;
+        if (mappedCat) {
+          query = query.ilike('category', mappedCat);
+        }
+      }
+      
+      if (selectedStyle !== "all") {
+        query = query.eq('style', selectedStyle);
+      }
+      
+      if (searchQuery.trim() !== "") {
+        query = query.ilike('name', `%${searchQuery.trim()}%`);
+      }
+
+      const { data, count, error } = await query
+        .range((page - 1) * 15, page * 15 - 1);
+      
+      if (error) {
+        console.error("Error fetching designs:", error);
+        return { designs: [], totalCount: 0 };
+      }
+      return {
+        designs: data || [],
+        totalCount: count || 0
+      };
     },
     staleTime: 60000,
   });
+
+  const dbDesigns = dbDesignsData.designs;
+  const totalCount = dbDesignsData.totalCount;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 15));
+
+  const getPaginationRange = (current: number, total: number) => {
+    const range: (number | string)[] = [];
+    const delta = 2;
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+        range.push(i);
+      } else if (i === current - delta - 1 || i === current + delta + 1) {
+        range.push("...");
+      }
+    }
+    return range.filter((item, idx, arr) => item !== "..." || arr[idx - 1] !== "...");
+  };
 
   const allDesigns = useMemo(() => {
     const mappedDbDesigns = (dbDesigns || []).map((dbD: any) => ({
@@ -150,14 +198,7 @@ const DesignsCatalog = () => {
     return [...mappedDbDesigns];
   }, [dbDesigns]);
 
-  const filteredDesigns = useMemo(() => {
-    return allDesigns.filter((design) => {
-      const matchesCat = selectedCategory === "all" || design.category === selectedCategory;
-      const matchesStyle = selectedStyle === "all" || design.style === selectedStyle;
-      const matchesSearch = design.name.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCat && matchesStyle && matchesSearch;
-    });
-  }, [allDesigns, selectedCategory, selectedStyle, searchQuery]);
+  const filteredDesigns = allDesigns;
 
   return (
     <Layout>
@@ -366,6 +407,9 @@ const DesignsCatalog = () => {
                             <img 
                               src={design.image} 
                               alt={design.name} 
+                              loading="lazy"
+                              width={800}
+                              height={800}
                               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 mix-blend-multiply opacity-90"
                             />
                             
@@ -478,12 +522,57 @@ const DesignsCatalog = () => {
             </AnimatePresence>
 
             {/* Pagination/Loader */}
-            {filteredDesigns.length > 0 && (
-              <div className="mt-24 flex flex-col items-center gap-8">
+            {totalPages > 1 && (
+              <div className="mt-24 flex flex-col items-center gap-6">
                 <div className="h-[1px] w-full bg-[#e5e2df]"></div>
-                <button className="px-12 py-5 border border-[#c4c6cc] text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#1c1c1a] hover:text-white transition-all duration-500 rounded-sm">
-                  Discover More Blueprints
-                </button>
+                
+                {/* Flipkart Info Label */}
+                <div className="text-xs text-[#74777d] font-body">
+                  Showing page <span className="font-bold text-[#1c1c1a]">{page}</span> of <span className="font-bold text-[#1c1c1a]">{totalPages}</span> ({totalCount} total designs)
+                </div>
+                
+                <div className="flex justify-center items-center gap-2">
+                  <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-4 py-2 border border-[#e5e2df] rounded-lg disabled:opacity-40 hover:bg-[#f6f3f0] text-sm font-semibold transition-colors disabled:cursor-not-allowed text-[#1c1c1a]"
+                  >
+                    Previous
+                  </button>
+                  
+                  <div className="flex items-center gap-1.5">
+                    {getPaginationRange(page, totalPages).map((p, idx) => {
+                      if (p === "...") {
+                        return (
+                          <span key={`ell-${idx}`} className="px-2 text-[#74777d] text-sm font-bold">
+                            ...
+                          </span>
+                        );
+                      }
+                      return (
+                        <button
+                          key={`page-${p}`}
+                          onClick={() => setPage(Number(p))}
+                          className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold border transition-all ${
+                            page === p
+                              ? "bg-[#735c00] text-white border-[#735c00] shadow-sm font-bold"
+                              : "bg-white text-[#1c1c1a] border-[#e5e2df] hover:bg-[#f6f3f0]"
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  
+                  <button
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="px-4 py-2 border border-[#e5e2df] rounded-lg disabled:opacity-40 hover:bg-[#f6f3f0] text-sm font-semibold transition-colors disabled:cursor-not-allowed text-[#1c1c1a]"
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
             )}
 

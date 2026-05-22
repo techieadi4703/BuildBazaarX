@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
@@ -29,7 +29,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { premiumProducts, otherProducts, allProducts as rawMaterialsData, Product, categories, getProductImage, woodPlanksImg } from "@/lib/rawMaterialsData";
 import { Link } from "react-router-dom";
 
-const allProductsList: Product[] = rawMaterialsData;
+const allProductsList: Product[] = [...rawMaterialsData];
 
 
 const RawMaterials = () => {
@@ -42,6 +42,7 @@ const RawMaterials = () => {
     categoryFromUrl,
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
 
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [expandedMobileDropdown, setExpandedMobileDropdown] = useState<
@@ -71,12 +72,15 @@ const RawMaterials = () => {
   const toggleDropdown = (dropdown: string) => {
     setExpandedMobileDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
+  
+  useEffect(() => {
+    setPage(1);
+  }, [selectedCategory, searchQuery]);
 
   const { data: regularProducts = [], isLoading: isLoadingReq } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-      // Shuffle products randomly on load
-      return [...allProductsList].sort(() => Math.random() - 0.5);
+      return allProductsList;
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -118,14 +122,41 @@ const RawMaterials = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const allProducts: Product[] = [...regularProducts, ...supplierProducts];
-  const filteredProducts = allProducts.filter((product) => {
-    const matchCat = !selectedCategory || product.category === selectedCategory;
-    const matchSearch =
-      product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.brand?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
-  });
+  const allProducts = useMemo(() => {
+    return [...regularProducts, ...supplierProducts];
+  }, [regularProducts, supplierProducts]);
+
+  const filteredProducts = useMemo(() => {
+    return allProducts.filter((product) => {
+      const matchCat = !selectedCategory || product.category === selectedCategory;
+      const matchSearch =
+        !searchQuery.trim() ||
+        product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.brand?.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchCat && matchSearch;
+    });
+  }, [allProducts, selectedCategory, searchQuery]);
+
+  const totalCount = filteredProducts.length;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 16));
+
+  const paginatedProducts = useMemo(() => {
+    const start = (page - 1) * 16;
+    return filteredProducts.slice(start, start + 16);
+  }, [filteredProducts, page]);
+
+  const getPaginationRange = (current: number, total: number) => {
+    const range: (number | string)[] = [];
+    const delta = 2;
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+        range.push(i);
+      } else if (i === current - delta - 1 || i === current + delta + 1) {
+        range.push("...");
+      }
+    }
+    return range.filter((item, idx, arr) => item !== "..." || arr[idx - 1] !== "...");
+  };
 
   const handleAddToCart = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
@@ -240,17 +271,7 @@ const RawMaterials = () => {
                 Raw <span className="italic">Materials</span>
               </h1>
             </div>
-            <div className="hidden md:flex items-center gap-4">
-              <div className="flex flex-col text-right">
-                <span className="font-body text-[10px] uppercase tracking-widest text-[#74777d]">
-                  Current Inventory
-                </span>
-                <span className="text-2xl font-headline font-medium">
-                  {allProducts.length} Items
-                </span>
-              </div>
-              <div className="w-12 h-[1px] bg-[#c4c6cc] opacity-50"></div>
-            </div>
+
             {/* Search Input inline with header */}
             <div className="hidden md:block relative w-full md:w-64 -mt-4 md:mt-0">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
@@ -327,6 +348,9 @@ const RawMaterials = () => {
                   <img
                     src={woodPlanksImg}
                     alt="Veneer"
+                    loading="lazy"
+                    width={400}
+                    height={400}
                     className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply"
                   />
                   <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">
@@ -373,7 +397,7 @@ const RawMaterials = () => {
                   </motion.div>
                 ) : (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 px-2 md:px-0">
-                    {filteredProducts.map((product) => (
+                    {paginatedProducts.map((product) => (
                       <motion.article
                         key={product.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -386,6 +410,9 @@ const RawMaterials = () => {
                           <img
                             src={getProductImage(product)}
                             alt={product.brand || "Material"}
+                            loading="lazy"
+                            width={400}
+                            height={500}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                           <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
@@ -480,6 +507,59 @@ const RawMaterials = () => {
                   </div>
                 )}
               </AnimatePresence>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="mt-16 flex flex-col items-center gap-6">
+                  {/* Flipkart Info Label */}
+                  <div className="text-xs text-[#74777d] font-body">
+                    Showing page <span className="font-bold text-[#1c1c1a]">{page}</span> of <span className="font-bold text-[#1c1c1a]">{totalPages}</span> ({totalCount} total items)
+                  </div>
+                  
+                  <div className="flex justify-center items-center gap-2">
+                    <button
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className="px-4 py-2 border border-[#e5e2df] rounded-lg disabled:opacity-40 hover:bg-[#f6f3f0] text-sm font-semibold transition-colors disabled:cursor-not-allowed text-[#1c1c1a]"
+                    >
+                      Previous
+                    </button>
+                    
+                    <div className="flex items-center gap-1.5">
+                      {getPaginationRange(page, totalPages).map((p, idx) => {
+                        if (p === "...") {
+                          return (
+                            <span key={`ell-${idx}`} className="px-2 text-[#74777d] text-sm font-bold">
+                              ...
+                            </span>
+                          );
+                        }
+                        return (
+                          <button
+                            key={`page-${p}`}
+                            onClick={() => setPage(Number(p))}
+                            className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold border transition-all ${
+                              page === p
+                                ? "bg-[#735c00] text-white border-[#735c00] shadow-sm font-bold"
+                                : "bg-white text-[#1c1c1a] border-[#e5e2df] hover:bg-[#f6f3f0]"
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    
+                    <button
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={page === totalPages}
+                      className="px-4 py-2 border border-[#e5e2df] rounded-lg disabled:opacity-40 hover:bg-[#f6f3f0] text-sm font-semibold transition-colors disabled:cursor-not-allowed text-[#1c1c1a]"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
