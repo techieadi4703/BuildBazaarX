@@ -10,13 +10,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
+import { kitchenImage, bedroomImage, livingroomImage, wardrobeImage, fullhomeImage } from "@/lib/cdnImages";
 
 // Images
-import kitchenImage from "@/assets/kitchen-design.jpg";
-import bedroomImage from "@/assets/bedroom-design.jpg";
-import livingroomImage from "@/assets/livingroom-design.jpg";
-import wardrobeImage from "@/assets/wardrobe-design.jpg";
-import fullhomeImage from "@/assets/fullhome-design.jpg";
 
 const categories = [
   { id: "all", name: "All Designs" },
@@ -411,7 +407,7 @@ const DesignsCatalog = () => {
                               width={800}
                               height={800}
                               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 mix-blend-multiply opacity-90"
-                            />
+                             decoding="async" />
                             
                             <div className="absolute top-4 left-4 md:top-6 md:left-6">
                               <span className="bg-[#fcf9f6]/90 backdrop-blur-md px-2 py-1 md:px-4 md:py-2 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest md:tracking-[0.2em] flex items-center gap-1 md:gap-2 shadow-sm border border-[#e5e2df]">

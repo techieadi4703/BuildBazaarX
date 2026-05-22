@@ -55,7 +55,7 @@ export const CartSheet = () => {
             <div className="flex-1 overflow-y-auto -mx-6 px-6 space-y-4 py-4">
               {items.map((item) => (
                 <div key={item.id} className="flex gap-3 p-3 rounded-xl border border-border bg-card animate-fade-in">
-                  <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg flex-shrink-0" />
+                  <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg flex-shrink-0" loading="lazy" decoding="async" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-primary font-medium uppercase">{item.brand}</p>
                     <h4 className="text-sm font-semibold text-foreground truncate">{item.name}</h4>

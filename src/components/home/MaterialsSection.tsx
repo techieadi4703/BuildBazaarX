@@ -9,7 +9,7 @@ import {
   luxuryPaintImg,
   italianMarbleImg,
   smartSwitchImg,
-} from "@/lib/rawMaterialsData";
+} from "@/lib/cdnImages";
 
 const products = [
   {

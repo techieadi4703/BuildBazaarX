@@ -205,7 +205,7 @@ export const Orders = () => {
                                         >
                                           <div className="w-20 h-20 rounded-2xl bg-white overflow-hidden shrink-0 border-2 border-border/50 shadow-sm group-hover/item:border-primary/30 transition-all">
                                             {item.image ? (
-                                              <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-110" />
+                                              <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-110" loading="lazy" decoding="async" />
                                             ) : (
                                               <div className="w-full h-full flex items-center justify-center bg-secondary/50">
                                                 <Package className="w-10 h-10 text-muted-foreground/30" />

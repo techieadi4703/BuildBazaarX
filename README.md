@@ -79,8 +79,19 @@ src/
 ├── hooks/            # Custom React hooks
 ├── integrations/     # Supabase & external client configurations
 ├── pages/            # Main route pages (Home, Catalog, Checkout, etc.)
-└── assets/           # Images, logos, and static resources
+└── assets/           # Static resources, icons, and transformations
 ```
+
+## 🖼️ Assets & Images
+
+Images have been migrated from the local bundle to the Supabase Storage CDN to improve performance and reduce bundle size.
+- **Product Images**: Live in the `product-images` Supabase bucket.
+- **Design Images**: Live in the `design-images` Supabase bucket.
+
+### How to add new images:
+1. Upload the new image to the appropriate Supabase bucket (`product-images` or `design-images`).
+2. Add the exported constant for the new image in `src/lib/cdnImages.ts` pointing to its CDN URL.
+3. Import and use the constant across the codebase instead of importing local files.
 
 ## 🔌 Backend Architecture
 

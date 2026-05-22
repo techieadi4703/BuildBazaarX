@@ -10,8 +10,8 @@ import {
   Youtube,
   CheckCircle 
 } from "lucide-react";
-import logo from "@/assets/logo.png";
 import { motion } from "framer-motion";
+import { logo } from "@/lib/cdnImages";
 
 const footerVariants = {
   hidden: { opacity: 0, y: 20 },

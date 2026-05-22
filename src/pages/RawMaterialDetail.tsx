@@ -370,7 +370,7 @@ const RawMaterialDetail = () => {
                       idx === currentImageIndex ? "border-primary shadow-md" : "border-transparent opacity-70 hover:opacity-100"
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>
@@ -536,7 +536,7 @@ const RawMaterialDetail = () => {
                       src={getProductImage(p)} 
                       alt={p.name ?? ""} 
                       className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform" 
-                    />
+                    loading="lazy" decoding="async" />
                   </div>
                   <h4 className="font-bold text-gray-900 line-clamp-1">{p.name}</h4>
                   <p className="text-sm text-gray-500 font-bold">₹{p.price?.toLocaleString()}</p>

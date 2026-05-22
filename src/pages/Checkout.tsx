@@ -445,7 +445,7 @@ const Checkout = () => {
                               whileHover={{ x: 5 }}
                             >
                               <div className="relative w-24 h-24 rounded-[1.5rem] bg-white overflow-hidden shrink-0 border border-border/50">
-                                <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" decoding="async" />
                                 <div className="absolute inset-0 bg-black/5" />
                               </div>
                               <div className="flex-1 py-1 flex flex-col justify-between">

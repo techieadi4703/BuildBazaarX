@@ -198,7 +198,7 @@ export default function AdminProducts() {
                   return (
                     <TableRow key={product.id}>
                       <TableCell>
-                        <img src={thumbnail} alt={product.name} className="w-12 h-12 rounded object-cover border" />
+                        <img src={thumbnail} alt={product.name} className="w-12 h-12 rounded object-cover border" loading="lazy" decoding="async" />
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col max-w-xs">

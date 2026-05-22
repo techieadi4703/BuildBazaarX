@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 // Material Fallback Images
+import { fullhomeImage } from "@/lib/cdnImages";
 import {
   genericPlywoodImg as plywoodImg,
   genericPaintImg as paintImg,
@@ -19,7 +20,6 @@ import {
 } from "@/lib/rawMaterialsData";
 
 // Design Fallback Images
-import fullhomeImage from "@/assets/fullhome-design.jpg";
 
 const categoryFallbackImages: Record<string, string> = {
   wood: plywoodImg,
@@ -94,7 +94,7 @@ const Wishlist = () => {
                     <img 
                       src={design.image} 
                       alt={design.name} 
-                      loading="lazy"
+                      loading="lazy" decoding="async"
                       width={400}
                       height={300}
                       onError={(e) => {

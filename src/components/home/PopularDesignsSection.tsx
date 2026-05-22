@@ -6,10 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
-import kitchenImage from "@/assets/kitchen-design.jpg";
-import bedroomImage from "@/assets/bedroom-design.jpg";
-import fullhomeImage from "@/assets/fullhome-design.jpg";
-import livingroomImage from "@/assets/livingroom-design.jpg"; // Re-using as bathroom/garden placeholder if needed
+import { livingroomImage } from "@/lib/cdnImages"; // Re-using as bathroom/garden placeholder if needed
+import { kitchenImage, bedroomImage, fullhomeImage } from "@/lib/cdnImages";
 
 const designCategories = [
   {

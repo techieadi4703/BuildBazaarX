@@ -231,6 +231,8 @@ export default function AdminBanners() {
                         <img 
                           src={formData.image_url || ''} 
                           alt="Banner Preview" 
+                          loading="lazy" 
+                          decoding="async"
                           className="absolute inset-0 w-full h-full object-cover"
                           onError={(e) => (e.currentTarget.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80')}
                         />
@@ -279,7 +281,7 @@ export default function AdminBanners() {
                   <TableRow key={banner.id}>
                     <TableCell>
                       <div className="w-20 h-10 rounded border overflow-hidden relative">
-                        <img src={banner.image_url} alt={banner.title} className="w-full h-full object-cover" />
+                        <img src={banner.image_url} alt={banner.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                       </div>
                     </TableCell>
                     <TableCell>

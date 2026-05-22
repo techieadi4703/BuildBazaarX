@@ -1,53 +1,6 @@
 
-const woodPlanksImg = "/products/wood_planks.webp";
-const luxuryPaintImg = "/products/luxury_paint.webp";
-const italianMarbleImg = "/products/italian_marble.webp";
-const smartSwitchImg = "/products/smart_switch.webp";
-const plywoodBoardImg = "/products/plywood_board.webp";
-const cementBagImg = "/products/cement_bag.webp";
-const paintBucketImg = "/products/paint_bucket.webp";
-const vitrifiedTileImg = "/products/vitrified_tile.webp";
-const wireCoilImg = "/products/wire_coil.webp";
-const ultratechCementImg = "/products/ultratech_cements.webp";
-const birlaCementImg = "/products/birla_cement.webp";
-const asianPaintsImg = "/products/asian_paints.webp";
-const duluxPaintImg = "/products/dulux_paints.webp";
-const cabinetHingeImg = "/products/hafles_hinges.webp";
-const drawerSlideImg = "/products/drawer_slide.webp";
-const astralPipeImg = "/products/astral_pipes.webp";
-const finolexPipeImg = "/products/finolex_pipes.webp";
-const indigoPaintImg = "/products/indigo_exterior_wall_primer.webp";
-const bergerPaintImg = "/products/berger_weathercoat_paint.webp";
-const duroPlywoodImg = "/products/duro_pumaply.webp";
-const virgoLaminateImg = "/products/virgo_ply.webp";
-const jswCementImg = "/products/jsw_cement.webp";
-const dalmiaCementImg = "/products/dalmia_cement.webp";
-const godrejLockImg = "/products/godrej_digital_locker.webp";
-const doorHandleImg = "/products/glass_fitting.webp";
-const dorsetLockImg = "/products/cylinder_lock.webp";
-const jaquarFaucetImg = "/products/jaguar_faucet.webp";
-const rrKabelImg = "/products/rr_kabel.webp";
-const groundLightsImg = "/products/inground_light.webp";
-const polycabWireImg = "/products/polycab_wires.webp";
-const anchorSwitchImg = "/products/anchor_switch-sockets.webp";
-const ozoneFittingImg = "/products/ozone_wall-to-glass-connector.webp";
-const actionTesaImg = "/products/action_tesla_ply.webp";
-const ambujaCementImg = "/products/ambuja_cement.webp";
-const legrandSwitchImg = "/products/legrand_advance-switches.webp";
-const nerolacPaintImg = "/products/nerolac_beauty_paint.webp";
-const kingkonreeTileImg = "/products/kingkonree_tiles.webp";
-const vinylFlooringImg = "/products/vinyl_flooring_sheet.webp";
-const indigoPlatinumImg = "/products/indigo_platinum_paints.webp";
-const showerImg = "/products/shower.webp";
-const ledLightImg = "/products/led-light.webp";
-const genericPaintImg = "/products/paint.webp";
-const genericSwitchesImg = "/products/switches.webp";
-const genericLaminateImg = "/products/laminate.webp";
-const genericCementImg = "/products/cement.webp";
-const genericTilesImg = "/products/tiles.webp";
-const genericPlywoodImg = "/products/plywood.webp";
 
-export {
+import {
   woodPlanksImg,
   luxuryPaintImg,
   italianMarbleImg,
@@ -95,7 +48,7 @@ export {
   genericCementImg,
   genericTilesImg,
   genericPlywoodImg
-};
+} from "./cdnImages";
 
 import {
   Hammer,
@@ -294,3 +247,53 @@ export const otherProducts: Product[] = [
 ];
 
 export const allProducts: Product[] = [...premiumProducts, ...otherProducts];
+
+export {
+  woodPlanksImg,
+  luxuryPaintImg,
+  italianMarbleImg,
+  smartSwitchImg,
+  plywoodBoardImg,
+  cementBagImg,
+  paintBucketImg,
+  vitrifiedTileImg,
+  wireCoilImg,
+  ultratechCementImg,
+  birlaCementImg,
+  asianPaintsImg,
+  duluxPaintImg,
+  cabinetHingeImg,
+  drawerSlideImg,
+  astralPipeImg,
+  finolexPipeImg,
+  indigoPaintImg,
+  bergerPaintImg,
+  duroPlywoodImg,
+  virgoLaminateImg,
+  jswCementImg,
+  dalmiaCementImg,
+  godrejLockImg,
+  doorHandleImg,
+  dorsetLockImg,
+  jaquarFaucetImg,
+  rrKabelImg,
+  groundLightsImg,
+  polycabWireImg,
+  anchorSwitchImg,
+  ozoneFittingImg,
+  actionTesaImg,
+  ambujaCementImg,
+  legrandSwitchImg,
+  nerolacPaintImg,
+  kingkonreeTileImg,
+  vinylFlooringImg,
+  indigoPlatinumImg,
+  showerImg,
+  ledLightImg,
+  genericPaintImg,
+  genericSwitchesImg,
+  genericLaminateImg,
+  genericCementImg,
+  genericTilesImg,
+  genericPlywoodImg
+};

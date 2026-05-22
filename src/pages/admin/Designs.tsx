@@ -167,7 +167,7 @@ export default function AdminDesigns() {
                   return (
                     <TableRow key={design.id}>
                       <TableCell>
-                        <img src={thumbnail} alt={design.name} className="w-12 h-12 rounded object-cover border" />
+                        <img src={thumbnail} alt={design.name} className="w-12 h-12 rounded object-cover border" loading="lazy" decoding="async" />
                       </TableCell>
                       <TableCell className="font-medium max-w-xs truncate" title={design.name}>{design.name}</TableCell>
                       <TableCell>

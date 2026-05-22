@@ -261,7 +261,7 @@ export default function DesignerDashboard() {
                         {designs?.map((design) => (
                           <div key={design.id} className="group relative border border-[#e5e2df] p-4 hover:border-[#735c00] transition-all">
                               <div className="aspect-[4/3] bg-[#fcf9f6] mb-6 overflow-hidden relative">
-                                 <img src={design.images && design.images.length > 0 ? design.images[0] : ""} alt={design.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                 <img src={design.images && design.images.length > 0 ? design.images[0] : ""} alt={design.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                  <div className="absolute top-4 right-4 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
                                     <button onClick={() => { setEditingDesign(design); setActiveTab("upload"); }} className="w-10 h-10 bg-white border border-[#e5e2df] flex items-center justify-center hover:bg-[#1c1c1a] hover:text-white transition-colors" title="Edit Design"><Edit className="w-4 h-4" /></button>
                                     <button onClick={() => handleDeleteDesign(design.id)} className="w-10 h-10 bg-white border border-[#e5e2df] flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors" title="Delete Design"><Trash className="w-4 h-4" /></button>
@@ -598,7 +598,7 @@ function UploadDesignSection({ designerId, editingDesign, onComplete, onCancel }
                        <div className="grid grid-cols-5 gap-2">
                           {imagePreviews.map((prev, idx) => (
                             <div key={idx} className="relative aspect-square border border-[#e5e2df] group">
-                               <img src={prev} className="w-full h-full object-cover" />
+                               <img src={prev} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                                <button onClick={() => removeImage(idx)} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button>
                             </div>
                           ))}

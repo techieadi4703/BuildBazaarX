@@ -13,6 +13,7 @@ export const BeforeAfterSlider = ({ beforeImage, afterImage, className = '', lab
     <div className={`relative w-full h-full overflow-hidden ${className}`}>
       {/* Before Image (Background) */}
       <img
+        loading="eager" fetchPriority="high"
         src={beforeImage}
         alt={`${label} - Before`}
         className="absolute inset-0 w-full h-full object-cover rounded-lg"
@@ -25,6 +26,7 @@ export const BeforeAfterSlider = ({ beforeImage, afterImage, className = '', lab
         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
       >
         <img
+          loading="eager" fetchPriority="high"
           src={afterImage}
           alt={`${label} - After`}
           className="absolute inset-0 w-full h-full object-cover rounded-lg"

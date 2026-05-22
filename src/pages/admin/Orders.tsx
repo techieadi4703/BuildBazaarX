@@ -245,7 +245,7 @@ export default function AdminOrders() {
                                     <div className="space-y-3">
                                       {Array.isArray(selectedOrder.items) && selectedOrder.items.map((item: any, idx: number) => (
                                         <div key={idx} className="flex items-start gap-3 p-3 border rounded-md text-sm">
-                                          {item.image && <img src={item.image} alt={item.name} className="w-12 h-12 rounded object-cover" />}
+                                          {item.image && <img src={item.image} alt={item.name} className="w-12 h-12 rounded object-cover" loading="lazy" decoding="async" />}
                                           <div className="flex-1">
                                             <p className="font-medium">{item.name}</p>
                                             <p className="text-muted-foreground">Qty: {item.quantity}</p>

@@ -35,12 +35,8 @@ import { DesignPricingCalculator } from "@/components/design-detail/DesignPricin
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion, AnimatePresence } from "framer-motion";
 import { autoClassifyMaterial } from "@/lib/utils";
+import { kitchenImage, bedroomImage, livingroomImage, wardrobeImage, fullhomeImage } from "@/lib/cdnImages";
 
-import kitchenImage from "@/assets/kitchen-design.jpg";
-import bedroomImage from "@/assets/bedroom-design.jpg";
-import livingroomImage from "@/assets/livingroom-design.jpg";
-import wardrobeImage from "@/assets/wardrobe-design.jpg";
-import fullhomeImage from "@/assets/fullhome-design.jpg";
 
 
 
@@ -384,7 +380,7 @@ const DesignDetail = () => {
                         : "border-transparent opacity-60 hover:opacity-100"
                     }`}
                   >
-                    <img src={img} alt={`View ${index + 1}`} className="w-full h-full object-cover" />
+                    <img src={img} alt={`View ${index + 1}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   </motion.button>
                 ))}
               </div>

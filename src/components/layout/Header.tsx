@@ -3,11 +3,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LogIn, LogOut, User, Package, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import logoIcon from "@/assets/logo-icon.png";
 import { CartSheet } from "@/components/cart/CartSheet";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
+import { logoIcon } from "@/lib/cdnImages";
 
 const navLinks = [
   { name: "Home", path: "/" },
