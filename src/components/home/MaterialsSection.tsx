@@ -44,14 +44,14 @@ const products = [
 
 export const MaterialsSection = () => {
   return (
-    <section className="py-12 bg-[#F4F0EA] relative overflow-hidden">
+    <section className="py-12 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <Reveal width="100%" direction="up">
           <div className="text-center mb-8 px-4">
-            <h2 className="text-xl md:text-2xl font-black text-[#0B132B] tracking-widest uppercase mb-3">
+            <h2 className="text-xl md:text-2xl font-black text-foreground tracking-widest uppercase mb-3">
               VERIFIED MATERIALS: INVENTORY SHOWCASE
             </h2>
-            <p className="text-[#0B132B]/60 text-sm font-medium">
+            <p className="text-muted-foreground text-sm font-medium">
               Premium brand cards update protocol and available commit to
               materials initiatives.
             </p>
@@ -64,13 +64,13 @@ export const MaterialsSection = () => {
               <RevealItem key={index}>
                 <Link to="/materials">
                   <motion.div whileHover={{ y: -5 }} className="h-full">
-                    <div className="bg-[#F8F6F1] border border-[#0B132B]/5 rounded-sm p-4 h-full flex flex-col hover:border-[#C5A572]/30 transition-colors shadow-sm hover:shadow-md">
+                    <div className="glass-card p-4 h-full flex flex-col hover:shadow-glass-lg transition-all">
                       {/* Brand Header */}
                       <div className="flex justify-between items-start mb-4">
-                        <span className="font-bold text-[#0B132B] text-xs uppercase tracking-wider">
+                        <span className="font-bold text-foreground text-xs uppercase tracking-wider">
                           {product.brand}
                         </span>
-                        <div className="bg-[#E6D5B8] text-[#0B132B] text-[8px] font-black p-1.5 leading-none text-center rounded-sm">
+                        <div className="glass-chip bg-secondary/20 text-foreground text-[8px] font-black p-1.5 leading-none text-center">
                           {product.discount.split("\n").map((line, i) => (
                             <div key={i}>{line}</div>
                           ))}
@@ -78,7 +78,7 @@ export const MaterialsSection = () => {
                       </div>
 
                       {/* Image */}
-                      <div className="bg-white border border-[#0B132B]/5 rounded p-4 mb-6 flex-grow flex items-center justify-center">
+                      <div className="glass border border-white/30 rounded-lg p-4 mb-6 flex-grow flex items-center justify-center">
                         <img
                           src={product.image}
                           alt={product.brand}
@@ -91,10 +91,10 @@ export const MaterialsSection = () => {
 
                       {/* Specs */}
                       <div>
-                        <h4 className="font-bold text-[#0B132B] text-sm mb-2">
+                        <h4 className="font-bold text-foreground text-sm mb-2">
                           {product.name}
                         </h4>
-                        <ul className="text-[#0B132B]/70 text-[10px] space-y-1 ml-3 list-disc">
+                        <ul className="text-muted-foreground text-[10px] space-y-1 ml-3 list-disc">
                           {product.specs.map((spec, i) => (
                             <li
                               key={i}
@@ -119,7 +119,7 @@ export const MaterialsSection = () => {
             <Button
               asChild
               size="sm"
-              className="bg-[#E6D5B8] hover:bg-[#DBC49D] text-[#0B132B] border-none px-6 py-2 text-[10px] uppercase font-bold tracking-wider rounded-sm shadow-sm transition-colors"
+              className="px-6 py-2 text-[10px] uppercase font-bold tracking-wider rounded-sm shadow-sm transition-colors bg-secondary/80 hover:bg-secondary text-white border-none"
             >
               <Link to="/materials">View Material Catalog</Link>
             </Button>

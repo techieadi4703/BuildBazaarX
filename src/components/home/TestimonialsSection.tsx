@@ -19,14 +19,14 @@ const testimonials = [
 
 export const TestimonialsSection = () => {
   return (
-    <section className="py-10 bg-[#0B132B] relative overflow-hidden">
+    <section className="py-10 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         
         {/* Section Header */}
         <Reveal width="100%" direction="up">
           <div className="text-center mb-4">
-            <h2 className="text-xl md:text-2xl font-black text-white tracking-widest uppercase">
-              VERIFIED <span className="text-[#C5A572] font-serif italic font-normal">TESTIMONY</span>
+            <h2 className="text-xl md:text-2xl font-black text-foreground tracking-widest uppercase">
+              VERIFIED <span className="text-secondary font-serif italic font-normal">TESTIMONY</span>
             </h2>
           </div>
         </Reveal>
@@ -39,22 +39,22 @@ export const TestimonialsSection = () => {
                 <div className="flex flex-col items-center text-center px-4 relative">
                   
                   {/* Gold Quote Mark */}
-                  <div className="text-[#C5A572] text-6xl md:text-8xl font-serif leading-none mb-2 h-12 md:h-16 flex items-center justify-center">
+                  <div className="text-secondary text-6xl md:text-8xl font-serif leading-none mb-2 h-12 md:h-16 flex items-center justify-center">
                     “
                   </div>
                   
                   {/* Quote Text */}
-                  <p className="text-white/90 text-xl md:text-2xl font-serif italic leading-relaxed mb-2 max-w-3xl">
+                  <p className="text-foreground/90 text-xl md:text-2xl font-serif italic leading-relaxed mb-2 max-w-3xl">
                     "{testimonial.quote}"
                   </p>
                   
                   {/* Author Name */}
-                  <div className="text-white/70 text-sm md:text-base font-medium tracking-wide mb-1">
+                  <div className="text-muted-foreground text-sm md:text-base font-medium tracking-wide mb-1">
                     — {testimonial.author}
                   </div>
                   
                   {/* Monospace Tech Footer */}
-                  <div className="text-[#C5A572]/70 text-[10px] md:text-xs font-mono uppercase tracking-widest mb-2">
+                  <div className="text-secondary/70 text-[10px] md:text-xs font-mono uppercase tracking-widest mb-2">
                     Project ID: {testimonial.projectId}, Status: {testimonial.status}.
                   </div>
 

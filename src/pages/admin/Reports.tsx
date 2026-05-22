@@ -161,7 +161,7 @@ export default function AdminReports() {
         {/* SECTION B — Content Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
-            <CardHeader className="bg-muted/30">
+            <CardHeader className="bg-white/5 backdrop-blur-sm">
               <CardTitle className="text-lg">Design Statistics</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
@@ -187,7 +187,7 @@ export default function AdminReports() {
           </Card>
 
           <Card>
-            <CardHeader className="bg-muted/30">
+            <CardHeader className="bg-white/5 backdrop-blur-sm">
               <CardTitle className="text-lg">Product Statistics</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
@@ -224,15 +224,15 @@ export default function AdminReports() {
             <CardDescription>Download platform data in CSV format for external analysis.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col sm:flex-row gap-4">
-            <Button className="flex-1 h-20 flex flex-col gap-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200" variant="outline" onClick={() => handleExport('users')}>
+            <Button className="flex-1 h-20 flex flex-col gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 shadow-glass" variant="outline" onClick={() => handleExport('users')}>
               <Users className="h-5 w-5" />
               <span>Export Users Data</span>
             </Button>
-            <Button className="flex-1 h-20 flex flex-col gap-2 bg-green-50 text-green-700 hover:bg-green-100 border border-green-200" variant="outline" onClick={() => handleExport('professionals')}>
+            <Button className="flex-1 h-20 flex flex-col gap-2 bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 hover:bg-green-500/20 shadow-glass" variant="outline" onClick={() => handleExport('professionals')}>
               <Wrench className="h-5 w-5" />
               <span>Export Professionals Data</span>
             </Button>
-            <Button className="flex-1 h-20 flex flex-col gap-2 bg-orange-50 text-orange-700 hover:bg-orange-100 border border-orange-200" variant="outline" onClick={() => handleExport('suppliers')}>
+            <Button className="flex-1 h-20 flex flex-col gap-2 bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 hover:bg-orange-500/20 shadow-glass" variant="outline" onClick={() => handleExport('suppliers')}>
               <Package className="h-5 w-5" />
               <span>Export Suppliers Data</span>
             </Button>

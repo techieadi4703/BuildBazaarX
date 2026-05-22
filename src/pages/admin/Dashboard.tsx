@@ -175,10 +175,10 @@ export default function AdminDashboard() {
             <CardContent className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData || []} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <RechartsTooltip />
+                  <RechartsTooltip contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px' }} />
                   <Legend />
                   <Line type="monotone" dataKey="customers" stroke="#3b82f6" strokeWidth={2} name="Customers" />
                   <Line type="monotone" dataKey="professionals" stroke="#10b981" strokeWidth={2} name="Professionals" />
@@ -201,7 +201,7 @@ export default function AdminDashboard() {
                       <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
                     ))}
                   </Pie>
-                  <RechartsTooltip />
+                  <RechartsTooltip contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px' }} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -216,7 +216,7 @@ export default function AdminDashboard() {
               <CardTitle>Recently Registered Users</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">
+              <div className="border border-white/20 rounded-xl glass shadow-glass overflow-hidden">
                 <Table>
                   <TableHeader>
                     <TableRow>

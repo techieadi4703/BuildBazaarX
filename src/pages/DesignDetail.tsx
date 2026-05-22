@@ -275,14 +275,14 @@ const DesignDetail = () => {
       <motion.div 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="bg-secondary/30 border-b border-border/50 py-4"
+        className="glass-subtle border-b border-white/20 py-4"
       >
         <div className="container mx-auto px-4">
           <Link
             to="/designs"
-            className="inline-flex items-center text-sm font-bold text-[#44474c] hover:text-primary transition-colors group"
+            className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-foreground transition-colors group"
           >
-            <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
+            <div className="w-8 h-8 rounded-full glass flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-primary-foreground transition-all shadow-sm">
               <ArrowLeft className="w-4 h-4" />
             </div>
             Back to Catalog
@@ -297,7 +297,7 @@ const DesignDetail = () => {
           <Reveal width="100%" direction="up">
             <div className="space-y-6">
               {/* Main Image Slider */}
-              <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-secondary shadow-2xl group">
+              <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-black/5 dark:bg-white/5 border border-white/20 shadow-2xl group">
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentImageIndex}
@@ -317,18 +317,18 @@ const DesignDetail = () => {
                   </Badge>
                 )}
                 {!design.trending && (
-                  <Badge className="absolute top-6 left-6 bg-white text-[#735c00] px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-lg border border-[#e5e2df] flex items-center gap-1.5">
+                  <Badge className="absolute top-6 left-6 bg-white/80 dark:bg-black/60 backdrop-blur-md text-secondary px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-lg border border-white/20 flex items-center gap-1.5">
                     <BadgeCheck className="w-4 h-4" />
                     Verified Blueprint
                   </Badge>
                 )}
-
+ 
                 {/* Like Button */}
                 <div className="absolute top-6 right-6 z-20">
                   <button 
                     type="button"
                     onClick={handleWishlistToggle}
-                    className={`w-12 h-12 ${isInWishlist(id || design.id.toString()) ? 'bg-[#ba1a1a]/10 text-[#ba1a1a] border-[#ba1a1a]/20' : 'bg-white/90 text-[#1c1c1a] border-[#e5e2df]'} backdrop-blur-md rounded-full flex items-center justify-center hover:text-[#ba1a1a] transition-all shadow-xl cursor-pointer border`}
+                    className={`w-12 h-12 ${isInWishlist(id || design.id.toString()) ? 'bg-destructive/10 text-destructive border-destructive/20' : 'glass hover:bg-white/40 text-foreground border-white/20'} backdrop-blur-md rounded-full flex items-center justify-center hover:text-destructive transition-all shadow-xl cursor-pointer border`}
                   >
                     <Heart className={`w-5 h-5 ${isInWishlist(id || design.id.toString()) ? 'fill-current' : ''}`} />
                   </button>
@@ -454,12 +454,12 @@ const DesignDetail = () => {
                   {design.name}
                 </h1>
                 <div className="flex flex-wrap items-center gap-8 text-sm font-bold">
-                  <div className="flex items-center gap-2 bg-accent/5 px-4 py-2 rounded-2xl border border-accent/10">
+                  <div className="flex items-center gap-2 glass-subtle px-4 py-2 rounded-2xl border border-white/20">
                     <Star className="w-5 h-5 fill-accent text-accent" />
                     <span className="text-foreground text-lg">{design.rating}</span>
-                    <span className="text-[#44474c] font-medium">({design.reviews} Reviews)</span>
+                    <span className="text-muted-foreground font-medium">({design.reviews} Reviews)</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-secondary/30 px-4 py-2 rounded-2xl border border-border/50">
+                  <div className="flex items-center gap-2 glass px-4 py-2 rounded-2xl border border-white/20">
                     <Ruler className="w-5 h-5 text-primary" />
                     <span className="text-foreground">{design.size} Area</span>
                   </div>
@@ -468,7 +468,7 @@ const DesignDetail = () => {
             </Reveal>
 
             <Reveal width="100%" direction="up" delay={0.1}>
-              <p className="text-[#44474c] text-lg leading-relaxed font-medium">
+              <p className="text-muted-foreground text-lg leading-relaxed font-medium">
                 {design.description}
               </p>
             </Reveal>
@@ -482,11 +482,11 @@ const DesignDetail = () => {
                   { icon: Check, label: "Material Grade", value: "Premium Plus" }
                 ].map((item, idx) => (
                   <RevealItem key={idx}>
-                    <div className="p-6 bg-secondary/20 rounded-[2rem] border border-border/50 hover:border-primary/20 transition-all text-center">
-                      <div className="w-12 h-12 bg-background rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                    <div className="p-6 glass-card border border-white/20 hover:border-primary/20 transition-all text-center">
+                      <div className="w-12 h-12 glass rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                         <item.icon className="w-6 h-6 text-primary" />
                       </div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#44474c] mb-1">{item.label}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{item.label}</p>
                       <p className="font-black text-foreground text-sm">{item.value}</p>
                     </div>
                   </RevealItem>
@@ -504,12 +504,12 @@ const DesignDetail = () => {
                     initial={{ opacity: 0, x: -10 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.05 * idx }}
-                    className="flex items-center gap-4 p-4 rounded-2xl bg-background border border-border/40 hover:border-primary/20 transition-all group"
+                    className="flex items-center gap-4 p-4 rounded-2xl glass-card border border-white/20 hover:border-primary/20 transition-all group"
                   >
-                    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all">
+                    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                       <Check className="w-4 h-4" />
                     </div>
-                    <span className="text-sm font-bold text-[#44474c] group-hover:text-foreground transition-colors">{feat}</span>
+                    <span className="text-sm font-bold text-muted-foreground group-hover:text-foreground transition-colors">{feat}</span>
                   </motion.div>
                 ))}
               </div>
@@ -527,7 +527,7 @@ const DesignDetail = () => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="py-24 bg-background"
+            className="py-24 bg-transparent"
           >
             <div className="container mx-auto px-4 max-w-5xl">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -535,15 +535,15 @@ const DesignDetail = () => {
                   <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-4">Inside the Build</h2>
                   <h3 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">Bill of Materials</h3>
                 </div>
-                <Badge variant="secondary" className="px-6 py-2 rounded-full font-bold h-fit border border-border">
+                <Badge variant="secondary" className="px-6 py-2 rounded-full font-bold h-fit border border-white/20 glass">
                   {dbMaterials.length} Standard Items Required
                 </Badge>
               </div>
               
               
-              <div className="overflow-x-auto rounded-[3rem] border border-border/50 bg-background shadow-2xl">
+              <div className="overflow-x-auto rounded-[3rem] border border-white/20 glass shadow-2xl">
                 <table className="w-full text-left">
-                  <thead className="bg-primary/5 text-muted-foreground border-b border-primary/10">
+                  <thead className="bg-white/10 dark:bg-white/5 text-muted-foreground border-b border-white/10">
                     <tr>
                       <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px]">Material Name</th>
                       <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px]">Category</th>
@@ -551,19 +551,19 @@ const DesignDetail = () => {
                       <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px] text-right">Est. Market Price</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border/50">
+                  <tbody className="divide-y divide-white/10">
                     {dbMaterials.map((mat, idx) => (
                       <motion.tr 
                         key={mat.id} 
                         initial={{ opacity: 0, x: -10 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.1 * idx }}
-                        className="hover:bg-secondary/20 transition-all group"
+                        className="hover:bg-white/20 dark:hover:bg-white/5 transition-all group"
                       >
                         <td className="px-10 py-6 font-bold text-foreground group-hover:text-primary transition-colors">{mat.material_name}</td>
                         <td className="px-10 py-6 font-medium text-muted-foreground italic text-sm">{mat.category || autoClassifyMaterial(mat.material_name)}</td>
                         <td className="px-10 py-6">
-                           <Badge variant="outline" className="rounded-full px-4 py-1 border-primary/10 font-bold bg-primary/5 text-primary">{mat.quantity} {mat.unit}</Badge>
+                           <Badge variant="outline" className="rounded-full px-4 py-1 border-white/20 font-bold glass text-foreground">{mat.quantity} {mat.unit}</Badge>
                         </td>
                         <td className="px-10 py-6 text-right font-black text-foreground">
                           {mat.estimated_cost ? `₹${mat.estimated_cost.toLocaleString('en-IN')}` : 'Market Rates'}
@@ -579,40 +579,39 @@ const DesignDetail = () => {
       </AnimatePresence>
 
       {!id?.startsWith("db-") && <DesignPricingCalculator />}
-
       {/* Consultation Form Form Section */}
-      <section id="consultation-form" className="py-24 bg-secondary/20 relative overflow-hidden">
+      <section id="consultation-form" className="py-24 bg-transparent relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto">
             <Reveal width="100%" direction="up">
               <div className="text-center mb-16">
                 <h2 className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4">Final Step</h2>
                 <h3 className="text-4xl md:text-6xl font-black text-foreground mb-6 tracking-tight">Your Dream, Crafted.</h3>
-                <p className="text-[#44474c] text-xl font-medium max-w-2xl mx-auto">
+                <p className="text-muted-foreground text-xl font-medium max-w-2xl mx-auto">
                   Share your vision with us and let our expert team bring it to life with precision and luxury.
                 </p>
               </div>
             </Reveal>
-
+ 
             <motion.div 
               whileHover={{ y: -5 }}
               transition={{ duration: 0.5 }}
             >
-              <Card className="shadow-[0_40px_100px_rgba(0,0,0,0.15)] border-none rounded-[4rem] overflow-hidden bg-background">
-                <div className="bg-primary p-12 flex flex-col items-center text-center text-white relative overflow-hidden">
+              <Card className="shadow-[0_40px_100px_rgba(0,0,0,0.15)] border-none rounded-[4rem] overflow-hidden glass-strong">
+                <div className="bg-primary/95 p-12 flex flex-col items-center text-center text-primary-foreground relative overflow-hidden border-b border-white/10">
                   <div className="relative z-10">
                     <MessageCircle className="w-16 h-16 mb-6 opacity-80" />
                     <h3 className="text-2xl font-black tracking-tight mb-2">Technical Feasibility Brief</h3>
-                    <p className="text-white/60 font-bold uppercase tracking-widest text-[10px]">No commitment consultation call</p>
+                    <p className="text-primary-foreground/60 font-bold uppercase tracking-widest text-[10px]">No commitment consultation call</p>
                   </div>
                   <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/5 rounded-full" />
                   <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-white/5 rounded-full" />
                 </div>
-                <CardContent className="p-12 space-y-8">
+                <CardContent className="p-12 space-y-8 bg-transparent text-foreground">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-name" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Full Name</Label>
+                        <Label htmlFor="consult-name" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Full Name</Label>
                         <Input
                           id="consult-name"
                           name="name"
@@ -620,13 +619,13 @@ const DesignDetail = () => {
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           placeholder="Your preferred name"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-[#74777d]/70 text-[#1c1c1a]"
+                          className="h-14 rounded-2xl bg-white/30 dark:bg-white/5 border border-white/20 focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all font-bold placeholder:text-muted-foreground text-foreground"
                         />
                       </div>
                     </RevealItem>
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-phone" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Mobile Access</Label>
+                        <Label htmlFor="consult-phone" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Mobile Access</Label>
                         <Input
                           id="consult-phone"
                           name="phone"
@@ -635,16 +634,16 @@ const DesignDetail = () => {
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           placeholder="+91"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-[#74777d]/70 text-[#1c1c1a]"
+                          className="h-14 rounded-2xl bg-white/30 dark:bg-white/5 border border-white/20 focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all font-bold placeholder:text-muted-foreground text-foreground"
                         />
                       </div>
                     </RevealItem>
                   </div>
-
+ 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-city" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Site Location</Label>
+                        <Label htmlFor="consult-city" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Site Location</Label>
                         <Input
                           id="consult-city"
                           name="city"
@@ -652,44 +651,44 @@ const DesignDetail = () => {
                           value={formData.city}
                           onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                           placeholder="Project city"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-[#74777d]/70 text-[#1c1c1a]"
+                          className="h-14 rounded-2xl bg-white/30 dark:bg-white/5 border border-white/20 focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all font-bold placeholder:text-muted-foreground text-foreground"
                         />
                       </div>
                     </RevealItem>
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-project" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Configuration</Label>
+                        <Label htmlFor="consult-project" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Configuration</Label>
                         <select
                           id="consult-project"
                           value={formData.projectType}
                           onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                          className={`flex h-14 w-full rounded-2xl bg-secondary/30 border-transparent px-4 py-2 text-sm font-bold focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none cursor-pointer ${formData.projectType === "" ? "text-[#74777d]/70" : "text-[#1c1c1a]"}`}
+                          className={`flex h-14 w-full rounded-2xl bg-white/30 dark:bg-white/5 border border-white/20 px-4 py-2 text-sm font-bold focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all outline-none appearance-none cursor-pointer ${formData.projectType === "" ? "text-muted-foreground" : "text-foreground"}`}
                         >
                           <option value="" disabled hidden>Specific Category</option>
-                          <option value="Kitchen" className="text-[#1c1c1a]">Modern Kitchen</option>
-                          <option value="Bedroom" className="text-[#1c1c1a]">Bespoke Bedroom</option>
-                          <option value="Living Room" className="text-[#1c1c1a]">Premium Living Lounge</option>
-                          <option value="Full Home" className="text-[#1c1c1a]">End-to-End Home</option>
-                          <option value="Other" className="text-[#1c1c1a]">Custom Project</option>
+                          <option value="Kitchen" className="text-foreground bg-card">Modern Kitchen</option>
+                          <option value="Bedroom" className="text-foreground bg-card">Bespoke Bedroom</option>
+                          <option value="Living Room" className="text-foreground bg-card">Premium Living Lounge</option>
+                          <option value="Full Home" className="text-foreground bg-card">End-to-End Home</option>
+                          <option value="Other" className="text-foreground bg-card">Custom Project</option>
                         </select>
                       </div>
                     </RevealItem>
                   </div>
-
+ 
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="consult-message" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Design Aspirations</Label>
+                      <Label htmlFor="consult-message" className="text-sm font-bold uppercase tracking-widest text-muted-foreground ml-1">Design Aspirations</Label>
                       <Textarea
                         id="consult-message"
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                         placeholder="Tell us everything — materials preferences, timeline constraints, or aesthetic inspiration..."
                         rows={4}
-                        className="rounded-3xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold pt-4 px-4 placeholder:text-[#74777d]/70 text-[#1c1c1a]"
+                        className="rounded-3xl bg-white/30 dark:bg-white/5 border border-white/20 focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all font-bold pt-4 px-4 placeholder:text-muted-foreground text-foreground"
                       />
                     </div>
                   </RevealItem>
-
+ 
                   <RevealItem>
                     <Button
                       size="lg"

@@ -80,12 +80,12 @@ export default function AdminOrders() {
 
   const getStatusColor = (status: string) => {
     switch(status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'confirmed': return 'bg-blue-100 text-blue-800';
-      case 'dispatched': return 'bg-purple-100 text-purple-800';
-      case 'delivered': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending': return 'bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 backdrop-blur-sm rounded-full';
+      case 'confirmed': return 'bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 backdrop-blur-sm rounded-full';
+      case 'dispatched': return 'bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 backdrop-blur-sm rounded-full';
+      case 'delivered': return 'bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 backdrop-blur-sm rounded-full';
+      case 'cancelled': return 'bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 backdrop-blur-sm rounded-full';
+      default: return 'bg-white/10 dark:bg-white/5-foreground/10 border border-muted-foreground/20 text-muted-foreground backdrop-blur-sm rounded-full';
     }
   };
 
@@ -142,7 +142,7 @@ export default function AdminOrders() {
           </div>
         </div>
 
-        <div className="border rounded-lg bg-background overflow-x-auto">
+        <div className="border border-white/20 rounded-xl glass overflow-x-auto shadow-glass">
           <Table>
             <TableHeader>
               <TableRow>
@@ -205,7 +205,7 @@ export default function AdminOrders() {
                               {selectedOrder && (
                                 <div className="mt-6 space-y-6">
                                   {/* Status */}
-                                  <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                  <div className="flex items-center justify-between p-3 bg-white/10 dark:bg-white/5 rounded-lg">
                                     <span className="font-medium">Current Status:</span>
                                     <Badge className={`capitalize ${getStatusColor(selectedOrder.status)}`}>
                                       {selectedOrder.status}
@@ -217,7 +217,7 @@ export default function AdminOrders() {
                                     <h4 className="font-medium text-sm text-foreground mb-2 flex items-center gap-2">
                                       <MapPin className="h-4 w-4 text-muted-foreground" /> Delivery Details
                                     </h4>
-                                    <div className="text-sm space-y-1 p-3 border rounded-md">
+                                    <div className="text-sm space-y-1 p-3 border border-white/20 rounded-xl glass shadow-glass">
                                       <p><span className="font-medium">Name:</span> {selectedOrder.delivery_address?.name}</p>
                                       {selectedOrder.delivery_address && (
                                         <>
@@ -234,7 +234,7 @@ export default function AdminOrders() {
                                     <h4 className="font-medium text-sm text-foreground mb-2 flex items-center gap-2">
                                       <CreditCard className="h-4 w-4 text-muted-foreground" /> Payment Method
                                     </h4>
-                                    <p className="text-sm p-3 border rounded-md capitalize">{selectedOrder.payment_method || 'N/A'}</p>
+                                    <p className="text-sm p-3 border border-white/20 rounded-xl glass shadow-glass capitalize">{selectedOrder.payment_method || 'N/A'}</p>
                                   </div>
 
                                   {/* Items List */}
@@ -244,7 +244,7 @@ export default function AdminOrders() {
                                     </h4>
                                     <div className="space-y-3">
                                       {Array.isArray(selectedOrder.items) && selectedOrder.items.map((item: any, idx: number) => (
-                                        <div key={idx} className="flex items-start gap-3 p-3 border rounded-md text-sm">
+                                        <div key={idx} className="flex items-start gap-3 p-3 border border-white/20 rounded-xl glass shadow-glass text-sm">
                                           {item.image && <img src={item.image} alt={item.name} className="w-12 h-12 rounded object-cover" />}
                                           <div className="flex-1">
                                             <p className="font-medium">{item.name}</p>

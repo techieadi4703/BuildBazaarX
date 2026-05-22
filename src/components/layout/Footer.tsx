@@ -64,7 +64,7 @@ const trustBadges = [
 
 export const Footer = () => {
   return (
-    <footer className="bg-[#1c1c1a] text-[#f6f3f0] border-t border-white/5 font-body">
+    <footer className="glass-strong rounded-t-2xl text-foreground border-t border-white/30 font-body mt-8">
       <div className="container mx-auto px-4 py-8">
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 mb-8"
@@ -83,7 +83,7 @@ export const Footer = () => {
                 whileHover={{ scale: 1.05 }}
               />
             </Link>
-            <p className="text-[13px] text-[#74777d] leading-relaxed max-w-xs font-medium">
+            <p className="text-[13px] text-muted-foreground leading-relaxed max-w-xs font-medium">
               A curated logistics layer and structural monograph network for avant-garde architectural execution.
             </p>
              {/* Social removed for now as they were broken placeholder links */}
@@ -91,13 +91,13 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <motion.div variants={columnVariants}>
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#735c00] mb-6">Discovery</h3>
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-secondary mb-6">Discovery</h3>
             <ul className="space-y-4">
               {quickLinks.map((link) => (
                 <motion.li key={link.path} variants={itemVariants}>
                   <Link
                     to={link.path}
-                    className="text-[13px] text-[#74777d] hover:text-white transition-colors duration-200 inline-block font-medium"
+                    className="text-[13px] text-muted-foreground hover:text-foreground transition-colors duration-200 inline-block font-medium"
                   >
                     {link.name}
                   </Link>
@@ -108,13 +108,13 @@ export const Footer = () => {
 
           {/* Operational Sectors (Formerly static Services) */}
           <motion.div variants={columnVariants}>
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#735c00] mb-6">Operational Sectors</h3>
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-secondary mb-6">Operational Sectors</h3>
             <ul className="space-y-4">
               {operationalSectors.map((sector) => (
                 <motion.li key={sector.name} variants={itemVariants}>
                   <Link 
                     to={sector.path} 
-                    className="text-[13px] text-[#74777d] hover:text-white transition-colors duration-200 inline-block font-medium"
+                    className="text-[13px] text-muted-foreground hover:text-foreground transition-colors duration-200 inline-block font-medium"
                   >
                     {sector.name}
                   </Link>
@@ -125,34 +125,34 @@ export const Footer = () => {
 
           {/* Connect & Partner */}
           <motion.div variants={columnVariants}>
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#735c00] mb-6">Network Access</h3>
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-secondary mb-6">Network Access</h3>
             <div className="space-y-6">
               <ul className="space-y-3">
                 <motion.li className="flex items-center gap-3" variants={itemVariants}>
-                  <Mail className="w-3.5 h-3.5 text-[#735c00]" />
-                  <a href="mailto:techie.adi47@gmail.com" className="text-[13px] text-[#74777d] hover:text-white transition-colors font-medium">
+                  <Mail className="w-3.5 h-3.5 text-secondary" />
+                  <a href="mailto:techie.adi47@gmail.com" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors font-medium">
                     techie.adi47@gmail.com
                   </a>
                 </motion.li>
                 <motion.li className="flex items-center gap-3" variants={itemVariants}>
-                  <Phone className="w-3.5 h-3.5 text-[#735c00]" />
-                  <a href="tel:+919521259456" className="text-[13px] text-[#74777d] hover:text-white transition-colors font-medium">
+                  <Phone className="w-3.5 h-3.5 text-secondary" />
+                  <a href="tel:+919521259456" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors font-medium">
                     +91 9521259456
                   </a>
                 </motion.li>
                 <motion.li className="flex items-center gap-3" variants={itemVariants}>
-                  <Phone className="w-3.5 h-3.5 text-[#735c00]" />
-                  <a href="tel:+917309958494" className="text-[13px] text-[#74777d] hover:text-white transition-colors font-medium">
+                  <Phone className="w-3.5 h-3.5 text-secondary" />
+                  <a href="tel:+917309958494" className="text-[13px] text-muted-foreground hover:text-foreground transition-colors font-medium">
                     +91 7309958494
                   </a>
                 </motion.li>
               </ul>
               
               <div className="pt-4 flex flex-col gap-2">
-                <Link to="/professional/auth" className="text-[10px] uppercase font-black tracking-widest text-white/40 hover:text-[#735c00] transition-colors">
+                <Link to="/professional/auth" className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 hover:text-secondary transition-colors">
                   Join Registry: Professional
                 </Link>
-                <Link to="/designer/auth" className="text-[10px] uppercase font-black tracking-widest text-white/40 hover:text-[#735c00] transition-colors">
+                <Link to="/designer/auth" className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60 hover:text-secondary transition-colors">
                   Join Registry: Designer
                 </Link>
               </div>
@@ -161,24 +161,24 @@ export const Footer = () => {
         </motion.div>
 
         {/* Bottom Bar: Trust Badges (Modern Horizontal Strip) */}
-        <div className="border-t border-white/5 pt-6">
-           <div className="flex flex-wrap justify-between gap-6 mb-8 pb-8 border-b border-white/5">
+        <div className="border-t border-white/10 pt-6">
+           <div className="flex flex-wrap justify-between gap-6 mb-8 pb-8 border-b border-white/10">
               {trustBadges.map(badge => (
                 <div key={badge.name} className="flex items-center gap-2">
-                   <CheckCircle className="w-3 h-3 text-[#735c00]" />
+                   <CheckCircle className="w-3 h-3 text-secondary" />
                    <div className="flex flex-col">
-                      <span className="text-[9px] font-black uppercase tracking-tight text-white/30">{badge.name}</span>
-                      <span className="text-[10px] text-[#74777d] italic">{badge.description}</span>
+                      <span className="text-[9px] font-black uppercase tracking-tight text-muted-foreground/50">{badge.name}</span>
+                      <span className="text-[10px] text-muted-foreground italic">{badge.description}</span>
                    </div>
                 </div>
               ))}
            </div>
 
-           <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-bold uppercase tracking-[0.2em] text-[#44474c]">
+           <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
               <div className="flex gap-8">
-                <Link to="/privacy-policy" className="hover:text-[#735c00] transition-colors">Privacy Policy</Link>
-                <Link to="/terms-of-service" className="hover:text-[#735c00] transition-colors">Terms of Service</Link>
-                <Link to="/contact" className="hover:text-[#735c00] transition-colors">Support</Link>
+                <Link to="/privacy-policy" className="hover:text-secondary transition-colors">Privacy Policy</Link>
+                <Link to="/terms-of-service" className="hover:text-secondary transition-colors">Terms of Service</Link>
+                <Link to="/contact" className="hover:text-secondary transition-colors">Support</Link>
               </div>
               <p className="opacity-40">© 2026 BuildBazaarX Network. All Rights Reserved.</p>
            </div>

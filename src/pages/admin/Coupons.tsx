@@ -280,7 +280,7 @@ export default function AdminCoupons() {
           </Dialog>
         </div>
 
-        <div className="border rounded-lg bg-background overflow-x-auto">
+        <div className="border border-white/20 rounded-xl glass overflow-x-auto shadow-glass">
           <Table>
             <TableHeader>
               <TableRow>
@@ -316,9 +316,9 @@ export default function AdminCoupons() {
                     </TableCell>
                     <TableCell>
                       {c.is_active ? (
-                        <Badge variant="secondary" className="bg-green-100 text-green-800">Active</Badge>
+                        <Badge variant="secondary" className="bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 backdrop-blur-sm rounded-full">Active</Badge>
                       ) : (
-                        <Badge variant="secondary" className="bg-gray-100 text-gray-800">Inactive</Badge>
+                        <Badge variant="secondary" className="bg-white/10 dark:bg-white/5-foreground/10 border border-muted-foreground/20 text-muted-foreground backdrop-blur-sm rounded-full">Inactive</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">

@@ -42,9 +42,7 @@ export const AuthRoleSelect = () => {
         .font-body { font-family: 'Manrope', sans-serif; }
       `}</style>
       
-      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative">
-        {/* Subtle grid background to match the "blueprint" aesthetic in a muted way */}
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e5e2df 1px, transparent 1px), linear-gradient(90deg, #e5e2df 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.3 }} />
+      <div className="text-foreground min-h-screen font-body w-full pb-20 relative overflow-hidden">
         
         <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
           
@@ -52,12 +50,12 @@ export const AuthRoleSelect = () => {
             
             {/* Header Area */}
             <div className="w-full md:w-1/3 shrink-0 sticky top-32">
-               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[#735c00] mb-4 block font-bold">Authentication Protocol</span>
+               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-secondary mb-4 block font-bold">Authentication Protocol</span>
                <h1 className="text-6xl md:text-7xl font-headline tracking-tight leading-none mb-6">
                 {isLogin ? "System" : "Platform"} <br/><span className="italic">Access.</span>
               </h1>
-               <div className="w-12 h-[1px] bg-[#c4c6cc] mb-6"></div>
-              <p className="text-lg font-body text-[#44474c] leading-relaxed max-w-sm">
+               <div className="w-12 h-[1px] bg-[#c4c6cc]/50 mb-6"></div>
+              <p className="text-lg font-body text-muted-foreground leading-relaxed max-w-sm">
                 {isLogin 
                   ? "Select your verified sector to securely enter the dashboard and manage operations." 
                   : "Establish your identity within the network. Select the appropriate operational sector to begin."}
@@ -66,7 +64,7 @@ export const AuthRoleSelect = () => {
 
             {/* Roles Grid */}
             <div className="w-full md:w-2/3">
-              <motion.div 
+               <motion.div 
                 initial="hidden"
                 animate="visible"
                 variants={{
@@ -88,25 +86,25 @@ export const AuthRoleSelect = () => {
                       className="cursor-pointer group flex flex-col h-full"
                       onClick={() => navigate(`${role.path}?mode=${isLogin ? 'login' : 'register'}`)}
                     >
-                      <article className="p-8 md:p-10 bg-[#f6f3f0] border border-[#e5e2df] group-hover:border-[#735c00] transition-colors rounded-sm flex-grow flex flex-col relative overflow-hidden">
+                      <article className="p-8 md:p-10 glass-card glass-hover-lift hover:border-secondary flex-grow flex flex-col relative overflow-hidden">
                         
                         <div className="mb-12">
-                          <div className="w-12 h-12 rounded-full bg-[#e5e2df] flex items-center justify-center mb-6 group-hover:bg-[#1c1c1a] transition-colors">
-                            <Icon className="w-5 h-5 text-[#1c1c1a] group-hover:text-white transition-colors" />
+                          <div className="w-12 h-12 rounded-full bg-white/20 dark:bg-white/5 border border-white/30 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-transparent transition-colors">
+                            <Icon className="w-5 h-5 text-foreground group-hover:text-primary-foreground transition-colors" />
                           </div>
-                          <h3 className="text-2xl font-headline font-semibold text-[#1c1c1a] leading-tight mb-3">
+                          <h3 className="text-2xl font-headline font-semibold text-foreground leading-tight mb-3">
                             {role.title}
                           </h3>
-                          <p className="font-body text-[#44474c] text-sm leading-relaxed">
+                          <p className="font-body text-muted-foreground text-sm leading-relaxed">
                             {role.description}
                           </p>
                         </div>
                         
-                        <div className="mt-auto border-t border-[#e5e2df] pt-6 flex justify-between items-center group-hover:border-[#735c00] transition-colors">
-                          <span className="text-[10px] uppercase font-bold tracking-widest text-[#735c00]">
+                        <div className="mt-auto border-t border-white/20 pt-6 flex justify-between items-center group-hover:border-secondary transition-colors">
+                          <span className="text-[10px] uppercase font-bold tracking-widest text-secondary">
                             {isLogin ? "Authenticate" : "Initialize Registration"}
                           </span>
-                          <div className="w-8 h-8 rounded-full border border-[#c4c6cc] group-hover:border-[#735c00] flex items-center justify-center group-hover:bg-[#735c00] group-hover:text-white transition-all">
+                          <div className="w-8 h-8 rounded-full border border-white/30 group-hover:border-secondary flex items-center justify-center group-hover:bg-secondary group-hover:text-secondary-foreground transition-all">
                             <ArrowRight className="w-3 h-3" />
                           </div>
                         </div>

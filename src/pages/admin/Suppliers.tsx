@@ -124,7 +124,7 @@ export default function AdminSuppliers() {
           </div>
         </div>
 
-        <div className="border rounded-lg bg-background overflow-x-auto">
+        <div className="border border-white/20 rounded-xl glass overflow-x-auto shadow-glass">
           <Table>
             <TableHeader>
               <TableRow>
@@ -169,9 +169,9 @@ export default function AdminSuppliers() {
                     </TableCell>
                     <TableCell>
                       {supplier.is_verified ? (
-                        <Badge variant="secondary" className="bg-green-100 text-green-800">Verified</Badge>
+                        <Badge variant="secondary" className="bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 backdrop-blur-sm rounded-full">Verified</Badge>
                       ) : (
-                        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending</Badge>
+                        <Badge variant="secondary" className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 backdrop-blur-sm rounded-full">Pending</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">

@@ -27,7 +27,7 @@ export const MobileNav = () => {
   ];
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#fcf9f6] border-t border-[#e5e2df] z-50 px-6 py-2 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)]">
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 glass-subtle border-t border-white/30 z-50 px-6 py-2 pb-[env(safe-area-inset-bottom)]">
       <nav className="flex items-center justify-between px-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path || (item.name === 'Profile' && location.pathname.startsWith('/profile'));

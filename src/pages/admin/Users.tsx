@@ -279,15 +279,15 @@ export default function AdminUsers() {
               setRoleFilter(val);
               setPage(1);
             }}
-            className="w-full md:w-auto overflow-x-auto border rounded-lg p-1 bg-muted/50"
+            className="w-full md:w-auto overflow-x-auto border border-white/20 rounded-xl p-1 glass-subtle shadow-glass"
           >
             <TabsList className="bg-transparent border-none h-auto p-0">
-              <TabsTrigger value="all" className="data-[state=active]:bg-background">All</TabsTrigger>
-              <TabsTrigger value="customers" className="data-[state=active]:bg-background">Customers</TabsTrigger>
-              <TabsTrigger value="professionals" className="data-[state=active]:bg-background">Professionals</TabsTrigger>
-              <TabsTrigger value="designers" className="data-[state=active]:bg-background">Designers</TabsTrigger>
-              <TabsTrigger value="suppliers" className="data-[state=active]:bg-background">Suppliers</TabsTrigger>
-              <TabsTrigger value="admins" className="data-[state=active]:bg-background">Admins</TabsTrigger>
+              <TabsTrigger value="all" className="data-[state=active]:bg-white/10 dark:data-[state=active]:bg-white/5 data-[state=active]:border-white/20">All</TabsTrigger>
+              <TabsTrigger value="customers" className="data-[state=active]:bg-white/10 dark:data-[state=active]:bg-white/5 data-[state=active]:border-white/20">Customers</TabsTrigger>
+              <TabsTrigger value="professionals" className="data-[state=active]:bg-white/10 dark:data-[state=active]:bg-white/5 data-[state=active]:border-white/20">Professionals</TabsTrigger>
+              <TabsTrigger value="designers" className="data-[state=active]:bg-white/10 dark:data-[state=active]:bg-white/5 data-[state=active]:border-white/20">Designers</TabsTrigger>
+              <TabsTrigger value="suppliers" className="data-[state=active]:bg-white/10 dark:data-[state=active]:bg-white/5 data-[state=active]:border-white/20">Suppliers</TabsTrigger>
+              <TabsTrigger value="admins" className="data-[state=active]:bg-white/10 dark:data-[state=active]:bg-white/5 data-[state=active]:border-white/20">Admins</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -305,7 +305,7 @@ export default function AdminUsers() {
           </div>
         </div>
 
-        <div className="border rounded-lg bg-background">
+        <div className="border border-white/20 rounded-xl glass shadow-glass">
           <Table>
             <TableHeader>
               <TableRow>
@@ -341,7 +341,7 @@ export default function AdminUsers() {
                       {user.isBlocked ? (
                         <Badge variant="destructive" className="flex w-fit items-center gap-1"><ShieldAlert className="h-3 w-3" /> Blocked</Badge>
                       ) : (
-                        <Badge variant="outline" className="text-green-600 bg-green-50 border-green-200 flex w-fit items-center gap-1"><ShieldCheck className="h-3 w-3" /> Active</Badge>
+                        <Badge variant="outline" className="text-green-600 dark:text-green-400 bg-green-500/10 border border-green-500/20 flex w-fit items-center gap-1 backdrop-blur-sm rounded-full"><ShieldCheck className="h-3 w-3" /> Active</Badge>
                       )}
                     </TableCell>
                     <TableCell>{safeDate(user.createdAt)}</TableCell>

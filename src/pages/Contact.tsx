@@ -175,7 +175,7 @@ const Contact = () => {
         <meta property="og:description" content="Reach our team in Jaipur. Free estimates, 24h response, and verified subject experts for every construction need." />
       </Helmet>
       {/* Blueprint Hero Section */}
-      <section className="relative overflow-hidden bg-primary-container pt-32 pb-24 md:pt-48 md:pb-32">
+      <section className="relative overflow-hidden bg-transparent pt-32 pb-24 md:pt-48 md:pb-32">
         <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />
         <div className="absolute inset-0 bg-dot-grid opacity-[0.05] pointer-events-none" />
         
@@ -185,10 +185,10 @@ const Contact = () => {
               <span className="font-mono text-[10px] md:text-xs text-[#C5A572] uppercase tracking-[0.5em] mb-6 block border border-[#C5A572]/30 px-4 py-1.5 rounded-full bg-[#C5A572]/10 backdrop-blur-sm">
                 Communication_Link
               </span>
-              <h1 className="text-5xl md:text-8xl font-black text-white mb-6 tracking-tighter leading-[1.1]">
-                Deploy Your <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-white to-[#C5A572]">Vision.</span>
+              <h1 className="text-5xl md:text-8xl font-black text-foreground mb-6 tracking-tighter leading-[1.1]">
+                Deploy Your <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-foreground to-[#C5A572]">Vision.</span>
               </h1>
-              <p className="text-white/60 max-w-2xl mx-auto text-lg md:text-2xl font-medium leading-relaxed">
+              <p className="text-foreground/60 max-w-2xl mx-auto text-lg md:text-2xl font-medium leading-relaxed">
                 Connect with the engineering vanguard. Transmit your project parameters for a highly customized architectural assessment.
               </p>
             </div>
@@ -197,49 +197,49 @@ const Contact = () => {
       </section>
 
       {/* Main Command Center Form */}
-      <section className="py-24 bg-[#F4F0EA] relative">
+      <section className="py-24 bg-transparent relative">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-12 gap-12 max-w-7xl mx-auto">
             
-            {/* Left: Gold Form */}
+            {/* Left: Glass Form */}
             <div className="lg:col-span-6">
               <Reveal width="100%" direction="up">
                 <div className="mb-10">
-                  <h2 className="text-4xl font-black text-black mb-4 tracking-tighter">Submit Execution Request</h2>
-                  <p className="text-black/60 text-lg font-medium">
+                  <h2 className="text-4xl font-black text-foreground mb-4 tracking-tighter">Submit Execution Request</h2>
+                  <p className="text-muted-foreground text-lg font-medium">
                     Input your primary parameters below. Action protocols proceed strictly within 24 operational hours.
                   </p>
                 </div>
               </Reveal>
-
+ 
               <motion.form 
                 onSubmit={handleSubmit} 
-                className="space-y-8 bg-[#C5A572] p-8 md:p-12 rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden"
+                className="space-y-8 glass-strong p-8 md:p-12 rounded-[3rem] shadow-glass-lg border border-white/20 relative overflow-hidden"
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.5 }}
               >
                 {/* Visual Blueprint accents */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10">
-                  <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black uppercase">Form_Asset</span>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-white/10">
+                  <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-foreground uppercase">Form_Asset</span>
                 </div>
-
+ 
                 <div className="grid sm:grid-cols-2 gap-8 relative z-10">
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Full Name</Label>
+                      <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-muted-foreground ml-1">Full Name</Label>
                       <Input
                         id="name"
                         placeholder="Aditya Srivastava"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
+                        className="rounded-2xl h-14 bg-white/10 dark:bg-white/5 border-white/20 focus-visible:bg-white/20 transition-all duration-300 text-foreground placeholder:text-muted-foreground/60 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Phone Number</Label>
+                      <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-muted-foreground ml-1">Phone Number</Label>
                       <Input
                         id="phone"
                         type="tel"
@@ -247,55 +247,55 @@ const Contact = () => {
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
+                        className="rounded-2xl h-14 bg-white/10 dark:bg-white/5 border-white/20 focus-visible:bg-white/20 transition-all duration-300 text-foreground placeholder:text-muted-foreground/60 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
                 </div>
-
+ 
                 <div className="grid sm:grid-cols-2 gap-8 relative z-10">
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="email" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Email Address</Label>
+                      <Label htmlFor="email" className="text-[10px] uppercase font-mono tracking-widest text-muted-foreground ml-1">Email Address</Label>
                       <Input
                         id="email"
                         type="email"
                         placeholder="you@email.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
+                        className="rounded-2xl h-14 bg-white/10 dark:bg-white/5 border-white/20 focus-visible:bg-white/20 transition-all duration-300 text-foreground placeholder:text-muted-foreground/60 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Operational City</Label>
+                      <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-muted-foreground ml-1">Operational City</Label>
                       <Input
                         id="city"
                         placeholder="Jaipur, RJ"
                         value={formData.city}
                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                         required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
+                        className="rounded-2xl h-14 bg-white/10 dark:bg-white/5 border-white/20 focus-visible:bg-white/20 transition-all duration-300 text-foreground placeholder:text-muted-foreground/60 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
                 </div>
-
+ 
                 <div className="grid sm:grid-cols-2 gap-8 relative z-10">
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="service" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Target Service</Label>
+                      <Label htmlFor="service" className="text-[10px] uppercase font-mono tracking-widest text-muted-foreground ml-1">Target Service</Label>
                       <Select
                         value={formData.service}
                         onValueChange={(value) => setFormData({ ...formData, service: value })}
                       >
-                        <SelectTrigger id="service" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-sm px-5">
+                        <SelectTrigger id="service" className="rounded-2xl h-14 bg-white/10 dark:bg-white/5 border-white/20 focus:bg-white/25 transition-all duration-300 text-foreground text-sm px-5">
                           <SelectValue placeholder="Select target parameter" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl bg-white text-black border-transparent shadow-xl">
+                        <SelectContent className="rounded-xl glass border-white/20 shadow-xl">
                           {services.map((service) => (
-                            <SelectItem key={service} value={service.toLowerCase()} className="rounded-lg hover:bg-black/5 focus:bg-black/5 focus:text-black cursor-pointer">
+                            <SelectItem key={service} value={service.toLowerCase()} className="rounded-lg hover:bg-white/10 focus:bg-white/10 focus:text-foreground cursor-pointer text-foreground">
                               {service}
                             </SelectItem>
                           ))}
@@ -305,54 +305,54 @@ const Contact = () => {
                   </RevealItem>
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="budget" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Capital Allocation</Label>
+                      <Label htmlFor="budget" className="text-[10px] uppercase font-mono tracking-widest text-muted-foreground ml-1">Capital Allocation</Label>
                       <Select
                         value={formData.budget}
                         onValueChange={(value) => setFormData({ ...formData, budget: value })}
                       >
-                        <SelectTrigger id="budget" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-sm px-5">
+                        <SelectTrigger id="budget" className="rounded-2xl h-14 bg-white/10 dark:bg-white/5 border-white/20 focus:bg-white/25 transition-all duration-300 text-foreground text-sm px-5">
                           <SelectValue placeholder="Select capital bounds" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl bg-white text-black border-transparent shadow-xl">
-                          <SelectItem value="under-2l" className="rounded-lg hover:bg-black/5 cursor-pointer">Under ₹2 Lakh</SelectItem>
-                          <SelectItem value="2-5l" className="rounded-lg hover:bg-black/5 cursor-pointer">₹2 - 5 Lakh</SelectItem>
-                          <SelectItem value="5-10l" className="rounded-lg hover:bg-black/5 cursor-pointer">₹5 - 10 Lakh</SelectItem>
-                          <SelectItem value="10-20l" className="rounded-lg hover:bg-black/5 cursor-pointer">₹10 - 20 Lakh</SelectItem>
-                          <SelectItem value="above-20l" className="rounded-lg hover:bg-black/5 cursor-pointer">Above ₹20 Lakh</SelectItem>
+                        <SelectContent className="rounded-xl glass border-white/20 shadow-xl">
+                          <SelectItem value="under-2l" className="rounded-lg hover:bg-white/10 cursor-pointer text-foreground">Under ₹2 Lakh</SelectItem>
+                          <SelectItem value="2-5l" className="rounded-lg hover:bg-white/10 cursor-pointer text-foreground">₹2 - 5 Lakh</SelectItem>
+                          <SelectItem value="5-10l" className="rounded-lg hover:bg-white/10 cursor-pointer text-foreground">₹5 - 10 Lakh</SelectItem>
+                          <SelectItem value="10-20l" className="rounded-lg hover:bg-white/10 cursor-pointer text-foreground">₹10 - 20 Lakh</SelectItem>
+                          <SelectItem value="above-20l" className="rounded-lg hover:bg-white/10 cursor-pointer text-foreground">Above ₹20 Lakh</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </RevealItem>
                 </div>
-
+ 
                 <RevealItem>
                   <div className="space-y-3 relative z-10">
-                    <Label htmlFor="message" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Architectural Brief</Label>
+                    <Label htmlFor="message" className="text-[10px] uppercase font-mono tracking-widest text-muted-foreground ml-1">Architectural Brief</Label>
                     <Textarea
                       id="message"
                       placeholder="Specify blueprint dimensions, materials required, and ultimate vision details..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       rows={5}
-                      className="rounded-2xl bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm p-5 resize-none"
+                      className="rounded-2xl bg-white/10 dark:bg-white/5 border-white/20 focus-visible:bg-white/20 transition-all duration-300 text-foreground placeholder:text-muted-foreground/60 text-sm p-5 resize-none animate-none"
                     />
                   </div>
                 </RevealItem>
-
+ 
                 <RevealItem>
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-6 border-t border-black/10 relative z-10">
-                    <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/50 max-w-[240px]">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-6 border-t border-white/10 relative z-10">
+                    <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground max-w-[240px]">
                       By deploying this request, you accept full operational terms.
                     </p>
                     <Button 
                       type="submit" 
-                      className="w-full sm:w-auto rounded-full px-12 h-16 text-lg font-bold shadow-[0_20px_40px_rgba(0,0,0,0.3)] bg-black text-white hover:bg-black/80 transition-all duration-300 group relative overflow-hidden"
+                      className="w-full sm:w-auto rounded-full px-12 h-16 text-lg font-bold shadow-glass-lg bg-foreground text-background hover:bg-foreground/90 transition-all duration-300 group relative overflow-hidden"
                       disabled={isSubmitting}
                     >
                       <span className="relative z-10 flex items-center gap-2">
                         {isSubmitting ? (
                           <>
-                           <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                           <div className="w-5 h-5 border-2 border-background/20 border-t-background rounded-full animate-spin" />
                            Compiling...
                           </>
                          ) : (
@@ -382,24 +382,24 @@ const Contact = () => {
                 <div className="grid sm:grid-cols-2 gap-4">
                   {contactInfo.map((info, index) => (
                     <RevealItem key={index}>
-                      <Card className="border-black/5 shadow-none bg-white rounded-3xl h-full group hover:shadow-xl transition-all duration-400">
+                      <Card className="border-white/20 shadow-glass bg-transparent glass-card rounded-3xl h-full group hover:shadow-glass-lg hover:-translate-y-1 transition-all duration-400">
                         <CardContent className="p-6">
-                          <div className={`w-12 h-12 bg-primary-container rounded-2xl flex items-center justify-center mb-6 border border-black/10 group-hover:scale-110 transition-transform ${info.color}`}>
-                            <info.icon className="w-5 h-5 text-white" />
+                          <div className="w-12 h-12 glass-subtle rounded-2xl flex items-center justify-center mb-6 border border-white/20 group-hover:scale-110 transition-transform">
+                            <info.icon className="w-5 h-5 text-secondary" />
                           </div>
-                          <h3 className="font-bold text-black mb-2 text-sm uppercase tracking-widest">{info.title}</h3>
+                          <h3 className="font-bold text-foreground mb-2 text-sm uppercase tracking-widest">{info.title}</h3>
                           <div className="flex flex-col gap-2">
                             {info.values.map((v, i) => (
                               v.link ? (
                                 <a
                                   key={i}
                                   href={v.link}
-                                  className="text-black/60 font-medium hover:text-[#C5A572] transition-colors text-sm break-all"
+                                  className="text-muted-foreground font-medium hover:text-secondary transition-colors text-sm break-all"
                                 >
                                   {v.text}
                                 </a>
                               ) : (
-                                <p key={i} className="text-black/60 font-medium text-sm">{v.text}</p>
+                                <p key={i} className="text-muted-foreground font-medium text-sm">{v.text}</p>
                               )
                             ))}
                           </div>
@@ -412,14 +412,14 @@ const Contact = () => {
 
               {/* Secure WhatsApp Bridge Block */}
               <Reveal width="100%" direction="up" delay={0.4}>
-                <Card className="border-white/10 shadow-2xl bg-[#131b2E] rounded-3xl overflow-hidden relative group">
+                <Card className="border-white/10 shadow-glass-lg bg-[#131b2e]/50 backdrop-blur-md rounded-3xl overflow-hidden relative group">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-bl-[100%] pointer-events-none" />
                   <CardContent className="p-10 flex flex-col sm:flex-row items-center gap-8 relative z-10">
                     <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-[2rem] flex items-center justify-center shrink-0 border border-green-500/30 group-hover:scale-110 transition-all duration-500">
                       <MessageCircle className="w-10 h-10" />
                     </div>
                     <div>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#C5A572] block mb-2">Priority_Comms</span>
+                      <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-secondary block mb-2">Priority_Comms</span>
                       <h3 className="text-2xl font-black text-white mb-2 leading-none">Instant Bridge</h3>
                       <p className="text-white/60 font-medium text-sm mb-6 leading-relaxed">
                         Access raw material logistics and architectural status in real-time.
@@ -438,8 +438,8 @@ const Contact = () => {
               <Reveal width="100%" direction="up" delay={0.5}>
                 <div className="p-8 pb-4">
                   <div className="flex items-center gap-3 mb-6">
-                    <ShieldAlert className="w-5 h-5 text-[#C5A572]" />
-                    <h3 className="font-mono text-[10px] tracking-[0.2em] text-black/40 uppercase">Operational Integrity</h3>
+                    <ShieldAlert className="w-5 h-5 text-secondary" />
+                    <h3 className="font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase">Operational Integrity</h3>
                   </div>
                   <div className="space-y-4">
                     {trustPoints.map((point, index) => (
@@ -450,8 +450,8 @@ const Contact = () => {
                         transition={{ delay: 0.1 * index }}
                         className="flex items-center gap-4"
                       >
-                        <CheckCircle className="w-4 h-4 text-[#C5A572]" />
-                        <span className="text-black/80 font-bold text-sm">{point}</span>
+                        <CheckCircle className="w-4 h-4 text-secondary" />
+                        <span className="text-foreground/80 font-bold text-sm">{point}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -463,22 +463,22 @@ const Contact = () => {
       </section>
 
       {/* Corporate Legacy Footer block */}
-      <section className="py-32 bg-primary-container relative overflow-hidden flex items-center justify-center min-h-[500px]">
+      <section className="py-32 bg-transparent relative overflow-hidden flex items-center justify-center min-h-[500px]">
         <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />
         <div className="absolute inset-0 bg-dot-grid opacity-[0.05] pointer-events-none" />
         
         <div className="container mx-auto px-4 text-center relative z-10">
           <Reveal width="100%" direction="up">
             <div className="max-w-4xl mx-auto">
-              <div className="w-16 h-16 mx-auto bg-[#C5A572]/10 border border-[#C5A572]/30 rounded-2xl flex items-center justify-center mb-8">
-                <Fingerprint className="w-8 h-8 text-[#C5A572]" />
+              <div className="w-16 h-16 mx-auto bg-secondary/10 border border-secondary/30 rounded-2xl flex items-center justify-center mb-8">
+                <Fingerprint className="w-8 h-8 text-secondary" />
               </div>
-              <p className="text-3xl md:text-5xl font-serif text-white leading-snug tracking-tight italic mb-10">
-                “Transparency is not an add-on; it is the structural integrity of <span className="text-[#C5A572]">BuildBazaarX</span>'s operations.”
+              <p className="text-3xl md:text-5xl font-serif text-foreground leading-snug tracking-tight italic mb-10">
+                “Transparency is not an add-on; it is the structural integrity of <span className="text-secondary">BuildBazaarX</span>'s operations.”
               </p>
               <div className="flex flex-col items-center">
-                <p className="font-black text-white uppercase tracking-widest text-sm mb-1">Executive Board</p>
-                <p className="text-xs text-white/50 font-medium font-mono uppercase">Jaipur Sector Control</p>
+                <p className="font-black text-foreground uppercase tracking-widest text-sm mb-1">Executive Board</p>
+                <p className="text-xs text-muted-foreground font-medium font-mono uppercase">Jaipur Sector Control</p>
               </div>
             </div>
           </Reveal>

@@ -124,7 +124,7 @@ export default function AdminSettings() {
                       <Label>Professional Commission (%)</Label>
                       <Input 
                         type="number" 
-                        className="border-gray-300 focus:border-[#735c00]"
+                        className="border-white/20 focus:border-secondary/50 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white/10 dark:bg-white/5 text-foreground"
                         value={settings.professional_commission_pct} 
                         onChange={(e) => handleInputChange('professional_commission_pct', e.target.value)} 
                       />
@@ -133,7 +133,7 @@ export default function AdminSettings() {
                       <Label>Designer Commission (%)</Label>
                       <Input 
                         type="number" 
-                        className="border-gray-300 focus:border-[#735c00]"
+                        className="border-white/20 focus:border-secondary/50 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white/10 dark:bg-white/5 text-foreground"
                         value={settings.designer_commission_pct} 
                         onChange={(e) => handleInputChange('designer_commission_pct', e.target.value)} 
                       />
@@ -145,7 +145,7 @@ export default function AdminSettings() {
                       <Label>Supplier Commission (%)</Label>
                       <Input 
                         type="number" 
-                        className="border-gray-300 focus:border-[#735c00]"
+                        className="border-white/20 focus:border-secondary/50 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white/10 dark:bg-white/5 text-foreground"
                         value={settings.supplier_commission_pct} 
                         onChange={(e) => handleInputChange('supplier_commission_pct', e.target.value)} 
                       />
@@ -154,7 +154,7 @@ export default function AdminSettings() {
                       <Label>GST Percentage (%)</Label>
                       <Input 
                         type="number" 
-                        className="border-gray-300 focus:border-[#735c00]"
+                        className="border-white/20 focus:border-secondary/50 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white/10 dark:bg-white/5 text-foreground"
                         value={settings.gst_pct} 
                         onChange={(e) => handleInputChange('gst_pct', e.target.value)} 
                       />
@@ -166,7 +166,7 @@ export default function AdminSettings() {
                       <Label>Featured Listing Price (₹)</Label>
                       <Input 
                         type="number" 
-                        className="border-gray-300 focus:border-[#735c00]"
+                        className="border-white/20 focus:border-secondary/50 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white/10 dark:bg-white/5 text-foreground"
                         value={settings.featured_listing_price} 
                         onChange={(e) => handleInputChange('featured_listing_price', e.target.value)} 
                       />
@@ -175,7 +175,7 @@ export default function AdminSettings() {
                       <Label>Minimum Payout Amount (₹)</Label>
                       <Input 
                         type="number" 
-                        className="border-gray-300 focus:border-[#735c00]"
+                        className="border-white/20 focus:border-secondary/50 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white/10 dark:bg-white/5 text-foreground"
                         value={settings.min_payout_amount} 
                         onChange={(e) => handleInputChange('min_payout_amount', e.target.value)} 
                       />
@@ -186,7 +186,7 @@ export default function AdminSettings() {
                     <Label>Payout Trigger Statuses (comma separated)</Label>
                     <Input 
                       placeholder="e.g. paid,pending,processing,shipped"
-                      className="border-gray-300 focus:border-[#735c00]"
+                      className="border-white/20 focus:border-secondary/50 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white/10 dark:bg-white/5 text-foreground"
                       value={settings.payout_trigger_statuses} 
                       onChange={(e) => handleInputChange('payout_trigger_statuses', e.target.value)} 
                     />
@@ -212,7 +212,7 @@ export default function AdminSettings() {
               <CardDescription>Recent administrative actions across the platform.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="border rounded-md">
+              <div className="border border-white/20 rounded-xl glass shadow-glass">
                 <Table>
                   <TableHeader>
                     <TableRow>

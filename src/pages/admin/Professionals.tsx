@@ -128,7 +128,7 @@ export default function AdminProfessionals() {
           </div>
         </div>
 
-        <div className="border rounded-lg bg-background overflow-x-auto">
+        <div className="border border-white/20 rounded-xl glass overflow-x-auto shadow-glass">
           <Table>
             <TableHeader>
               <TableRow>
@@ -171,9 +171,9 @@ export default function AdminProfessionals() {
                     <TableCell>
                       <div className="flex flex-col gap-1">
                         {pro.is_verified ? (
-                          <Badge variant="secondary" className="bg-green-100 text-green-800 w-fit">Verified</Badge>
+                          <Badge variant="secondary" className="bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 backdrop-blur-sm rounded-full w-fit">Verified</Badge>
                         ) : (
-                          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 w-fit">Pending</Badge>
+                          <Badge variant="secondary" className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 backdrop-blur-sm rounded-full w-fit">Pending</Badge>
                         )}
                         {pro.is_available ? (
                           <span className="text-[10px] text-green-600 font-medium">Available</span>
@@ -212,7 +212,7 @@ export default function AdminProfessionals() {
                                   
                                   <div>
                                     <h4 className="font-medium text-sm text-muted-foreground mb-1">Bio</h4>
-                                    <p className="text-sm bg-muted/50 p-3 rounded-md">{selectedPro.bio || 'No bio provided.'}</p>
+                                    <p className="text-sm bg-white/5 p-3 rounded-md">{selectedPro.bio || 'No bio provided.'}</p>
                                   </div>
 
                                   <div className="grid grid-cols-2 gap-4">

@@ -199,7 +199,10 @@ export default {
   			lg: 'var(--shadow-lg)',
   			xl: 'var(--shadow-xl)',
   			'2xl': 'var(--shadow-2xl)',
-  			ambient: 'var(--shadow-xl)'
+  			ambient: 'var(--shadow-xl)',
+  			glass: 'var(--glass-shadow)',
+  			'glass-lg': 'var(--glass-shadow-lg)',
+  			'glass-inner': 'var(--glass-inner-highlight)'
   		}
   	}
   },

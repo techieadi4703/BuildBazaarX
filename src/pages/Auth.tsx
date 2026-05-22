@@ -92,27 +92,27 @@ export default function Auth() {
         .font-body { font-family: 'Manrope', sans-serif; }
       `}</style>
       
-      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e5e2df 1px, transparent 1px), linear-gradient(90deg, #e5e2df 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.3 }} />
+      <div className="text-foreground min-h-screen font-body w-full pb-20 relative overflow-hidden">
+        
         
         <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
           <div className="flex flex-col md:flex-row gap-16 md:gap-24 items-start">
             
             <div className="w-full md:w-1/3 shrink-0 sticky top-32">
-               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[#735c00] mb-4 block font-bold">Client Registry</span>
+               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-secondary mb-4 block font-bold">Client Registry</span>
                <h1 className="text-6xl md:text-7xl font-headline tracking-tight leading-none mb-6">
                 Customer <br/><span className="italic">{isLogin ? "Portal." : "Onboarding."}</span>
               </h1>
                <div className="w-12 h-[1px] bg-[#c4c6cc] mb-6"></div>
-              <p className="text-lg font-body text-[#44474c] leading-relaxed max-w-sm">
+               <p className="text-lg font-body text-muted-foreground leading-relaxed max-w-sm">
                 {isLogin 
                   ? "Re-establish your connection to access curated architectural blueprints and material logistics." 
                   : "Join the elite network of developers and homeowners sourcing premium structural designs."}
               </p>
               
               <div className="mt-12 space-y-4">
-                <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-[#74777d]">
-                  <ShieldCheck className="w-4 h-4 text-[#735c00]" /> 256-bit Encrypted Session
+                 <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                   <ShieldCheck className="w-4 h-4 text-secondary" /> 256-bit Encrypted Session
                 </div>
               </div>
             </div>
@@ -121,51 +121,51 @@ export default function Auth() {
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white border border-[#e5e2df] p-8 md:p-12 rounded-sm shadow-sm"
+                className="glass-strong rounded-2xl p-8 md:p-12"
               >
                 <form onSubmit={handleAuth} className="space-y-8">
                   {!isLogin && (
                     <div className="space-y-2">
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Full Nomenclature</label>
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-foreground opacity-60">Full Nomenclature</label>
                       <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input 
                           required
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
                           placeholder="Johnathan Doe"
-                          className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                          className="w-full pl-12 pr-4 py-4 bg-white/30 backdrop-blur-md border border-white/40 focus:border-secondary rounded-lg text-sm outline-none font-body transition-all"
                         />
                       </div>
                     </div>
                   )}
 
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Identity Email</label>
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-foreground opacity-60">Identity Email</label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input 
                         type="email"
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="identity@matrix.com"
-                        className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                        className="w-full pl-12 pr-4 py-4 bg-white/30 backdrop-blur-md border border-white/40 focus:border-secondary rounded-lg text-sm outline-none font-body transition-all"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Security Key</label>
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-foreground opacity-60">Security Key</label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input 
                         type="password"
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••••••"
-                        className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                        className="w-full pl-12 pr-4 py-4 bg-white/30 backdrop-blur-md border border-white/40 focus:border-secondary rounded-lg text-sm outline-none font-body transition-all"
                       />
                     </div>
                   </div>
@@ -173,20 +173,20 @@ export default function Auth() {
                   <button 
                     type="submit"
                     disabled={isLoading}
-                    className="w-full h-14 bg-[#1c1c1a] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#735c00] transition-all flex items-center justify-center gap-3 group"
+                    className="w-full h-14 bg-secondary text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-secondary/90 transition-all flex items-center justify-center gap-3 group"
                   >
                     {isLoading ? "Authenticating..." : isLogin ? "Access Portal" : "Establish Identity"}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </form>
 
-                <div className="mt-12 pt-8 border-t border-[#e5e2df] flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#74777d]">
+                <div className="mt-12 pt-8 border-t border-white/20 flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
                     {isLogin ? "No active profile?" : "Existing operative?"}
                   </span>
                   <button 
                     onClick={() => setIsLogin(!isLogin)}
-                    className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4"
+                    className="text-[10px] uppercase font-bold tracking-widest text-secondary hover:underline underline-offset-4"
                   >
                     {isLogin ? "Initialize Registration" : "Portal Access"}
                   </button>

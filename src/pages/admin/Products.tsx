@@ -174,7 +174,7 @@ export default function AdminProducts() {
           </div>
         </div>
 
-        <div className="border rounded-lg bg-background overflow-x-auto">
+        <div className="border border-white/20 rounded-xl glass overflow-x-auto shadow-glass">
           <Table>
             <TableHeader>
               <TableRow>
@@ -227,12 +227,12 @@ export default function AdminProducts() {
                       <TableCell>
                         <div className="flex flex-col gap-1 items-start">
                           {product.is_published ? (
-                            <Badge variant="secondary" className="bg-green-100 text-green-800">Published</Badge>
+                            <Badge variant="secondary" className="bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 backdrop-blur-sm rounded-full">Published</Badge>
                           ) : (
-                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Draft</Badge>
+                            <Badge variant="secondary" className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 backdrop-blur-sm rounded-full">Draft</Badge>
                           )}
                           {product.is_featured && (
-                            <Badge variant="secondary" className="bg-blue-100 text-blue-800 flex items-center gap-1 text-[10px]">
+                            <Badge variant="secondary" className="bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 backdrop-blur-sm rounded-full flex items-center gap-1 text-[10px]">
                               <Star className="w-3 h-3 fill-blue-600 outline-none border-none" /> Featured
                             </Badge>
                           )}

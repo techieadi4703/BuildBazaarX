@@ -121,19 +121,18 @@ export default function DesignerAuth() {
         .font-body { font-family: 'Manrope', sans-serif; }
       `}</style>
       
-      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e5e2df 1px, transparent 1px), linear-gradient(90deg, #e5e2df 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.3 }} />
+      <div className="text-foreground min-h-screen font-body w-full pb-20 relative overflow-hidden">
         
         <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
           <div className="flex flex-col md:flex-row gap-16 md:gap-24 items-start">
             
             <div className="w-full md:w-1/3 shrink-0 sticky top-32">
-               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[#735c00] mb-4 block font-bold">Creative Network</span>
+               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-secondary mb-4 block font-bold">Creative Network</span>
                <h1 className="text-6xl md:text-7xl font-headline tracking-tight leading-none mb-6">
                 Designer <br/><span className="italic">{isLogin ? "Access." : "Studio."}</span>
               </h1>
-               <div className="w-12 h-[1px] bg-[#c4c6cc] mb-6"></div>
-              <p className="text-lg font-body text-[#44474c] leading-relaxed max-w-sm">
+               <div className="w-12 h-[1px] bg-[#c4c6cc]/50 mb-6"></div>
+              <p className="text-lg font-body text-muted-foreground leading-relaxed max-w-sm">
                 {isLogin 
                   ? "Authenticate to manage your commissions and publish your latest architectural visions." 
                   : "Join the most exclusive directory of certified designers and material architects."}
@@ -141,40 +140,40 @@ export default function DesignerAuth() {
             </div>
 
             <div className="w-full md:w-2/3 max-w-2xl">
-              <motion.div 
+               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white border border-[#e5e2df] p-8 md:p-12 rounded-sm shadow-sm"
+                className="glass-strong p-8 md:p-12 rounded-2xl"
               >
                 <form onSubmit={handleAuth} className="space-y-8">
                    {!isLogin && (
                     <div className="space-y-8">
                       <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Creative Nomenclature *</label>
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-foreground opacity-60">Creative Nomenclature *</label>
                         <div className="relative">
-                          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                          <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Aditya Srivastava" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Aditya Srivastava" className="w-full pl-12 pr-4 py-4 bg-white/30 dark:bg-white/5 border border-white/40 focus:border-secondary rounded-lg text-sm outline-none font-body transition-all" />
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Designer Contact *</label>
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-foreground opacity-60">Designer Contact *</label>
                         <div className="relative">
-                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                          <input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 XXXXX" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 XXXXX" className="w-full pl-12 pr-4 py-4 bg-white/30 dark:bg-white/5 border border-white/40 focus:border-secondary rounded-lg text-sm outline-none font-body transition-all" />
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Headquarters (City) *</label>
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-foreground opacity-60">Headquarters (City) *</label>
                         <div className="relative">
-                          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                          <input required value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Jaipur" className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" />
+                          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <input required value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Jaipur" className="w-full pl-12 pr-4 py-4 bg-white/30 dark:bg-white/5 border border-white/40 focus:border-secondary rounded-lg text-sm outline-none font-body transition-all" />
                         </div>
                       </div>
 
                       <div className="space-y-4">
-                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Specialization Grid (Select All That Apply)</label>
+                        <label className="text-[10px] uppercase font-bold tracking-widest text-foreground opacity-60">Specialization Grid (Select All That Apply)</label>
                         <div className="grid grid-cols-2 gap-3">
                           {SPECIALIZATIONS.map(spec => {
                             const isSelected = selectedSpecs.includes(spec);
@@ -183,10 +182,10 @@ export default function DesignerAuth() {
                                 key={spec}
                                 type="button"
                                 onClick={() => toggleSpec(spec)}
-                                className={`flex items-center gap-3 p-4 border transition-all rounded-sm ${
+                                className={`flex items-center gap-3 p-4 border transition-all rounded-lg ${
                                   isSelected 
-                                    ? "border-[#735c00] bg-[#fcf9f6] text-[#735c00] shadow-sm" 
-                                    : "border-[#e5e2df] text-[#74777d] hover:border-[#c4c6cc] bg-white"
+                                    ? "border-secondary bg-secondary/10 text-secondary shadow-sm" 
+                                    : "border-white/30 text-muted-foreground hover:border-white/60 bg-white/20 dark:bg-white/5 backdrop-blur-sm"
                                 }`}
                               >
                                 <div className="pointer-events-none flex items-center gap-3 w-full">
@@ -204,9 +203,9 @@ export default function DesignerAuth() {
                   )}
 
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Identity Email</label>
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-foreground opacity-60">Identity Email</label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input 
                         required 
                         type="email" 
@@ -214,15 +213,15 @@ export default function DesignerAuth() {
                         value={email} 
                         onChange={(e) => setEmail(e.target.value)} 
                         placeholder="name@studio.com" 
-                        className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" 
+                        className="w-full pl-12 pr-4 py-4 bg-white/30 dark:bg-white/5 border border-white/40 focus:border-secondary rounded-lg text-sm outline-none font-body transition-all" 
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Security Key</label>
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-foreground opacity-60">Security Key</label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input 
                         required 
                         type="password" 
@@ -230,22 +229,22 @@ export default function DesignerAuth() {
                         value={password} 
                         onChange={(e) => setPassword(e.target.value)} 
                         placeholder="••••••••" 
-                        className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors" 
+                        className="w-full pl-12 pr-4 py-4 bg-white/30 dark:bg-white/5 border border-white/40 focus:border-secondary rounded-lg text-sm outline-none font-body transition-all" 
                       />
                     </div>
                   </div>
 
-                  <button type="submit" disabled={isLoading} className="w-full h-14 bg-[#1c1c1a] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#735c00] transition-all flex items-center justify-center gap-3 group">
+                  <button type="submit" disabled={isLoading} className="w-full h-14 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center gap-3 group">
                     {isLoading ? "Synchronizing..." : isLogin ? "Access Studio" : "Establish Professional Profile"}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </form>
 
-                <div className="mt-12 pt-8 border-t border-[#e5e2df] flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#74777d]">
+                <div className="mt-12 pt-8 border-t border-white/20 flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
                     {isLogin ? "No active license?" : "Existing resident?"}
                   </span>
-                  <button onClick={() => setIsLogin(!isLogin)} className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4">
+                  <button onClick={() => setIsLogin(!isLogin)} className="text-[10px] uppercase font-bold tracking-widest text-secondary hover:underline underline-offset-4">
                     {isLogin ? "Join the Network" : "Portal Access"}
                   </button>
                 </div>

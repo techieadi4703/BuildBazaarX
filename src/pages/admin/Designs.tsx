@@ -142,7 +142,7 @@ export default function AdminDesigns() {
           </div>
         </div>
 
-        <div className="border rounded-lg bg-background overflow-x-auto">
+        <div className="border border-white/20 rounded-xl glass overflow-x-auto shadow-glass">
           <Table>
             <TableHeader>
               <TableRow>
@@ -187,12 +187,12 @@ export default function AdminDesigns() {
                       <TableCell>
                         <div className="flex flex-col gap-1 items-start">
                           {design.is_published ? (
-                            <Badge variant="secondary" className="bg-green-100 text-green-800">Published</Badge>
+                            <Badge variant="secondary" className="bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 backdrop-blur-sm rounded-full">Published</Badge>
                           ) : (
-                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Draft</Badge>
+                            <Badge variant="secondary" className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 backdrop-blur-sm rounded-full">Draft</Badge>
                           )}
                           {design.is_trending && (
-                            <Badge variant="secondary" className="bg-orange-100 text-orange-800 flex items-center gap-1 text-[10px]">
+                            <Badge variant="secondary" className="bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 backdrop-blur-sm rounded-full flex items-center gap-1 text-[10px]">
                               <Flame className="w-3 h-3" /> Trending
                             </Badge>
                           )}

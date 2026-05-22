@@ -138,7 +138,7 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <ErrorBoundary>
-                <React.Suspense fallback={<div className="h-screen w-full flex items-center justify-center"><div className="w-8 h-8 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent"></div></div>}>
+                <React.Suspense fallback={<div className="h-screen w-full flex items-center justify-center relative"><div className="fixed inset-0 -z-10 app-mesh" aria-hidden="true" /><div className="w-8 h-8 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent"></div></div>}>
                   <AnimatedRoutes />
                 </React.Suspense>
               </ErrorBoundary>

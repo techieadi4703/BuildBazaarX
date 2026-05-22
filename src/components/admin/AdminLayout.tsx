@@ -61,9 +61,9 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-background border-r border-border">
+    <div className="flex flex-col h-full glass-subtle border-r border-white/20 bg-background/20 dark:bg-background/40">
       <div className="p-6">
-        <h2 className="text-xl font-bold tracking-tight text-primary">BuildBazaarX <span className="text-foreground">Admin</span></h2>
+        <h2 className="text-xl font-bold tracking-tight text-secondary">BuildBazaarX <span className="text-foreground">Admin</span></h2>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-4 space-y-1">
@@ -74,10 +74,10 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               key={item.path}
               to={item.path}
               onClick={() => setIsMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors relative group ${
+              className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative group ${
                 isActive 
-                  ? 'text-primary font-medium' 
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  ? 'text-secondary font-bold' 
+                  : 'text-muted-foreground hover:bg-white/10 dark:hover:bg-white/5 hover:text-foreground'
               }`}
             >
               <div className="flex items-center gap-3 relative z-10">
@@ -86,7 +86,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               </div>
               {isActive && (
                 <div
-                  className="absolute inset-0 bg-primary/10 rounded-md z-0 transition-all"
+                  className="absolute inset-0 glass border border-white/20 rounded-md z-0 shadow-sm"
                 />
               )}
             </Link>
@@ -95,13 +95,13 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
       </nav>
 
-      <div className="p-4 border-t border-border mt-auto h-[80px]">
+      <div className="p-4 border-t border-white/10 mt-auto h-[80px]">
         {email && (
           <div className="text-sm font-medium text-muted-foreground mb-3 truncate px-2">
             {email}
           </div>
         )}
-        <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleLogout}>
+        <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 border-white/20 bg-transparent hover:bg-destructive/20" onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           Logout
         </Button>
@@ -110,9 +110,9 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   );
 
   return (
-    <div className="min-h-screen bg-muted/30 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-transparent flex flex-col md:flex-row">
       {/* Mobile Topbar */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-background border-b border-border z-20">
+      <div className="md:hidden flex items-center justify-between p-4 glass-subtle border-b border-white/20 z-20 bg-background/30">
         <h1 className="text-lg font-bold">BuildBazaarX Admin</h1>
         <Button variant="ghost" size="icon" onClick={() => setIsMobileOpen(!isMobileOpen)}>
           {isMobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -122,9 +122,9 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Mobile Sidebar overlay */}
       {isMobileOpen && (
         <div className="md:hidden fixed inset-0 z-40 flex">
-          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setIsMobileOpen(false)} />
-          <div className="relative w-64 max-w-sm h-full bg-background flex-col shadow-xl z-50 animate-in slide-in-from-left-0">
-            <div className="absolute top-4 right-4 flex items-center justify-center">
+          <div className="fixed inset-0 bg-background/40 backdrop-blur-sm" onClick={() => setIsMobileOpen(false)} />
+          <div className="relative w-64 max-w-sm h-full glass-strong flex flex-col shadow-xl z-50 animate-in slide-in-from-left-0">
+            <div className="absolute top-4 right-4 flex items-center justify-center z-10">
               <Button variant="ghost" size="icon" onClick={() => setIsMobileOpen(false)}>
                 <X className="h-5 w-5" />
                 <span className="sr-only">Close sidebar</span>

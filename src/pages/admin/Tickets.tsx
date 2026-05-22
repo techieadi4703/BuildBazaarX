@@ -96,16 +96,16 @@ export default function AdminTickets() {
 
   const getStatusBadge = (status: string) => {
     switch(status) {
-      case 'open': return <Badge variant="destructive" className="bg-red-100 text-red-800 hover:bg-red-100">Open</Badge>;
-      case 'replied': return <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-100">Replied</Badge>;
-      case 'closed': return <Badge variant="outline" className="bg-gray-100 text-gray-800">Closed</Badge>;
+      case 'open': return <Badge variant="destructive" className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 backdrop-blur-sm rounded-full hover:bg-red-100">Open</Badge>;
+      case 'replied': return <Badge variant="secondary" className="bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 backdrop-blur-sm rounded-full hover:bg-blue-100">Replied</Badge>;
+      case 'closed': return <Badge variant="outline" className="bg-white/10 dark:bg-white/5-foreground/10 border border-muted-foreground/20 text-muted-foreground backdrop-blur-sm rounded-full">Closed</Badge>;
       default: return <Badge>{status}</Badge>;
     }
   };
 
   const getPriorityBadge = (priority: string) => {
     if (priority === 'urgent') return <Badge variant="destructive" className="flex items-center gap-1"><AlertCircle className="w-3 h-3"/> Urgent</Badge>;
-    return <Badge variant="secondary" className="bg-slate-100 text-slate-800">Normal</Badge>;
+    return <Badge variant="secondary" className="bg-white/10 dark:bg-white/5-foreground/10 border border-muted-foreground/20 text-muted-foreground backdrop-blur-sm rounded-full">Normal</Badge>;
   };
 
   return (
@@ -138,7 +138,7 @@ export default function AdminTickets() {
           </div>
         </div>
 
-        <div className="border rounded-lg bg-background overflow-x-auto">
+        <div className="border border-white/20 rounded-xl glass overflow-x-auto shadow-glass">
           <Table>
             <TableHeader>
               <TableRow>
@@ -203,7 +203,7 @@ export default function AdminTickets() {
                                       <span className="text-xs text-muted-foreground ml-auto">{format(new Date(selectedTicket.created_at), 'PPP p')}</span>
                                     </div>
                                     <h3 className="text-lg font-semibold mb-2">{selectedTicket.subject}</h3>
-                                    <div className="p-4 bg-muted/50 rounded-lg text-sm whitespace-pre-wrap leading-relaxed">
+                                    <div className="p-4 bg-white/5 rounded-lg text-sm whitespace-pre-wrap leading-relaxed">
                                       {selectedTicket.message}
                                     </div>
                                   </div>
@@ -211,7 +211,7 @@ export default function AdminTickets() {
                                   <div className="border-t pt-6 flex-1 flex flex-col">
                                     <h4 className="font-medium mb-3">Admin Reply</h4>
                                     {selectedTicket.status === 'closed' && selectedTicket.admin_reply ? (
-                                      <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-lg text-sm whitespace-pre-wrap text-blue-900">
+                                      <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-sm whitespace-pre-wrap text-blue-600 dark:text-blue-400">
                                         {selectedTicket.admin_reply}
                                       </div>
                                     ) : (

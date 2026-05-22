@@ -217,14 +217,14 @@ const RawMaterials = () => {
         <meta property="og:image:height" content="630" />
       </Helmet>
 
-      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative">
+      <div className="text-foreground min-h-screen font-body w-full pb-20 relative">
         {/* Mobile Top Navigation (Search + Button) */}
-        <div className="md:hidden flex flex-col px-4 pt-4 pb-2 bg-[#fcf9f6] space-y-4 sticky top-0 z-20 shadow-sm border-b border-[#e5e2df]">
+        <div className="md:hidden flex flex-col px-4 pt-4 pb-2 bg-transparent space-y-4 sticky top-0 z-20">
           <div className="flex items-center gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
-                className="w-full pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded-xl text-sm outline-none shadow-sm font-body"
+                className="w-full pl-10 pr-4 py-3 bg-white/30 dark:bg-white/5 border border-white/40 focus:border-secondary rounded-xl text-sm outline-none backdrop-blur-md shadow-sm font-body transition-colors"
                 placeholder="Search materials..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -233,7 +233,7 @@ const RawMaterials = () => {
             </div>
             <button
               onClick={openFilterSheet}
-              className="flex items-center justify-center gap-2 px-5 py-3 bg-[#f6f3f0] border border-[#e5e2df] rounded-xl text-sm font-medium whitespace-nowrap hover:bg-[#eae8e5] transition-colors shadow-sm font-body"
+              className="flex items-center justify-center gap-2 px-5 py-3 glass rounded-xl text-sm font-medium whitespace-nowrap hover:bg-white/40 transition-colors shadow-sm font-body"
             >
               <SlidersHorizontal className="w-4 h-4" />
               Filter
@@ -243,7 +243,7 @@ const RawMaterials = () => {
           {/* Active filter pills */}
           {selectedCategory && (
             <div className="flex flex-wrap gap-2 pt-1 pb-1">
-              <span className="bg-[#f6f3f0] border border-[#e5e2df] text-[#1c1c1a] px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 font-body">
+              <span className="glass-chip text-foreground px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 font-body">
                 {categories.find((c) => c.id === selectedCategory)?.name ||
                   selectedCategory}
                 <X
@@ -258,7 +258,7 @@ const RawMaterials = () => {
         {/* Floating Action Button for Mobile */}
         <button
           onClick={openFilterSheet}
-          className="md:hidden fixed bottom-24 right-6 z-30 bg-[#735c00] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform"
+          className="md:hidden fixed bottom-24 right-6 z-30 bg-secondary text-secondary-foreground w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform"
         >
           <Sliders className="w-6 h-6" />
         </button>
@@ -274,9 +274,9 @@ const RawMaterials = () => {
 
             {/* Search Input inline with header */}
             <div className="hidden md:block relative w-full md:w-64 -mt-4 md:mt-0">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
-                className="pl-12 pr-4 py-3 bg-[#f6f3f0] border-none focus:ring-1 focus:ring-[#735c00] rounded-full text-sm w-full outline-none font-body shadow-inner"
+                className="pl-12 pr-4 py-3 bg-white/30 dark:bg-white/5 border border-white/40 focus:border-secondary focus:ring-1 focus:ring-secondary rounded-full text-sm w-full outline-none backdrop-blur-md font-body transition-colors"
                 placeholder="Search materials..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -292,13 +292,13 @@ const RawMaterials = () => {
             <aside className="hidden lg:block lg:w-64 flex-shrink-0">
               <div className="sticky top-32">
                 <div className="flex justify-between items-end mb-8">
-                  <h4 className="font-body text-[10px] uppercase tracking-[0.2em] text-[#74777d] font-bold">
+                  <h4 className="font-body text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
                     Categories
                   </h4>
                   {selectedCategory && (
                     <button
                       onClick={() => setSelectedCategory(null)}
-                      className="text-[10px] text-[#74777d] border-b border-[#74777d] pb-[1px] hover:text-black"
+                      className="text-[10px] text-muted-foreground border-b border-muted-foreground pb-[1px] hover:text-foreground"
                     >
                       Clear
                     </button>
@@ -311,14 +311,14 @@ const RawMaterials = () => {
                       <li key={cat.id}>
                         <button
                           onClick={() => setSelectedCategory(cat.id)}
-                          className={`flex items-center justify-between w-full group relative py-1 ${selectedCategory === cat.id ? "text-[#735c00]" : "text-[#1c1c1a]"}`}
+                          className={`flex items-center justify-between w-full group relative py-1 ${selectedCategory === cat.id ? "text-secondary font-bold" : "text-foreground"}`}
                         >
                           <div className="flex items-center gap-3 relative z-10">
                             <Icon
-                              className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? "text-[#735c00]" : "text-[#74777d] group-hover:text-[#735c00]"}`}
+                              className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? "text-secondary" : "text-muted-foreground group-hover:text-secondary"}`}
                             />
                             <span
-                              className={`font-headline text-xl italic group-hover:text-[#735c00] transition-colors`}
+                              className={`font-headline text-xl italic group-hover:text-secondary transition-colors`}
                             >
                               {cat.name}
                             </span>
@@ -326,7 +326,7 @@ const RawMaterials = () => {
                           {selectedCategory === cat.id && (
                             <motion.div
                               layoutId="active-category-underline"
-                              className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#735c00] z-0"
+                              className="absolute bottom-0 left-0 right-0 h-[2px] bg-secondary z-0"
                               transition={{
                                 type: "spring",
                                 bounce: 0.2,
@@ -341,8 +341,8 @@ const RawMaterials = () => {
                 </ul>
 
                 {/* Featured Ad inside Sidebar */}
-                <div className="mt-16 p-6 bg-[#f6f3f0] rounded-lg">
-                  <h5 className="font-bold mb-3 font-headline italic text-lg">
+                <div className="mt-16 p-6 glass-card border border-white/20">
+                  <h5 className="font-bold mb-3 font-headline italic text-lg text-foreground">
                     Featured Material
                   </h5>
                   <img
@@ -351,15 +351,15 @@ const RawMaterials = () => {
                     loading="lazy"
                     width={400}
                     height={400}
-                    className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply"
+                    className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply dark:mix-blend-normal dark:opacity-80"
                   />
-                  <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">
+                  <p className="text-xs text-muted-foreground mb-4 leading-relaxed font-body">
                     Discover the 2024 Architectural Digest choice for
                     sustainable veneers.
                   </p>
                   <a
                     href="#"
-                    className="font-body text-[10px] font-bold uppercase text-[#735c00] flex items-center gap-1 hover:underline"
+                    className="font-body text-[10px] font-bold uppercase text-secondary flex items-center gap-1 hover:underline"
                   >
                     Read Monograph <ArrowUpRight className="w-3 h-3" />
                   </a>
@@ -377,8 +377,8 @@ const RawMaterials = () => {
                     exit={{ opacity: 0 }}
                     className="flex flex-col items-center justify-center p-24 text-center"
                   >
-                    <div className="w-10 h-10 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent mb-4"></div>
-                    <p className="font-body text-sm text-[#74777d]">
+                    <div className="w-10 h-10 animate-spin rounded-full border-4 border-secondary border-t-transparent mb-4"></div>
+                    <p className="font-body text-sm text-muted-foreground">
                       Loading materials inventory...
                     </p>
                   </motion.div>
@@ -386,12 +386,12 @@ const RawMaterials = () => {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex flex-col items-center justify-center p-20 text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]"
+                    className="flex flex-col items-center justify-center p-20 text-center glass-card border border-white/20"
                   >
-                    <span className="font-headline text-2xl italic mb-2 text-[#1c1c1a]">
+                    <span className="font-headline text-2xl italic mb-2 text-foreground">
                       No Elements Active
                     </span>
-                    <p className="font-body text-sm text-[#74777d]">
+                    <p className="font-body text-sm text-muted-foreground">
                       Shift curation filters to uncover available components.
                     </p>
                   </motion.div>
@@ -402,11 +402,11 @@ const RawMaterials = () => {
                         key={product.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="group flex flex-col h-full bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-sm border border-[#e5e2df] hover:shadow-md transition-all relative"
+                        className="group flex flex-col h-full glass-card glass-hover-lift overflow-hidden relative"
                       >
                         <Link to={`/materials/${product.id}`} className="flex flex-col h-full">
                         {/* Image Box */}
-                        <div className="relative aspect-[4/5] overflow-hidden bg-[#f6f3f0]">
+                        <div className="relative aspect-[4/5] overflow-hidden bg-black/5 dark:bg-white/5">
                           <img
                             src={getProductImage(product)}
                             alt={product.brand || "Material"}
@@ -416,9 +416,9 @@ const RawMaterials = () => {
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                           <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
-                            <span className="bg-white/95 backdrop-blur-md px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm border border-[#e5e2df] text-[#1c1c1a]">
+                            <span className="bg-white/80 dark:bg-black/60 backdrop-blur-md px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm border border-white/20 text-foreground">
                               <BadgeCheck
-                                className={`w-3 h-3 ${product.in_stock ? "text-[#735c00]" : "text-orange-500"} shrink-0`}
+                                className={`w-3 h-3 ${product.in_stock ? "text-secondary" : "text-orange-500"} shrink-0`}
                               />
                               <span>
                                 {product.in_stock ? "Verified" : "Limited"}
@@ -426,7 +426,7 @@ const RawMaterials = () => {
                             </span>
                           </div>
                           <div className="absolute bottom-2 left-2 md:bottom-3 md:left-3 z-10">
-                            <span className="bg-[#735c00] text-white px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded-sm shadow-md">
+                            <span className="bg-secondary text-secondary-foreground px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded-sm shadow-md">
                               {product.category?.toUpperCase() || "MATERIAL"}
                             </span>
                           </div>
@@ -441,7 +441,7 @@ const RawMaterials = () => {
                                 return (
                                   <motion.div
                                     layout
-                                    className="bg-[#1c1c1a] text-white rounded-full flex items-center gap-1 py-[2px] shadow-lg border border-white/10"
+                                    className="bg-primary text-primary-foreground rounded-full flex items-center gap-1 py-[2px] shadow-lg border border-white/10"
                                   >
                                     <button
                                       onClick={(e) => {
@@ -452,7 +452,7 @@ const RawMaterials = () => {
                                           cartItem.quantity - 1,
                                         );
                                       }}
-                                      className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
+                                      className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-secondary transition-all"
                                     >
                                       <Minus className="w-3 h-3" />
                                     </button>
@@ -468,7 +468,7 @@ const RawMaterials = () => {
                                           cartItem.quantity + 1,
                                         );
                                       }}
-                                      className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
+                                      className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-secondary transition-all"
                                     >
                                       <Plus className="w-3 h-3" />
                                     </button>
@@ -478,7 +478,7 @@ const RawMaterials = () => {
                               return (
                                 <button
                                   onClick={(e) => handleAddToCart(e, product)}
-                                  className="w-8 h-8 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
+                                  className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center hover:bg-secondary hover:scale-110 transition-all shadow-lg"
                                 >
                                   <Plus className="w-4 h-4" />
                                 </button>
@@ -489,14 +489,14 @@ const RawMaterials = () => {
 
                         {/* Content Area */}
                         <div className="p-3 md:p-4 flex flex-col flex-grow">
-                          <h3 className="text-sm md:text-base font-headline font-bold leading-tight text-[#1c1c1a] mb-1 line-clamp-1">
+                          <h3 className="text-sm md:text-base font-headline font-bold leading-tight text-foreground mb-1 line-clamp-1">
                             {product.name}
                           </h3>
                           <div className="flex justify-between items-end mt-auto pt-2">
-                            <span className="text-[10px] text-[#74777d] font-body lowercase line-clamp-1 mr-2">
+                            <span className="text-[10px] text-muted-foreground font-body lowercase line-clamp-1 mr-2">
                               {product.category?.replace("-", " ")}
                             </span>
-                            <span className="font-body font-bold text-[#1c1c1a] text-sm whitespace-nowrap">
+                            <span className="font-body font-bold text-foreground text-sm whitespace-nowrap">
                               ₹{product.price?.toLocaleString() || "0"}
                             </span>
                           </div>
@@ -512,15 +512,15 @@ const RawMaterials = () => {
               {totalPages > 1 && (
                 <div className="mt-16 flex flex-col items-center gap-6">
                   {/* Flipkart Info Label */}
-                  <div className="text-xs text-[#74777d] font-body">
-                    Showing page <span className="font-bold text-[#1c1c1a]">{page}</span> of <span className="font-bold text-[#1c1c1a]">{totalPages}</span> ({totalCount} total items)
+                  <div className="text-xs text-muted-foreground font-body">
+                    Showing page <span className="font-bold text-foreground">{page}</span> of <span className="font-bold text-foreground">{totalPages}</span> ({totalCount} total items)
                   </div>
                   
                   <div className="flex justify-center items-center gap-2">
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="px-4 py-2 border border-[#e5e2df] rounded-lg disabled:opacity-40 hover:bg-[#f6f3f0] text-sm font-semibold transition-colors disabled:cursor-not-allowed text-[#1c1c1a]"
+                      className="px-4 py-2 glass rounded-lg disabled:opacity-40 hover:bg-white/20 text-sm font-semibold transition-all disabled:cursor-not-allowed text-foreground"
                     >
                       Previous
                     </button>
@@ -529,7 +529,7 @@ const RawMaterials = () => {
                       {getPaginationRange(page, totalPages).map((p, idx) => {
                         if (p === "...") {
                           return (
-                            <span key={`ell-${idx}`} className="px-2 text-[#74777d] text-sm font-bold">
+                            <span key={`ell-${idx}`} className="px-2 text-muted-foreground text-sm font-bold">
                               ...
                             </span>
                           );
@@ -538,10 +538,10 @@ const RawMaterials = () => {
                           <button
                             key={`page-${p}`}
                             onClick={() => setPage(Number(p))}
-                            className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold border transition-all ${
+                            className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-all ${
                               page === p
-                                ? "bg-[#735c00] text-white border-[#735c00] shadow-sm font-bold"
-                                : "bg-white text-[#1c1c1a] border-[#e5e2df] hover:bg-[#f6f3f0]"
+                                ? "bg-secondary text-secondary-foreground border-secondary shadow-sm font-bold"
+                                : "glass text-foreground hover:bg-white/20"
                             }`}
                           >
                             {p}
@@ -553,7 +553,7 @@ const RawMaterials = () => {
                     <button
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page === totalPages}
-                      className="px-4 py-2 border border-[#e5e2df] rounded-lg disabled:opacity-40 hover:bg-[#f6f3f0] text-sm font-semibold transition-colors disabled:cursor-not-allowed text-[#1c1c1a]"
+                      className="px-4 py-2 glass rounded-lg disabled:opacity-40 hover:bg-white/20 text-sm font-semibold transition-all disabled:cursor-not-allowed text-foreground"
                     >
                       Next
                     </button>
@@ -566,11 +566,11 @@ const RawMaterials = () => {
           {/* Mobile Bottom Sheet for Filters */}
           <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
             <SheetContent
-              className="overflow-y-auto w-full md:hidden bg-[#fcf9f6] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl"
+              className="overflow-y-auto w-full md:hidden glass-strong z-[100] px-6 rounded-t-3xl border-0 shadow-2xl text-foreground"
               side="bottom"
             >
               <SheetHeader className="mb-6 pb-2 block">
-                <SheetTitle className="font-headline text-2xl text-left bg-gradient-to-r from-[#1c1c1a] to-[#735c00] bg-clip-text text-transparent">
+                <SheetTitle className="font-headline text-2xl text-left bg-gradient-to-r from-foreground to-secondary bg-clip-text text-transparent">
                   Material Filters
                 </SheetTitle>
                 <SheetDescription className="hidden">
@@ -580,16 +580,16 @@ const RawMaterials = () => {
 
               <div className="space-y-4 md:space-y-3 pb-32">
                 <div className="flex flex-col gap-4">
-                  <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                  <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white/20 rounded-lg transition-colors">
                     <input
                       type="radio"
                       name="draftCategory"
                       checked={draftCategory === null}
                       onChange={() => setDraftCategory(null)}
-                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                      className="w-4 h-4 text-secondary border-white/30 focus:ring-secondary bg-transparent"
                     />
                     <span
-                      className={`text-sm font-medium transition-colors ${draftCategory === null ? "text-[#735c00]" : "text-[#44474c]"}`}
+                      className={`text-sm font-medium transition-colors ${draftCategory === null ? "text-secondary" : "text-muted-foreground"}`}
                     >
                       All Materials
                     </span>
@@ -599,20 +599,20 @@ const RawMaterials = () => {
                     return (
                       <label
                         key={cat.id}
-                        className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors"
+                        className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white/20 rounded-lg transition-colors"
                       >
                         <input
                           type="radio"
                           name="draftCategory"
                           checked={draftCategory === cat.id}
                           onChange={() => setDraftCategory(cat.id)}
-                          className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                          className="w-4 h-4 text-secondary border-white/30 focus:ring-secondary bg-transparent"
                         />
                         <Icon
-                          className={`w-4 h-4 ${draftCategory === cat.id ? "text-[#735c00]" : "text-[#74777d]"}`}
+                          className={`w-4 h-4 ${draftCategory === cat.id ? "text-secondary" : "text-muted-foreground"}`}
                         />
                         <span
-                          className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? "text-[#735c00]" : "text-[#44474c]"}`}
+                          className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? "text-secondary" : "text-muted-foreground"}`}
                         >
                           {cat.name}
                         </span>
@@ -622,16 +622,16 @@ const RawMaterials = () => {
                 </div>
               </div>
 
-              <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t border-[#e5e2df] flex gap-4 pb-12">
+              <div className="fixed bottom-0 left-0 right-0 p-6 glass-strong border-t border-white/20 flex gap-4 pb-12">
                 <button
                   onClick={resetFilters}
-                  className="w-1/3 py-4 border border-[#e5e2df] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] bg-white transition-colors font-body"
+                  className="w-1/3 py-4 glass rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white/20 transition-all font-body text-foreground"
                 >
                   Reset
                 </button>
                 <button
                   onClick={applyFilters}
-                  className="flex-1 py-4 bg-[#1c1c1a] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#735c00] transition-colors shadow-xl font-body"
+                  className="flex-1 py-4 bg-primary text-primary-foreground rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-secondary hover:text-white transition-all shadow-xl font-body"
                 >
                   Apply Filters
                 </button>
