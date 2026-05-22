@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import heroImage from "@/assets/hero-interior.jpg"; // Re-using existing image, but styling it like a blueprint architectural render
+import { BeforeAfterSlider } from "@/components/shared/BeforeAfterSlider";
+import afterImage from "@/assets/transformations/after.png"; // The furnished version
+import beforeImage from "@/assets/transformations/before.png"; // The unfurnished version
 
 export const HeroSection = () => {
   return (
     <section className="relative overflow-hidden bg-[#0B132B] min-h-[85vh] flex items-center justify-center pt-24 pb-8">
-      {/* Blueprint Grid Overlay */}
+      {/* ... (Blueprint Grid Overlay) ... */}
       <div 
         className="absolute inset-0 opacity-20 pointer-events-none"
         style={{
@@ -53,26 +55,11 @@ export const HeroSection = () => {
 
           <div className="relative rounded-[1rem] p-2 bg-[#0A1128] border border-white/10 shadow-[0_0_100px_rgba(197,165,114,0.05)] mx-auto overflow-hidden">
             <div className="absolute inset-0 bg-[#C5A572]/10 mix-blend-overlay z-10 pointer-events-none" />
-            <div className="relative w-full h-[400px] md:h-[500px]">
-              {/* Single Image with fetchpriority */}
-              <img
-                src={heroImage}
-                alt="Architectural Render"
-                className="absolute inset-0 w-full h-full object-cover rounded-lg"
-              />
-
-              {/* Grayscale overlay animated to reveal color from top to bottom */}
-              <motion.div
-                className="absolute inset-0 w-full h-full rounded-lg z-10 backdrop-grayscale backdrop-brightness-75"
-                animate={{ clipPath: ["inset(0 0 0 0)", "inset(100% 0 0 0)", "inset(0 0 0 0)"] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              />
-
-              {/* Horizontal scan line effect */}
-              <motion.div 
-                className="absolute left-0 right-0 h-[2px] bg-[#C5A572] z-20 shadow-[0_0_15px_rgba(197,165,114,0.8)]"
-                animate={{ top: ["0%", "100%", "0%"] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            <div className="relative w-full h-[400px] md:h-[500px] rounded-lg overflow-hidden group">
+              <BeforeAfterSlider 
+                beforeImage={beforeImage} 
+                afterImage={afterImage} 
+                label="Architectural Render"
               />
             </div>
           </div>
