@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { FloatingBubbles } from "@/components/ui/FloatingBubbles";
 import { motion } from "framer-motion";
 import { Reveal, RevealItem } from "./Reveal";
+import { sendToActivepieces } from "@/utils/activepieces";
 
 interface LeadCaptureFormProps {
   variant?: "default" | "compact" | "hero";
@@ -31,6 +32,7 @@ export const LeadCaptureForm = ({
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
+    email: "",
     city: "",
     budget: "",
   });
@@ -42,6 +44,7 @@ export const LeadCaptureForm = ({
         setFormData(prev => ({
           ...prev,
           name: session.user.user_metadata?.full_name || prev.name,
+          email: session.user.email || prev.email,
         }));
 
         const { data: profile } = await supabase
@@ -78,12 +81,27 @@ export const LeadCaptureForm = ({
 
       if (error) throw error;
       
+      // Fire-and-forget Activepieces integration
+      const numericPhone = formData.phone.replace(/\D/g, "");
+      if (numericPhone.length >= 10 && numericPhone.length <= 13) {
+        // Send data in background without awaiting
+        sendToActivepieces({
+          fullName: formData.name,
+          phoneNumber: formData.phone,
+          email: formData.email,
+          city: formData.city,
+          budgetRange: formData.budget,
+          submittedAt: new Date().toISOString(),
+          source: "homepage_consultation_form"
+        });
+      }
+      
       toast({
         title: "Thank you for your interest!",
         description: "Our team will contact you within 24 hours.",
       });
       
-      setFormData({ name: "", phone: "", city: "", budget: "" });
+      setFormData({ name: "", phone: "", email: "", city: "", budget: "" });
     } catch (error: any) {
       toast({
         title: "Submission Failed",
@@ -125,7 +143,7 @@ export const LeadCaptureForm = ({
               whileHover={{ y: -5 }}
               transition={{ duration: 0.5 }}
             >
-              <div className={`grid ${isCompact ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-2"} gap-6 mb-8`}>
+              <div className={`grid ${isCompact ? "sm:grid-cols-2 lg:grid-cols-5" : "sm:grid-cols-2"} gap-6 mb-8`}>
                 <RevealItem>
                   <div className="space-y-3">
                     <Label htmlFor="name" className="text-sm font-bold uppercase tracking-wider text-black/60">Full Name</Label>
@@ -149,6 +167,19 @@ export const LeadCaptureForm = ({
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       required
+                      className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black placeholder:text-black/60 shadow-sm"
+                    />
+                  </div>
+                </RevealItem>
+                <RevealItem>
+                  <div className="space-y-3">
+                    <Label htmlFor="email" className="text-sm font-bold uppercase tracking-wider text-black/60">Email Address (Optional)</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black placeholder:text-black/60 shadow-sm"
                     />
                   </div>
