@@ -51,7 +51,6 @@ const operationalSectors = [
   { name: "Home Interior", path: "/designs?category=full-home" },
   { name: "Construction", path: "/materials?category=construction" },
   { name: "Renovation", path: "/designs?category=living-room" },
-  { name: "On-site Execution", path: "/professional/auth" },
   { name: "Material Supply", path: "/materials" },
 ];
 
@@ -149,12 +148,7 @@ export const Footer = () => {
               </ul>
               
               <div className="pt-4 flex flex-col gap-2">
-                <Link to="/professional/auth" className="text-[10px] uppercase font-black tracking-widest text-white/40 hover:text-[#735c00] transition-colors">
-                  Join Registry: Professional
-                </Link>
-                <Link to="/designer/auth" className="text-[10px] uppercase font-black tracking-widest text-white/40 hover:text-[#735c00] transition-colors">
-                  Join Registry: Designer
-                </Link>
+                {/* Links to standalone professional and designer registries can be added here */}
               </div>
             </div>
           </motion.div>

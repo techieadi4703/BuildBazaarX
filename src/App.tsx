@@ -20,18 +20,11 @@ const RawMaterialDetail = React.lazy(() => import("./pages/RawMaterialDetail"));
 const About = React.lazy(() => import("./pages/About"));
 const Contact = React.lazy(() => import("./pages/Contact"));
 const Auth = React.lazy(() => import("./pages/Auth"));
-const AuthRoleSelect = React.lazy(() => import("./pages/AuthRoleSelect"));
 const Checkout = React.lazy(() => import("./pages/Checkout"));
 const Profile = React.lazy(() => import("./pages/Profile"));
 const Orders = React.lazy(() => import("./pages/Orders"));
 const Wishlist = React.lazy(() => import("./pages/Wishlist"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
-const ProfessionalAuth = React.lazy(() => import("./pages/ProfessionalAuth"));
-const ProfessionalDashboard = React.lazy(() => import("./pages/ProfessionalDashboard"));
-const ProfessionalSetup = React.lazy(() => import("./pages/ProfessionalSetup"));
-const DesignerAuth = React.lazy(() => import("./pages/DesignerAuth"));
-const DesignerDashboard = React.lazy(() => import("./pages/DesignerDashboard"));
-const DesignerSetup = React.lazy(() => import("./pages/DesignerSetup"));
 
 const AdminDashboard = React.lazy(() => import("./pages/admin/Dashboard"));
 const AdminUsers = React.lazy(() => import("./pages/admin/Users"));
@@ -76,7 +69,6 @@ const AnimatedRoutes = () => {
         <Route path="/about" element={<PageTransition><About /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
-        <Route path="/auth/select-role" element={<PageTransition><AuthRoleSelect /></PageTransition>} />
         <Route path="/profile" element={
           <ProtectedRoute>
             <PageTransition><Profile /></PageTransition>
@@ -97,12 +89,7 @@ const AnimatedRoutes = () => {
             <PageTransition><Checkout /></PageTransition>
           </ProtectedRoute>
         } />
-        <Route path="/professional/auth" element={<PageTransition><ProfessionalAuth /></PageTransition>} />
-        <Route path="/professional/dashboard" element={<PageTransition><ProfessionalDashboard /></PageTransition>} />
-        <Route path="/professional/setup" element={<PageTransition><ProfessionalSetup /></PageTransition>} />
-        <Route path="/designer/auth" element={<PageTransition><DesignerAuth /></PageTransition>} />
-        <Route path="/designer/dashboard" element={<PageTransition><DesignerDashboard /></PageTransition>} />
-        <Route path="/designer/setup" element={<PageTransition><DesignerSetup /></PageTransition>} />
+
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

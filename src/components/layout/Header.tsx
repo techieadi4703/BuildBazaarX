@@ -167,13 +167,13 @@ export const Header = () => {
                 transition={{ delay: 0.6 }}
               >
                 <Button asChild variant="ghost" size="sm" className="rounded-full hover:scale-105 transition-transform duration-200">
-                  <Link to="/auth/select-role?mode=login">
+                  <Link to="/auth?mode=login">
                     <LogIn className="w-4 h-4 mr-2" />
                     Login
                   </Link>
                 </Button>
                 <Button asChild size="sm" className="rounded-full px-6 hover:scale-105 hover:shadow-lg transition-all duration-200">
-                  <Link to="/auth/select-role">
+                  <Link to="/auth">
                     Sign Up
                   </Link>
                 </Button>
