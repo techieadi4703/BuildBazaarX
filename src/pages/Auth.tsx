@@ -20,6 +20,10 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
+    setIsLogin(isLoginParam);
+  }, [isLoginParam]);
+
+  useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         // Don't navigate here — handleAuth already handles it for login
