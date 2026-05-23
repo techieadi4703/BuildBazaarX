@@ -17,21 +17,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { userRole, isAuthenticated, isLoading } = useAuth();
 
-  useEffect(() => {
-    if (isLoading || !isAuthenticated) return;
-
-    if (userRole === 'designer') {
-      navigate('/designer/dashboard');
-    } else if (userRole === 'professional') {
-      navigate('/professional/dashboard');
-    } else if (userRole === 'supplier') {
-      navigate('/supplier/dashboard');
-    }
-  }, [userRole, isAuthenticated, isLoading, navigate]);
-
-  // Optionally show a loading state while deciding on the redirect.
-  // This prevents the page from flashing before redirection to dashboard.
-  if (isLoading || (isAuthenticated && userRole && userRole !== 'customer')) {
+  if (isLoading) {
      return <div className="min-h-screen bg-background" />;
   }
 

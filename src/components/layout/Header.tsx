@@ -23,23 +23,15 @@ export const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Derive dashboard path from cached role in AuthContext — no extra DB calls
-  const userDashboardPath = useMemo(() => {
-    if (userRole === 'designer') return '/designer/dashboard';
-    if (userRole === 'professional') return '/professional/dashboard';
-    if (userRole === 'supplier') return '/supplier/dashboard';
-    return '/';
-  }, [userRole]);
+  // Derive dashboard path from cached role in AuthContext
+  const userDashboardPath = "/";
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/");
   };
 
-  const isProfessionalRoute = location.pathname.startsWith("/professional");
-  const isDesignerRoute = location.pathname.startsWith("/designer");
-  const isSupplierRoute = location.pathname.startsWith("/supplier");
-  const isNonUserRoute = isProfessionalRoute || isDesignerRoute || isSupplierRoute;
+  const isNonUserRoute = false;
 
   return (
     <motion.header 
