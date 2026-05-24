@@ -66,15 +66,15 @@ export const Orders = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-secondary/10 py-16 md:py-24">
+      <div className="min-h-screen bg-secondary/10 py-5 md:py-10">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             {/* Header Area */}
-            <div className="mb-12">
+            <div className="mb-5 md:mb-6">
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="mb-8"
+                className="mb-4 sm:mb-8"
               >
                 <Link
                   to="/profile"
@@ -140,7 +140,7 @@ export const Orders = () => {
                 </motion.div>
               ) : (
                 <Reveal width="100%" staggerChildren={0.1}>
-                  <div className="space-y-10">
+                  <div className="space-y-6">
                     {orders.map((order) => {
                       const parsedItems = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
                       const itemsList = Array.isArray(parsedItems) ? parsedItems : [];
@@ -154,8 +154,8 @@ export const Orders = () => {
                           >
                             <Card className="overflow-hidden bg-background border-border/50 rounded-[2.5rem] shadow-[0_10px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.1)] transition-all">
                               {/* Order Header Card */}
-                              <div className="bg-secondary/30 px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border/50">
-                                <div className="flex flex-wrap gap-x-10 gap-y-4">
+                              <div className="bg-secondary/30 px-4 sm:px-8 py-4 sm:py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 border-b border-border/50">
+                                <div className="flex flex-wrap gap-x-10 gap-y-4 w-full sm:w-auto">
                                   <div className="space-y-1">
                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0B132B]/60">Order Reference</p>
                                     <p className="font-mono text-sm font-bold bg-background px-3 py-1 rounded-lg border shadow-sm">
@@ -181,26 +181,32 @@ export const Orders = () => {
                                       {order.status}
                                     </Badge>
                                   </div>
+                                  {/* Mobile-only Total Amount (Inline with Status) */}
+                                  <div className="text-right ml-auto sm:hidden">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0B132B]/60 mb-1">Total Amount</p>
+                                    <p className="text-2xl font-black text-primary tracking-tight">₹{(order.total || 0).toLocaleString("en-IN")}</p>
+                                  </div>
                                 </div>
-                                <div className="text-right">
+                                {/* Desktop-only Total Amount (Right-aligned in header) */}
+                                <div className="hidden sm:block text-right">
                                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0B132B]/60 mb-1">Total Amount</p>
                                   <p className="text-2xl font-black text-primary tracking-tight">₹{(order.total || 0).toLocaleString("en-IN")}</p>
                                 </div>
                               </div>
 
-                              <CardContent className="p-8">
-                                <div className="grid md:grid-cols-[1.5fr,1fr] gap-12">
+                              <CardContent className="p-4 sm:p-8">
+                                <div className="grid md:grid-cols-[1.5fr,1fr] gap-6 md:gap-12">
                                   {/* Items Section */}
-                                  <div className="space-y-6">
+                                  <div className="flex flex-col gap-3">
                                     <h4 className="text-xs font-black text-[#0B132B]/80 uppercase tracking-[0.25em] flex items-center gap-2">
                                       <ShoppingBag className="w-4 h-4" />
                                       Ordered Items
                                     </h4>
-                                    <div className="space-y-6">
+                                    <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-secondary/30 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/30">
                                       {itemsList.map((item: any, idx: number) => (
                                         <motion.div 
                                           key={idx} 
-                                          className="flex gap-6 items-center p-4 rounded-3xl bg-secondary/20 border border-transparent hover:border-primary/10 hover:bg-secondary/40 transition-all group/item"
+                                          className="flex gap-3 sm:gap-6 items-center p-3 sm:p-4 rounded-3xl bg-secondary/20 border border-transparent hover:border-primary/10 hover:bg-secondary/40 transition-all group/item"
                                           whileHover={{ x: 5 }}
                                         >
                                           <div className="w-20 h-20 rounded-2xl bg-white overflow-hidden shrink-0 border-2 border-border/50 shadow-sm group-hover/item:border-primary/30 transition-all">

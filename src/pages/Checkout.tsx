@@ -359,13 +359,13 @@ const Checkout = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-secondary/10 py-12 md:py-20">
+      <div className="min-h-screen bg-secondary/10 py-5 md:py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="mb-10"
+              className="mb-4 sm:mb-10"
             >
               <Button variant="outline" className="bg-white/80 border-border/40 shadow-sm hover:shadow-md rounded-full font-bold text-foreground/70 hover:text-primary transition-all group px-6" onClick={() => navigate(-1)}>
                 <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Shopping
@@ -373,63 +373,63 @@ const Checkout = () => {
             </motion.div>
 
             <Reveal width="100%" direction="up">
-              <h1 className="text-4xl md:text-5xl font-black text-foreground mb-12 tracking-tight">Complete Your Order</h1>
+              <h1 className="text-4xl md:text-5xl font-black text-foreground mb-6 md:mb-12 tracking-tight">Complete Your Order</h1>
             </Reveal>
 
-            <div className="grid lg:grid-cols-12 gap-10">
+            <div className="grid lg:grid-cols-12 gap-6 sm:gap-10">
               {/* Left Column: Forms */}
-              <div className="lg:col-span-7 space-y-10">
+              <div className="lg:col-span-7 space-y-6 sm:space-y-10">
                 {/* 1. Shipping Details */}
                 <Reveal width="100%" direction="up" delay={0.1}>
                   <Card className="border-border/50 shadow-[0_10px_40px_rgba(0,0,0,0.05)] bg-background/80 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
-                    <div className="bg-primary/5 px-10 py-6 border-b border-border/50 flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
-                        <MapPin className="w-5 h-5" />
+                    <div className="bg-primary/5 px-4 sm:px-10 py-3 sm:py-6 border-b border-border/50 flex items-center gap-3">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0">
+                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
-                      <h2 className="text-xl font-black uppercase tracking-widest text-primary/80">Shipping Details</h2>
+                      <h2 className="text-base sm:text-xl font-black uppercase tracking-widest text-primary/80">Shipping Details</h2>
                     </div>
-                    <CardContent className="p-10">
-                      <form className="grid sm:grid-cols-2 gap-8" onSubmit={handleOrder}>
+                    <CardContent className="p-4 sm:p-10">
+                      <form className="grid sm:grid-cols-2 gap-4 sm:gap-8" onSubmit={handleOrder}>
                         <RevealItem>
-                          <div className="space-y-3">
-                            <Label htmlFor="name" className="text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Full Name</Label>
-                            <Input id="name" name="name" value={form.name} onChange={handleChange} placeholder="Required" required className="h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
+                          <div className="space-y-2 sm:space-y-3">
+                            <Label htmlFor="name" className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Full Name</Label>
+                            <Input id="name" name="name" value={form.name} onChange={handleChange} placeholder="Required" required className="h-11 sm:h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
                           </div>
                         </RevealItem>
                         <RevealItem>
-                          <div className="space-y-3">
-                            <Label htmlFor="phone" className="text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Phone Number</Label>
-                            <Input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 XXXX" required className="h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
+                          <div className="space-y-2 sm:space-y-3">
+                            <Label htmlFor="phone" className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Phone Number</Label>
+                            <Input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 XXXX" required className="h-11 sm:h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
                           </div>
                         </RevealItem>
                         <RevealItem>
-                          <div className="space-y-3">
-                            <Label htmlFor="email" className="text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Email Address</Label>
-                            <Input id="email" name="email" type="email" value={form.email} onChange={handleChange} placeholder="your@email.com" className="h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
+                          <div className="space-y-2 sm:space-y-3">
+                            <Label htmlFor="email" className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Email Address</Label>
+                            <Input id="email" name="email" type="email" value={form.email} onChange={handleChange} placeholder="your@email.com" className="h-11 sm:h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
                           </div>
                         </RevealItem>
                         <RevealItem>
-                          <div className="space-y-3">
-                            <Label htmlFor="pincode" className="text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Pincode</Label>
-                            <Input id="pincode" name="pincode" value={form.pincode} onChange={handleChange} placeholder="6-digit" required className="h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
+                          <div className="space-y-2 sm:space-y-3">
+                            <Label htmlFor="pincode" className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Pincode</Label>
+                            <Input id="pincode" name="pincode" value={form.pincode} onChange={handleChange} placeholder="6-digit" required className="h-11 sm:h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
                           </div>
                         </RevealItem>
                         <RevealItem className="sm:col-span-2">
-                          <div className="space-y-3">
-                            <Label htmlFor="address" className="text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Complete Address</Label>
-                            <Textarea id="address" name="address" value={form.address} onChange={handleChange} placeholder="House/Flat No., Street, Landmark..." rows={3} required className="rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium min-h-[120px] pt-4 placeholder:text-black/40" />
+                          <div className="space-y-2 sm:space-y-3">
+                            <Label htmlFor="address" className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Complete Address</Label>
+                            <Input id="address" name="address" value={form.address} onChange={handleChange} placeholder="House/Flat No., Street, Landmark..." required className="h-11 sm:h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
                           </div>
                         </RevealItem>
                         <RevealItem>
-                          <div className="space-y-3">
-                            <Label htmlFor="city" className="text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">City</Label>
-                            <Input id="city" name="city" value={form.city} onChange={handleChange} placeholder="City name" required className="h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
+                          <div className="space-y-2 sm:space-y-3">
+                            <Label htmlFor="city" className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">City</Label>
+                            <Input id="city" name="city" value={form.city} onChange={handleChange} placeholder="City name" required className="h-11 sm:h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
                           </div>
                         </RevealItem>
                         <RevealItem>
-                          <div className="space-y-3">
-                            <Label htmlFor="state" className="text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">State</Label>
-                            <Input id="state" name="state" value={form.state} onChange={handleChange} placeholder="State name" className="h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
+                          <div className="space-y-2 sm:space-y-3">
+                            <Label htmlFor="state" className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">State</Label>
+                            <Input id="state" name="state" value={form.state} onChange={handleChange} placeholder="State name" className="h-11 sm:h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-black/40" />
                           </div>
                         </RevealItem>
                       </form>
@@ -440,14 +440,14 @@ const Checkout = () => {
                 {/* 2. Payment Selector */}
                 <Reveal width="100%" direction="up" delay={0.2}>
                   <Card className="border-border/50 shadow-[0_10px_40px_rgba(0,0,0,0.05)] bg-background/80 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
-                    <div className="bg-primary/5 px-10 py-6 border-b border-border/50 flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
-                        <CreditCard className="w-5 h-5" />
+                    <div className="bg-primary/5 px-4 sm:px-10 py-3 sm:py-6 border-b border-border/50 flex items-center gap-3">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0">
+                        <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
-                      <h2 className="text-xl font-black uppercase tracking-widest text-primary/80">Secure Payment</h2>
+                      <h2 className="text-base sm:text-xl font-black uppercase tracking-widest text-primary/80">Secure Payment</h2>
                     </div>
-                    <CardContent className="p-10">
-                      <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <CardContent className="p-4 sm:p-10">
+                      <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="grid grid-cols-3 gap-2 sm:gap-6">
                         {[
                           { value: "upi", label: "Instant UPI", sub: "GPay, PhonePe", icon: Smartphone },
                           { value: "card", label: "Debit/Credit", sub: "Visa / Master", icon: CreditCard },
@@ -455,18 +455,18 @@ const Checkout = () => {
                         ].map((method) => (
                           <label
                             key={method.value}
-                            className={`flex flex-col items-center text-center gap-4 p-8 rounded-3xl border-2 cursor-pointer transition-all ${
+                            className={`flex flex-col items-center text-center gap-2 sm:gap-4 p-3 sm:p-8 rounded-3xl border-2 cursor-pointer transition-all ${
                               paymentMethod === method.value
                                 ? "border-primary bg-primary/5 shadow-xl scale-105"
                                 : "border-border/50 hover:border-primary/20 hover:bg-secondary/20"
                             }`}
                           >
-                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${paymentMethod === method.value ? "bg-primary text-white" : "bg-secondary text-muted-foreground"}`}>
-                              <method.icon className="w-7 h-7" />
+                            <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center ${paymentMethod === method.value ? "bg-primary text-white" : "bg-secondary text-muted-foreground"}`}>
+                              <method.icon className="w-5 h-5 sm:w-7 sm:h-7" />
                             </div>
-                            <div className="space-y-1">
-                              <span className="block font-black text-foreground">{method.label}</span>
-                              <span className="block text-xs font-bold text-[#0B132B]/60 uppercase tracking-widest">{method.sub}</span>
+                            <div className="space-y-0.5 sm:space-y-1">
+                              <span className="block text-xs sm:text-base font-black text-foreground leading-tight">{method.label}</span>
+                              <span className="hidden sm:block text-xs font-bold text-[#0B132B]/60 uppercase tracking-widest">{method.sub}</span>
                             </div>
                             <RadioGroupItem value={method.value} className="sr-only" />
                           </label>
@@ -513,7 +513,7 @@ const Checkout = () => {
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="flex items-center gap-4 text-sm text-[#0B132B]/80 bg-secondary/40 rounded-2xl p-4 mt-8 border border-border/30"
+                            className="flex items-center gap-3 text-sm text-[#0B132B]/80 bg-secondary/40 rounded-2xl p-3 sm:p-4 mt-4 sm:mt-8 border border-border/30"
                           >
                             <div className="w-10 h-10 bg-background rounded-xl flex items-center justify-center shrink-0">
                               <ShieldCheck className="w-6 h-6 text-green-600" />
@@ -531,41 +531,41 @@ const Checkout = () => {
 
               {/* Right Column: Summary */}
               <div className="lg:col-span-5">
-                <Reveal direction="left" distance={30} delay={0.3}>
-                  <Card className="sticky top-24 border-border/50 shadow-[0_30px_90px_rgba(0,0,0,0.1)] bg-background rounded-[3rem] overflow-hidden">
+                <Reveal width="100%" direction="left" distance={30} delay={0.3}>
+                  <Card className="sticky top-24 border-border/50 shadow-[0_30px_90px_rgba(0,0,0,0.1)] bg-background rounded-[2.5rem] overflow-hidden">
                     <CardContent className="p-0">
-                      <div className="p-10 bg-secondary/20">
-                        <h2 className="text-2xl font-black mb-8 tracking-tight">Order Summary</h2>
-                        <div className="space-y-6 max-h-[350px] overflow-y-auto pr-4 custom-scrollbar">
+                      <div className="p-4 sm:p-10 bg-secondary/20">
+                        <h2 className="text-xl sm:text-2xl font-black mb-4 sm:mb-8 tracking-tight">Order Summary</h2>
+                        <div className="space-y-4 sm:space-y-6 max-h-[350px] overflow-y-auto pr-2 sm:pr-4 custom-scrollbar">
                           {items.map((item) => (
                             <motion.div 
                               key={item.id} 
                               layout
-                              className="flex gap-5 group"
+                              className="flex gap-3 sm:gap-5 group"
                               whileHover={{ x: 5 }}
                             >
-                              <div className="relative w-24 h-24 rounded-[1.5rem] bg-white overflow-hidden shrink-0 border border-border/50">
+                              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-[1.25rem] sm:rounded-[1.5rem] bg-white overflow-hidden shrink-0 border border-border/50">
                                 <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" decoding="async" />
                                 <div className="absolute inset-0 bg-black/5" />
                               </div>
-                              <div className="flex-1 py-1 flex flex-col justify-between">
+                              <div className="flex-1 py-1 flex flex-col justify-between min-w-0">
                                 <div>
                                   <p className="text-[10px] font-black uppercase text-primary tracking-widest mb-1">{item.brand}</p>
                                   <p className="text-sm font-bold text-foreground line-clamp-1 leading-tight">{item.name}</p>
                                   <p className="text-[10px] font-medium text-[#0B132B]/60 mt-1">{item.specs}</p>
                                 </div>
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3 bg-secondary/50 rounded-full px-2 py-1 border border-border/30">
-                                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-6 h-6 flex items-center justify-center hover:bg-background rounded-full transition-colors">
+                                <div className="flex items-center justify-between gap-2 mt-1">
+                                  <div className="flex items-center gap-2 sm:gap-3 bg-secondary/50 rounded-full px-2 py-1 border border-border/30 shrink-0">
+                                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center hover:bg-background rounded-full transition-colors">
                                       <Minus className="w-3 h-3" />
                                     </button>
                                     <span className="w-4 text-center text-xs font-black">{item.quantity}</span>
-                                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-6 h-6 flex items-center justify-center hover:bg-background rounded-full transition-colors">
+                                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center hover:bg-background rounded-full transition-colors">
                                       <Plus className="w-3 h-3" />
                                     </button>
                                   </div>
-                                  <div className="flex flex-col items-end">
-                                    <span className="text-lg font-black text-foreground">₹{(item.price * item.quantity).toLocaleString()}</span>
+                                  <div className="flex flex-col items-end shrink-0">
+                                    <span className="text-base sm:text-lg font-black text-foreground">₹{(item.price * item.quantity).toLocaleString()}</span>
                                     <button onClick={() => removeFromCart(item.id)} className="text-[10px] font-black uppercase tracking-tighter text-[#0B132B]/70 hover:text-destructive flex items-center gap-1 transition-colors">
                                       <Trash2 className="w-3 h-3" /> Remove
                                     </button>
@@ -577,7 +577,7 @@ const Checkout = () => {
                         </div>
                       </div>
 
-                      <div className="p-10 space-y-8">
+                      <div className="p-4 sm:p-10 space-y-4 sm:space-y-8">
                         <div className="space-y-4">
                           <div className="flex justify-between items-center text-sm font-bold">
                             <span className="text-[#0B132B]/70 uppercase tracking-widest">Bag Total</span>
@@ -603,7 +603,7 @@ const Checkout = () => {
                         </div>
 
                         <Button
-                          className="w-full h-20 rounded-[1.5rem] font-black text-xl shadow-2xl shadow-primary/30 relative overflow-hidden group"
+                          className="w-full h-14 sm:h-20 rounded-[1.5rem] font-black text-base sm:text-xl shadow-2xl shadow-primary/30 relative overflow-hidden group"
                           onClick={handleOrder}
                           disabled={isSubmitting}
                         >

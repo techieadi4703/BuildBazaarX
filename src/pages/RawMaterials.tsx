@@ -263,17 +263,17 @@ const RawMaterials = () => {
           <Sliders className="w-6 h-6" />
         </button>
 
-        <main className="max-w-[1440px] mx-auto px-4 md:px-12 py-0 md:py-20">
+        <main className="max-w-[1440px] mx-auto px-4 md:px-12 py-0 md:pt-8 md:pb-20">
           {/* Header */}
-          <header className="hidden md:flex mb-16 md:mb-24 flex-col md:flex-row md:items-end justify-between gap-8">
+          <header className="hidden md:flex mb-6 md:mb-8 flex-row items-end justify-between gap-8">
             <div className="max-w-2xl">
-              <h1 className="text-6xl md:text-8xl font-headline tracking-tight leading-none mb-6">
+              <h1 className="text-6xl md:text-8xl font-headline tracking-tight leading-none">
                 Raw <span className="italic">Materials</span>
               </h1>
             </div>
 
             {/* Search Input inline with header */}
-            <div className="hidden md:block relative w-full md:w-64 -mt-4 md:mt-0">
+            <div className="relative w-64 shrink-0">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
               <input
                 className="pl-12 pr-4 py-3 bg-[#f6f3f0] border-none focus:ring-1 focus:ring-[#735c00] rounded-full text-sm w-full outline-none font-body shadow-inner"
@@ -287,7 +287,7 @@ const RawMaterials = () => {
 
           {/* Bento Features Removed as per request */}
 
-          <div className="flex flex-col lg:flex-row gap-12 mt-4 md:mt-12">
+          <div className="flex flex-col lg:flex-row gap-12 mt-4 md:mt-6">
             {/* Sidebar Categories */}
             <aside className="hidden lg:block lg:w-64 flex-shrink-0">
               <div className="sticky top-32">
@@ -510,7 +510,7 @@ const RawMaterials = () => {
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
-                <div className="mt-16 flex flex-col items-center gap-6">
+                <div className="mt-8 flex flex-col items-center gap-3">
                   {/* Flipkart Info Label */}
                   <div className="text-xs text-[#74777d] font-body">
                     Showing page <span className="font-bold text-[#1c1c1a]">{page}</span> of <span className="font-bold text-[#1c1c1a]">{totalPages}</span> ({totalCount} total items)

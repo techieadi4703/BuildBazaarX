@@ -391,18 +391,18 @@ const DesignDetail = () => {
                   <Button
                     size="lg"
                     variant={isInCart ? "outline" : "default"}
-                    className={`w-full h-20 rounded-[2rem] text-xl font-black shadow-2xl group relative overflow-hidden transition-all ${isInCart ? 'border-destructive text-destructive hover:bg-destructive/10' : 'shadow-primary/20 bg-foreground text-background hover:bg-foreground/90'}`}
+                    className={`w-full h-14 rounded-[2rem] text-base font-black shadow-2xl group relative overflow-hidden transition-all ${isInCart ? 'border-destructive text-destructive hover:bg-destructive/10' : 'shadow-primary/20 bg-foreground text-background hover:bg-foreground/90'}`}
                     onClick={handleCartToggle}
                   >
                     <div className="relative z-10 flex items-center justify-center gap-3">
                       {isInCart ? (
                         <>
-                          <Trash2 className="w-6 h-6" />
+                          <Trash2 className="w-5 h-5" />
                           Remove from Cart
                         </>
                       ) : (
                         <>
-                          <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                          <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
                           Add Blueprint to Cart
                         </>
                       )}
@@ -411,16 +411,16 @@ const DesignDetail = () => {
 
                   <Button
                     size="lg"
-                    className="w-full h-20 rounded-[2rem] text-xl font-black shadow-2xl shadow-primary/20 group relative overflow-hidden"
+                    className="w-full h-14 rounded-[2rem] text-base font-black shadow-2xl shadow-primary/20 group relative overflow-hidden"
                     onClick={() => {
                       const el = document.getElementById("consultation-form");
                       el?.scrollIntoView({ behavior: "smooth" });
                     }}
                   >
                     <div className="relative z-10 flex items-center justify-center gap-3">
-                      <Phone className="w-6 h-6 animate-pulse" />
+                      <Phone className="w-5 h-5 animate-pulse" />
                       Request Free Expert Consultation
-                      <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                     </div>
                     <motion.div 
                       className="absolute inset-0 bg-primary-foreground/10"
@@ -523,12 +523,12 @@ const DesignDetail = () => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="py-24 bg-background"
+            className="py-4 bg-background"
           >
             <div className="container mx-auto px-4 max-w-5xl">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
                 <div>
-                  <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-4">Inside the Build</h2>
+                  <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-1">Inside the Build</h2>
                   <h3 className="text-3xl md:text-5xl font-black text-foreground tracking-tight">Bill of Materials</h3>
                 </div>
                 <Badge variant="secondary" className="px-6 py-2 rounded-full font-bold h-fit border border-border">
@@ -541,10 +541,10 @@ const DesignDetail = () => {
                 <table className="w-full text-left">
                   <thead className="bg-primary/5 text-muted-foreground border-b border-primary/10">
                     <tr>
-                      <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px]">Material Name</th>
-                      <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px]">Category</th>
-                      <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px]">Quantity</th>
-                      <th className="px-10 py-6 font-black uppercase tracking-widest text-[10px] text-right">Est. Market Price</th>
+                      <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px]">Material Name</th>
+                      <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px]">Category</th>
+                      <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px]">Quantity</th>
+                      <th className="px-4 py-3 font-black uppercase tracking-widest text-[10px] text-right">Est. Market Price</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
@@ -556,12 +556,12 @@ const DesignDetail = () => {
                         transition={{ delay: 0.1 * idx }}
                         className="hover:bg-secondary/20 transition-all group"
                       >
-                        <td className="px-10 py-6 font-bold text-foreground group-hover:text-primary transition-colors">{mat.material_name}</td>
-                        <td className="px-10 py-6 font-medium text-muted-foreground italic text-sm">{mat.category || autoClassifyMaterial(mat.material_name)}</td>
-                        <td className="px-10 py-6">
+                        <td className="px-4 py-3 font-bold text-foreground group-hover:text-primary transition-colors">{mat.material_name}</td>
+                        <td className="px-4 py-3 font-medium text-muted-foreground italic text-sm">{mat.category || autoClassifyMaterial(mat.material_name)}</td>
+                        <td className="px-4 py-3">
                            <Badge variant="outline" className="rounded-full px-4 py-1 border-primary/10 font-bold bg-primary/5 text-primary">{mat.quantity} {mat.unit}</Badge>
                         </td>
-                        <td className="px-10 py-6 text-right font-black text-foreground">
+                        <td className="px-4 py-3 text-right font-black text-foreground">
                           {mat.estimated_cost ? `₹${mat.estimated_cost.toLocaleString('en-IN')}` : 'Market Rates'}
                         </td>
                       </motion.tr>
@@ -577,11 +577,11 @@ const DesignDetail = () => {
       {!id?.startsWith("db-") && <DesignPricingCalculator />}
 
       {/* Consultation Form Form Section */}
-      <section id="consultation-form" className="py-24 bg-secondary/20 relative overflow-hidden">
+      <section id="consultation-form" className="py-8 bg-secondary/20 relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto">
             <Reveal width="100%" direction="up">
-              <div className="text-center mb-16">
+              <div className="text-center mb-6">
                 <h2 className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4">Final Step</h2>
                 <h3 className="text-4xl md:text-6xl font-black text-foreground mb-6 tracking-tight">Your Dream, Crafted.</h3>
                 <p className="text-[#44474c] text-xl font-medium max-w-2xl mx-auto">
@@ -689,11 +689,11 @@ const DesignDetail = () => {
                   <RevealItem>
                     <Button
                       size="lg"
-                      className="w-full h-20 rounded-[2rem] font-black text-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] group relative overflow-hidden"
+                      className="w-full h-14 rounded-[2rem] font-black text-base shadow-[0_20px_50px_rgba(0,0,0,0.15)] group relative overflow-hidden"
                       onClick={handleSubmit}
                     >
                       <span className="relative z-10 flex items-center justify-center gap-3">
-                        <MessageCircle className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                        <MessageCircle className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                         Initiate Free Consultation
                       </span>
                       <motion.div 

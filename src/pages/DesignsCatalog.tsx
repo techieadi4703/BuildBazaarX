@@ -45,12 +45,12 @@ const DesignsCatalog = () => {
   const handleWishlistToggle = (e: React.MouseEvent, design: any) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!isAuthenticated) {
       toast.error("Please log in to save designs to your wishlist");
       return;
     }
-    
+
     if (isInWishlist(design.id)) {
       removeFromWishlist(design.id);
       toast.success("Removed from wishlist");
@@ -69,7 +69,7 @@ const DesignsCatalog = () => {
   const handleAddToCart = (e: React.MouseEvent, design: any) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // Parse totalCost string to a number for the cart
     const numericCost = parseFloat(design.totalCost.replace(/[^\d.]/g, '')) || 0;
 
@@ -100,7 +100,7 @@ const DesignsCatalog = () => {
     setSelectedCategory(draftCategory);
     setSelectedStyle(draftStyle);
     setIsFilterSheetOpen(false);
-    setExpandedMobileDropdown(null); 
+    setExpandedMobileDropdown(null);
   };
 
   const resetFilters = () => {
@@ -131,25 +131,25 @@ const DesignsCatalog = () => {
         .from('designs')
         .select('*, designers(full_name)', { count: 'exact' })
         .eq('is_published', true);
-      
+
       if (selectedCategory !== "all") {
         const mappedCat = categories.find(c => c.id === selectedCategory)?.name;
         if (mappedCat) {
           query = query.ilike('category', mappedCat);
         }
       }
-      
+
       if (selectedStyle !== "all") {
         query = query.eq('style', selectedStyle);
       }
-      
+
       if (searchQuery.trim() !== "") {
         query = query.ilike('name', `%${searchQuery.trim()}%`);
       }
 
       const { data, count, error } = await query
         .range((page - 1) * 15, page * 15 - 1);
-      
+
       if (error) {
         console.error("Error fetching designs:", error);
         return { designs: [], totalCount: 0 };
@@ -211,21 +211,21 @@ const DesignsCatalog = () => {
       </Helmet>
       <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full">
         <main className="max-w-[1920px] mx-auto flex flex-col md:flex-row min-h-screen relative">
-          
+
           {/* Mobile Top Navigation (Search + Button) */}
           <div className="md:hidden flex flex-col px-4 pt-4 pb-2 bg-[#fcf9f6] space-y-4 sticky top-0 z-20">
             <div className="flex items-center gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
-                <input 
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded-xl text-sm outline-none shadow-sm" 
-                  placeholder="Search designs..." 
+                <input
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded-xl text-sm outline-none shadow-sm"
+                  placeholder="Search designs..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   type="text"
                 />
               </div>
-              <button 
+              <button
                 onClick={openFilterSheet}
                 className="flex items-center justify-center gap-2 px-5 py-3 bg-[#f6f3f0] border border-[#e5e2df] rounded-xl text-sm font-medium whitespace-nowrap hover:bg-[#eae8e5] transition-colors shadow-sm"
               >
@@ -233,7 +233,7 @@ const DesignsCatalog = () => {
                 Filter
               </button>
             </div>
-            
+
             <div className="flex items-center justify-between text-sm pt-2">
               <span className="text-[#74777d]">Showing <span className="font-bold text-[#1c1c1a]">{filteredDesigns.length}</span> designs</span>
               <div className="flex items-center cursor-pointer font-medium text-[#1c1c1a]">
@@ -252,8 +252,8 @@ const DesignsCatalog = () => {
                 )}
                 {selectedStyle !== "all" && (
                   <span className="bg-[#f6f3f0] border border-[#e5e2df] text-[#1c1c1a] px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
-                     {selectedStyle}
-                     <X className="w-3 h-3 cursor-pointer opacity-50 hover:opacity-100 transition-opacity" onClick={() => setSelectedStyle('all')} />
+                    {selectedStyle}
+                    <X className="w-3 h-3 cursor-pointer opacity-50 hover:opacity-100 transition-opacity" onClick={() => setSelectedStyle('all')} />
                   </span>
                 )}
               </div>
@@ -261,7 +261,7 @@ const DesignsCatalog = () => {
           </div>
 
           {/* Floating Action Button for Mobile */}
-          <button 
+          <button
             onClick={openFilterSheet}
             className="md:hidden fixed bottom-24 right-6 z-30 bg-[#735c00] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform"
           >
@@ -274,7 +274,7 @@ const DesignsCatalog = () => {
               <div className="flex items-center justify-between">
                 <h2 className="font-headline italic text-2xl">Curation Filter</h2>
                 {(selectedCategory !== "all" || selectedStyle !== "all" || searchQuery !== "") && (
-                  <button 
+                  <button
                     onClick={clearAllFilters}
                     className="font-body text-[10px] font-bold uppercase tracking-widest text-[#74777d] hover:text-[#735c00]"
                   >
@@ -284,14 +284,14 @@ const DesignsCatalog = () => {
               </div>
 
               <div className="relative w-full md:w-[85%]">
-                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
-                 <input 
-                   className="pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded text-sm w-full outline-none font-body shadow-sm" 
-                   placeholder="Search designs..." 
-                   value={searchQuery}
-                   onChange={(e) => setSearchQuery(e.target.value)}
-                   type="text"
-                 />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+                <input
+                  className="pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded text-sm w-full outline-none font-body shadow-sm"
+                  placeholder="Search designs..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  type="text"
+                />
               </div>
             </div>
 
@@ -301,12 +301,12 @@ const DesignsCatalog = () => {
                 <div className="flex flex-col gap-3 md:gap-2">
                   {categories.map(cat => (
                     <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
-                      <input 
-                        type="radio" 
+                      <input
+                        type="radio"
                         name="desktopCategory"
                         checked={selectedCategory === cat.id}
                         onChange={() => setSelectedCategory(cat.id)}
-                        className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                        className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
                       />
                       <span className={`text-sm font-medium transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
                         {cat.name}
@@ -320,12 +320,12 @@ const DesignsCatalog = () => {
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Architectural Styles</h3>
                 <div className="flex flex-col gap-3 md:gap-2">
                   <label className="flex items-center gap-3 cursor-pointer group">
-                    <input 
-                      type="radio" 
+                    <input
+                      type="radio"
                       name="desktopStyle"
                       checked={selectedStyle === "all"}
                       onChange={() => setSelectedStyle("all")}
-                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
                     />
                     <span className={`text-sm font-medium transition-colors ${selectedStyle === "all" ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
                       Any Style
@@ -333,12 +333,12 @@ const DesignsCatalog = () => {
                   </label>
                   {styles.map(style => (
                     <label key={style} className="flex items-center gap-3 cursor-pointer group">
-                      <input 
-                        type="radio" 
+                      <input
+                        type="radio"
                         name="desktopStyle"
                         checked={selectedStyle === style}
                         onChange={() => setSelectedStyle(style)}
-                        className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
+                        className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
                       />
                       <span className={`text-sm font-medium transition-colors ${selectedStyle === style ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
                         {style}
@@ -352,13 +352,13 @@ const DesignsCatalog = () => {
 
           {/* Content Canvas */}
           <section className="flex-1 p-0 md:p-8 md:px-16 md:pt-8 md:pb-4 bg-[#fcf9f6]">
-            
+
             {/* Header - Hidden on mobile, handled by mobile top bar */}
             <header className="hidden md:block mb-8">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                 <div className="max-w-2xl">
-                  <h1 className="text-6xl md:text-8xl font-headline leading-tight tracking-tight mb-6 md:mb-2">
-                    Designs <br className="md:hidden" /><span className="italic font-normal">Catalog.</span>
+                  <h1 className="text-6xl md:text-8xl font-headline tracking-tight leading-none mb-6 whitespace-nowrap">
+                    Designs <span className="italic">Catalog</span>
                   </h1>
                 </div>
                 <div className="flex shrink-0">
@@ -373,26 +373,26 @@ const DesignsCatalog = () => {
             {/* Grid */}
             <AnimatePresence>
               {isLoading ? (
-                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 flex flex-col items-center justify-center text-center">
-                    <div className="w-10 h-10 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent mb-4"></div>
-                    <p className="font-body text-sm text-[#74777d]">Loading designs catalog...</p>
-                 </motion.div>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 flex flex-col items-center justify-center text-center">
+                  <div className="w-10 h-10 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent mb-4"></div>
+                  <p className="font-body text-sm text-[#74777d]">Loading designs catalog...</p>
+                </motion.div>
               ) : filteredDesigns.length === 0 ? (
-                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 flex flex-col items-center justify-center text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]">
-                    <h3 className="font-headline text-2xl mb-2 text-[#1c1c1a]">No designs found 😕</h3>
-                    <p className="font-body text-sm text-[#74777d] max-w-sm">Try adjusting your filters or clearing them to see more results.</p>
-                    <button onClick={clearAllFilters} className="mt-8 px-8 py-3.5 bg-[#735c00] text-white rounded-lg font-bold text-sm hover:bg-[#5a4800] transition-colors shadow-md">
-                      Clear Filters
-                    </button>
-                 </motion.div>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-24 flex flex-col items-center justify-center text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]">
+                  <h3 className="font-headline text-2xl mb-2 text-[#1c1c1a]">No designs found 😕</h3>
+                  <p className="font-body text-sm text-[#74777d] max-w-sm">Try adjusting your filters or clearing them to see more results.</p>
+                  <button onClick={clearAllFilters} className="mt-8 px-8 py-3.5 bg-[#735c00] text-white rounded-lg font-bold text-sm hover:bg-[#5a4800] transition-colors shadow-md">
+                    Clear Filters
+                  </button>
+                </motion.div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-x-8 md:gap-y-16 px-4 md:px-0">
                   {filteredDesigns.map((design, index) => {
                     const isFeatured = design.featured && index === 0;
 
                     return (
-                      <motion.article 
-                        key={design.id} 
+                      <motion.article
+                        key={design.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         whileHover={{ y: -5 }}
@@ -400,15 +400,15 @@ const DesignsCatalog = () => {
                       >
                         <Link to={`/designs/${design.id}`} className="h-full flex flex-col bg-white md:bg-transparent rounded-2xl md:rounded-none overflow-hidden shadow-sm md:shadow-none border border-[#e5e2df] md:border-none relative">
                           <div className={`relative overflow-hidden bg-[#f6f3f0] md:mb-6 ${isFeatured ? 'aspect-[16/10]' : 'aspect-[4/5] md:aspect-square'}`}>
-                            <img 
-                              src={design.image} 
-                              alt={design.name} 
+                            <img
+                              src={design.image}
+                              alt={design.name}
                               loading="lazy"
                               width={800}
                               height={800}
                               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 mix-blend-multiply opacity-90"
-                             decoding="async" />
-                            
+                              decoding="async" />
+
                             <div className="absolute top-4 left-4 md:top-6 md:left-6">
                               <span className="bg-[#fcf9f6]/90 backdrop-blur-md px-2 py-1 md:px-4 md:py-2 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest md:tracking-[0.2em] flex items-center gap-1 md:gap-2 shadow-sm border border-[#e5e2df]">
                                 <BadgeCheck className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#735c00] shrink-0" />
@@ -445,13 +445,13 @@ const DesignsCatalog = () => {
                             )}
 
                           </div>
-                          
+
                           {!isFeatured && (
                             <div className="p-3 md:p-0 md:space-y-3 flex-grow flex flex-col bg-white md:bg-transparent">
                               <div className="flex md:justify-between items-start flex-col md:flex-row md:gap-4 mb-1 md:mb-0">
                                 <h3 className="text-xs md:text-xl font-headline font-bold leading-tight line-clamp-1">{design.name}</h3>
                               </div>
-                              
+
                               {/* Mobile simplified info */}
                               <div className="flex items-center gap-1.5 text-[9px] text-[#74777d] md:hidden font-body font-medium mt-auto">
                                 {design.category.replace("-", " ")}
@@ -471,7 +471,7 @@ const DesignsCatalog = () => {
 
                         {/* Like Button (Positioned over the card but outside Link) */}
                         <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20">
-                          <button 
+                          <button
                             type="button"
                             onClick={(e) => handleWishlistToggle(e, design)}
                             className={`w-7 h-7 md:w-10 md:h-10 ${isInWishlist(design.id) ? 'bg-[#ba1a1a]/10 text-[#ba1a1a] border-[#ba1a1a]/20' : 'bg-white/80 text-[#1c1c1a] border-[#e5e2df]'} backdrop-blur-md rounded-full flex items-center justify-center hover:text-[#ba1a1a] transition-colors shadow-sm cursor-pointer border shrink-0`}
@@ -486,7 +486,7 @@ const DesignsCatalog = () => {
                             const cartItem = cartItems.find(i => i.id === design.id);
                             if (cartItem) {
                               return (
-                                <button 
+                                <button
                                   onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
@@ -501,7 +501,7 @@ const DesignsCatalog = () => {
                               );
                             }
                             return (
-                              <button 
+                              <button
                                 onClick={(e) => handleAddToCart(e, design)}
                                 className="w-10 h-10 md:w-12 md:h-12 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
                               >
@@ -521,12 +521,12 @@ const DesignsCatalog = () => {
             {totalPages > 1 && (
               <div className="mt-24 flex flex-col items-center gap-6">
                 <div className="h-[1px] w-full bg-[#e5e2df]"></div>
-                
+
                 {/* Flipkart Info Label */}
                 <div className="text-xs text-[#74777d] font-body">
                   Showing page <span className="font-bold text-[#1c1c1a]">{page}</span> of <span className="font-bold text-[#1c1c1a]">{totalPages}</span> ({totalCount} total designs)
                 </div>
-                
+
                 <div className="flex justify-center items-center gap-2">
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -535,7 +535,7 @@ const DesignsCatalog = () => {
                   >
                     Previous
                   </button>
-                  
+
                   <div className="flex items-center gap-1.5">
                     {getPaginationRange(page, totalPages).map((p, idx) => {
                       if (p === "...") {
@@ -549,18 +549,17 @@ const DesignsCatalog = () => {
                         <button
                           key={`page-${p}`}
                           onClick={() => setPage(Number(p))}
-                          className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold border transition-all ${
-                            page === p
-                              ? "bg-[#735c00] text-white border-[#735c00] shadow-sm font-bold"
-                              : "bg-white text-[#1c1c1a] border-[#e5e2df] hover:bg-[#f6f3f0]"
-                          }`}
+                          className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold border transition-all ${page === p
+                            ? "bg-[#735c00] text-white border-[#735c00] shadow-sm font-bold"
+                            : "bg-white text-[#1c1c1a] border-[#e5e2df] hover:bg-[#f6f3f0]"
+                            }`}
                         >
                           {p}
                         </button>
                       );
                     })}
                   </div>
-                  
+
                   <button
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
@@ -576,71 +575,71 @@ const DesignsCatalog = () => {
 
           {/* Mobile Bottom Sheet for Filters */}
           <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
-             <SheetContent className="overflow-y-auto w-full md:hidden bg-[#fcf9f6] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl" side="bottom">
-               <SheetHeader className="mb-6 pb-2 block">
-                 <SheetTitle className="font-headline text-2xl text-left bg-gradient-to-r from-[#1c1c1a] to-[#735c00] bg-clip-text text-transparent">Filter Settings</SheetTitle>
-                 <SheetDescription className="hidden">Filter options to refine the catalog of modern architectural designs.</SheetDescription>
-               </SheetHeader>
-               
-               <div className="space-y-4 md:space-y-3 pb-32">
-                 <div className="space-y-4">
-                   <div className="flex justify-between items-center cursor-pointer group" onClick={() => toggleDropdown('draftCategory')}>
-                     <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Spatial Category</h3>
-                     <ChevronDown className={`w-4 h-4 text-[#1c1c1a] opacity-60 transition-transform ${expandedMobileDropdown === 'draftCategory' ? 'rotate-180' : ''}`} />
-                   </div>
-                   <div className={`overflow-hidden transition-all duration-300 ${expandedMobileDropdown === 'draftCategory' ? 'max-h-96 opacity-100 flex flex-col gap-4' : 'max-h-0 opacity-0 hidden'}`}>
-                     {categories.map(cat => (
-                       <label key={cat.id} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
-                         <input 
-                           type="radio" 
-                           name="draftCategory"
-                           checked={draftCategory === cat.id}
-                           onChange={() => setDraftCategory(cat.id)}
-                           className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                         />
-                         <span className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{cat.name}</span>
-                       </label>
-                     ))}
-                   </div>
-                 </div>
+            <SheetContent className="overflow-y-auto w-full md:hidden bg-[#fcf9f6] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl" side="bottom">
+              <SheetHeader className="mb-6 pb-2 block">
+                <SheetTitle className="font-headline text-2xl text-left bg-gradient-to-r from-[#1c1c1a] to-[#735c00] bg-clip-text text-transparent">Filter Settings</SheetTitle>
+                <SheetDescription className="hidden">Filter options to refine the catalog of modern architectural designs.</SheetDescription>
+              </SheetHeader>
 
-                 <div className="space-y-4 pt-4 border-t border-[#e5e2df]">
-                    <div className="flex justify-between items-center cursor-pointer group" onClick={() => toggleDropdown('draftStyle')}>
-                     <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Architectural Styles</h3>
-                     <ChevronDown className={`w-4 h-4 text-[#1c1c1a] opacity-60 transition-transform ${expandedMobileDropdown === 'draftStyle' ? 'rotate-180' : ''}`} />
-                   </div>
-                   <div className={`overflow-hidden transition-all duration-300 ${expandedMobileDropdown === 'draftStyle' ? 'max-h-96 opacity-100 flex flex-col gap-4' : 'max-h-0 opacity-0 hidden'}`}>
-                     <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
-                       <input 
-                         type="radio" 
-                         name="draftStyle"
-                         checked={draftStyle === "all"}
-                         onChange={() => setDraftStyle("all")}
-                         className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                       />
-                       <span className={`text-sm font-medium transition-colors ${draftStyle === "all" ? 'text-[#735c00]' : 'text-[#44474c]'}`}>Any Style</span>
-                     </label>
-                     {styles.map(style => (
-                       <label key={style} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
-                         <input 
-                           type="radio" 
-                           name="draftStyle"
-                           checked={draftStyle === style}
-                           onChange={() => setDraftStyle(style)}
-                           className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent" 
-                         />
-                         <span className={`text-sm font-medium transition-colors ${draftStyle === style ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{style}</span>
-                       </label>
-                     ))}
-                   </div>
-                 </div>
-               </div>
+              <div className="space-y-4 md:space-y-3 pb-32">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center cursor-pointer group" onClick={() => toggleDropdown('draftCategory')}>
+                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Spatial Category</h3>
+                    <ChevronDown className={`w-4 h-4 text-[#1c1c1a] opacity-60 transition-transform ${expandedMobileDropdown === 'draftCategory' ? 'rotate-180' : ''}`} />
+                  </div>
+                  <div className={`overflow-hidden transition-all duration-300 ${expandedMobileDropdown === 'draftCategory' ? 'max-h-96 opacity-100 flex flex-col gap-4' : 'max-h-0 opacity-0 hidden'}`}>
+                    {categories.map(cat => (
+                      <label key={cat.id} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                        <input
+                          type="radio"
+                          name="draftCategory"
+                          checked={draftCategory === cat.id}
+                          onChange={() => setDraftCategory(cat.id)}
+                          className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                        />
+                        <span className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{cat.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
 
-               <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t border-[#e5e2df] flex gap-4 pb-12">
-                  <button onClick={resetFilters} className="w-1/3 py-4 border border-[#e5e2df] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] bg-white transition-colors">Reset</button>
-                  <button onClick={applyFilters} className="flex-1 py-4 bg-[#1c1c1a] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#735c00] transition-colors shadow-xl">Apply Filters</button>
-               </div>
-             </SheetContent>
+                <div className="space-y-4 pt-4 border-t border-[#e5e2df]">
+                  <div className="flex justify-between items-center cursor-pointer group" onClick={() => toggleDropdown('draftStyle')}>
+                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Architectural Styles</h3>
+                    <ChevronDown className={`w-4 h-4 text-[#1c1c1a] opacity-60 transition-transform ${expandedMobileDropdown === 'draftStyle' ? 'rotate-180' : ''}`} />
+                  </div>
+                  <div className={`overflow-hidden transition-all duration-300 ${expandedMobileDropdown === 'draftStyle' ? 'max-h-96 opacity-100 flex flex-col gap-4' : 'max-h-0 opacity-0 hidden'}`}>
+                    <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                      <input
+                        type="radio"
+                        name="draftStyle"
+                        checked={draftStyle === "all"}
+                        onChange={() => setDraftStyle("all")}
+                        className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                      />
+                      <span className={`text-sm font-medium transition-colors ${draftStyle === "all" ? 'text-[#735c00]' : 'text-[#44474c]'}`}>Any Style</span>
+                    </label>
+                    {styles.map(style => (
+                      <label key={style} className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                        <input
+                          type="radio"
+                          name="draftStyle"
+                          checked={draftStyle === style}
+                          onChange={() => setDraftStyle(style)}
+                          className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                        />
+                        <span className={`text-sm font-medium transition-colors ${draftStyle === style ? 'text-[#735c00]' : 'text-[#44474c]'}`}>{style}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t border-[#e5e2df] flex gap-4 pb-12">
+                <button onClick={resetFilters} className="w-1/3 py-4 border border-[#e5e2df] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] bg-white transition-colors">Reset</button>
+                <button onClick={applyFilters} className="flex-1 py-4 bg-[#1c1c1a] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#735c00] transition-colors shadow-xl">Apply Filters</button>
+              </div>
+            </SheetContent>
           </Sheet>
 
         </main>

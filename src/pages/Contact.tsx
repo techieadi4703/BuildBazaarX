@@ -175,7 +175,7 @@ const Contact = () => {
         <meta property="og:description" content="Reach our team in Jaipur. Free estimates, 24h response, and verified subject experts for every construction need." />
       </Helmet>
       {/* Blueprint Hero Section */}
-      <section className="relative overflow-hidden bg-primary-container pt-32 pb-24 md:pt-48 md:pb-32">
+      <section className="relative overflow-hidden bg-primary-container pt-16 pb-12 md:pt-24 md:pb-16">
         <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />
         <div className="absolute inset-0 bg-dot-grid opacity-[0.05] pointer-events-none" />
         
@@ -197,14 +197,14 @@ const Contact = () => {
       </section>
 
       {/* Main Command Center Form */}
-      <section className="py-24 bg-[#F4F0EA] relative">
+      <section className="py-8 md:py-12 bg-[#F4F0EA] relative">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-12 gap-12 max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-12 gap-8 md:gap-12 max-w-7xl mx-auto">
             
             {/* Left: Gold Form */}
             <div className="lg:col-span-6">
               <Reveal width="100%" direction="up">
-                <div className="mb-10">
+                <div className="mb-5 md:mb-10">
                   <h2 className="text-4xl font-black text-black mb-4 tracking-tighter">Submit Execution Request</h2>
                   <p className="text-black/60 text-lg font-medium">
                     Input your primary parameters below. Action protocols proceed strictly within 24 operational hours.
@@ -214,7 +214,7 @@ const Contact = () => {
 
               <motion.form 
                 onSubmit={handleSubmit} 
-                className="space-y-8 bg-[#C5A572] p-8 md:p-12 rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden"
+                className="space-y-4 md:space-y-8 bg-[#C5A572] p-5 md:p-12 rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden"
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.5 }}
               >
@@ -223,7 +223,7 @@ const Contact = () => {
                   <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black uppercase">Form_Asset</span>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-8 relative z-10">
+                <div className="grid sm:grid-cols-2 gap-4 md:gap-8 relative z-10">
                   <RevealItem>
                     <div className="space-y-3">
                       <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Full Name</Label>
@@ -253,7 +253,7 @@ const Contact = () => {
                   </RevealItem>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-8 relative z-10">
+                <div className="grid sm:grid-cols-2 gap-4 md:gap-8 relative z-10">
                   <RevealItem>
                     <div className="space-y-3">
                       <Label htmlFor="email" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Email Address</Label>
@@ -282,7 +282,7 @@ const Contact = () => {
                   </RevealItem>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-8 relative z-10">
+                <div className="grid sm:grid-cols-2 gap-4 md:gap-8 relative z-10">
                   <RevealItem>
                     <div className="space-y-3">
                       <Label htmlFor="service" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Target Service</Label>
@@ -375,7 +375,7 @@ const Contact = () => {
             </div>
 
             {/* Right: Info Panels / Bento */}
-            <div className="lg:col-span-6 space-y-8 flex flex-col pt-12 lg:pt-24">
+            <div className="lg:col-span-6 space-y-6 md:space-y-8 flex flex-col pt-4 lg:pt-8">
               
               {/* Communication Interface Grid */}
               <Reveal width="100%" staggerChildren={0.1}>
@@ -463,7 +463,7 @@ const Contact = () => {
       </section>
 
       {/* Corporate Legacy Footer block */}
-      <section className="py-32 bg-primary-container relative overflow-hidden flex items-center justify-center min-h-[500px]">
+      <section className="py-10 md:py-16 bg-primary-container relative overflow-hidden flex items-center justify-center min-h-[300px]">
         <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />
         <div className="absolute inset-0 bg-dot-grid opacity-[0.05] pointer-events-none" />
         

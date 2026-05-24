@@ -3,10 +3,10 @@ import { Layout } from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { 
+import {
   User, Phone, MapPin, Mail, Save, Loader2, Package, ArrowRight, LogOut,
   ChevronRight, CreditCard, Heart, Star, Bell,
-  FileText, ShieldCheck, Landmark, Edit, X, Power, 
+  FileText, ShieldCheck, Landmark, Edit, X, Power,
   Trash2, AlertTriangle
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
@@ -20,7 +20,7 @@ const Profile = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [currentRole, setCurrentRole] = useState("customer");
-  
+
   // Tab states: 'profile' | 'addresses' | 'saved-upi' | 'saved-cards' | 'reviews' | 'notifications'
   const [activeTab, setActiveTab] = useState<string>("profile");
 
@@ -115,7 +115,7 @@ const Profile = () => {
 
     // Validate that the card is exactly 16 digits
     const cardRegex = /^\d{16}$/;
-    
+
     if (!cardRegex.test(trimmedCard)) {
       toast({
         title: "Invalid Card Number",
@@ -270,7 +270,7 @@ const Profile = () => {
       if (section === "personal") {
         const mergedName = `${firstName} ${lastName}`.trim();
         updatedFields.full_name = mergedName;
-        
+
         // Save gender to supabase auth metadata
         const { error: authError } = await supabase.auth.updateUser({
           data: { gender }
@@ -294,8 +294,8 @@ const Profile = () => {
           state: stateInput,
           pincode: pincodeInput,
         };
-        setProfile(prev => ({ 
-          ...prev, 
+        setProfile(prev => ({
+          ...prev,
           address: addressInput,
           city: cityInput,
           state: stateInput,
@@ -368,10 +368,10 @@ const Profile = () => {
       <div className="bg-background text-[#131b2e] min-h-screen font-sans w-full py-8">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-6 items-start">
-            
+
             {/* Sidebar Left Column */}
             <div className="w-full md:w-1/3 shrink-0 flex flex-col gap-4">
-              
+
               {/* Hello Card Header */}
               <div className="bg-white p-4 flex items-center gap-4 rounded-sm shadow-sm border border-border">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#855300] to-[#fea619] flex items-center justify-center text-white font-bold text-lg shadow-inner">
@@ -387,9 +387,9 @@ const Profile = () => {
 
               {/* Navigation Menu Links */}
               <div className="bg-white rounded-sm shadow-sm border border-border overflow-hidden">
-                
+
                 {/* Orders Category */}
-                <Link 
+                <Link
                   to="/orders"
                   className="w-full flex items-center justify-between p-4 hover:bg-[#eceef0]/30 border-b border-border transition-colors group"
                 >
@@ -407,23 +407,21 @@ const Profile = () => {
                     <span className="font-bold text-xs tracking-wider text-gray-400 uppercase">ACCOUNT SETTINGS</span>
                   </div>
                   <div className="flex flex-col">
-                    <button 
+                    <button
                       onClick={() => setActiveTab("profile")}
-                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
-                        activeTab === "profile" 
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "profile"
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
                           : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
-                      }`}
+                        }`}
                     >
                       Profile Information
                     </button>
-                    <button 
+                    <button
                       onClick={() => setActiveTab("addresses")}
-                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
-                        activeTab === "addresses" 
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "addresses"
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
                           : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
-                      }`}
+                        }`}
                     >
                       Manage Addresses
                     </button>
@@ -437,23 +435,21 @@ const Profile = () => {
                     <span className="font-bold text-xs tracking-wider text-gray-400 uppercase">PAYMENTS</span>
                   </div>
                   <div className="flex flex-col">
-                    <button 
+                    <button
                       onClick={() => setActiveTab("saved-upi")}
-                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
-                        activeTab === "saved-upi" 
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "saved-upi"
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
                           : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
-                      }`}
+                        }`}
                     >
                       Saved UPI
                     </button>
-                    <button 
+                    <button
                       onClick={() => setActiveTab("saved-cards")}
-                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
-                        activeTab === "saved-cards" 
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "saved-cards"
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
                           : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
-                      }`}
+                        }`}
                     >
                       Saved Cards
                     </button>
@@ -467,28 +463,26 @@ const Profile = () => {
                     <span className="font-bold text-xs tracking-wider text-gray-400 uppercase">MY STUFF</span>
                   </div>
                   <div className="flex flex-col">
-                    <button 
+                    <button
                       onClick={() => setActiveTab("reviews")}
-                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
-                        activeTab === "reviews" 
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "reviews"
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
                           : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
-                      }`}
+                        }`}
                     >
                       My Reviews & Ratings
                     </button>
-                    <button 
+                    <button
                       onClick={() => setActiveTab("notifications")}
-                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
-                        activeTab === "notifications" 
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "notifications"
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
                           : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
-                      }`}
+                        }`}
                     >
                       All Notifications
                     </button>
-                    <Link 
-                      to="/wishlist" 
+                    <Link
+                      to="/wishlist"
                       className="text-left pl-14 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#855300] block transition-all"
                     >
                       My Wishlist
@@ -497,7 +491,7 @@ const Profile = () => {
                 </div>
 
                 {/* Logout Button */}
-                <button 
+                <button
                   onClick={handleLogout}
                   disabled={isSaving}
                   className="w-full text-left p-4 hover:bg-red-50 text-gray-700 hover:text-red-600 transition-colors flex items-center gap-4 cursor-pointer font-bold text-sm tracking-wide"
@@ -521,9 +515,9 @@ const Profile = () => {
 
             {/* Main Content Area Right Column */}
             <div className="w-full md:w-2/3 bg-white rounded-sm shadow-sm border border-border p-6 md:p-8 relative min-h-[600px] overflow-hidden">
-              
+
               <AnimatePresence mode="wait">
-                
+
                 {/* 1. Profile Information Tab */}
                 {activeTab === "profile" && (
                   <motion.div
@@ -567,11 +561,10 @@ const Profile = () => {
                           onChange={(e) => setFirstName(e.target.value)}
                           disabled={!isEditingPersonal}
                           placeholder="First Name"
-                          className={`px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
-                            isEditingPersonal 
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                          className={`px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingPersonal
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
                               : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
-                          }`}
+                            }`}
                         />
                         <input
                           type="text"
@@ -579,11 +572,10 @@ const Profile = () => {
                           onChange={(e) => setLastName(e.target.value)}
                           disabled={!isEditingPersonal}
                           placeholder="Last Name"
-                          className={`px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
-                            isEditingPersonal 
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                          className={`px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingPersonal
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
                               : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
-                          }`}
+                            }`}
                         />
                       </div>
 
@@ -620,7 +612,7 @@ const Profile = () => {
 
                       {isEditingPersonal && (
                         <div className="pt-2">
-                          <Button 
+                          <Button
                             onClick={() => handleSaveSection("personal")}
                             disabled={isSaving}
                             className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
@@ -665,17 +657,16 @@ const Profile = () => {
                           onChange={(e) => setEmailInput(e.target.value)}
                           disabled={!isEditingEmail}
                           placeholder="name@example.com"
-                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
-                            isEditingEmail 
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingEmail
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
                               : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
-                          }`}
+                            }`}
                         />
                       </div>
 
                       {isEditingEmail && (
                         <div className="pt-1">
-                          <Button 
+                          <Button
                             onClick={() => handleSaveSection("email")}
                             disabled={isSaving}
                             className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
@@ -720,17 +711,16 @@ const Profile = () => {
                           onChange={(e) => setPhoneInput(e.target.value)}
                           disabled={!isEditingMobile}
                           placeholder="+91 XXXXX XXXXX"
-                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
-                            isEditingMobile 
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingMobile
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
                               : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
-                          }`}
+                            }`}
                         />
                       </div>
 
                       {isEditingMobile && (
                         <div className="pt-1">
-                          <Button 
+                          <Button
                             onClick={() => handleSaveSection("mobile")}
                             disabled={isSaving}
                             className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
@@ -834,11 +824,10 @@ const Profile = () => {
                           onChange={(e) => setAddressInput(e.target.value)}
                           disabled={!isEditingAddress}
                           placeholder="House No, Building, Street, Area..."
-                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all min-h-[80px] resize-none ${
-                            isEditingAddress 
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all min-h-[80px] resize-none ${isEditingAddress
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
                               : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
-                          }`}
+                            }`}
                         />
                       </div>
 
@@ -851,11 +840,10 @@ const Profile = () => {
                             onChange={(e) => setCityInput(e.target.value)}
                             disabled={!isEditingAddress}
                             placeholder="Your City"
-                            className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
-                              isEditingAddress 
-                                ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                            className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingAddress
+                                ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
                                 : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
-                            }`}
+                              }`}
                           />
                         </div>
                         <div className="space-y-2">
@@ -866,11 +854,10 @@ const Profile = () => {
                             onChange={(e) => setStateInput(e.target.value)}
                             disabled={!isEditingAddress}
                             placeholder="State"
-                            className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
-                              isEditingAddress 
-                                ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                            className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingAddress
+                                ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
                                 : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
-                            }`}
+                              }`}
                           />
                         </div>
                       </div>
@@ -884,17 +871,16 @@ const Profile = () => {
                           onChange={(e) => setPincodeInput(e.target.value)}
                           disabled={!isEditingAddress}
                           placeholder="6-digit pincode"
-                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
-                            isEditingAddress 
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingAddress
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
                               : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
-                          }`}
+                            }`}
                         />
                       </div>
 
                       {isEditingAddress && (
                         <div className="pt-2">
-                          <Button 
+                          <Button
                             onClick={() => handleSaveSection("address")}
                             disabled={isSaving}
                             className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
@@ -925,7 +911,7 @@ const Profile = () => {
                     </div>
 
                     <div className="max-w-lg space-y-4">
-                      
+
                       {upiList.map((upi, idx) => (
                         <div key={idx} className="p-4 border border-border rounded-sm flex items-center justify-between hover:bg-gray-50/50 transition-colors">
                           <div className="flex items-center gap-3">
@@ -943,8 +929,8 @@ const Profile = () => {
                                 VERIFIED
                               </span>
                             )}
-                            <button 
-                              onClick={() => handleRemoveUpi(upi.id)} 
+                            <button
+                              onClick={() => handleRemoveUpi(upi.id)}
                               className="text-xs text-red-500 font-bold hover:underline cursor-pointer"
                             >
                               Remove
@@ -956,14 +942,14 @@ const Profile = () => {
                       <div className="p-6 border border-dashed border-gray-300 rounded-sm flex flex-col gap-3 items-center justify-center py-10">
                         <span className="text-sm text-gray-600 font-bold">Link a new UPI Virtual Address</span>
                         <div className="flex gap-3 w-full max-w-sm pt-2">
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             value={upiId}
                             onChange={(e) => setUpiId(e.target.value)}
-                            placeholder="username@upi" 
-                            className="w-full px-4 py-2.5 text-sm border border-border rounded-sm outline-none focus:border-[#855300]" 
+                            placeholder="username@upi"
+                            className="w-full px-4 py-2.5 text-sm border border-border rounded-sm outline-none focus:border-[#855300]"
                           />
-                          <button 
+                          <button
                             onClick={handleLinkVpa}
                             disabled={isVerifyingUpi}
                             className="bg-[#1c1c1a] text-white hover:bg-[#855300] px-6 py-2.5 text-sm rounded-sm shrink-0 font-bold shadow-sm transition-colors flex items-center gap-2"
@@ -995,22 +981,21 @@ const Profile = () => {
                     </div>
 
                     <div className="max-w-lg space-y-6">
-                      
+
                       {/* Credit Card Widgets */}
                       {cardList.length > 0 && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {cardList.map((card) => (
-                            <div 
-                              key={card.id} 
-                              className={`p-6 text-white rounded-md shadow-md space-y-6 relative overflow-hidden border border-slate-700/80 transition-transform hover:scale-[1.01] ${
-                                card.type === "Mastercard" 
+                            <div
+                              key={card.id}
+                              className={`p-6 text-white rounded-md shadow-md space-y-6 relative overflow-hidden border border-slate-700/80 transition-transform hover:scale-[1.01] ${card.type === "Mastercard"
                                   ? "bg-gradient-to-tr from-slate-900 via-[#2d1500] to-[#b15802]/80"
                                   : card.type === "Visa"
-                                  ? "bg-gradient-to-tr from-gray-900 via-[#1c1c1a] to-[#855300]/80"
-                                  : card.type === "Amex"
-                                  ? "bg-gradient-to-tr from-blue-950 via-slate-900 to-indigo-900"
-                                  : "bg-gradient-to-tr from-emerald-950 via-stone-900 to-teal-900"
-                              }`}
+                                    ? "bg-gradient-to-tr from-gray-900 via-[#1c1c1a] to-[#855300]/80"
+                                    : card.type === "Amex"
+                                      ? "bg-gradient-to-tr from-blue-950 via-slate-900 to-indigo-900"
+                                      : "bg-gradient-to-tr from-emerald-950 via-stone-900 to-teal-900"
+                                }`}
                             >
                               <div className="flex justify-between items-start">
                                 <div>
@@ -1019,7 +1004,7 @@ const Profile = () => {
                                 </div>
                                 <Landmark className="w-7 h-7 text-slate-300 opacity-80" />
                               </div>
-                              
+
                               <div className="space-y-1">
                                 <span className="text-[10px] text-gray-300 uppercase tracking-widest block">Card Number</span>
                                 <p className="text-base tracking-widest font-mono text-gray-200">•••• •••• •••• {card.last4}</p>
@@ -1030,8 +1015,8 @@ const Profile = () => {
                                   <span className="text-[9px] text-gray-300 uppercase tracking-wider block">Card Holder</span>
                                   <span className="text-xs text-slate-200 tracking-wide">{profile.full_name || "Aditya Srivastava"}</span>
                                 </div>
-                                <button 
-                                  onClick={() => handleRemoveCard(card.id)} 
+                                <button
+                                  onClick={() => handleRemoveCard(card.id)}
                                   className="text-xs text-red-400 font-bold hover:text-red-300 hover:underline cursor-pointer z-10"
                                 >
                                   Remove Card
@@ -1048,15 +1033,15 @@ const Profile = () => {
                       <div className="p-6 border border-dashed border-gray-300 rounded-sm flex flex-col gap-3 items-center justify-center py-10">
                         <span className="text-sm text-gray-600 font-bold">Link a new Debit / Credit Card</span>
                         <div className="flex gap-3 w-full max-w-sm pt-2">
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             value={cardNumber}
                             onChange={(e) => setCardNumber(e.target.value)}
-                            placeholder="Card Number (16 digits)" 
-                            className="w-full px-4 py-2.5 text-sm border border-border rounded-sm outline-none focus:border-[#855300]" 
+                            placeholder="Card Number (16 digits)"
+                            className="w-full px-4 py-2.5 text-sm border border-border rounded-sm outline-none focus:border-[#855300]"
                             maxLength={16}
                           />
-                          <button 
+                          <button
                             onClick={handleAddCard}
                             disabled={isVerifyingCard}
                             className="bg-[#1c1c1a] text-white hover:bg-[#855300] px-6 py-2.5 text-sm rounded-sm shrink-0 font-bold shadow-sm transition-colors flex items-center gap-2"
@@ -1122,7 +1107,7 @@ const Profile = () => {
                     </div>
 
                     <div className="space-y-4 max-w-2xl">
-                      
+
                       {/* Notification 1 */}
                       <div className="p-4 border border-border bg-[#fea619]/5 rounded-sm flex items-start gap-4 hover:bg-gray-50/50 transition-colors">
                         <Package className="w-5 h-5 text-[#855300] shrink-0 mt-0.5" />

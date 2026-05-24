@@ -56,7 +56,7 @@ const About = () => {
         <meta property="og:description" content="Hear the BuildBazaarX story — incubated at IIT Bombay, built to obliterate friction in India's construction industry." />
       </Helmet>
       {/* Immersive Blueprint Hero */}
-      <section className="relative overflow-hidden bg-primary-container pt-32 pb-24 md:pt-48 md:pb-32">
+      <section className="relative overflow-hidden bg-primary-container pt-16 pb-12 md:pt-24 md:pb-16">
         <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />
         <div className="absolute inset-0 bg-dot-grid opacity-[0.05] pointer-events-none" />
         
@@ -91,10 +91,10 @@ const About = () => {
       <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#C5A572]/20 to-transparent" />
 
       {/* Mission & Vision Bento Box */}
-      <section className="py-24 bg-[#F4F0EA]">
+      <section className="py-12 bg-[#F4F0EA]">
         <div className="container mx-auto px-4">
           <Reveal width="100%" direction="up">
-            <div className="text-center mb-16 max-w-3xl mx-auto">
+            <div className="text-center mb-8 max-w-3xl mx-auto">
               <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#C5A572] mb-4 block">Core_Directives</span>
               <h2 className="text-4xl md:text-5xl font-black text-black tracking-tight">System Algorithms</h2>
             </div>
@@ -149,12 +149,12 @@ const About = () => {
       </section>
 
       {/* The Edge / Offerings (4-Card Grid) */}
-      <section className="py-24 bg-white relative">
+      <section className="py-12 bg-white relative">
         <div className="absolute inset-0 bg-dot-grid opacity-[0.05] pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
           <Reveal width="100%" direction="up">
-            <div className="text-center mb-16 max-w-3xl mx-auto">
+            <div className="text-center mb-8 max-w-3xl mx-auto">
               <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#C5A572] mb-4 block">The_Edge</span>
               <h2 className="text-4xl md:text-5xl font-black text-black leading-[1.1] mb-6 tracking-tighter">
                 Comprehensive Infrastructure
@@ -183,10 +183,10 @@ const About = () => {
       </section>
 
       {/* Architectural Timeline */}
-      <section className="py-24 bg-[#F4F0EA]">
+      <section className="py-12 bg-[#F4F0EA]">
          <div className="container mx-auto px-4">
           <Reveal width="100%" direction="up">
-            <div className="text-center mb-24 max-w-3xl mx-auto">
+            <div className="text-center mb-10 max-w-3xl mx-auto">
               <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-black/40 mb-4 block">Historical_Data</span>
               <h2 className="text-4xl md:text-5xl font-serif text-black italic">Expansion Milestones</h2>
             </div>
@@ -196,7 +196,7 @@ const About = () => {
             {/* The Central Beam */}
             <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[2px] bg-black/10 md:-translate-x-1/2" />
             
-            <div className="space-y-16">
+            <div className="space-y-10">
               {milestones.map((milestone, idx) => {
                 const isEven = idx % 2 === 0;
                 return (
@@ -223,13 +223,13 @@ const About = () => {
       </section>
 
       {/* Gold / Beige High Contrast CTA */}
-      <section className="py-32 bg-primary-container relative overflow-hidden">
+      <section className="py-14 bg-primary-container relative overflow-hidden">
         <div className="absolute inset-0 bg-blueprint opacity-[0.03] pointer-events-none" />
         <div className="absolute inset-0 bg-dot-grid opacity-[0.05] pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
           <Reveal width="100%" direction="up">
-            <div className="max-w-5xl mx-auto bg-[#C5A572] rounded-[3rem] p-12 md:p-20 text-center shadow-[0_40px_100px_rgba(0,0,0,0.5)] border border-white/20 relative overflow-hidden">
+            <div className="max-w-5xl mx-auto bg-[#C5A572] rounded-[3rem] p-8 md:p-12 text-center shadow-[0_40px_100px_rgba(0,0,0,0.5)] border border-white/20 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-black/5 flex items-center justify-center rounded-bl-[6rem] border-l border-b border-black/10">
                 <Building className="w-24 h-24 text-black/10 -rotate-12" />
               </div>

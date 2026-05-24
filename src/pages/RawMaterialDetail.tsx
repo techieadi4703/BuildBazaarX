@@ -441,34 +441,33 @@ const RawMaterialDetail = () => {
 
                 <Separator className="bg-gray-200" />
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 md:gap-4 w-full">
                   {isInCart ? (
-                    <div className="flex items-center bg-white border border-gray-200 rounded-2xl p-1 shadow-sm shrink-0">
+                    <div className="flex items-center bg-white border border-gray-200 rounded-xl md:rounded-2xl p-0.5 md:p-1 shadow-sm shrink-0">
                       <button 
                         onClick={() => updateQuantity(product.id, cartItem.quantity - 1)}
-                        className="w-8 h-9 md:h-[54px] md:w-12 flex items-center justify-center hover:bg-gray-50 rounded-xl transition-colors"
+                        className="w-8 h-10 md:h-[54px] md:w-12 flex items-center justify-center hover:bg-gray-50 rounded-lg md:rounded-xl transition-colors"
                       >
-                        <Minus className="w-4 h-4" />
+                        <Minus className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </button>
-                      <span className="w-8 text-center font-black text-lg">{cartItem.quantity}</span>
+                      <span className="w-6 md:w-8 text-center font-black text-sm md:text-lg">{cartItem.quantity}</span>
                       <button 
                         onClick={() => updateQuantity(product.id, cartItem.quantity + 1)}
-                        className="w-8 h-9  md:h-[54px] md:w-12 flex items-center justify-center hover:bg-gray-50 rounded-xl transition-colors"
+                        className="w-8 h-10 md:h-[54px] md:w-12 flex items-center justify-center hover:bg-gray-50 rounded-lg md:rounded-xl transition-colors"
                       >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </button>
                     </div>
                   ) : null}
 
                   <Button 
                     onClick={handleCartAction}
-                    size="lg" 
-                    className={`flex-1 h-11 md:h-16 rounded-2xl text-base md:text-lg font-black transition-all shadow-lg ${
+                    className={`flex-1 h-11 md:h-16 rounded-xl md:rounded-2xl text-[13px] sm:text-base md:text-lg px-2 sm:px-8 font-black transition-all shadow-lg overflow-hidden ${
                       isInCart ? "bg-green-600 hover:bg-green-700" : "bg-gray-900 hover:bg-gray-800"
                     }`}
                   >
-                    <ShoppingBag className="w-5 h-5 mr-2" />
-                    {isInCart ? "Checkout Now" : "Add to Cart"}
+                    <ShoppingBag className="w-4 h-4 md:w-5 md:h-5 mr-1.5 md:mr-2 shrink-0" />
+                    <span className="truncate">{isInCart ? "Checkout Now" : "Add to Cart"}</span>
                   </Button>
                 </div>
               </div>
@@ -514,7 +513,7 @@ const RawMaterialDetail = () => {
         </div>
 
         {/* Related Products Section */}
-        <section className="mt-24 space-y-8">
+        <section className="mt-10 md:mt-24 space-y-6 md:space-y-8">
           <div className="flex items-end justify-between">
             <div>
               <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-2">Build Better</h2>
