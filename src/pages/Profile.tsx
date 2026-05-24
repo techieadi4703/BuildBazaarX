@@ -3,9 +3,14 @@ import { Layout } from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, MapPin, Mail, Save, Loader2, Package, ArrowRight, LogOut } from "lucide-react";
+import { 
+  User, Phone, MapPin, Mail, Save, Loader2, Package, ArrowRight, LogOut,
+  ChevronRight, CreditCard, Heart, Star, Bell,
+  FileText, ShieldCheck, Landmark, Edit, X, Power, 
+  Trash2, AlertTriangle
+} from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Profile = () => {
   const { toast } = useToast();
@@ -14,18 +19,46 @@ const Profile = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [currentRole, setCurrentRole] = useState("customer");
+  
+  // Tab states: 'profile' | 'addresses' | 'saved-upi' | 'saved-cards' | 'reviews' | 'notifications'
+  const [activeTab, setActiveTab] = useState<string>("profile");
+
   const [profile, setProfile] = useState({
     full_name: "",
     phone: "",
+    email: "",
     address: "",
     city: "",
     state: "",
     pincode: "",
+    gender: "",
   });
+
+  // Editing input states
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [gender, setGender] = useState<"Male" | "Female" | "">("");
+  const [emailInput, setEmailInput] = useState("");
+  const [phoneInput, setPhoneInput] = useState("");
+
+  const [addressInput, setAddressInput] = useState("");
+  const [cityInput, setCityInput] = useState("");
+  const [stateInput, setStateInput] = useState("");
+  const [pincodeInput, setPincodeInput] = useState("");
+
+  // Edit toggles
+  const [isEditingPersonal, setIsEditingPersonal] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [isEditingMobile, setIsEditingMobile] = useState(false);
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   const handleLogout = async () => {
     setIsSaving(true);
     await supabase.auth.signOut();
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
     navigate("/");
   };
 
@@ -48,14 +81,31 @@ const Profile = () => {
         console.error("Error fetching profile:", error);
       } else if (data) {
         setCurrentRole(data.role || "customer");
-        setProfile({
+        const userGender = session.user.user_metadata?.gender || "";
+        const loadedProfile = {
           full_name: data.full_name || "",
           phone: data.phone || "",
+          email: data.email || session.user.email || "",
           address: data.address || "",
           city: data.city || "",
           state: data.state || "",
           pincode: data.pincode || "",
-        });
+          gender: userGender,
+        };
+        setProfile(loadedProfile);
+
+        // Prepopulate input states
+        const nameParts = (data.full_name || "").trim().split(/\s+/);
+        setFirstName(nameParts[0] || "");
+        setLastName(nameParts.slice(1).join(" ") || "");
+        setGender(userGender as "Male" | "Female" | "");
+        setEmailInput(loadedProfile.email);
+        setPhoneInput(loadedProfile.phone);
+
+        setAddressInput(loadedProfile.address);
+        setCityInput(loadedProfile.city);
+        setStateInput(loadedProfile.state);
+        setPincodeInput(loadedProfile.pincode);
       }
       setIsLoading(false);
     };
@@ -63,45 +113,108 @@ const Profile = () => {
     fetchProfile();
   }, [navigate]);
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveSection = async (section: "personal" | "email" | "mobile" | "address") => {
     setIsSaving(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
 
-    const { error } = await supabase
-      .from("profiles")
-      .upsert({
-        id: user.id,
-        full_name: profile.full_name,
-        phone: profile.phone,
-        address: profile.address,
-        city: profile.city,
-        state: profile.state,
-        pincode: profile.pincode,
-        role: currentRole || "customer",
-      });
+      let updatedFields: any = {};
 
-    if (error) {
-      console.error("Profile update error:", error);
+      if (section === "personal") {
+        const mergedName = `${firstName} ${lastName}`.trim();
+        updatedFields.full_name = mergedName;
+        
+        // Save gender to supabase auth metadata
+        const { error: authError } = await supabase.auth.updateUser({
+          data: { gender }
+        });
+        if (authError) throw authError;
+
+        setProfile(prev => ({ ...prev, full_name: mergedName, gender }));
+        setIsEditingPersonal(false);
+      } else if (section === "email") {
+        updatedFields.email = emailInput;
+        setProfile(prev => ({ ...prev, email: emailInput }));
+        setIsEditingEmail(false);
+      } else if (section === "mobile") {
+        updatedFields.phone = phoneInput;
+        setProfile(prev => ({ ...prev, phone: phoneInput }));
+        setIsEditingMobile(false);
+      } else if (section === "address") {
+        updatedFields = {
+          address: addressInput,
+          city: cityInput,
+          state: stateInput,
+          pincode: pincodeInput,
+        };
+        setProfile(prev => ({ 
+          ...prev, 
+          address: addressInput,
+          city: cityInput,
+          state: stateInput,
+          pincode: pincodeInput
+        }));
+        setIsEditingAddress(false);
+      }
+
+      const { error } = await supabase
+        .from("profiles")
+        .upsert({
+          id: session.user.id,
+          role: currentRole || "customer",
+          ...updatedFields,
+        });
+
+      if (error) throw error;
+
       toast({
-        title: "Error",
-        description: `Failed to update profile: ${error.message}`,
+        title: "Profile Updated",
+        description: `${section.charAt(0).toUpperCase() + section.slice(1)} information saved successfully!`,
+      });
+    } catch (err: any) {
+      console.error(`Error updating ${section}:`, err);
+      toast({
+        title: "Update Failed",
+        description: `Failed to update ${section}: ${err.message}`,
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Success",
-        description: "Profile updated successfully!",
-      });
+    } finally {
+      setIsSaving(false);
     }
-    setIsSaving(false);
+  };
+
+  const handleCancelSection = (section: "personal" | "email" | "mobile" | "address") => {
+    if (section === "personal") {
+      const nameParts = (profile.full_name || "").trim().split(/\s+/);
+      setFirstName(nameParts[0] || "");
+      setLastName(nameParts.slice(1).join(" ") || "");
+      setGender(profile.gender as "Male" | "Female" | "");
+      setIsEditingPersonal(false);
+    } else if (section === "email") {
+      setEmailInput(profile.email);
+      setIsEditingEmail(false);
+    } else if (section === "mobile") {
+      setPhoneInput(profile.phone);
+      setIsEditingMobile(false);
+    } else if (section === "address") {
+      setAddressInput(profile.address);
+      setCityInput(profile.city);
+      setStateInput(profile.state);
+      setPincodeInput(profile.pincode);
+      setIsEditingAddress(false);
+    }
   };
 
   if (isLoading) {
     return (
       <Layout>
-        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 bg-[#fcf9f6]">
-          <Loader2 className="w-8 h-8 text-[#735c00] animate-spin" />
-          <p className="font-body text-sm text-[#44474c] tracking-widest uppercase">Initializing Registry...</p>
+        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 bg-background">
+          <Loader2 className="w-10 h-10 text-[#855300] animate-spin" />
+          <p className="font-semibold text-sm text-gray-500 tracking-wide">Loading secure profile...</p>
         </div>
       </Layout>
     );
@@ -109,209 +222,742 @@ const Profile = () => {
 
   return (
     <Layout>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap');
-        .font-headline { font-family: 'Newsreader', serif; }
-        .font-body { font-family: 'Manrope', sans-serif; }
-      `}</style>
-      
-      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-24 relative overflow-hidden">
-        {/* Subtle grid background */}
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e5e2df 1px, transparent 1px), linear-gradient(90deg, #e5e2df 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.3 }} />
-        
-        <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
-          <div className="flex flex-col md:flex-row gap-16 md:gap-24 items-start">
+      <div className="bg-background text-[#131b2e] min-h-screen font-sans w-full py-8">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row gap-6 items-start">
             
-            {/* Sidebar / Header */}
-            <div className="w-full md:w-1/3 shrink-0 sticky top-32">
-              <span className="font-headline italic text-2xl text-[#735c00] mb-4 block underline underline-offset-8 decoration-1 decoration-[#c4c6cc]">Control Center.</span>
-              <h1 className="text-6xl md:text-7xl font-headline tracking-tight leading-none mb-8">
-                Client <br/> <span className="italic">Monograph.</span>
-              </h1>
-              <div className="w-12 h-[1px] bg-[#c4c6cc] mb-8"></div>
-              <p className="text-lg font-body text-[#44474c] leading-relaxed max-w-sm mb-12">
-                Manage your identity and logistical requisitions within the BuildBazaarX network.
-              </p>
+            {/* Sidebar Left Column */}
+            <div className="w-full md:w-1/3 shrink-0 flex flex-col gap-4">
               
-              <div className="space-y-4">
-                <Link to="/orders" className="group flex items-center justify-between p-6 bg-white border border-[#e5e2df] hover:border-[#735c00] transition-colors rounded-sm shadow-sm max-w-sm">
+              {/* Hello Card Header */}
+              <div className="bg-white p-4 flex items-center gap-4 rounded-sm shadow-sm border border-border">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#855300] to-[#fea619] flex items-center justify-center text-white font-bold text-lg shadow-inner">
+                  {firstName ? firstName.charAt(0).toUpperCase() : <User className="w-6 h-6" />}
+                </div>
+                <div>
+                  <span className="text-xs text-gray-500 block">Hello,</span>
+                  <span className="text-base font-bold text-[#131b2e] tracking-wide truncate max-w-[180px] block">
+                    {profile.full_name || "BuildBazaarX User"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Navigation Menu Links */}
+              <div className="bg-white rounded-sm shadow-sm border border-border overflow-hidden">
+                
+                {/* Orders Category */}
+                <Link 
+                  to="/orders"
+                  className="w-full flex items-center justify-between p-4 hover:bg-[#eceef0]/30 border-b border-border transition-colors group"
+                >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-[#f6f3f0] flex items-center justify-center">
-                      <Package className="w-5 h-5 text-[#1c1c1a]" />
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] block mb-1">Logistics</span>
-                      <span className="text-sm font-semibold">Active Requisitions</span>
-                    </div>
+                    <Package className="w-5 h-5 text-[#855300]" />
+                    <span className="font-bold text-sm tracking-wide text-gray-600 group-hover:text-[#855300] transition-colors">MY ORDERS</span>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-[#74777d] group-hover:text-[#735c00] group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#855300] group-hover:translate-x-0.5 transition-all" />
                 </Link>
 
-                <button onClick={handleLogout} className="group w-full flex items-center justify-between p-6 bg-white border border-red-100 hover:border-red-500 transition-colors rounded-sm shadow-sm max-w-sm cursor-pointer text-left">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
-                      <LogOut className="w-5 h-5 text-red-500" />
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase font-bold tracking-widest text-red-500 block mb-1">Session</span>
-                      <span className="text-sm font-semibold text-red-600">Terminate Access</span>
-                    </div>
+                {/* Account Settings Category */}
+                <div className="border-b border-border">
+                  <div className="flex items-center gap-4 p-4 pb-2">
+                    <User className="w-5 h-5 text-[#855300]" />
+                    <span className="font-bold text-xs tracking-wider text-gray-400 uppercase">ACCOUNT SETTINGS</span>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-red-300 group-hover:text-red-500 group-hover:translate-x-1 transition-all" />
+                  <div className="flex flex-col">
+                    <button 
+                      onClick={() => setActiveTab("profile")}
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
+                        activeTab === "profile" 
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                      }`}
+                    >
+                      Profile Information
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab("addresses")}
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
+                        activeTab === "addresses" 
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                      }`}
+                    >
+                      Manage Addresses
+                    </button>
+                  </div>
+                </div>
+
+                {/* Payments Category */}
+                <div className="border-b border-border">
+                  <div className="flex items-center gap-4 p-4 pb-2">
+                    <CreditCard className="w-5 h-5 text-[#855300]" />
+                    <span className="font-bold text-xs tracking-wider text-gray-400 uppercase">PAYMENTS</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <button 
+                      onClick={() => setActiveTab("saved-upi")}
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
+                        activeTab === "saved-upi" 
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                      }`}
+                    >
+                      Saved UPI
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab("saved-cards")}
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
+                        activeTab === "saved-cards" 
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                      }`}
+                    >
+                      Saved Cards
+                    </button>
+                  </div>
+                </div>
+
+                {/* My Stuff Category */}
+                <div className="border-b border-border">
+                  <div className="flex items-center gap-4 p-4 pb-2">
+                    <Heart className="w-5 h-5 text-[#855300]" />
+                    <span className="font-bold text-xs tracking-wider text-gray-400 uppercase">MY STUFF</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <button 
+                      onClick={() => setActiveTab("reviews")}
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
+                        activeTab === "reviews" 
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                      }`}
+                    >
+                      My Reviews & Ratings
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab("notifications")}
+                      className={`text-left pl-14 py-2.5 text-sm transition-all ${
+                        activeTab === "notifications" 
+                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]" 
+                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                      }`}
+                    >
+                      All Notifications
+                    </button>
+                    <Link 
+                      to="/wishlist" 
+                      className="text-left pl-14 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#855300] block transition-all"
+                    >
+                      My Wishlist
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Logout Button */}
+                <button 
+                  onClick={handleLogout}
+                  disabled={isSaving}
+                  className="w-full text-left p-4 hover:bg-red-50 text-gray-700 hover:text-red-600 transition-colors flex items-center gap-4 cursor-pointer font-bold text-sm tracking-wide"
+                >
+                  <Power className="w-5 h-5 text-gray-400 group-hover:text-red-500" />
+                  <span>Logout</span>
                 </button>
               </div>
+
+              {/* Frequently Visited Footer Links */}
+              <div className="px-4 py-2 text-xs text-gray-500">
+                <span className="font-semibold text-gray-400 block mb-1">Frequently Visited:</span>
+                <div className="flex gap-3">
+                  <Link to="/orders" className="hover:text-[#855300] hover:underline">Track Order</Link>
+                  <span>•</span>
+                  <Link to="/contact" className="hover:text-[#855300] hover:underline">Help Center</Link>
+                </div>
+              </div>
+
             </div>
 
-            {/* Main Form Area */}
-            <div className="w-full md:w-2/3">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white border border-[#e5e2df] p-8 md:p-12 rounded-sm shadow-sm relative overflow-hidden"
-              >
-                <form onSubmit={handleUpdate} className="space-y-12">
-                  
-                  {/* Account Matrix */}
-                  <section className="space-y-8">
-                    <header className="flex items-center gap-4 border-b border-[#e5e2df] pb-4">
-                      <div className="w-2 h-2 rounded-full bg-[#735c00]"></div>
-                      <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#735c00]">Operational Sector: {currentRole.toUpperCase()}</h3>
-                    </header>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Full Nomenclature</label>
-                        <div className="relative">
-                          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#74777d]" />
-                          <input
-                            required
-                            type="text"
-                            value={profile.full_name}
-                            onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                            placeholder="Your Name"
-                            className="w-full pl-10 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
-                          />
-                        </div>
+            {/* Main Content Area Right Column */}
+            <div className="w-full md:w-2/3 bg-white rounded-sm shadow-sm border border-border p-6 md:p-8 relative min-h-[600px] overflow-hidden">
+              
+              <AnimatePresence mode="wait">
+                
+                {/* 1. Profile Information Tab */}
+                {activeTab === "profile" && (
+                  <motion.div
+                    key="profile"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-8 pb-12"
+                  >
+                    {/* Personal Info Section */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <h2 className="text-lg font-bold text-[#131b2e]">Personal Information</h2>
+                        <button
+                          onClick={() => {
+                            if (isEditingPersonal) {
+                              handleCancelSection("personal");
+                            } else {
+                              setIsEditingPersonal(true);
+                            }
+                          }}
+                          className="text-xs font-bold text-[#855300] hover:text-[#fea619] hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          {isEditingPersonal ? (
+                            <>
+                              <X className="w-3.5 h-3.5" /> Cancel
+                            </>
+                          ) : (
+                            <>
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </>
+                          )}
+                        </button>
                       </div>
 
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Telecom Sequence</label>
-                        <div className="relative">
-                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#74777d]" />
-                          <input
-                            required
-                            type="tel"
-                            value={profile.phone}
-                            onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                            placeholder="+91 XXXXX XXXXX"
-                            className="w-full pl-10 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Verified Credentials</label>
-                      <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
-                        <input
-                          value={user?.email || ""}
-                          disabled
-                          className="w-full pl-10 pr-4 py-4 bg-[#fcf9f6] border border-[#e5e2df] text-[#74777d] rounded-sm text-sm font-body cursor-not-allowed opacity-60"
-                        />
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                          <span className="text-[10px] uppercase font-bold tracking-tighter text-[#735c00]">Verified Identity</span>
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-
-                  {/* Logistical Vector */}
-                  <section className="space-y-8 pt-6">
-                    <header className="flex items-center gap-4 border-b border-[#e5e2df] pb-4">
-                      <div className="w-2 h-2 rounded-full bg-[#1c1c1a]"></div>
-                      <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#1c1c1a]">Logistical Vector</h3>
-                    </header>
-                    
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Structural Address</label>
-                      <div className="relative">
-                        <MapPin className="absolute left-4 top-5 w-4 h-4 text-[#74777d]" />
-                        <textarea
-                          value={profile.address}
-                          onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-                          placeholder="House No, Street Name, Area / Landmark..."
-                          rows={3}
-                          className="w-full pl-10 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors min-h-[120px] resize-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Operational City</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
                         <input
                           type="text"
-                          value={profile.city}
-                          onChange={(e) => setProfile({ ...profile, city: e.target.value })}
-                          placeholder="Your City"
-                          className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          disabled={!isEditingPersonal}
+                          placeholder="First Name"
+                          className={`px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
+                            isEditingPersonal 
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                          }`}
                         />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Federal State</label>
                         <input
                           type="text"
-                          value={profile.state}
-                          onChange={(e) => setProfile({ ...profile, state: e.target.value })}
-                          placeholder="State / Region"
-                          className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          disabled={!isEditingPersonal}
+                          placeholder="Last Name"
+                          className={`px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
+                            isEditingPersonal 
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                          }`}
                         />
+                      </div>
+
+                      {/* Gender Selector */}
+                      <div className="space-y-2 pt-2">
+                        <span className="text-xs font-bold text-gray-500 block">Your Gender</span>
+                        <div className="flex items-center gap-6">
+                          <label className={`flex items-center gap-2 text-sm select-none cursor-pointer ${!isEditingPersonal && "opacity-60 cursor-not-allowed"}`}>
+                            <input
+                              type="radio"
+                              name="gender"
+                              value="Male"
+                              checked={gender === "Male"}
+                              onChange={() => isEditingPersonal && setGender("Male")}
+                              disabled={!isEditingPersonal}
+                              className="w-4 h-4 text-[#855300] focus:ring-[#855300] border-gray-300"
+                            />
+                            <span>Male</span>
+                          </label>
+                          <label className={`flex items-center gap-2 text-sm select-none cursor-pointer ${!isEditingPersonal && "opacity-60 cursor-not-allowed"}`}>
+                            <input
+                              type="radio"
+                              name="gender"
+                              value="Female"
+                              checked={gender === "Female"}
+                              onChange={() => isEditingPersonal && setGender("Female")}
+                              disabled={!isEditingPersonal}
+                              className="w-4 h-4 text-[#855300] focus:ring-[#855300] border-gray-300"
+                            />
+                            <span>Female</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {isEditingPersonal && (
+                        <div className="pt-2">
+                          <Button 
+                            onClick={() => handleSaveSection("personal")}
+                            disabled={isSaving}
+                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
+                          >
+                            {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                            Save Personal Details
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Email Address Section */}
+                    <div className="space-y-4 pt-4 border-t border-border">
+                      <div className="flex items-center gap-4">
+                        <h2 className="text-lg font-bold text-[#131b2e]">Email Address</h2>
+                        <button
+                          onClick={() => {
+                            if (isEditingEmail) {
+                              handleCancelSection("email");
+                            } else {
+                              setIsEditingEmail(true);
+                            }
+                          }}
+                          className="text-xs font-bold text-[#855300] hover:text-[#fea619] hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          {isEditingEmail ? (
+                            <>
+                              <X className="w-3.5 h-3.5" /> Cancel
+                            </>
+                          ) : (
+                            <>
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <div className="max-w-lg">
+                        <input
+                          type="email"
+                          value={emailInput}
+                          onChange={(e) => setEmailInput(e.target.value)}
+                          disabled={!isEditingEmail}
+                          placeholder="name@example.com"
+                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
+                            isEditingEmail 
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                          }`}
+                        />
+                      </div>
+
+                      {isEditingEmail && (
+                        <div className="pt-1">
+                          <Button 
+                            onClick={() => handleSaveSection("email")}
+                            disabled={isSaving}
+                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
+                          >
+                            {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                            Save Email
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Mobile Number Section */}
+                    <div className="space-y-4 pt-4 border-t border-border">
+                      <div className="flex items-center gap-4">
+                        <h2 className="text-lg font-bold text-[#131b2e]">Mobile Number</h2>
+                        <button
+                          onClick={() => {
+                            if (isEditingMobile) {
+                              handleCancelSection("mobile");
+                            } else {
+                              setIsEditingMobile(true);
+                            }
+                          }}
+                          className="text-xs font-bold text-[#855300] hover:text-[#fea619] hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          {isEditingMobile ? (
+                            <>
+                              <X className="w-3.5 h-3.5" /> Cancel
+                            </>
+                          ) : (
+                            <>
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <div className="max-w-lg">
+                        <input
+                          type="tel"
+                          value={phoneInput}
+                          onChange={(e) => setPhoneInput(e.target.value)}
+                          disabled={!isEditingMobile}
+                          placeholder="+91 XXXXX XXXXX"
+                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
+                            isEditingMobile 
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                          }`}
+                        />
+                      </div>
+
+                      {isEditingMobile && (
+                        <div className="pt-1">
+                          <Button 
+                            onClick={() => handleSaveSection("mobile")}
+                            disabled={isSaving}
+                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
+                          >
+                            {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                            Save Mobile Number
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* FAQ Help Accordion Section */}
+                    <div className="pt-8 border-t border-border space-y-4">
+                      <h3 className="text-base font-bold text-[#131b2e]">FAQs</h3>
+                      <div className="space-y-4">
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-gray-700">What happens when I update my email address (or mobile number)?</p>
+                          <p className="text-xs text-[#45464d] leading-relaxed">
+                            Your login email id (or mobile number) changes, likewise. You'll receive all your account related communication on your updated email address (or mobile number).
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-gray-700">When will my Flipkart account be updated with the new email address (or mobile number)?</p>
+                          <p className="text-xs text-[#45464d] leading-relaxed">
+                            It happens as soon as you confirm the verification code sent to your email (or mobile) and save the changes.
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-gray-700">What happens to my existing Flipkart account when I update my email address (or mobile number)?</p>
+                          <p className="text-xs text-[#45464d] leading-relaxed">
+                            Updating your email address (or mobile number) doesn't invalidate your account. Your account remains fully functional. You'll continue seeing your Order history, saved information and personal details.
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-gray-700">Does my Seller account get affected when I update my email address?</p>
+                          <p className="text-xs text-[#45464d] leading-relaxed">
+                            Flipkart has a 'single sign-on' policy. Any changes will reflect in your Seller account also.
+                          </p>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="space-y-2 max-w-xs">
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Postal Code</label>
-                      <input
-                        type="text"
-                        value={profile.pincode}
-                        onChange={(e) => setProfile({ ...profile, pincode: e.target.value })}
-                        placeholder="6-Digit Register"
-                        maxLength={6}
-                        className="w-full px-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
-                      />
+                    {/* Account Deactivate / Delete links */}
+                    <div className="pt-8 flex flex-col gap-2">
+                      <button className="text-sm font-bold text-[#855300] hover:text-[#fea619] hover:underline text-left max-w-xs cursor-pointer">Deactivate Account</button>
+                      <button className="text-sm font-bold text-red-600 hover:underline text-left max-w-xs cursor-pointer flex items-center gap-1">
+                        <Trash2 className="w-4 h-4" /> Delete Account
+                      </button>
                     </div>
-                  </section>
 
-                  {/* Submission Flow */}
-                  <div className="pt-12 border-t border-[#e5e2df] flex justify-end">
-                    <button 
-                      type="submit" 
-                      className="group relative h-14 px-12 bg-[#1c1c1a] text-white overflow-hidden shadow-lg hover:shadow-2xl transition-all rounded-sm disabled:opacity-50"
-                      disabled={isSaving}
-                    >
-                      <span className="relative z-10 font-body text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-3">
-                        {isSaving ? (
+                    {/* SVG Flying Paper Airplane Graphic */}
+                    <div className="absolute right-6 bottom-6 w-32 h-32 opacity-10 pointer-events-none hidden md:block">
+                      <svg viewBox="0 0 24 24" fill="none" className="text-[#fea619] w-full h-full" stroke="currentColor" strokeWidth="1">
+                        <path d="M22 2L2 8.66l7.56 2.89L16 5l-5.55 6.44L18 19 22 2z" />
+                      </svg>
+                    </div>
+
+                  </motion.div>
+                )}
+
+                {/* 2. Manage Addresses Tab */}
+                {activeTab === "addresses" && (
+                  <motion.div
+                    key="addresses"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-6"
+                  >
+                    <div className="flex items-center justify-between border-b border-border pb-4">
+                      <h2 className="text-lg font-bold text-[#131b2e]">Manage Addresses</h2>
+                      <button
+                        onClick={() => {
+                          if (isEditingAddress) {
+                            handleCancelSection("address");
+                          } else {
+                            setIsEditingAddress(true);
+                          }
+                        }}
+                        className="text-xs font-bold text-[#855300] hover:text-[#fea619] hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        {isEditingAddress ? (
                           <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            Synchronizing...
+                            <X className="w-3.5 h-3.5" /> Cancel
                           </>
                         ) : (
                           <>
-                            <Save className="w-4 h-4" />
-                            Update Registry
+                            <Edit className="w-3.5 h-3.5" /> Modify Address
                           </>
                         )}
-                      </span>
-                      <div className="absolute inset-x-0 bottom-0 h-0 bg-[#735c00] group-hover:h-full transition-all duration-300" />
-                    </button>
-                  </div>
-                </form>
-              </motion.div>
+                      </button>
+                    </div>
+
+                    <div className="space-y-4 max-w-lg">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-500 block">Structural Address</label>
+                        <textarea
+                          rows={3}
+                          value={addressInput}
+                          onChange={(e) => setAddressInput(e.target.value)}
+                          disabled={!isEditingAddress}
+                          placeholder="House No, Building, Street, Area..."
+                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all min-h-[80px] resize-none ${
+                            isEditingAddress 
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                          }`}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-500 block">City</label>
+                          <input
+                            type="text"
+                            value={cityInput}
+                            onChange={(e) => setCityInput(e.target.value)}
+                            disabled={!isEditingAddress}
+                            placeholder="Your City"
+                            className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
+                              isEditingAddress 
+                                ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                                : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            }`}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-xs font-bold text-gray-500 block">State</label>
+                          <input
+                            type="text"
+                            value={stateInput}
+                            onChange={(e) => setStateInput(e.target.value)}
+                            disabled={!isEditingAddress}
+                            placeholder="State"
+                            className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
+                              isEditingAddress 
+                                ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                                : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            }`}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 max-w-[200px]">
+                        <label className="text-xs font-bold text-gray-500 block">Pincode</label>
+                        <input
+                          type="text"
+                          maxLength={6}
+                          value={pincodeInput}
+                          onChange={(e) => setPincodeInput(e.target.value)}
+                          disabled={!isEditingAddress}
+                          placeholder="6-digit pincode"
+                          className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${
+                            isEditingAddress 
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]" 
+                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                          }`}
+                        />
+                      </div>
+
+                      {isEditingAddress && (
+                        <div className="pt-2">
+                          <Button 
+                            onClick={() => handleSaveSection("address")}
+                            disabled={isSaving}
+                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
+                          >
+                            {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                            Update Address Registry
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* 3. Saved UPI Tab */}
+                {activeTab === "saved-upi" && (
+                  <motion.div
+                    key="saved-upi"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-6"
+                  >
+                    <div className="border-b border-border pb-4">
+                      <h2 className="text-lg font-bold text-[#131b2e] flex items-center gap-2">
+                        <Landmark className="w-5 h-5 text-[#855300]" /> Saved UPI Accounts
+                      </h2>
+                    </div>
+
+                    <div className="max-w-lg space-y-4">
+                      
+                      {/* Active VPA row */}
+                      <div className="p-4 border border-border rounded-sm flex items-center justify-between hover:bg-gray-50/50 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 bg-yellow-50 text-[#855300] rounded-full flex items-center justify-center font-bold text-sm">
+                            ₹
+                          </div>
+                          <div>
+                            <span className="text-sm font-bold text-[#131b2e] block">adi.sri.12@oksbi</span>
+                            <span className="text-xs text-gray-400">Linked State Bank of India Account</span>
+                          </div>
+                        </div>
+                        <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 border border-green-100 rounded-sm">VERIFIED</span>
+                      </div>
+
+                      <div className="p-4 border border-dashed border-gray-300 rounded-sm flex flex-col gap-2 items-center justify-center py-8">
+                        <span className="text-xs text-gray-500 font-semibold">Link a new UPI Virtual Address</span>
+                        <div className="flex gap-2 w-full max-w-sm pt-2">
+                          <input type="text" placeholder="username@upi" className="w-full px-3 py-2 text-xs border border-border rounded-sm outline-none focus:border-[#855300]" />
+                          <button className="bg-[#1c1c1a] text-white hover:bg-[#855300] px-4 py-2 text-xs rounded-sm shrink-0 font-semibold shadow-sm transition-colors">
+                            Link VPA
+                          </button>
+                        </div>
+                      </div>
+
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* 4. Saved Cards Tab */}
+                {activeTab === "saved-cards" && (
+                  <motion.div
+                    key="saved-cards"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-6"
+                  >
+                    <div className="border-b border-border pb-4">
+                      <h2 className="text-lg font-bold text-[#131b2e] flex items-center gap-2">
+                        <CreditCard className="w-5 h-5 text-[#855300]" /> Saved Credit & Debit Cards
+                      </h2>
+                    </div>
+
+                    <div className="max-w-lg space-y-6">
+                      
+                      {/* Credit Card Widget */}
+                      <div className="p-6 bg-gradient-to-tr from-gray-900 via-[#1c1c1a] to-[#855300]/80 text-white rounded-md shadow-md space-y-6 relative overflow-hidden max-w-sm border border-slate-700/80">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <span className="text-xs text-gray-300 block tracking-wider font-semibold">Saved Premium Card</span>
+                            <span className="text-sm font-bold tracking-widest text-[#fea619]">PLATINUM</span>
+                          </div>
+                          <Landmark className="w-7 h-7 text-slate-300 opacity-80" />
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <span className="text-[10px] text-gray-300 uppercase tracking-widest block">Card Number</span>
+                          <p className="text-base tracking-widest font-mono text-gray-200">•••• •••• •••• 4284</p>
+                        </div>
+
+                        <div className="flex justify-between items-end">
+                          <div>
+                            <span className="text-[9px] text-gray-300 uppercase tracking-wider block">Card Holder</span>
+                            <span className="text-xs text-slate-200 tracking-wide">{profile.full_name || "Aditya Srivastava"}</span>
+                          </div>
+                          <span className="text-xs font-bold font-mono tracking-widest text-[#fea619]">VISA</span>
+                        </div>
+
+                        {/* Decorative chip/reflection */}
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/5 rounded-full pointer-events-none blur-md" />
+                      </div>
+
+                      <div className="p-4 border border-border rounded-sm bg-[#eceef0]/20 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          <CreditCard className="w-5 h-5 text-gray-500" />
+                          <span className="text-xs text-gray-600 font-semibold">Visa ending in 4284</span>
+                        </div>
+                        <button className="text-xs text-red-500 font-bold hover:underline cursor-pointer">Remove Card</button>
+                      </div>
+
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* 5. Reviews & Ratings Tab */}
+                {activeTab === "reviews" && (
+                  <motion.div
+                    key="reviews"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-6"
+                  >
+                    <div className="border-b border-border pb-4">
+                      <h2 className="text-lg font-bold text-[#131b2e] flex items-center gap-2">
+                        <Star className="w-5 h-5 text-[#fea619] fill-[#fea619]" /> My Reviews & Ratings
+                      </h2>
+                    </div>
+
+                    <div className="py-12 flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto">
+                      <div className="w-16 h-16 rounded-full bg-[#fea619]/10 flex items-center justify-center text-[#855300]">
+                        <Star className="w-8 h-8 fill-[#fea619]/25" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-sm font-bold text-[#131b2e]">No Reviews Published</h3>
+                        <p className="text-xs text-gray-500 leading-relaxed">
+                          You haven't reviewed any architectural designs or raw material products yet. Rate your active purchases from the Orders catalog!
+                        </p>
+                      </div>
+                      <Link to="/orders" className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-bold text-xs py-2.5 px-6 rounded-sm shadow-sm transition-colors">
+                        View Active Orders
+                      </Link>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* 6. All Notifications Tab */}
+                {activeTab === "notifications" && (
+                  <motion.div
+                    key="notifications"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-6"
+                  >
+                    <div className="border-b border-border pb-4 flex justify-between items-center">
+                      <h2 className="text-lg font-bold text-[#131b2e] flex items-center gap-2">
+                        <Bell className="w-5 h-5 text-[#855300]" /> Notifications
+                      </h2>
+                      <button className="text-xs text-gray-400 hover:text-gray-600 font-semibold cursor-pointer">Mark all as read</button>
+                    </div>
+
+                    <div className="space-y-4 max-w-2xl">
+                      
+                      {/* Notification 1 */}
+                      <div className="p-4 border border-border bg-[#fea619]/5 rounded-sm flex items-start gap-4 hover:bg-gray-50/50 transition-colors">
+                        <Package className="w-5 h-5 text-[#855300] shrink-0 mt-0.5" />
+                        <div className="space-y-1 flex-1">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-bold text-[#131b2e]">Order Dispatched</span>
+                            <span className="text-[10px] text-gray-400 font-semibold">Today, 2:45 PM</span>
+                          </div>
+                          <p className="text-xs text-[#45464d] leading-relaxed">
+                            Good news! Your architectural blueprint order #BBAX-99482 has been verified and dispatched to your registered address.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Notification 2 */}
+                      <div className="p-4 border border-border rounded-sm flex items-start gap-4 hover:bg-gray-50/50 transition-colors">
+                        <ShieldCheck className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                        <div className="space-y-1 flex-1">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-bold text-[#131b2e]">Identity Synchronized</span>
+                            <span className="text-[10px] text-gray-400 font-semibold">Yesterday</span>
+                          </div>
+                          <p className="text-xs text-[#45464d] leading-relaxed">
+                            Your core profile registration credentials have been synchronized with the Supabase distributed database ledger.
+                          </p>
+                        </div>
+                      </div>
+
+                    </div>
+                  </motion.div>
+                )}
+
+              </AnimatePresence>
+
             </div>
 
           </div>
-        </main>
+        </div>
       </div>
     </Layout>
   );
