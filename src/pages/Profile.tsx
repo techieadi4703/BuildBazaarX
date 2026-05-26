@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { validateUpiFormat } from "@/lib/upi/validateFormat";
 
 const Profile = () => {
   const { toast } = useToast();
@@ -24,39 +25,88 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState<string>("profile");
 
   const [upiId, setUpiId] = useState("");
-  const [upiList, setUpiList] = useState<any[]>([]);
+  const [upiList, setUpiList] = useState<Array<{ id: string; name: string; verified: boolean }>>(() => {
+    const saved = localStorage.getItem("saved_upis");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("saved_upis", JSON.stringify(upiList));
+  }, [upiList]);
   const [isVerifyingUpi, setIsVerifyingUpi] = useState(false);
 
-  const handleLinkVpa = () => {
+  const handleLinkVpa = async () => {
     const trimmedUpi = upiId.trim();
     if (!trimmedUpi) return;
 
-    // Simple regex for UPI validation: e.g. username@bank
-    const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
-    
-    if (!upiRegex.test(trimmedUpi)) {
+    // Layer 1: Format + PSP handle whitelist (the same check Checkout uses)
+    const local = validateUpiFormat(trimmedUpi);
+    if (!local.valid) {
       toast({
         title: "Invalid UPI ID",
-        description: "Please enter a valid UPI ID (e.g., username@bank).",
-        variant: "destructive"
+        description: local.reason || "Please enter a valid UPI ID.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Duplicate guard
+    if (upiList.some(u => u.id.toLowerCase() === trimmedUpi.toLowerCase())) {
+      toast({
+        title: "Already Linked",
+        description: "This UPI ID is already saved.",
+        variant: "destructive",
       });
       return;
     }
 
     setIsVerifyingUpi(true);
-    setTimeout(() => {
-      setUpiList([...upiList, { id: trimmedUpi, bank: "Linked Bank Account", verified: true }]);
+    try {
+      // Layer 2: Real verification via the same Edge Function Checkout uses
+      const { data, error } = await supabase.functions.invoke("upi-verify", {
+        body: { upi: trimmedUpi },
+      });
+
+      if (error) throw new Error("Verification service unavailable.");
+      if (!data?.valid) {
+        toast({
+          title: "Verification Failed",
+          description: data?.reason || "This UPI ID could not be verified on NPCI.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const verifiedName = data.name || "Verified User";
+      setUpiList([
+        ...upiList,
+        { id: trimmedUpi, name: verifiedName, verified: true },
+      ]);
       setUpiId("");
-      setIsVerifyingUpi(false);
       toast({
         title: "VPA Linked",
-        description: `${trimmedUpi} has been verified and linked successfully.`,
+        description: `${verifiedName} • ${trimmedUpi}`,
       });
-    }, 1500);
+    } catch (err: any) {
+      toast({
+        title: "Verification Failed",
+        description: err.message || "Could not verify UPI ID.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsVerifyingUpi(false);
+    }
   };
 
   const [cardNumber, setCardNumber] = useState("");
-  const [cardList, setCardList] = useState<any[]>([]);
+  const [cardList, setCardList] = useState<any[]>(() => {
+    const saved = localStorage.getItem("saved_cards");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("saved_cards", JSON.stringify(cardList));
+  }, [cardList]);
   const [isVerifyingCard, setIsVerifyingCard] = useState(false);
 
   const handleAddCard = () => {
@@ -883,13 +933,15 @@ const Profile = () => {
                               ₹
                             </div>
                             <div>
-                              <span className="text-sm font-bold text-[#131b2e] block">{upi.id}</span>
-                              <span className="text-xs text-gray-400">{upi.bank}</span>
+                              <span className="text-sm font-bold text-[#131b2e] block">{upi.name}</span>
+                              <span className="text-xs text-gray-500">{upi.id}</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
                             {upi.verified && (
-                              <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 border border-green-100 rounded-sm">VERIFIED</span>
+                              <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 border border-green-100 rounded-sm">
+                                VERIFIED
+                              </span>
                             )}
                             <button 
                               onClick={() => handleRemoveUpi(upi.id)} 
