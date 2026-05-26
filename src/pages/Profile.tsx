@@ -23,6 +23,98 @@ const Profile = () => {
   // Tab states: 'profile' | 'addresses' | 'saved-upi' | 'saved-cards' | 'reviews' | 'notifications'
   const [activeTab, setActiveTab] = useState<string>("profile");
 
+  const [upiId, setUpiId] = useState("");
+  const [upiList, setUpiList] = useState<any[]>([]);
+  const [isVerifyingUpi, setIsVerifyingUpi] = useState(false);
+
+  const handleLinkVpa = () => {
+    const trimmedUpi = upiId.trim();
+    if (!trimmedUpi) return;
+
+    // Simple regex for UPI validation: e.g. username@bank
+    const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+    
+    if (!upiRegex.test(trimmedUpi)) {
+      toast({
+        title: "Invalid UPI ID",
+        description: "Please enter a valid UPI ID (e.g., username@bank).",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsVerifyingUpi(true);
+    setTimeout(() => {
+      setUpiList([...upiList, { id: trimmedUpi, bank: "Linked Bank Account", verified: true }]);
+      setUpiId("");
+      setIsVerifyingUpi(false);
+      toast({
+        title: "VPA Linked",
+        description: `${trimmedUpi} has been verified and linked successfully.`,
+      });
+    }, 1500);
+  };
+
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardList, setCardList] = useState<any[]>([]);
+  const [isVerifyingCard, setIsVerifyingCard] = useState(false);
+
+  const handleAddCard = () => {
+    const trimmedCard = cardNumber.trim();
+    if (!trimmedCard) return;
+
+    // Validate that the card is exactly 16 digits
+    const cardRegex = /^\d{16}$/;
+    
+    if (!cardRegex.test(trimmedCard)) {
+      toast({
+        title: "Invalid Card Number",
+        description: "Please enter a valid 16-digit card number.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsVerifyingCard(true);
+    setTimeout(() => {
+      const last4 = trimmedCard.slice(-4);
+      let cardType = "Visa";
+      if (trimmedCard.startsWith("4")) {
+        cardType = "Visa";
+      } else if (/^[52]/.test(trimmedCard)) {
+        cardType = "Mastercard";
+      } else if (trimmedCard.startsWith("3")) {
+        cardType = "Amex";
+      } else {
+        cardType = "RuPay";
+      }
+
+      setCardList([...cardList, { id: Date.now().toString(), last4, type: cardType }]);
+      setCardNumber("");
+      setIsVerifyingCard(false);
+      toast({
+        title: "Card Added",
+        description: `${cardType} ending in ${last4} has been verified and added.`,
+      });
+    }, 1500);
+  };
+
+  const handleRemoveCard = (idToRemove: string) => {
+    setCardList(cardList.filter(card => card.id !== idToRemove));
+    toast({
+      title: "Card Removed",
+      description: "The card has been removed successfully.",
+    });
+  };
+
+  const handleRemoveUpi = (idToRemove: string) => {
+    setUpiList(upiList.filter(upi => upi.id !== idToRemove));
+    toast({
+      title: "UPI Removed",
+      description: "The UPI ID has been removed successfully.",
+    });
+  };
+
   const [profile, setProfile] = useState({
     full_name: "",
     phone: "",
@@ -80,22 +172,23 @@ const Profile = () => {
       if (error) {
         console.error("Error fetching profile:", error);
       } else if (data) {
-        setCurrentRole(data.role || "customer");
+        const profileData = data as any;
+        setCurrentRole(profileData.role || "customer");
         const userGender = session.user.user_metadata?.gender || "";
         const loadedProfile = {
-          full_name: data.full_name || "",
-          phone: data.phone || "",
-          email: data.email || session.user.email || "",
-          address: data.address || "",
-          city: data.city || "",
-          state: data.state || "",
-          pincode: data.pincode || "",
+          full_name: profileData.full_name || "",
+          phone: profileData.phone || "",
+          email: profileData.email || session.user.email || "",
+          address: profileData.address || "",
+          city: profileData.city || "",
+          state: profileData.state || "",
+          pincode: profileData.pincode || "",
           gender: userGender,
         };
         setProfile(loadedProfile);
 
         // Prepopulate input states
-        const nameParts = (data.full_name || "").trim().split(/\s+/);
+        const nameParts = (profileData.full_name || "").trim().split(/\s+/);
         setFirstName(nameParts[0] || "");
         setLastName(nameParts.slice(1).join(" ") || "");
         setGender(userGender as "Male" | "Female" | "");
@@ -783,26 +876,48 @@ const Profile = () => {
 
                     <div className="max-w-lg space-y-4">
                       
-                      {/* Active VPA row */}
-                      <div className="p-4 border border-border rounded-sm flex items-center justify-between hover:bg-gray-50/50 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 bg-yellow-50 text-[#855300] rounded-full flex items-center justify-center font-bold text-sm">
-                            ₹
+                      {upiList.map((upi, idx) => (
+                        <div key={idx} className="p-4 border border-border rounded-sm flex items-center justify-between hover:bg-gray-50/50 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 bg-yellow-50 text-[#855300] rounded-full flex items-center justify-center font-bold text-sm">
+                              ₹
+                            </div>
+                            <div>
+                              <span className="text-sm font-bold text-[#131b2e] block">{upi.id}</span>
+                              <span className="text-xs text-gray-400">{upi.bank}</span>
+                            </div>
                           </div>
-                          <div>
-                            <span className="text-sm font-bold text-[#131b2e] block">adi.sri.12@oksbi</span>
-                            <span className="text-xs text-gray-400">Linked State Bank of India Account</span>
+                          <div className="flex items-center gap-3">
+                            {upi.verified && (
+                              <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 border border-green-100 rounded-sm">VERIFIED</span>
+                            )}
+                            <button 
+                              onClick={() => handleRemoveUpi(upi.id)} 
+                              className="text-xs text-red-500 font-bold hover:underline cursor-pointer"
+                            >
+                              Remove
+                            </button>
                           </div>
                         </div>
-                        <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 border border-green-100 rounded-sm">VERIFIED</span>
-                      </div>
+                      ))}
 
-                      <div className="p-4 border border-dashed border-gray-300 rounded-sm flex flex-col gap-2 items-center justify-center py-8">
-                        <span className="text-xs text-gray-500 font-semibold">Link a new UPI Virtual Address</span>
-                        <div className="flex gap-2 w-full max-w-sm pt-2">
-                          <input type="text" placeholder="username@upi" className="w-full px-3 py-2 text-xs border border-border rounded-sm outline-none focus:border-[#855300]" />
-                          <button className="bg-[#1c1c1a] text-white hover:bg-[#855300] px-4 py-2 text-xs rounded-sm shrink-0 font-semibold shadow-sm transition-colors">
-                            Link VPA
+                      <div className="p-6 border border-dashed border-gray-300 rounded-sm flex flex-col gap-3 items-center justify-center py-10">
+                        <span className="text-sm text-gray-600 font-bold">Link a new UPI Virtual Address</span>
+                        <div className="flex gap-3 w-full max-w-sm pt-2">
+                          <input 
+                            type="text" 
+                            value={upiId}
+                            onChange={(e) => setUpiId(e.target.value)}
+                            placeholder="username@upi" 
+                            className="w-full px-4 py-2.5 text-sm border border-border rounded-sm outline-none focus:border-[#855300]" 
+                          />
+                          <button 
+                            onClick={handleLinkVpa}
+                            disabled={isVerifyingUpi}
+                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] px-6 py-2.5 text-sm rounded-sm shrink-0 font-bold shadow-sm transition-colors flex items-center gap-2"
+                          >
+                            {isVerifyingUpi && <Loader2 className="w-4 h-4 animate-spin" />}
+                            {isVerifyingUpi ? "Verifying..." : "Link VPA"}
                           </button>
                         </div>
                       </div>
@@ -829,39 +944,75 @@ const Profile = () => {
 
                     <div className="max-w-lg space-y-6">
                       
-                      {/* Credit Card Widget */}
-                      <div className="p-6 bg-gradient-to-tr from-gray-900 via-[#1c1c1a] to-[#855300]/80 text-white rounded-md shadow-md space-y-6 relative overflow-hidden max-w-sm border border-slate-700/80">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <span className="text-xs text-gray-300 block tracking-wider font-semibold">Saved Premium Card</span>
-                            <span className="text-sm font-bold tracking-widest text-[#fea619]">PLATINUM</span>
-                          </div>
-                          <Landmark className="w-7 h-7 text-slate-300 opacity-80" />
-                        </div>
-                        
-                        <div className="space-y-1">
-                          <span className="text-[10px] text-gray-300 uppercase tracking-widest block">Card Number</span>
-                          <p className="text-base tracking-widest font-mono text-gray-200">•••• •••• •••• 4284</p>
-                        </div>
+                      {/* Credit Card Widgets */}
+                      {cardList.length > 0 && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {cardList.map((card) => (
+                            <div 
+                              key={card.id} 
+                              className={`p-6 text-white rounded-md shadow-md space-y-6 relative overflow-hidden border border-slate-700/80 transition-transform hover:scale-[1.01] ${
+                                card.type === "Mastercard" 
+                                  ? "bg-gradient-to-tr from-slate-900 via-[#2d1500] to-[#b15802]/80"
+                                  : card.type === "Visa"
+                                  ? "bg-gradient-to-tr from-gray-900 via-[#1c1c1a] to-[#855300]/80"
+                                  : card.type === "Amex"
+                                  ? "bg-gradient-to-tr from-blue-950 via-slate-900 to-indigo-900"
+                                  : "bg-gradient-to-tr from-emerald-950 via-stone-900 to-teal-900"
+                              }`}
+                            >
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <span className="text-[10px] text-gray-300 block tracking-wider font-semibold">Saved Premium Card</span>
+                                  <span className="text-sm font-bold tracking-widest text-[#fea619]">{card.type.toUpperCase()} PLATINUM</span>
+                                </div>
+                                <Landmark className="w-7 h-7 text-slate-300 opacity-80" />
+                              </div>
+                              
+                              <div className="space-y-1">
+                                <span className="text-[10px] text-gray-300 uppercase tracking-widest block">Card Number</span>
+                                <p className="text-base tracking-widest font-mono text-gray-200">•••• •••• •••• {card.last4}</p>
+                              </div>
 
-                        <div className="flex justify-between items-end">
-                          <div>
-                            <span className="text-[9px] text-gray-300 uppercase tracking-wider block">Card Holder</span>
-                            <span className="text-xs text-slate-200 tracking-wide">{profile.full_name || "Aditya Srivastava"}</span>
-                          </div>
-                          <span className="text-xs font-bold font-mono tracking-widest text-[#fea619]">VISA</span>
-                        </div>
+                              <div className="flex justify-between items-end">
+                                <div>
+                                  <span className="text-[9px] text-gray-300 uppercase tracking-wider block">Card Holder</span>
+                                  <span className="text-xs text-slate-200 tracking-wide">{profile.full_name || "Aditya Srivastava"}</span>
+                                </div>
+                                <button 
+                                  onClick={() => handleRemoveCard(card.id)} 
+                                  className="text-xs text-red-400 font-bold hover:text-red-300 hover:underline cursor-pointer z-10"
+                                >
+                                  Remove Card
+                                </button>
+                              </div>
 
-                        {/* Decorative chip/reflection */}
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/5 rounded-full pointer-events-none blur-md" />
-                      </div>
-
-                      <div className="p-4 border border-border rounded-sm bg-[#eceef0]/20 flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                          <CreditCard className="w-5 h-5 text-gray-500" />
-                          <span className="text-xs text-gray-600 font-semibold">Visa ending in 4284</span>
+                              {/* Decorative chip/reflection */}
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/5 rounded-full pointer-events-none blur-md" />
+                            </div>
+                          ))}
                         </div>
-                        <button className="text-xs text-red-500 font-bold hover:underline cursor-pointer">Remove Card</button>
+                      )}
+
+                      <div className="p-6 border border-dashed border-gray-300 rounded-sm flex flex-col gap-3 items-center justify-center py-10">
+                        <span className="text-sm text-gray-600 font-bold">Link a new Debit / Credit Card</span>
+                        <div className="flex gap-3 w-full max-w-sm pt-2">
+                          <input 
+                            type="text" 
+                            value={cardNumber}
+                            onChange={(e) => setCardNumber(e.target.value)}
+                            placeholder="Card Number (16 digits)" 
+                            className="w-full px-4 py-2.5 text-sm border border-border rounded-sm outline-none focus:border-[#855300]" 
+                            maxLength={16}
+                          />
+                          <button 
+                            onClick={handleAddCard}
+                            disabled={isVerifyingCard}
+                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] px-6 py-2.5 text-sm rounded-sm shrink-0 font-bold shadow-sm transition-colors flex items-center gap-2"
+                          >
+                            {isVerifyingCard && <Loader2 className="w-4 h-4 animate-spin" />}
+                            {isVerifyingCard ? "Verifying..." : "Add Card"}
+                          </button>
+                        </div>
                       </div>
 
                     </div>

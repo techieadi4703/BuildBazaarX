@@ -99,6 +99,21 @@ The project leverages **Supabase Edge Functions** for secure server-side operati
 - `create-razorpay-order`: Securely generates Razorpay orders.
 - `process-payment`: Handles payment verification and signature validation.
 - `send-order-email`: Automates customer notifications upon successful purchase.
+- `upi-verify`: Provides server-side validation and verification of UPI IDs before payment submission.
+
+## 💳 UPI Verification (Two-Layer System)
+
+BuildBazaarX implements a robust two-layer validation for UPI payments to ensure speed and accuracy:
+
+1. **Layer 1 (Client-Side):**
+   - Provides instant feedback (sub-300ms) on format validity (`name@bank`).
+   - Uses a strict whitelist of ~200 recognized NPCI PSP handles to prevent typos.
+   - **How to update:** Edit `src/lib/upi/pspHandles.ts` to add or remove handles based on NPCI's latest list.
+
+2. **Layer 2 (Server-Side):**
+   - Validates the VPA against a payment aggregator (Razorpay, Cashfree, PayU, Paytm) inside the `upi-verify` Edge Function.
+   - Protects against fraud via IP rate limiting and caches results for 10 minutes to minimize aggregator costs (cost-model is typically ₹0.50 - ₹1.00 per verification call).
+   - **How to swap aggregators:** Provide the respective API keys in the Edge Function's environment variables (`RAZORPAY_KEY_ID`, `CASHFREE_APP_ID`, etc.) and update the aggregator fetch logic in `supabase/functions/upi-verify/index.ts`.
 
 ## 🧪 Testing
 
