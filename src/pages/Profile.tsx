@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
   User, Phone, MapPin, Mail, Save, Loader2, Package, ArrowRight, LogOut,
@@ -11,6 +10,17 @@ import {
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+
+interface ProfileData {
+  id: string;
+  role: string | null;
+  full_name: string | null;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  pincode: string | null;
+}
 import { validateUpiFormat } from "@/lib/upi/validateFormat";
 
 const Profile = () => {
@@ -18,6 +28,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [currentRole, setCurrentRole] = useState("customer");
 
@@ -195,13 +206,18 @@ const Profile = () => {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   const handleLogout = async () => {
-    setIsSaving(true);
-    await supabase.auth.signOut();
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out.",
-    });
-    navigate("/");
+    setIsLoggingOut(true);
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({ title: "Error", description: "Logout failed. Please try again.", variant: "destructive" });
+      setIsLoggingOut(false);
+    } else {
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+      });
+      navigate("/");
+    }
   };
 
   useEffect(() => {
@@ -217,7 +233,7 @@ const Profile = () => {
         .from("profiles")
         .select("*")
         .eq("id", session.user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching profile:", error);
@@ -307,7 +323,7 @@ const Profile = () => {
       const { error } = await supabase
         .from("profiles")
         .upsert({
-          id: session.user.id,
+          id: session.user?.id,
           role: currentRole || "customer",
           ...updatedFields,
         });
@@ -410,8 +426,8 @@ const Profile = () => {
                     <button
                       onClick={() => setActiveTab("profile")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "profile"
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
+                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
                         }`}
                     >
                       Profile Information
@@ -419,8 +435,8 @@ const Profile = () => {
                     <button
                       onClick={() => setActiveTab("addresses")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "addresses"
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
+                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
                         }`}
                     >
                       Manage Addresses
@@ -438,8 +454,8 @@ const Profile = () => {
                     <button
                       onClick={() => setActiveTab("saved-upi")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "saved-upi"
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
+                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
                         }`}
                     >
                       Saved UPI
@@ -447,8 +463,8 @@ const Profile = () => {
                     <button
                       onClick={() => setActiveTab("saved-cards")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "saved-cards"
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
+                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
                         }`}
                     >
                       Saved Cards
@@ -466,8 +482,8 @@ const Profile = () => {
                     <button
                       onClick={() => setActiveTab("reviews")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "reviews"
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
+                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
                         }`}
                     >
                       My Reviews & Ratings
@@ -475,8 +491,8 @@ const Profile = () => {
                     <button
                       onClick={() => setActiveTab("notifications")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "notifications"
-                          ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
+                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
                         }`}
                     >
                       All Notifications
@@ -562,8 +578,8 @@ const Profile = () => {
                           disabled={!isEditingPersonal}
                           placeholder="First Name"
                           className={`px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingPersonal
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
                             }`}
                         />
                         <input
@@ -573,8 +589,8 @@ const Profile = () => {
                           disabled={!isEditingPersonal}
                           placeholder="Last Name"
                           className={`px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingPersonal
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
                             }`}
                         />
                       </div>
@@ -658,8 +674,8 @@ const Profile = () => {
                           disabled={!isEditingEmail}
                           placeholder="name@example.com"
                           className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingEmail
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
                             }`}
                         />
                       </div>
@@ -712,8 +728,8 @@ const Profile = () => {
                           disabled={!isEditingMobile}
                           placeholder="+91 XXXXX XXXXX"
                           className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingMobile
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
                             }`}
                         />
                       </div>
@@ -825,8 +841,8 @@ const Profile = () => {
                           disabled={!isEditingAddress}
                           placeholder="House No, Building, Street, Area..."
                           className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all min-h-[80px] resize-none ${isEditingAddress
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
                             }`}
                         />
                       </div>
@@ -841,8 +857,8 @@ const Profile = () => {
                             disabled={!isEditingAddress}
                             placeholder="Your City"
                             className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingAddress
-                                ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                                : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
                               }`}
                           />
                         </div>
@@ -855,8 +871,8 @@ const Profile = () => {
                             disabled={!isEditingAddress}
                             placeholder="State"
                             className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingAddress
-                                ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                                : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
                               }`}
                           />
                         </div>
@@ -872,8 +888,8 @@ const Profile = () => {
                           disabled={!isEditingAddress}
                           placeholder="6-digit pincode"
                           className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingAddress
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
                             }`}
                         />
                       </div>
@@ -989,12 +1005,12 @@ const Profile = () => {
                             <div
                               key={card.id}
                               className={`p-6 text-white rounded-md shadow-md space-y-6 relative overflow-hidden border border-slate-700/80 transition-transform hover:scale-[1.01] ${card.type === "Mastercard"
-                                  ? "bg-gradient-to-tr from-slate-900 via-[#2d1500] to-[#b15802]/80"
-                                  : card.type === "Visa"
-                                    ? "bg-gradient-to-tr from-gray-900 via-[#1c1c1a] to-[#855300]/80"
-                                    : card.type === "Amex"
-                                      ? "bg-gradient-to-tr from-blue-950 via-slate-900 to-indigo-900"
-                                      : "bg-gradient-to-tr from-emerald-950 via-stone-900 to-teal-900"
+                                ? "bg-gradient-to-tr from-slate-900 via-[#2d1500] to-[#b15802]/80"
+                                : card.type === "Visa"
+                                  ? "bg-gradient-to-tr from-gray-900 via-[#1c1c1a] to-[#855300]/80"
+                                  : card.type === "Amex"
+                                    ? "bg-gradient-to-tr from-blue-950 via-slate-900 to-indigo-900"
+                                    : "bg-gradient-to-tr from-emerald-950 via-stone-900 to-teal-900"
                                 }`}
                             >
                               <div className="flex justify-between items-start">

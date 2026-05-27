@@ -595,16 +595,15 @@ const DesignDetail = () => {
               transition={{ duration: 0.5 }}
             >
               <Card className="shadow-[0_40px_100px_rgba(0,0,0,0.15)] border-none rounded-[4rem] overflow-hidden bg-background">
-                <div className="bg-primary p-12 flex flex-col items-center text-center text-white relative overflow-hidden">
+                <div className="bg-primary px-8 py-6 flex flex-col items-center text-center text-white relative overflow-hidden">
                   <div className="relative z-10">
-                    <MessageCircle className="w-16 h-16 mb-6 opacity-80" />
-                    <h3 className="text-2xl font-black tracking-tight mb-2">Technical Feasibility Brief</h3>
+                    <h3 className="text-2xl font-black tracking-tight mb-1">Technical Feasibility Brief</h3>
                     <p className="text-white/60 font-bold uppercase tracking-widest text-[10px]">No commitment consultation call</p>
                   </div>
                   <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/5 rounded-full" />
                   <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-white/5 rounded-full" />
                 </div>
-                <CardContent className="p-12 space-y-8">
+                <CardContent className="p-8 space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <RevealItem>
                       <div className="space-y-3">
