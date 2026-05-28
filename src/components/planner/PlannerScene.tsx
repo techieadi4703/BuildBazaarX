@@ -42,17 +42,51 @@ const RoomMesh: React.FC<RoomMeshProps> = ({ room, wallHeight, isSelected, onCli
     onClick(room.id);
   };
 
-  const wallColor = isSelected ? '#a18100' : '#e5e7eb';
-  const defaultFloorColors = {
+  const baseWallColor = room.materials?.wallColorHex || '#e5e7eb';
+  const wallColor = baseWallColor;
+
+  const defaultFloorColors: Record<string, string> = {
     bedroom: '#dbeafe',
     living: '#fef3c7',
     kitchen: '#dcfce7',
     bathroom: '#f3e8ff',
     balcony: '#f3f4f6'
   };
-  const baseFloorColor = room.color || defaultFloorColors[room.type] || '#f3f4f6';
-  const floorColor = isSelected ? '#735c00' : baseFloorColor;
-  const emissive = isSelected ? '#332a00' : '#000000';
+  const baseFloorColor = room.materials?.floorColorHex || room.color || defaultFloorColors[room.type] || '#f3f4f6';
+  const floorColor = baseFloorColor;
+  
+  const emissive = isSelected ? '#222222' : '#000000';
+  const wallEmissive = isSelected ? '#111111' : '#000000';
+
+  const [floorTexture, setFloorTexture] = React.useState<THREE.Texture | null>(null);
+
+  React.useEffect(() => {
+    let active = true;
+    const url = room.materials?.floorTextureUrl;
+    if (url) {
+      new THREE.TextureLoader().load(url, (texture) => {
+        if (!active) {
+          texture.dispose();
+          return;
+        }
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(0.5, 0.5); // 1 repeat per 2 meters
+        setFloorTexture(texture);
+      });
+    } else {
+      setFloorTexture(null);
+    }
+    return () => {
+      active = false;
+    };
+  }, [room.materials?.floorTextureUrl]);
+
+  React.useEffect(() => {
+    return () => {
+      if (floorTexture) floorTexture.dispose();
+    };
+  }, [floorTexture]);
 
   return (
     <group>
@@ -64,7 +98,8 @@ const RoomMesh: React.FC<RoomMeshProps> = ({ room, wallHeight, isSelected, onCli
       >
         <shapeGeometry args={[floorShape]} />
         <meshStandardMaterial 
-          color={floorColor} 
+          color={floorTexture ? '#ffffff' : floorColor} 
+          map={floorTexture}
           emissive={emissive}
           side={THREE.DoubleSide} 
         />
@@ -80,7 +115,7 @@ const RoomMesh: React.FC<RoomMeshProps> = ({ room, wallHeight, isSelected, onCli
           <boxGeometry args={[wall.length, wallHeight, 0.1]} />
           <meshStandardMaterial 
             color={wallColor} 
-            emissive={isSelected ? '#1a1400' : '#000000'}
+            emissive={wallEmissive}
           />
         </mesh>
       ))}
