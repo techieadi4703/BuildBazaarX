@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Grid } from '@react-three/drei';
+import { OrbitControls, Grid, Bounds } from '@react-three/drei';
 import * as THREE from 'three';
 import { FloorPlan, Room } from './types';
 
@@ -43,7 +43,15 @@ const RoomMesh: React.FC<RoomMeshProps> = ({ room, wallHeight, isSelected, onCli
   };
 
   const wallColor = isSelected ? '#a18100' : '#e5e7eb';
-  const floorColor = isSelected ? '#735c00' : '#f3f4f6';
+  const defaultFloorColors = {
+    bedroom: '#dbeafe',
+    living: '#fef3c7',
+    kitchen: '#dcfce7',
+    bathroom: '#f3e8ff',
+    balcony: '#f3f4f6'
+  };
+  const baseFloorColor = room.color || defaultFloorColors[room.type] || '#f3f4f6';
+  const floorColor = isSelected ? '#735c00' : baseFloorColor;
   const emissive = isSelected ? '#332a00' : '#000000';
 
   return (
@@ -89,21 +97,23 @@ interface PlannerSceneProps {
 export const PlannerScene: React.FC<PlannerSceneProps> = ({ plan, selectedRoomId, onSelectRoom }) => {
   return (
     <div className="w-full h-full relative bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
-      <Canvas camera={{ position: [5, 10, 15], fov: 50 }}>
+      <Canvas camera={{ position: [0, 15, 20], fov: 50 }}>
         <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
+        <directionalLight position={[10, 20, 10]} intensity={1} castShadow />
         
-        <group position={[-5, 0, -5]}> {/* Center the sample plan roughly */}
-          {plan.rooms.map((room) => (
-            <RoomMesh 
-              key={room.id}
-              room={room}
-              wallHeight={plan.wallHeight}
-              isSelected={selectedRoomId === room.id}
-              onClick={(id) => onSelectRoom(id)}
-            />
-          ))}
-        </group>
+        <Bounds fit clip observe margin={1.2}>
+          <group>
+            {plan.rooms.map((room) => (
+              <RoomMesh 
+                key={room.id}
+                room={room}
+                wallHeight={plan.wallHeight}
+                isSelected={selectedRoomId === room.id}
+                onClick={(id) => onSelectRoom(id)}
+              />
+            ))}
+          </group>
+        </Bounds>
 
         {/* Click outside to deselect */}
         <mesh 
@@ -119,7 +129,7 @@ export const PlannerScene: React.FC<PlannerSceneProps> = ({ plan, selectedRoomId
           infiniteGrid 
           cellSize={1} 
           sectionSize={5} 
-          fadeDistance={30} 
+          fadeDistance={50} 
           fadeStrength={1} 
           cellColor="#d1d5db" 
           sectionColor="#9ca3af" 
@@ -129,3 +139,4 @@ export const PlannerScene: React.FC<PlannerSceneProps> = ({ plan, selectedRoomId
     </div>
   );
 };
+

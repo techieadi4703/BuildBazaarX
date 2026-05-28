@@ -4,6 +4,7 @@ export interface Room {
   id: string;
   name: string;
   type: RoomType;
+  color?: string;
   /**
    * Polygon representing the floor outline in metres on the X/Z plane.
    * Ordered clockwise. e.g., [[0,0], [0,5], [5,5], [5,0]]
