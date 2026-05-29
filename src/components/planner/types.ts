@@ -1,5 +1,14 @@
 export type RoomType = 'bedroom' | 'living' | 'kitchen' | 'bathroom' | 'balcony';
 
+export interface PlacedFurniture {
+  instanceId: string;
+  libraryId: string;
+  productId?: string;
+  position: [number, number, number];
+  rotationY: number;
+  scale: number;
+}
+
 export interface Room {
   id: string;
   name: string;
@@ -17,6 +26,7 @@ export interface Room {
    * Ordered clockwise. e.g., [[0,0], [0,5], [5,5], [5,0]]
    */
   polygon: [number, number][];
+  furniture?: PlacedFurniture[];
 }
 
 export interface FloorPlan {

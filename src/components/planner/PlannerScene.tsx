@@ -3,6 +3,8 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid, Bounds } from '@react-three/drei';
 import * as THREE from 'three';
 import { FloorPlan, Room } from './types';
+import { FurnitureModel } from './FurnitureModel';
+import { usePlannerStore } from './store';
 
 interface RoomMeshProps {
   room: Room;
@@ -130,6 +132,7 @@ interface PlannerSceneProps {
 }
 
 export const PlannerScene: React.FC<PlannerSceneProps> = ({ plan, selectedRoomId, onSelectRoom }) => {
+  const { setSelectedFurnitureId } = usePlannerStore();
   return (
     <div className="w-full h-full relative bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
       <Canvas camera={{ position: [0, 15, 20], fov: 50 }}>
@@ -139,13 +142,17 @@ export const PlannerScene: React.FC<PlannerSceneProps> = ({ plan, selectedRoomId
         <Bounds fit clip observe margin={1.2}>
           <group>
             {plan.rooms.map((room) => (
-              <RoomMesh 
-                key={room.id}
-                room={room}
-                wallHeight={plan.wallHeight}
-                isSelected={selectedRoomId === room.id}
-                onClick={(id) => onSelectRoom(id)}
-              />
+              <group key={room.id}>
+                <RoomMesh 
+                  room={room}
+                  wallHeight={plan.wallHeight}
+                  isSelected={selectedRoomId === room.id}
+                  onClick={(id) => onSelectRoom(id)}
+                />
+                {room.furniture?.map((f) => (
+                  <FurnitureModel key={f.instanceId} furniture={f} roomId={room.id} />
+                ))}
+              </group>
             ))}
           </group>
         </Bounds>
@@ -154,7 +161,10 @@ export const PlannerScene: React.FC<PlannerSceneProps> = ({ plan, selectedRoomId
         <mesh 
           rotation={[-Math.PI / 2, 0, 0]} 
           position={[0, -0.1, 0]} 
-          onPointerDown={() => onSelectRoom(null)}
+          onPointerDown={() => {
+            onSelectRoom(null);
+            setSelectedFurnitureId(null);
+          }}
         >
           <planeGeometry args={[100, 100]} />
           <meshBasicMaterial visible={false} />

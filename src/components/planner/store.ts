@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { FloorPlan, Room } from './types';
+import { FloorPlan, Room, PlacedFurniture } from './types';
 import { samplePlan } from './samplePlan';
 
 interface PlannerState {
@@ -12,6 +12,13 @@ interface PlannerState {
   updateRoom: (roomId: string, updates: Partial<Room>) => void;
   addRoom: (room: Room) => void;
   deleteRoom: (roomId: string) => void;
+  selectedFurnitureId: string | null;
+  setSelectedFurnitureId: (id: string | null) => void;
+  addFurniture: (roomId: string, furniture: PlacedFurniture) => void;
+  updateFurniture: (roomId: string, instanceId: string, updates: Partial<PlacedFurniture>) => void;
+  deleteFurniture: (roomId: string, instanceId: string) => void;
+  transformMode: 'translate' | 'rotate';
+  setTransformMode: (mode: 'translate' | 'rotate') => void;
 }
 
 export const usePlannerStore = create<PlannerState>((set) => ({
@@ -41,5 +48,51 @@ export const usePlannerStore = create<PlannerState>((set) => ({
         rooms: state.plan.rooms.filter((r) => r.id !== roomId),
       },
       selectedRoomId: state.selectedRoomId === roomId ? null : state.selectedRoomId,
+    })),
+  transformMode: 'translate',
+  setTransformMode: (mode) => set({ transformMode: mode }),
+  selectedFurnitureId: null,
+  setSelectedFurnitureId: (id) => set({ selectedFurnitureId: id }),
+  addFurniture: (roomId, furniture) =>
+    set((state) => ({
+      plan: {
+        ...state.plan,
+        rooms: state.plan.rooms.map((r) =>
+          r.id === roomId
+            ? { ...r, furniture: [...(r.furniture || []), furniture] }
+            : r
+        ),
+      },
+    })),
+  updateFurniture: (roomId, instanceId, updates) =>
+    set((state) => ({
+      plan: {
+        ...state.plan,
+        rooms: state.plan.rooms.map((r) =>
+          r.id === roomId && r.furniture
+            ? {
+                ...r,
+                furniture: r.furniture.map((f) =>
+                  f.instanceId === instanceId ? { ...f, ...updates } : f
+                ),
+              }
+            : r
+        ),
+      },
+    })),
+  deleteFurniture: (roomId, instanceId) =>
+    set((state) => ({
+      plan: {
+        ...state.plan,
+        rooms: state.plan.rooms.map((r) =>
+          r.id === roomId && r.furniture
+            ? {
+                ...r,
+                furniture: r.furniture.filter((f) => f.instanceId !== instanceId),
+              }
+            : r
+        ),
+      },
+      selectedFurnitureId: state.selectedFurnitureId === instanceId ? null : state.selectedFurnitureId,
     })),
 }));

@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Info, Save, FolderOpen, Plus, Trash2 } from 'lucide-react';
+import { Info, Save, FolderOpen, Plus, Trash2, Box, Move, RotateCw, ShoppingCart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,6 +20,8 @@ import { useNavigate } from 'react-router-dom';
 import { Room } from '@/components/planner/types';
 import { Input } from '@/components/ui/input';
 import { fallbackPaints, fallbackFloors, PaintSwatch, FloorMaterial } from '@/components/planner/materialsLibrary';
+import { furnitureLibrary } from '@/components/planner/furnitureLibrary';
+import { BomSummary } from '@/components/planner/BomSummary';
 
 const calculateArea = (polygon: [number, number][]): number => {
   let area = 0;
@@ -41,8 +43,9 @@ const isWebGLAvailable = (): boolean => {
 };
 
 const Planner = () => {
-  const { mode, plan, selectedRoomId, setMode, setPlan, setSelectedRoomId, updateRoom, addRoom, deleteRoom } = usePlannerStore();
+  const { plan, setPlan, mode, setMode, selectedRoomId, setSelectedRoomId, updateRoom, addRoom, deleteRoom, addFurniture, deleteFurniture, selectedFurnitureId, transformMode, setTransformMode } = usePlannerStore();
   const [saveDialogOpen, setSaveDialogOpen] = React.useState(false);
+  const [bomOpen, setBomOpen] = React.useState(false);
   const { isAuthenticated, userId } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -218,6 +221,10 @@ const Planner = () => {
               <Save className="w-4 h-4 mr-2" /> Save
             </Button>
             
+            <Button onClick={() => setBomOpen(true)} className="bg-primary hover:bg-primary/90">
+              <ShoppingCart className="w-4 h-4 mr-2" /> Review & Build
+            </Button>
+            
             <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
               <DialogContent>
                 <DialogHeader>
@@ -311,10 +318,11 @@ const Planner = () => {
                 {selectedRoom ? (
                   <div className="flex flex-col h-full gap-4">
                     <Tabs defaultValue="general" className="flex flex-col flex-1 min-h-0">
-                      <TabsList className="w-full grid grid-cols-3 shrink-0">
+                      <TabsList className="w-full grid grid-cols-4 shrink-0">
                         <TabsTrigger value="general">General</TabsTrigger>
-                        <TabsTrigger value="walls">3D Walls</TabsTrigger>
-                        <TabsTrigger value="floor">3D Floor</TabsTrigger>
+                        <TabsTrigger value="walls">Walls</TabsTrigger>
+                        <TabsTrigger value="floor">Floor</TabsTrigger>
+                        <TabsTrigger value="furnish">Furnish</TabsTrigger>
                       </TabsList>
                       
                       <TabsContent value="general" className="flex-1 overflow-y-auto mt-4 pr-1 space-y-6">
@@ -397,19 +405,85 @@ const Planner = () => {
                           ))}
                         </div>
                       </TabsContent>
+
+                      <TabsContent value="furnish" className="flex-1 overflow-y-auto mt-4 pr-1">
+                        <div className="grid grid-cols-2 gap-3 pb-1">
+                          {furnitureLibrary.map(item => (
+                            <button
+                              key={item.id}
+                              onClick={() => {
+                                let cx = 0, cz = 0;
+                                selectedRoom.polygon.forEach(p => {
+                                  cx += p[0];
+                                  cz += p[1];
+                                });
+                                cx /= selectedRoom.polygon.length;
+                                cz /= selectedRoom.polygon.length;
+                                
+                                // Place items in a tidy grid 1.5 meters apart based on existing count
+                                const existingCount = selectedRoom.furniture?.length || 0;
+                                const offsetX = ((existingCount % 3) - 1) * 1.5; 
+                                const offsetZ = (Math.floor(existingCount / 3) - 1) * 1.5;
+                                
+                                addFurniture(selectedRoom.id, {
+                                  instanceId: crypto.randomUUID(),
+                                  libraryId: item.id,
+                                  position: [cx + offsetX, 0, cz + offsetZ],
+                                  rotationY: 0,
+                                  scale: item.defaultScale,
+                                });
+                              }}
+                              className="text-left p-2 rounded-lg border-2 border-gray-100 hover:border-gray-300 transition-all flex flex-col items-center justify-center text-center bg-white"
+                            >
+                              <div className="w-12 h-12 bg-gray-100 rounded mb-2 flex items-center justify-center text-gray-400">
+                                <Box className="w-6 h-6" />
+                              </div>
+                              <p className="text-xs font-semibold truncate w-full" title={item.name}>{item.name}</p>
+                              <p className="text-[10px] text-gray-500 capitalize">{item.category}</p>
+                            </button>
+                          ))}
+                        </div>
+                      </TabsContent>
                     </Tabs>
 
                     <div className="shrink-0 mt-auto pt-2 space-y-4">
-                      <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
-                        <p className="text-sm text-amber-800 font-medium mb-1">Floor Area</p>
-                        <div className="flex items-end gap-2">
-                          <span className="text-3xl font-bold text-amber-900">{areaSqFt.toFixed(1)}</span>
-                          <span className="text-amber-700 pb-1">sq ft</span>
+                      {selectedFurnitureId ? (
+                        <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 flex flex-col gap-3">
+                          <p className="text-sm text-blue-800 font-medium">Selected Furniture</p>
+                          <div className="flex gap-2">
+                            <Button 
+                              variant={transformMode === 'translate' ? 'default' : 'outline'} 
+                              size="sm" 
+                              className="flex-1"
+                              onClick={() => setTransformMode('translate')}
+                            >
+                              <Move className="w-4 h-4 mr-2" /> Move
+                            </Button>
+                            <Button 
+                              variant={transformMode === 'rotate' ? 'default' : 'outline'} 
+                              size="sm" 
+                              className="flex-1"
+                              onClick={() => setTransformMode('rotate')}
+                            >
+                              <RotateCw className="w-4 h-4 mr-2" /> Rotate
+                            </Button>
+                          </div>
+                          <Button variant="destructive" size="sm" onClick={() => deleteFurniture(selectedRoom.id, selectedFurnitureId)}>
+                            <Trash2 className="w-4 h-4 mr-2" /> Delete Item
+                          </Button>
                         </div>
-                        <p className="text-xs text-amber-600 mt-1">({areaSqMeters.toFixed(1)} m²)</p>
-                      </div>
+                      ) : (
+                        <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                          <p className="text-sm text-amber-800 font-medium mb-1">Floor Area</p>
+                          <div className="flex items-end gap-2">
+                            <span className="text-3xl font-bold text-amber-900">{areaSqFt.toFixed(1)}</span>
+                            <span className="text-amber-700 pb-1">sq ft</span>
+                          </div>
+                          <p className="text-xs text-amber-600 mt-1">({areaSqMeters.toFixed(1)} m²)</p>
+                        </div>
+                      )}
   
-                      <Button variant="destructive" className="w-full" onClick={() => deleteRoom(selectedRoom.id)}>
+                      <Button variant="outline" className="w-full text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => deleteRoom(selectedRoom.id)}>
                         <Trash2 className="w-4 h-4 mr-2" /> Delete Room
                       </Button>
                     </div>
@@ -425,6 +499,7 @@ const Planner = () => {
           </div>
         </div>
       </div>
+      <BomSummary open={bomOpen} onOpenChange={setBomOpen} />
     </Layout>
   );
 };
