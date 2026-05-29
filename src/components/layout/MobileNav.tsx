@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, LayoutGrid, Package, User } from "lucide-react";
+import { Home, LayoutGrid, Package, User, Box } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const MobileNav = () => {
@@ -21,6 +21,7 @@ export const MobileNav = () => {
 
   const navItems = [
     { name: "Home", path: "/", icon: Home },
+    { name: "Planner", path: "/planner", icon: Box },
     { name: "Designs", path: "/designs", icon: LayoutGrid },
     { name: "Materials", path: "/materials", icon: Package },
     { name: "Profile", path: userId ? "/profile" : "/auth?mode=login", icon: User },

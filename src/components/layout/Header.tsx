@@ -11,6 +11,7 @@ import { logoIcon } from "@/lib/cdnImages";
 
 const navLinks = [
   { name: "Home", path: "/" },
+  { name: "3D Planner", path: "/planner" },
   { name: "Designs Catalog", path: "/designs" },
   { name: "Raw Materials", path: "/materials" },
   { name: "About", path: "/about" },
