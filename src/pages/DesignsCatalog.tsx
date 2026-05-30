@@ -351,13 +351,13 @@ const DesignsCatalog = () => {
           </aside>
 
           {/* Content Canvas */}
-          <section className="flex-1 p-0 md:p-8 md:px-16 md:pt-8 md:pb-4 bg-[#fcf9f6]">
+          <section className="flex-1 p-0 md:p-8 lg:px-8 xl:px-16 md:pt-8 md:pb-4 bg-[#fcf9f6]">
 
             {/* Header - Hidden on mobile, handled by mobile top bar */}
             <header className="hidden md:block mb-8">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <div className="max-w-2xl">
-                  <h1 className="text-6xl md:text-8xl font-headline tracking-tight leading-none mb-6 whitespace-nowrap">
+                <div className="max-w-2xl overflow-hidden">
+                  <h1 className="text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-headline tracking-tight leading-none mb-6">
                     Designs <span className="italic">Catalog</span>
                   </h1>
                 </div>
@@ -386,7 +386,7 @@ const DesignsCatalog = () => {
                   </button>
                 </motion.div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-x-8 md:gap-y-16 px-4 md:px-0">
+                <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-x-8 md:gap-y-16 px-4 md:px-0">
                   {filteredDesigns.map((design, index) => {
                     const isFeatured = design.featured && index === 0;
 

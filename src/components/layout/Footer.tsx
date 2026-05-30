@@ -63,7 +63,7 @@ const trustBadges = [
 
 export const Footer = () => {
   return (
-    <footer className="bg-[#1c1c1a] text-[#f6f3f0] border-t border-white/5 font-body">
+    <footer className="w-full bg-[#1c1c1a] text-[#f6f3f0] border-t border-white/5 font-body">
       <div className="container mx-auto px-4 py-5">
         {/* Logo — centered above the columns */}
         <motion.div
@@ -135,7 +135,8 @@ export const Footer = () => {
                 <motion.li className="flex items-center gap-2" variants={itemVariants}>
                   <Mail className="w-3 h-3 text-[#735c00] shrink-0" />
                   <a href="mailto:techie.adi47@gmail.com" className="text-[11px] text-[#74777d] hover:text-white transition-colors font-medium break-all">
-                    techie.adi47@gmail.com
+                    <span className="lg:hidden">Mail us</span>
+                    <span className="hidden lg:inline">techie.adi47@gmail.com</span>
                   </a>
                 </motion.li>
                 <motion.li className="flex items-center gap-2" variants={itemVariants}>
