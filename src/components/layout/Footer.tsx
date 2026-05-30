@@ -142,13 +142,13 @@ export const Footer = () => {
                 <motion.li className="flex items-center gap-2" variants={itemVariants}>
                   <Phone className="w-3 h-3 text-[#735c00] shrink-0" />
                   <a href="tel:+919521259456" className="text-[11px] text-[#74777d] hover:text-white transition-colors font-medium">
-                    +91 9521259456
+                    9521259456
                   </a>
                 </motion.li>
                 <motion.li className="flex items-center gap-2" variants={itemVariants}>
                   <Phone className="w-3 h-3 text-[#735c00] shrink-0" />
                   <a href="tel:+917309958494" className="text-[11px] text-[#74777d] hover:text-white transition-colors font-medium">
-                    +91 7309958494
+                    7309958494
                   </a>
                 </motion.li>
               </ul>
