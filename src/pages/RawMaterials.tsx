@@ -218,8 +218,9 @@ const RawMaterials = () => {
       </Helmet>
 
       <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative">
-        {/* Mobile Top Navigation (Search + Button) */}
-        <div className="md:hidden flex flex-col px-4 pt-4 pb-2 bg-[#fcf9f6] space-y-4 sticky top-0 z-20 shadow-sm border-b border-[#e5e2df]">
+        <main className="max-w-[1920px] mx-auto flex flex-col md:flex-row min-h-screen relative">
+          {/* Mobile Top Navigation (Search + Button) */}
+          <div className="md:hidden flex flex-col px-4 pt-4 pb-2 bg-[#fcf9f6] space-y-4 sticky top-0 z-20 shadow-sm border-b border-[#e5e2df]">
           <div className="flex items-center gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
@@ -263,112 +264,116 @@ const RawMaterials = () => {
           <Sliders className="w-6 h-6" />
         </button>
 
-        <main className="max-w-[1440px] mx-auto px-4 md:px-12 py-0 md:pt-8 md:pb-20">
-          {/* Header */}
-          <header className="hidden md:flex mb-6 md:mb-8 flex-row items-end justify-between gap-8">
-            <div className="max-w-2xl">
-              <h1 className="text-6xl md:text-8xl font-headline tracking-tight leading-none">
-                Raw <span className="italic">Materials</span>
-              </h1>
+        {/* Desktop Sidebar Filter */}
+        <aside className="hidden w-80 px-4 py-8 pt-6 md:px-5 md:flex flex-col gap-4 bg-[#f6f3f0] border-r border-[#e5e2df] shrink-0 sticky top-0 h-auto">
+          <div className="flex flex-col gap-6 md:gap-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-headline italic text-2xl">Filters</h2>
+              {(selectedCategory !== null || searchQuery !== "") && (
+                <button
+                  onClick={() => {
+                    setSelectedCategory(null);
+                    setSearchQuery("");
+                  }}
+                  className="font-body text-[10px] font-bold uppercase tracking-widest text-[#74777d] hover:text-[#735c00]"
+                >
+                  Clear All
+                </button>
+              )}
             </div>
 
-            {/* Search Input inline with header */}
-            <div className="relative w-64 shrink-0">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+            <div className="relative w-full md:w-[85%]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
               <input
-                className="pl-12 pr-4 py-3 bg-[#f6f3f0] border-none focus:ring-1 focus:ring-[#735c00] rounded-full text-sm w-full outline-none font-body shadow-inner"
+                className="pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded text-sm w-full outline-none font-body shadow-sm"
                 placeholder="Search materials..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 type="text"
               />
             </div>
-          </header>
+          </div>
 
-          {/* Bento Features Removed as per request */}
+          <div className="space-y-4 md:space-y-3 pt-4 border-t border-[#e5e2df]">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Categories</h3>
+            <div className="flex flex-col gap-3 md:gap-2">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="desktopCategory"
+                  checked={selectedCategory === null}
+                  onChange={() => setSelectedCategory(null)}
+                  className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                />
+                <span className={`text-sm font-medium transition-colors ${selectedCategory === null ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
+                  All Materials
+                </span>
+              </label>
+              {categories.map(cat => {
+                const Icon = cat.icon;
+                return (
+                  <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
+                    <input
+                      type="radio"
+                      name="desktopCategory"
+                      checked={selectedCategory === cat.id}
+                      onChange={() => setSelectedCategory(cat.id)}
+                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                    />
+                    <Icon className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#74777d] group-hover:text-[#735c00]'}`} />
+                    <span className={`text-sm font-medium transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
+                      {cat.name}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
 
-          <div className="flex flex-col lg:flex-row gap-12 mt-4 md:mt-6">
-            {/* Sidebar Categories */}
-            <aside className="hidden lg:block lg:w-64 flex-shrink-0">
-              <div className="sticky top-32">
-                <div className="flex justify-between items-end mb-8">
-                  <h4 className="font-body text-[10px] uppercase tracking-[0.2em] text-[#74777d] font-bold">
-                    Categories
-                  </h4>
-                  {selectedCategory && (
-                    <button
-                      onClick={() => setSelectedCategory(null)}
-                      className="text-[10px] text-[#74777d] border-b border-[#74777d] pb-[1px] hover:text-black"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
-                <ul className="space-y-6">
-                  {categories.map((cat) => {
-                    const Icon = cat.icon;
-                    return (
-                      <li key={cat.id}>
-                        <button
-                          onClick={() => setSelectedCategory(cat.id)}
-                          className={`flex items-center justify-between w-full group relative py-1 ${selectedCategory === cat.id ? "text-[#735c00]" : "text-[#1c1c1a]"}`}
-                        >
-                          <div className="flex items-center gap-3 relative z-10">
-                            <Icon
-                              className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? "text-[#735c00]" : "text-[#74777d] group-hover:text-[#735c00]"}`}
-                            />
-                            <span
-                              className={`font-headline text-xl italic group-hover:text-[#735c00] transition-colors`}
-                            >
-                              {cat.name}
-                            </span>
-                          </div>
-                          {selectedCategory === cat.id && (
-                            <motion.div
-                              layoutId="active-category-underline"
-                              className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#735c00] z-0"
-                              transition={{
-                                type: "spring",
-                                bounce: 0.2,
-                                duration: 0.6,
-                              }}
-                            />
-                          )}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
+          {/* Featured Ad inside Sidebar */}
+          <div className="mt-8 p-6 bg-white border border-[#e5e2df] rounded-lg">
+            <h5 className="font-bold mb-3 font-headline italic text-lg">
+              Featured Material
+            </h5>
+            <img
+              src={woodPlanksImg}
+              alt="Veneer"
+              loading="lazy"
+              width={400}
+              height={400}
+              className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply"
+            />
+            <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">
+              Discover the 2024 Architectural Digest choice for
+              sustainable veneers.
+            </p>
+            <a
+              href="#"
+              className="font-body text-[10px] font-bold uppercase text-[#735c00] flex items-center gap-1 hover:underline"
+            >
+              Read Monograph <ArrowUpRight className="w-3 h-3" />
+            </a>
+          </div>
+        </aside>
 
-                {/* Featured Ad inside Sidebar */}
-                <div className="mt-16 p-6 bg-[#f6f3f0] rounded-lg">
-                  <h5 className="font-bold mb-3 font-headline italic text-lg">
-                    Featured Material
-                  </h5>
-                  <img
-                    src={woodPlanksImg}
-                    alt="Veneer"
-                    loading="lazy"
-                    width={400}
-                    height={400}
-                    className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply"
-                  />
-                  <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">
-                    Discover the 2024 Architectural Digest choice for
-                    sustainable veneers.
-                  </p>
-                  <a
-                    href="#"
-                    className="font-body text-[10px] font-bold uppercase text-[#735c00] flex items-center gap-1 hover:underline"
-                  >
-                    Read Monograph <ArrowUpRight className="w-3 h-3" />
-                  </a>
-                </div>
+        {/* Content Canvas */}
+        <section className="flex-1 p-0 md:p-8 lg:px-8 xl:px-16 md:pt-8 md:pb-4 bg-[#fcf9f6]">
+          {/* Header - Hidden on mobile, handled by mobile top bar */}
+          <header className="hidden md:block mb-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+              <div>
+                <h1 className="text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-headline tracking-tight leading-none mb-6 whitespace-nowrap">
+                  Raw <span className="italic">Materials</span>
+                </h1>
               </div>
-            </aside>
-
-            {/* Catalog Grid */}
-            <div className="flex-grow">
+              <div className="flex shrink-0">
+                <span className="px-5 py-2.5 bg-[#eae8e5] rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#735c00]"></span>
+                  {totalCount} MATERIALS AVAILABLE
+                </span>
+              </div>
+            </div>
+          </header>
               <AnimatePresence mode="wait">
                 {isLoadingReq || isLoadingSup ? (
                   <motion.div
@@ -560,10 +565,10 @@ const RawMaterials = () => {
                   </div>
                 </div>
               )}
-            </div>
-          </div>
 
-          {/* Mobile Bottom Sheet for Filters */}
+        </section>
+
+        {/* Mobile Bottom Sheet for Filters */}
           <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
             <SheetContent
               className="overflow-y-auto w-full md:hidden bg-[#fcf9f6] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl"
