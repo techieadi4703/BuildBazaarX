@@ -227,7 +227,7 @@ export const LeadCaptureForm = ({
                   disabled={isSubmitting}
                 >
                   <span className="relative z-10 flex items-center gap-2">
-                    {isSubmitting ? "Submitting..." : "Initiate Free Consultation"}
+                    {isSubmitting ? "Submitting..." : "Get Free Consultation"}
                   </span>
                   <motion.div 
                     className="absolute inset-0 bg-white/10"

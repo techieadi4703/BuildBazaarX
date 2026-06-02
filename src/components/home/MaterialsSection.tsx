@@ -49,11 +49,10 @@ export const MaterialsSection = () => {
         <Reveal width="100%" direction="up">
           <div className="text-center mb-8 px-4">
             <h2 className="text-xl md:text-2xl font-black text-[#0B132B] tracking-widest uppercase mb-3">
-              VERIFIED MATERIALS: INVENTORY SHOWCASE
+              Top Materials Collection
             </h2>
             <p className="text-[#0B132B]/60 text-sm font-medium">
-              Premium brand cards update protocol and available commit to
-              materials initiatives.
+              Explore our handpicked selection of premium materials for your project.
             </p>
           </div>
         </Reveal>

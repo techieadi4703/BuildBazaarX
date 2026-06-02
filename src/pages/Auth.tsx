@@ -77,12 +77,12 @@ export default function Auth() {
             })
             .eq("id", data.user.id);
 
-          toast({ title: "Identity Established", description: "Verification email dispatched." });
+          toast({ title: "Account Created", description: "Verification email sent." });
           navigate("/");
         }
       }
     } catch (error: any) {
-      toast({ variant: "destructive", title: "Authentication Denied", description: error.message });
+      toast({ variant: "destructive", title: "Login Failed", description: error.message });
     } finally {
       setIsLoading(false);
     }
@@ -103,20 +103,20 @@ export default function Auth() {
           <div className="flex flex-col md:flex-row gap-8 md:gap-24 items-start">
             
             <div className="w-full md:w-1/3 shrink-0 md:sticky md:top-32">
-               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[#735c00] mb-4 block font-bold">Client Registry</span>
+               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[#735c00] mb-4 block font-bold">Account</span>
                <h1 className="text-6xl md:text-7xl font-headline tracking-tight leading-none mb-6">
-                Customer <br/><span className="italic">{isLogin ? "Portal." : "Onboarding."}</span>
+                Customer <br/><span className="italic">{isLogin ? "Login." : "Signup."}</span>
               </h1>
                <div className="w-12 h-[1px] bg-[#c4c6cc] mb-6"></div>
               <p className="text-lg font-body text-[#44474c] leading-relaxed max-w-sm">
                 {isLogin 
-                  ? "Re-establish your connection to access curated architectural blueprints and material logistics." 
-                  : "Join the elite network of developers and homeowners sourcing premium structural designs."}
+                  ? "Log in to your account to access our platform." 
+                  : "Create an account to join our platform."}
               </p>
               
               <div className="mt-12 space-y-4">
                 <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-[#74777d]">
-                  <ShieldCheck className="w-4 h-4 text-[#735c00]" /> 256-bit Encrypted Session
+                  <ShieldCheck className="w-4 h-4 text-[#735c00]" /> Secure Session
                 </div>
               </div>
             </div>
@@ -130,14 +130,14 @@ export default function Auth() {
                 <form onSubmit={handleAuth} className="space-y-5 md:space-y-8">
                   {!isLogin && (
                     <div className="space-y-2">
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Full Nomenclature</label>
+                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Full Name</label>
                       <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
                         <input 
                           required
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
-                          placeholder="Johnathan Doe"
+                          placeholder="John Doe"
                           className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
                         />
                       </div>
@@ -145,7 +145,7 @@ export default function Auth() {
                   )}
 
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Identity Email</label>
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Email Address</label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
                       <input 
@@ -153,14 +153,14 @@ export default function Auth() {
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="identity@matrix.com"
+                        placeholder="you@example.com"
                         className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Security Key</label>
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Password</label>
                     <div className="relative">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
                       <input 
@@ -179,20 +179,20 @@ export default function Auth() {
                     disabled={isLoading}
                     className="w-full h-14 bg-[#1c1c1a] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#735c00] transition-all flex items-center justify-center gap-3 group"
                   >
-                    {isLoading ? "Authenticating..." : isLogin ? "Access Portal" : "Establish Identity"}
+                    {isLoading ? "Loading..." : isLogin ? "Log In" : "Sign Up"}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </form>
 
                 <div className="mt-6 md:mt-12 pt-6 md:pt-8 border-t border-[#e5e2df] flex items-center justify-between">
                   <span className="text-[10px] uppercase font-bold tracking-widest text-[#74777d]">
-                    {isLogin ? "No active profile?" : "Existing operative?"}
+                    {isLogin ? "Don't have an account?" : "Already have an account?"}
                   </span>
                   <button 
                     onClick={() => setIsLogin(!isLogin)}
                     className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4"
                   >
-                    {isLogin ? "Initialize Registration" : "Portal Access"}
+                    {isLogin ? "Sign Up" : "Log In"}
                   </button>
                 </div>
               </motion.div>

@@ -32,7 +32,7 @@ import { motion } from "framer-motion";
 const contactInfo = [
   {
     icon: Phone,
-    title: "Direct Hotlines",
+    title: "Phone",
     values: [
       { text: "+91 9521259456", link: "tel:+919521259456" },
       { text: "+91 7309958494", link: "tel:+917309958494" }
@@ -42,7 +42,7 @@ const contactInfo = [
   {
     icon: Mail,
     
-    title: "Official Email",
+    title: "Email",
     values: [
       { text: "jangidrahul9829@gmail.com", link: "mailto:jangidrahul9829@gmail.com" },
       { text: "techie.adi47@gmail.com", link: "mailto:techie.adi47@gmail.com" }
@@ -51,7 +51,7 @@ const contactInfo = [
   },
   {
     icon: MapPin,
-    title: "Headquarters",
+    title: "Office",
     values: [
       { text: "Jaipur, Rajasthan, India", link: null }
     ],
@@ -59,7 +59,7 @@ const contactInfo = [
   },
   {
     icon: Clock,
-    title: "Availability",
+    title: "Hours",
     values: [
       { text: "Mon - Sat: 10 AM – 7 PM", link: null }
     ],
@@ -75,10 +75,10 @@ const services = [
 ];
 
 const trustPoints = [
-  "Free Algorithmic Estimate",
-  "Priority 24h Response",
-  "Verified Subject Experts",
-  "100% Data Fidelity",
+  "Free Estimate",
+  "24h Response",
+  "Verified Experts",
+  "100% Data Security",
 ];
 
 const Contact = () => {
@@ -183,13 +183,13 @@ const Contact = () => {
           <Reveal width="100%" direction="up">
             <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
               <span className="font-mono text-[10px] md:text-xs text-[#C5A572] uppercase tracking-[0.5em] mb-6 block border border-[#C5A572]/30 px-4 py-1.5 rounded-full bg-[#C5A572]/10 backdrop-blur-sm">
-                Communication_Link
+                Contact Us
               </span>
               <h1 className="text-5xl md:text-8xl font-black text-white mb-6 tracking-tighter leading-[1.1]">
-                Deploy Your <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-white to-[#C5A572]">Vision.</span>
+                Share Your <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-white to-[#C5A572]">Ideas.</span>
               </h1>
               <p className="text-white/60 max-w-2xl mx-auto text-lg md:text-2xl font-medium leading-relaxed">
-                Connect with the engineering vanguard. Transmit your project parameters for a highly customized architectural assessment.
+                Connect with our experts. Share your project details for a personalized plan.
               </p>
             </div>
           </Reveal>
@@ -205,9 +205,9 @@ const Contact = () => {
             <div className="lg:col-span-6">
               <Reveal width="100%" direction="up">
                 <div className="mb-5 md:mb-10">
-                  <h2 className="text-4xl font-black text-black mb-4 tracking-tighter">Submit Execution Request</h2>
+                  <h2 className="text-4xl font-black text-black mb-4 tracking-tighter">Submit Request</h2>
                   <p className="text-black/60 text-lg font-medium">
-                    Input your primary parameters below. Action protocols proceed strictly within 24 operational hours.
+                    Enter your details below. We will get back to you within 24 hours.
                   </p>
                 </div>
               </Reveal>
@@ -285,13 +285,13 @@ const Contact = () => {
                 <div className="grid sm:grid-cols-2 gap-4 md:gap-8 relative z-10">
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="service" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Target Service</Label>
+                      <Label htmlFor="service" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Service</Label>
                       <Select
                         value={formData.service}
                         onValueChange={(value) => setFormData({ ...formData, service: value })}
                       >
                         <SelectTrigger id="service" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-sm px-5">
-                          <SelectValue placeholder="Select target parameter" />
+                          <SelectValue placeholder="Select service" />
                         </SelectTrigger>
                         <SelectContent className="rounded-xl bg-white text-black border-transparent shadow-xl">
                           {services.map((service) => (
@@ -305,13 +305,13 @@ const Contact = () => {
                   </RevealItem>
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="budget" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Capital Allocation</Label>
+                      <Label htmlFor="budget" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Budget</Label>
                       <Select
                         value={formData.budget}
                         onValueChange={(value) => setFormData({ ...formData, budget: value })}
                       >
                         <SelectTrigger id="budget" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-sm px-5">
-                          <SelectValue placeholder="Select capital bounds" />
+                          <SelectValue placeholder="Select budget" />
                         </SelectTrigger>
                         <SelectContent className="rounded-xl bg-white text-black border-transparent shadow-xl">
                           <SelectItem value="under-2l" className="rounded-lg hover:bg-black/5 cursor-pointer">Under ₹2 Lakh</SelectItem>
@@ -327,10 +327,10 @@ const Contact = () => {
 
                 <RevealItem>
                   <div className="space-y-3 relative z-10">
-                    <Label htmlFor="message" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Architectural Brief</Label>
+                    <Label htmlFor="message" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Message</Label>
                     <Textarea
                       id="message"
-                      placeholder="Specify blueprint dimensions, materials required, and ultimate vision details..."
+                      placeholder="Tell us about your project..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       rows={5}
@@ -342,7 +342,7 @@ const Contact = () => {
                 <RevealItem>
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-6 border-t border-black/10 relative z-10">
                     <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/50 max-w-[240px]">
-                      By deploying this request, you accept full operational terms.
+                      By submitting this request, you agree to our terms.
                     </p>
                     <Button 
                       type="submit" 
@@ -357,7 +357,7 @@ const Contact = () => {
                           </>
                          ) : (
                           <>
-                           Execute Request
+                           Submit Request
                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                           </>
                          )}
@@ -419,14 +419,14 @@ const Contact = () => {
                       <MessageCircle className="w-10 h-10" />
                     </div>
                     <div>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#C5A572] block mb-2">Priority_Comms</span>
-                      <h3 className="text-2xl font-black text-white mb-2 leading-none">Instant Bridge</h3>
+                      <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#C5A572] block mb-2">WhatsApp Support</span>
+                      <h3 className="text-2xl font-black text-white mb-2 leading-none">Chat With Us</h3>
                       <p className="text-white/60 font-medium text-sm mb-6 leading-relaxed">
-                        Access raw material logistics and architectural status in real-time.
+                        Get instant updates on your project and materials.
                       </p>
                       <Button className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold rounded-2xl shadow-lg shadow-green-500/20" asChild>
                         <a href="https://wa.me/919521259456" target="_blank" rel="noopener noreferrer">
-                          Engage Team
+                          Start Chat
                         </a>
                       </Button>
                     </div>
@@ -439,7 +439,7 @@ const Contact = () => {
                 <div className="p-8 pb-4">
                   <div className="flex items-center gap-3 mb-6">
                     <ShieldAlert className="w-5 h-5 text-[#C5A572]" />
-                    <h3 className="font-mono text-[10px] tracking-[0.2em] text-black/40 uppercase">Operational Integrity</h3>
+                    <h3 className="font-mono text-[10px] tracking-[0.2em] text-black/40 uppercase">Our Guarantees</h3>
                   </div>
                   <div className="space-y-4">
                     {trustPoints.map((point, index) => (
@@ -474,11 +474,11 @@ const Contact = () => {
                 <Fingerprint className="w-8 h-8 text-[#C5A572]" />
               </div>
               <p className="text-3xl md:text-5xl font-serif text-white leading-snug tracking-tight italic mb-10">
-                “Transparency is not an add-on; it is the structural integrity of <span className="text-[#C5A572]">BuildBazaarX</span>'s operations.”
+                “Transparency is the foundation of <span className="text-[#C5A572]">BuildBazaarX</span>.”
               </p>
               <div className="flex flex-col items-center">
-                <p className="font-black text-white uppercase tracking-widest text-sm mb-1">Executive Board</p>
-                <p className="text-xs text-white/50 font-medium font-mono uppercase">Jaipur Sector Control</p>
+                <p className="font-black text-white uppercase tracking-widest text-sm mb-1">Leadership</p>
+                <p className="text-xs text-white/50 font-medium font-mono uppercase">Jaipur Office</p>
               </div>
             </div>
           </Reveal>

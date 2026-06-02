@@ -82,7 +82,7 @@ export const Footer = () => {
             />
           </Link>
           <p className="text-[12px] text-[#74777d] leading-relaxed font-medium text-center max-w-xs">
-            A curated logistics layer and structural monograph network for avant-garde architectural execution.
+            A trusted network for materials and designs for modern home building.
           </p>
         </motion.div>
 

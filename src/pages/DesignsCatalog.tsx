@@ -188,7 +188,7 @@ const DesignsCatalog = () => {
       size: dbD.room_size || "Standard",
       style: dbD.style,
       totalCost: `₹${(dbD.total_cost || 0).toLocaleString('en-IN')}`,
-      time: "Variable",
+      time: "Flexible",
       featured: dbD.is_trending || false,
     }));
     return [...mappedDbDesigns];
@@ -272,7 +272,7 @@ const DesignsCatalog = () => {
           <aside className="hidden w-80 px-4 py-8 pt-6 md:px-5 md:flex flex-col gap-4 bg-[#f6f3f0] border-r border-[#e5e2df] shrink-0 sticky top-0 h-auto">
             <div className="flex flex-col gap-6 md:gap-4">
               <div className="flex items-center justify-between">
-                <h2 className="font-headline italic text-2xl">Curation Filter</h2>
+                <h2 className="font-headline italic text-2xl">Filters</h2>
                 {(selectedCategory !== "all" || selectedStyle !== "all" || searchQuery !== "") && (
                   <button
                     onClick={clearAllFilters}
@@ -297,7 +297,7 @@ const DesignsCatalog = () => {
 
             <div className="space-y-4 md:space-y-3">
               <div className="space-y-4 md:space-y-3">
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Spatial Category</h3>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Room Type</h3>
                 <div className="flex flex-col gap-3 md:gap-2">
                   {categories.map(cat => (
                     <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
@@ -317,7 +317,7 @@ const DesignsCatalog = () => {
               </div>
 
               <div className="space-y-4 md:space-y-3 pt-4 border-t border-[#e5e2df]">
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Architectural Styles</h3>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Design Style</h3>
                 <div className="flex flex-col gap-3 md:gap-2">
                   <label className="flex items-center gap-3 cursor-pointer group">
                     <input
@@ -356,15 +356,15 @@ const DesignsCatalog = () => {
             {/* Header - Hidden on mobile, handled by mobile top bar */}
             <header className="hidden md:block mb-8">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <div className="max-w-2xl overflow-hidden">
-                  <h1 className="text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-headline tracking-tight leading-none mb-6">
+                <div>
+                  <h1 className="text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-headline tracking-tight leading-none mb-6 whitespace-nowrap">
                     Designs <span className="italic">Catalog</span>
                   </h1>
                 </div>
                 <div className="flex shrink-0">
                   <span className="px-5 py-2.5 bg-[#eae8e5] rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#735c00]"></span>
-                    {allDesigns.length} DESIGNS ACTIVE
+                    {allDesigns.length} DESIGNS AVAILABLE
                   </span>
                 </div>
               </div>
@@ -413,7 +413,7 @@ const DesignsCatalog = () => {
                               <span className="bg-[#fcf9f6]/90 backdrop-blur-md px-2 py-1 md:px-4 md:py-2 rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest md:tracking-[0.2em] flex items-center gap-1 md:gap-2 shadow-sm border border-[#e5e2df]">
                                 <BadgeCheck className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#735c00] shrink-0" />
                                 <span className="md:hidden">Verified</span>
-                                <span className="hidden md:inline">Verified Blueprint</span>
+                                <span className="hidden md:inline">Verified Design</span>
                               </span>
                             </div>
                             {/* Like button removed from inside Link */}
@@ -421,7 +421,7 @@ const DesignsCatalog = () => {
                             {isFeatured && (
                               <div className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row justify-between items-end gap-4">
                                 <div className="bg-[#fcf9f6]/95 backdrop-blur-md p-6 rounded-lg max-w-sm w-full border border-[#e5e2df] shadow-lg">
-                                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00] mb-2">Featured Blueprint</h4>
+                                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#735c00] mb-2">Featured Design</h4>
                                   <h3 className="text-2xl font-headline font-bold mb-3">{design.name}</h3>
                                   <div className="flex items-center gap-4 text-[10px] font-bold uppercase opacity-60 tracking-wider">
                                     <span>{design.size}</span>
@@ -459,7 +459,7 @@ const DesignsCatalog = () => {
 
                               {/* Desktop full info */}
                               <div className="hidden md:flex flex-col flex-grow">
-                                <p className="text-sm text-[#44474c] line-clamp-2 leading-relaxed flex-grow">A masterclass in {design.style.toLowerCase()} luxury, focusing on spatial harmony and robust architectural detailing.</p>
+                                <p className="text-sm text-[#44474c] line-clamp-2 leading-relaxed flex-grow">A beautiful {design.style.toLowerCase()} design, focusing on comfortable living and great attention to detail.</p>
                                 <div className="flex items-center gap-5 text-[10px] font-bold uppercase tracking-widest opacity-60 pt-3 border-t border-[#e5e2df] mt-auto">
                                   <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {design.time}</span>
                                   <span className="flex items-center gap-1.5"><Compass className="w-3.5 h-3.5" /> {design.size}</span>
@@ -584,7 +584,7 @@ const DesignsCatalog = () => {
               <div className="space-y-4 md:space-y-3 pb-32">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center cursor-pointer group" onClick={() => toggleDropdown('draftCategory')}>
-                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Spatial Category</h3>
+                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Room Type</h3>
                     <ChevronDown className={`w-4 h-4 text-[#1c1c1a] opacity-60 transition-transform ${expandedMobileDropdown === 'draftCategory' ? 'rotate-180' : ''}`} />
                   </div>
                   <div className={`overflow-hidden transition-all duration-300 ${expandedMobileDropdown === 'draftCategory' ? 'max-h-96 opacity-100 flex flex-col gap-4' : 'max-h-0 opacity-0 hidden'}`}>
@@ -605,7 +605,7 @@ const DesignsCatalog = () => {
 
                 <div className="space-y-4 pt-4 border-t border-[#e5e2df]">
                   <div className="flex justify-between items-center cursor-pointer group" onClick={() => toggleDropdown('draftStyle')}>
-                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Architectural Styles</h3>
+                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-80">Design Style</h3>
                     <ChevronDown className={`w-4 h-4 text-[#1c1c1a] opacity-60 transition-transform ${expandedMobileDropdown === 'draftStyle' ? 'rotate-180' : ''}`} />
                   </div>
                   <div className={`overflow-hidden transition-all duration-300 ${expandedMobileDropdown === 'draftStyle' ? 'max-h-96 opacity-100 flex flex-col gap-4' : 'max-h-0 opacity-0 hidden'}`}>
