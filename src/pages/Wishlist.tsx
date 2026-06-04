@@ -32,7 +32,7 @@ const categoryFallbackImages: Record<string, string> = {
 };
 
 const getFallbackImage = (item: any) => {
-  if (item.id.startsWith("mat-") && item.category) {
+  if (typeof item?.id === "string" && item.id.startsWith("mat-") && item?.category) {
     return categoryFallbackImages[item.category.toLowerCase()] || plywoodImg;
   }
   return fullhomeImage;
@@ -78,8 +78,10 @@ const Wishlist = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {items.map((design) => {
-                const isMaterial = design.id.startsWith("mat-");
-                const linkTo = isMaterial ? `/raw-materials` : `/designs/${design.id.replace('db-', '')}`;
+                const isMaterial = typeof design?.id === "string" && design.id.startsWith("mat-");
+                const linkTo = isMaterial ? `/raw-materials` : `/designs/${typeof design?.id === "string" ? design.id.replace('db-', '') : ''}`;
+
+                if (!design || typeof design !== "object") return null;
 
                 return (
                 <motion.div 
@@ -92,8 +94,8 @@ const Wishlist = () => {
                 >
                   <Link to={linkTo} className="block relative aspect-[4/3] overflow-hidden bg-[#f6f3f0]">
                     <img 
-                      src={design.image} 
-                      alt={design.name} 
+                      src={design?.image || fullhomeImage} 
+                      alt={design?.name || "Design"} 
                       loading="lazy" decoding="async"
                       width={400}
                       height={300}
@@ -106,15 +108,15 @@ const Wishlist = () => {
                   <div className="p-5 flex flex-col flex-grow">
                     <div className="flex justify-between items-start mb-2">
                       <Link to={linkTo} className="hover:text-[#735c00] transition-colors">
-                        <h3 className="font-headline font-bold text-xl line-clamp-1">{design.name}</h3>
+                        <h3 className="font-headline font-bold text-xl line-clamp-1">{design?.name || "Unknown"}</h3>
                       </Link>
                     </div>
                     <div className="flex items-center gap-2 mb-4">
                       <span className="bg-[#f6f3f0] px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-[#74777d]">
-                        {design.category.replace("-", " ")}
+                        {typeof design?.category === "string" ? design.category.replace("-", " ") : "Unknown"}
                       </span>
                       <span className="bg-[#f6f3f0] px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-[#74777d]">
-                        {design.style}
+                        {design?.style || "Unknown"}
                       </span>
                     </div>
                     
@@ -123,7 +125,7 @@ const Wishlist = () => {
                         <Link to={linkTo}>View Details</Link>
                       </Button>
                       <button 
-                        onClick={(e) => { e.preventDefault(); removeFromWishlist(design.id); }}
+                        onClick={(e) => { e.preventDefault(); if (design?.id) removeFromWishlist(design.id); }}
                         className="text-[#74777d] hover:text-[#ba1a1a] transition-colors p-2 rounded-full hover:bg-[#ba1a1a]/10"
                         title="Remove from wishlist"
                       >

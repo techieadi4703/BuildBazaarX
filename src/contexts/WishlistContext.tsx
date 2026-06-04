@@ -32,7 +32,7 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
     // Store wishlist in the profiles table exactly like the cart does
     await supabase.from("profiles").upsert({
       id: uid,
-      wishlist: wishlistItems
+      wishlist: wishlistItems.map(item => typeof item?.id === "string" ? item.id.replace(/^db-/, "").replace(/^mat-/, "") : item?.id)
     }, { onConflict: "id" });
   }, []);
 
@@ -43,11 +43,82 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
       .eq("id", uid)
       .maybeSingle();
       
-    if (!error && data && Array.isArray(data.wishlist)) {
-      setItems(data.wishlist as WishlistItem[]);
-    } else {
+    if (error || !data || !Array.isArray(data.wishlist)) {
       setItems([]);
+      return;
     }
+
+    const rawWishlist = data.wishlist;
+    const wishlistIds = rawWishlist
+      .map((item: any) => {
+        if (typeof item === "string") return item;
+        if (item && typeof item === "object" && typeof item.id === "string") {
+          return item.id.replace(/^db-/, "").replace(/^mat-/, "");
+        }
+        return null;
+      })
+      .filter(Boolean) as string[];
+
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const uuids = wishlistIds.filter(id => uuidRegex.test(id));
+    
+    let designsData: any[] = [];
+    let materialsData: any[] = [];
+
+    if (uuids.length > 0) {
+      const [designsRes, materialsRes] = await Promise.all([
+        supabase.from("designs").select("*").in("id", uuids),
+        supabase.from("supplier_products").select("*").in("id", uuids)
+      ]);
+      if (designsRes.data) designsData = designsRes.data;
+      if (materialsRes.data) materialsData = materialsRes.data;
+    }
+
+    const builtItems: WishlistItem[] = [];
+    const processedIds = new Set<string>();
+
+    designsData.forEach(d => {
+      builtItems.push({
+        id: `db-${d.id}`,
+        name: d.name || "Unknown Design",
+        image: (d.images && d.images.length > 0) ? d.images[0] : "",
+        category: d.category || "design",
+        style: d.style || "Modern"
+      });
+      processedIds.add(d.id);
+    });
+
+    materialsData.forEach(m => {
+      builtItems.push({
+        id: `mat-${m.id}`,
+        name: m.name || "Unknown Material",
+        image: (m.images && m.images.length > 0) ? m.images[0] : "",
+        category: m.category || "material",
+        style: m.brand || "Standard"
+      });
+      processedIds.add(m.id);
+    });
+
+    // Fallback for missing items (legacy objects or local non-db items)
+    wishlistIds.forEach(id => {
+      if (!processedIds.has(id)) {
+        const original = rawWishlist.find((r: any) => 
+          typeof r === "object" && r !== null && 
+          (r.id === id || r.id === `db-${id}` || r.id === `mat-${id}`)
+        );
+        if (original) {
+          builtItems.push({
+            id: typeof original.id === "string" ? original.id : `db-${id}`,
+            name: original.name || "Unknown",
+            image: original.image || "",
+            category: original.category || "Unknown",
+            style: original.style || "Unknown"
+          });
+        }
+      }
+    });
+
+    setItems(builtItems);
   }, []);
 
   // ─── Auth state listener ──────────────────────────────────────────────
