@@ -1,9 +1,15 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { motion } from "framer-motion";
 
 interface PageTransitionProps {
   children: React.ReactNode;
 }
+
+const Fallback = () => (
+  <div className="h-screen w-full flex items-center justify-center">
+    <div className="w-8 h-8 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent"></div>
+  </div>
+);
 
 export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   return (
@@ -16,7 +22,9 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
         ease: [0.22, 1, 0.36, 1] // Custom cubic-bezier for premium feel
       }}
     >
-      {children}
+      <Suspense fallback={<Fallback />}>
+        {children}
+      </Suspense>
     </motion.div>
   );
 };

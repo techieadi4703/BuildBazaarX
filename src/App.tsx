@@ -59,7 +59,7 @@ const AnimatedRoutes = () => {
   }, [location.pathname]);
 
   return (
-    <AnimatePresence mode="popLayout">
+    <AnimatePresence>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
         <Route path="/designs" element={<PageTransition><DesignsCatalog /></PageTransition>} />
@@ -125,9 +125,7 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <ErrorBoundary>
-                <React.Suspense fallback={<div className="h-screen w-full flex items-center justify-center"><div className="w-8 h-8 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent"></div></div>}>
-                  <AnimatedRoutes />
-                </React.Suspense>
+                <AnimatedRoutes />
               </ErrorBoundary>
             </BrowserRouter>
           </TooltipProvider>
