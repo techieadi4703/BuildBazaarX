@@ -16,6 +16,8 @@ export const BeforeAfterSlider = ({ beforeImage, afterImage, className = '', lab
         loading="eager" fetchPriority="high"
         src={beforeImage}
         alt={`${label} - Before`}
+        width={1600}
+        height={900}
         className="absolute inset-0 w-full h-full object-cover rounded-lg"
       />
 
@@ -26,9 +28,11 @@ export const BeforeAfterSlider = ({ beforeImage, afterImage, className = '', lab
         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
       >
         <img
-          loading="eager" fetchPriority="high"
+          loading="eager"
           src={afterImage}
           alt={`${label} - After`}
+          width={1600}
+          height={900}
           className="absolute inset-0 w-full h-full object-cover rounded-lg"
         />
       </motion.div>

@@ -4,8 +4,8 @@ import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { BeforeAfterSlider } from "@/components/shared/BeforeAfterSlider";
-import afterImage from "@/assets/transformations/after.png"; // The furnished version
-import beforeImage from "@/assets/transformations/before.png"; // The unfurnished version
+import afterImage from "@/assets/transformations/after.webp"; // The furnished version
+import beforeImage from "@/assets/transformations/before.webp"; // The unfurnished version
 
 export const HeroSection = () => {
   return (

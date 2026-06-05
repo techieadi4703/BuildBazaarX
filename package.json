@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "upload-images": "tsx scripts/upload-images-to-cdn.ts"
+    "upload-images": "tsx scripts/upload-images-to-cdn.ts",
+    "optimize:hero": "tsx scripts/optimize-hero-images.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
