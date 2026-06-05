@@ -9,6 +9,7 @@ import {
   luxuryPaintImg,
   italianMarbleImg,
   smartSwitchImg,
+  cdnImg,
 } from "@/lib/cdnImages";
 
 const products = [
@@ -79,9 +80,10 @@ export const MaterialsSection = () => {
                       {/* Image */}
                       <div className="bg-white border border-[#0B132B]/5 rounded p-4 mb-6 flex-grow flex items-center justify-center">
                         <img
-                          src={product.image}
+                          src={cdnImg(product.image, 200)}
                           alt={product.brand}
                           loading="lazy"
+                          decoding="async"
                           width={200}
                           height={128}
                           className="w-full h-auto object-contain mix-blend-multiply max-h-32"

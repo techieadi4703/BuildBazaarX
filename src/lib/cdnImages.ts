@@ -1,6 +1,13 @@
 const PRODUCT_CDN = "https://iymwxolcoemdayahabou.supabase.co/storage/v1/object/public/product-images/";
 const DESIGN_CDN = "https://iymwxolcoemdayahabou.supabase.co/storage/v1/object/public/design-images/";
 
+// Supabase image transformation is not enabled on this tenant. 
+// Returning the original URL.
+export const cdnImg = (url: string, width = 600, quality = 72) => {
+  if (!url) return "";
+  return url;
+};
+
 export const woodPlanksImg = `${PRODUCT_CDN}wood_planks.webp`;
 export const luxuryPaintImg = `${PRODUCT_CDN}luxury_paint.webp`;
 export const italianMarbleImg = `${PRODUCT_CDN}italian_marble.webp`;

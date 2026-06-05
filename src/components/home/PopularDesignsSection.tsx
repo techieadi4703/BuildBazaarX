@@ -7,7 +7,7 @@ import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { livingroomImage } from "@/lib/cdnImages"; // Re-using as bathroom/garden placeholder if needed
-import { kitchenImage, bedroomImage, fullhomeImage } from "@/lib/cdnImages";
+import { kitchenImage, bedroomImage, fullhomeImage, cdnImg } from "@/lib/cdnImages";
 
 const designCategories = [
   {
@@ -72,8 +72,12 @@ export const PopularDesignsSection = () => {
                            {category.categoryId}
                          </div>
                          <motion.img
-                           src={category.image}
+                           src={cdnImg(category.image, 600)}
                            alt={category.title}
+                           loading="lazy"
+                           decoding="async"
+                           width={600}
+                           height={400}
                            initial={{ 
                              opacity: 0.5, 
                              filter: isMobile ? "grayscale(100%) blur(2px)" : "grayscale(100%)" 

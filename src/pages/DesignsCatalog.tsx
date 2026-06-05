@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
-import { kitchenImage, bedroomImage, livingroomImage, wardrobeImage, fullhomeImage } from "@/lib/cdnImages";
+import { kitchenImage, bedroomImage, livingroomImage, wardrobeImage, fullhomeImage, cdnImg } from "@/lib/cdnImages";
 
 // Images
 
@@ -401,7 +401,7 @@ const DesignsCatalog = () => {
                         <Link to={`/designs/${design.id}`} className="h-full flex flex-col bg-white md:bg-transparent rounded-2xl md:rounded-none overflow-hidden shadow-sm md:shadow-none border border-[#e5e2df] md:border-none relative">
                           <div className={`relative overflow-hidden bg-[#f6f3f0] md:mb-6 ${isFeatured ? 'aspect-[16/10]' : 'aspect-[4/5] md:aspect-square'}`}>
                             <img
-                              src={design.image}
+                              src={cdnImg(design.image, 600)}
                               alt={design.name}
                               loading="lazy"
                               width={800}

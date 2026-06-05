@@ -27,6 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { premiumProducts, otherProducts, allProducts as rawMaterialsData, Product, categories, getProductImage, woodPlanksImg } from "@/lib/rawMaterialsData";
+import { cdnImg } from "@/lib/cdnImages";
 import { Link } from "react-router-dom";
 
 const allProductsList: Product[] = [...rawMaterialsData].sort(() => Math.random() - 0.5);
@@ -336,11 +337,12 @@ const RawMaterials = () => {
               Featured Material
             </h5>
             <img
-              src={woodPlanksImg}
+              src={cdnImg(woodPlanksImg, 400)}
               alt="Veneer"
               loading="lazy"
               width={400}
               height={400}
+              decoding="async"
               className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply"
             />
             <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">
@@ -413,11 +415,12 @@ const RawMaterials = () => {
                         {/* Image Box */}
                         <div className="relative aspect-[4/5] overflow-hidden bg-[#f6f3f0]">
                           <img
-                            src={getProductImage(product)}
+                            src={cdnImg(getProductImage(product), 400)}
                             alt={product.brand || "Material"}
                             loading="lazy"
                             width={400}
                             height={500}
+                            decoding="async"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                           <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
