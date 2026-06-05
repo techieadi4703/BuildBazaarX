@@ -22,9 +22,12 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          motion: ['framer-motion'],
           supabase: ['@supabase/supabase-js'],
-          ui: ['lucide-react', 'recharts', 'embla-carousel-react'],
+          charts: ['recharts'],
+          icons: ['lucide-react'],
+          carousel: ['embla-carousel-react'],
         }
       }
     }
