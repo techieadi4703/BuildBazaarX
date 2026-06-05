@@ -34,7 +34,7 @@ const Index = () => {
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
       </Helmet>
-      <Reveal width="100%" direction="up"><HeroSection /></Reveal>
+      <HeroSection />
       <Reveal width="100%" direction="up"><HowItWorksSection /></Reveal>
       <Reveal width="100%" direction="up"><PopularDesignsSection /></Reveal>
       <Reveal width="100%" direction="up"><MaterialsSection /></Reveal>

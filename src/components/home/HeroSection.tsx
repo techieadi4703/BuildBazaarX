@@ -36,11 +36,8 @@ export const HeroSection = () => {
       <div className="container mx-auto px-4 relative z-10 flex flex-col items-center">
         
         {/* Architectural Image Presentation */}
-        <motion.div 
+        <div 
           className="relative w-full max-w-4xl mx-auto mb-16"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
         >
           {/* Decorative tech lines */}
           <div className="absolute -left-12 top-1/4 w-8 h-[1px] bg-[#C5A572]/50 hidden md:block" />
@@ -63,38 +60,39 @@ export const HeroSection = () => {
               />
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Copy */}
-        <motion.div 
-          className="text-center max-w-3xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
+        <div className="text-center max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-6xl text-white mb-6 leading-tight tracking-tight font-serif">
             Architectural <span className="text-[#C5A572]">Precision</span>. <br className="hidden md:block" />
             Total Transparency.
           </h1>
           
-          <p className="text-lg md:text-xl text-white/50 mb-10 max-w-2xl mx-auto leading-relaxed">
-            The data-driven platform for premium home construction and interiors. <br className="hidden md:block" />
-            Experience clarity from blueprint to build.
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <p className="text-lg md:text-xl text-white/50 mb-10 max-w-2xl mx-auto leading-relaxed">
+              The data-driven platform for premium home construction and interiors. <br className="hidden md:block" />
+              Experience clarity from blueprint to build.
+            </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Button size="lg" asChild className="bg-[#C5A572] hover:bg-[#B89456] text-[#0B132B] border-none px-10 py-6 text-sm font-bold uppercase tracking-widest rounded transition-all">
-              <Link to="/designs">
-                Explore Projects
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild className="border-white/20 text-white hover:bg-white/5 hover:text-white px-10 py-6 text-sm font-bold uppercase tracking-widest rounded transition-all bg-transparent">
-              <Link to="/about#methodology">
-                View Methodology
-              </Link>
-            </Button>
-          </div>
-        </motion.div>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Button size="lg" asChild className="bg-[#C5A572] hover:bg-[#B89456] text-[#0B132B] border-none px-10 py-6 text-sm font-bold uppercase tracking-widest rounded transition-all">
+                <Link to="/designs">
+                  Explore Projects
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="border-white/20 text-white hover:bg-white/5 hover:text-white px-10 py-6 text-sm font-bold uppercase tracking-widest rounded transition-all bg-transparent">
+                <Link to="/about#methodology">
+                  View Methodology
+                </Link>
+              </Button>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
