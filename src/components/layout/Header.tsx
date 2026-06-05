@@ -35,9 +35,6 @@ export const Header = () => {
 
   return (
     <motion.header 
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 100, damping: 20 }}
       className="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-primary/5 shadow-sm transition-all duration-300"
     >
       <div className="container mx-auto px-4">
