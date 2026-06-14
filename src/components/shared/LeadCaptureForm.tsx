@@ -54,11 +54,12 @@ export const LeadCaptureForm = ({
           .single();
 
         if (profile) {
+          const userProfile = profile as { full_name?: string; phone?: string; city?: string };
           setFormData(prev => ({
             ...prev,
-            name: profile.full_name || prev.name,
-            phone: profile.phone || prev.phone,
-            city: profile.city || prev.city,
+            name: userProfile.full_name || prev.name,
+            phone: userProfile.phone || prev.phone,
+            city: userProfile.city || prev.city,
           }));
         }
       }
