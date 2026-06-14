@@ -25,6 +25,9 @@ const Profile = React.lazy(() => import("./pages/Profile"));
 const Orders = React.lazy(() => import("./pages/Orders"));
 const Wishlist = React.lazy(() => import("./pages/Wishlist"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
+const PaymentSuccess = React.lazy(() => import("./pages/PaymentSuccess"));
+const PaymentFailed = React.lazy(() => import("./pages/PaymentFailed"));
+const PaymentHistory = React.lazy(() => import("./pages/PaymentHistory"));
 
 const AdminDashboard = React.lazy(() => import("./pages/admin/Dashboard"));
 const AdminUsers = React.lazy(() => import("./pages/admin/Users"));
@@ -79,6 +82,11 @@ const AnimatedRoutes = () => {
             <PageTransition><Orders /></PageTransition>
           </ProtectedRoute>
         } />
+        <Route path="/orders/payments" element={
+          <ProtectedRoute>
+            <PageTransition><PaymentHistory /></PageTransition>
+          </ProtectedRoute>
+        } />
         <Route path="/wishlist" element={
           <ProtectedRoute>
             <PageTransition><Wishlist /></PageTransition>
@@ -87,6 +95,16 @@ const AnimatedRoutes = () => {
         <Route path="/checkout" element={
           <ProtectedRoute>
             <PageTransition><Checkout /></PageTransition>
+          </ProtectedRoute>
+        } />
+        <Route path="/payment/success" element={
+          <ProtectedRoute>
+            <PageTransition><PaymentSuccess /></PageTransition>
+          </ProtectedRoute>
+        } />
+        <Route path="/payment/failed" element={
+          <ProtectedRoute>
+            <PageTransition><PaymentFailed /></PageTransition>
           </ProtectedRoute>
         } />
 

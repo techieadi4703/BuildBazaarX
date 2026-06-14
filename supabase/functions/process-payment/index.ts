@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Native HMAC-SHA256 using Web Crypto API (no external imports needed)
+// Native HMAC-SHA256 using Web Crypto API
 async function verifyRazorpaySignature(
   orderId: string,
   paymentId: string,
@@ -29,26 +29,34 @@ async function verifyRazorpaySignature(
   return expectedHex === signature;
 }
 
-interface PaymentPayload {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-  order_db_id: string;
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const payload: PaymentPayload = await req.json();
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_db_id } = payload;
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) throw new Error("Missing authorization header");
+
+    const token = authHeader.replace("Bearer ", "");
+    
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    );
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) throw new Error("Invalid session");
+
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_db_id } = await req.json();
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      throw new Error("Missing payment fields");
+    }
 
     const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
     if (!keySecret) throw new Error("RAZORPAY_KEY_SECRET is not configured");
 
-    // Verify Razorpay signature server-side
     const isValid = await verifyRazorpaySignature(
       razorpay_order_id,
       razorpay_payment_id,
@@ -63,18 +71,35 @@ serve(async (req) => {
       );
     }
 
-    // Update only the status column (payment_id columns added via SQL later)
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    );
+    // Verify payment belongs to user
+    const { data: payment, error: fetchError } = await supabaseAdmin
+      .from("payments")
+      .select("id, user_id, status")
+      .eq("razorpay_order_id", razorpay_order_id)
+      .single();
 
-    const { error: updateError } = await supabaseAdmin
-      .from("orders")
-      .update({ status: "paid" })
-      .eq("id", order_db_id);
+    if (fetchError || !payment || payment.user_id !== user.id) {
+      throw new Error("Order not found or unauthorized");
+    }
 
-    if (updateError) throw new Error(`DB update failed: ${updateError.message}`);
+    if (payment.status === "paid") {
+      return new Response(
+        JSON.stringify({ success: true, alreadyProcessed: true }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Update payments table
+    await supabaseAdmin.from("payments").update({
+      razorpay_payment_id,
+      razorpay_signature,
+      status: "paid",
+    }).eq("razorpay_order_id", razorpay_order_id);
+
+    // Legacy support: if order_db_id is provided, update orders table too
+    if (order_db_id) {
+      await supabaseAdmin.from("orders").update({ status: "paid" }).eq("id", order_db_id);
+    }
 
     return new Response(
       JSON.stringify({ success: true }),

@@ -21,31 +21,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
 import { validateUpiFormat, UpiValidationResult } from "@/lib/upi/validateFormat";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useRazorpayCheckout } from "@/hooks/useRazorpayCheckout";
 
-// Razorpay window type
-declare global {
-  interface Window {
-    Razorpay: new (options: Record<string, unknown>) => { open: () => void };
-  }
-}
-
-// Load Razorpay SDK script dynamically
-function loadRazorpayScript(): Promise<boolean> {
-  return new Promise((resolve) => {
-    if (document.getElementById("razorpay-sdk")) return resolve(true);
-    const script = document.createElement("script");
-    script.id = "razorpay-sdk";
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-}
+// Razorpay handled by hook
 
 const Checkout = () => {
   const { items, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { initiatePayment } = useRazorpayCheckout();
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -95,7 +79,6 @@ const Checkout = () => {
           });
       }
     });
-    loadRazorpayScript();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -162,91 +145,28 @@ const Checkout = () => {
   };
 
   const handleRazorpayPayment = async () => {
-    console.log("1. Loading Razorpay script...");
-    const loaded = await loadRazorpayScript();
-    if (!loaded || !window.Razorpay) {
-      throw new Error("Failed to load Razorpay SDK. Please check your connection.");
-    }
-
-    console.log("2. Creating Razorpay order via Edge Function...");
-    const createOrderPromise = supabase.functions.invoke(
-      "create-razorpay-order",
-      { body: { amount: totalPrice, currency: "INR" } }
-    );
-    
-    const timeoutPromise = new Promise<{ data: null, error: Error }>((_, reject) => 
-      setTimeout(() => reject(new Error("Payment gateway request timed out")), 15000)
-    );
-
-    let result;
-    try {
-      result = await Promise.race([createOrderPromise, timeoutPromise]);
-    } catch (err) {
-      console.error("Razorpay order creation timeout/error:", err);
-      throw new Error("Payment initialization timed out. Please try again.");
-    }
-    
-    const { data: rzpOrder, error: rzpErr } = result as any;
-    console.log("3. Razorpay order result:", { rzpOrder, rzpErr });
-    
-    if (rzpErr || !rzpOrder?.id) {
-      throw new Error("Could not create payment order. Please try again.");
-    }
-
-    console.log("4. Inserting pending order into database...");
+    console.log("1. Creating order in DB (pending)...");
     const dbOrderId = await insertOrder("pending");
 
-    console.log("5. Opening Razorpay modal...");
-    await new Promise<void>((resolve, reject) => {
-      try {
-        const options = {
-          key: import.meta.env.VITE_RAZORPAY_KEY_ID || import.meta.env.VITE_RAZORPAY_KEY_ID_TEST || import.meta.env.VITE_RAZORPAY_KEY_ID_LIVE,
-          amount: rzpOrder.amount,
-          currency: rzpOrder.currency,
-          name: "BuildBazaarX",
-          description: "Order Payment",
-          order_id: rzpOrder.id,
-          prefill: {
-            name: form.name,
-            email: form.email || userEmail,
-            contact: form.phone,
-          },
-          theme: { color: "#735c00" },
-          modal: {
-            ondismiss: () => {
-              console.log("Razorpay modal dismissed by user");
-              reject(new Error("Payment cancelled by user"));
-            },
-          },
-          handler: async (response: any) => {
-            console.log("6. Payment authorized, verifying signature...");
-            try {
-              const { error: verifyErr } = await supabase.functions.invoke("process-payment", {
-                body: {
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  order_db_id: dbOrderId,
-                },
-              });
-              if (verifyErr) throw new Error("Payment verification failed.");
-              console.log("7. Payment verified successfully!");
-              sendConfirmationEmail(dbOrderId);
-              resolve();
-            } catch (err) {
-              console.error("Payment verification error:", err);
-              reject(err);
-            }
-          },
-        };
+    console.log("2. Initiating Razorpay Secure Checkout...");
+    const cartItemsForPayment = items.map((item) => ({
+      product_id: item.id,
+      quantity: item.quantity,
+      seller_id: item.supplier_id,
+    }));
 
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } catch (err) {
-        console.error("Error opening Razorpay modal:", err);
-        reject(err);
-      }
+    const result = await initiatePayment(cartItemsForPayment, {
+      name: form.name,
+      email: form.email || userEmail,
+      phone: form.phone,
     });
+
+    if (result.success) {
+      console.log("3. Payment successful!");
+      sendConfirmationEmail(dbOrderId);
+      // Let handleOrder redirect to success page
+      return result;
+    }
   };
 
   const handleOrder = async (e: React.FormEvent) => {
@@ -295,19 +215,17 @@ const Checkout = () => {
         setShowUpiConfirmModal(true);
         setIsSubmitting(false);
       } else {
-        await handleRazorpayPayment();
-        toast({
-          title: "Payment Successful! 🎉",
-          description: form.email ? "Confirmation email is on its way!" : "Your order is confirmed.",
-        });
+        const result = await handleRazorpayPayment();
         clearCart();
-        navigate("/");
+        navigate(`/payment/success?payment_id=${result?.paymentId}`);
         setIsSubmitting(false);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "An unexpected error occurred.";
-      if (!message.includes("cancelled")) {
-        toast({ title: "Order Failed", description: message, variant: "destructive" });
+      if (message.includes("cancelled")) {
+        toast({ title: "Payment Cancelled", description: "You cancelled the payment.", variant: "default" });
+      } else {
+        navigate(`/payment/failed?reason=${encodeURIComponent(message)}`);
       }
       setIsSubmitting(false);
     }
@@ -317,17 +235,15 @@ const Checkout = () => {
     setShowUpiConfirmModal(false);
     setIsSubmitting(true);
     try {
-      await handleRazorpayPayment();
-      toast({
-        title: "Payment Successful! 🎉",
-        description: form.email ? "Confirmation email is on its way!" : "Your order is confirmed.",
-      });
+      const result = await handleRazorpayPayment();
       clearCart();
-      navigate("/");
+      navigate(`/payment/success?payment_id=${result?.paymentId}`);
     } catch (err) {
       const message = err instanceof Error ? err.message : "An unexpected error occurred.";
-      if (!message.includes("cancelled")) {
-        toast({ title: "Payment Failed", description: message, variant: "destructive" });
+      if (message.includes("cancelled")) {
+        toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
+      } else {
+        navigate(`/payment/failed?reason=${encodeURIComponent(message)}`);
       }
     } finally {
       setIsSubmitting(false);
