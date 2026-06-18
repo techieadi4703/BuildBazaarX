@@ -27,7 +27,7 @@ export const MobileNav = () => {
   ];
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#fcf9f6] border-t border-[#e5e2df] z-50 px-6 py-2 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)]">
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#fcf9f6] border-t border-[var(--border-subtle)] z-50 px-6 py-2 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)]">
       <nav className="flex items-center justify-between px-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path || (item.name === 'Profile' && location.pathname.startsWith('/profile'));
@@ -37,7 +37,7 @@ export const MobileNav = () => {
               to={item.path}
               className="relative flex flex-col items-center gap-1 py-1"
             >
-              <div className={`p-2 rounded-xl transition-all duration-300 ${isActive ? 'bg-[#735c00] text-white shadow-lg' : 'text-[#74777d] hover:text-[#1c1c1a] hover:bg-[#e5e2df]/50'}`}>
+              <div className={`p-2 rounded-lg transition-all duration-300 ${isActive ? 'bg-[#735c00] text-white shadow-[var(--shadow-md)]' : 'text-[#74777d] hover:text-[#1c1c1a] hover:bg-[#e5e2df]/50'}`}>
                 <item.icon className="w-5 h-5" />
               </div>
               <span className={`text-[9px] font-bold tracking-widest uppercase transition-colors ${isActive ? 'text-[#735c00]' : 'text-[#74777d]'}`}>

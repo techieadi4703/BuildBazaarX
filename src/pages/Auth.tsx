@@ -130,7 +130,7 @@ export default function Auth() {
                 <form onSubmit={handleAuth} className="space-y-5 md:space-y-8">
                   {!isLogin && (
                     <div className="space-y-2">
-                      <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Full Name</label>
+                      <label className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)]">Full Name</label>
                       <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
                         <input 
@@ -145,7 +145,7 @@ export default function Auth() {
                   )}
 
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Email Address</label>
+                    <label className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)]">Email Address</label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
                       <input 
@@ -160,7 +160,7 @@ export default function Auth() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold tracking-widest text-[#1c1c1a] opacity-60">Password</label>
+                    <label className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)]">Password</label>
                     <div className="relative">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
                       <input 

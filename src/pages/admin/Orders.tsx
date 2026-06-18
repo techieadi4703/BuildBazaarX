@@ -106,7 +106,7 @@ export default function AdminOrders() {
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-          <Tabs defaultValue="all" value={filterTab} onValueChange={setFilterTab} className="w-full md:w-auto overflow-x-auto border rounded-xl p-1 shrink-0">
+          <Tabs defaultValue="all" value={filterTab} onValueChange={setFilterTab} className="w-full md:w-auto overflow-x-auto border rounded-lg p-1 shrink-0">
             <TabsList className="bg-transparent h-auto p-0">
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="pending">Pending</TabsTrigger>
@@ -172,8 +172,7 @@ export default function AdminOrders() {
                     <TableCell>
                       {calculateItemsCount(order.items)} items
                     </TableCell>
-                    <TableCell className="font-semibold">
-                      ₹{order.total?.toLocaleString() || 0}
+                    <TableCell className="font-semibold price-display">₹{order.total?.toLocaleString() || 0}
                     </TableCell>
                     <TableCell>
                       <Badge variant="secondary" className={`capitalize ${getStatusColor(order.status)}`}>
@@ -250,15 +249,14 @@ export default function AdminOrders() {
                                             <p className="font-medium">{item.name}</p>
                                             <p className="text-muted-foreground">Qty: {item.quantity}</p>
                                           </div>
-                                          <div className="font-semibold">
-                                            ₹{(item.price * (item.quantity || 1)).toLocaleString()}
+                                          <div className="font-semibold price-display">₹{(item.price * (item.quantity || 1)).toLocaleString()}
                                           </div>
                                         </div>
                                       ))}
                                       
                                       <div className="flex justify-between items-center p-3 border-t">
                                         <span className="font-bold">Total Amount</span>
-                                        <span className="font-bold text-lg">₹{selectedOrder.total?.toLocaleString() || 0}</span>
+                                        <span className="font-bold text-lg price-display">₹{selectedOrder.total?.toLocaleString() || 0}</span>
                                       </div>
                                     </div>
                                   </div>

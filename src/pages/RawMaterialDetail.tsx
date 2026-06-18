@@ -237,60 +237,60 @@ const RawMaterialDetail = () => {
           onClick={() => shareToPlatform("whatsapp")}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-green-50 text-[#25D366] flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-all shadow-sm border border-green-100">
+          <div className="w-14 h-14 rounded-2xl bg-green-50 text-[#25D366] flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-[var(--text-primary)] transition-all shadow-sm border border-green-100">
             <MessageCircle className="w-7 h-7" />
           </div>
-          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">WhatsApp</span>
+          <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">WhatsApp</span>
         </button>
         <button 
           onClick={() => shareToPlatform("facebook")}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#1877F2] flex items-center justify-center group-hover:bg-[#1877F2] group-hover:text-white transition-all shadow-sm border border-blue-100">
+          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#1877F2] flex items-center justify-center group-hover:bg-[#1877F2] group-hover:text-[var(--text-primary)] transition-all shadow-sm border border-blue-100">
             <Facebook className="w-7 h-7" />
           </div>
-          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">Facebook</span>
+          <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">Facebook</span>
         </button>
         <button 
           onClick={() => shareToPlatform("twitter")}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gray-50 text-gray-900 flex items-center justify-center group-hover:bg-gray-900 group-hover:text-white transition-all shadow-sm border border-gray-200">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--bg-surface)] text-[var(--text-primary)] flex items-center justify-center group-hover:bg-gray-900 group-hover:text-[var(--text-primary)] transition-all shadow-sm border border-[var(--border-subtle)]">
             <Twitter className="w-7 h-7" />
           </div>
-          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">Twitter</span>
+          <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">Twitter</span>
         </button>
         <button 
           onClick={() => shareToPlatform("linkedin")}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#0A66C2] flex items-center justify-center group-hover:bg-[#0A66C2] group-hover:text-white transition-all shadow-sm border border-blue-100">
+          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#0A66C2] flex items-center justify-center group-hover:bg-[#0A66C2] group-hover:text-[var(--text-primary)] transition-all shadow-sm border border-blue-100">
             <Linkedin className="w-7 h-7" />
           </div>
-          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">LinkedIn</span>
+          <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">LinkedIn</span>
         </button>
         <button 
           onClick={() => shareToPlatform("native")}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[#735c00] flex items-center justify-center group-hover:bg-[#735c00] group-hover:text-white transition-all shadow-sm border border-amber-100">
+          <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[var(--accent-warm)] flex items-center justify-center group-hover:bg-[var(--accent-hover)] group-hover:text-[var(--text-primary)] transition-all shadow-sm border border-amber-100">
             <MoreHorizontal className="w-7 h-7" />
           </div>
-          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">More</span>
+          <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">More</span>
         </button>
         <button 
           onClick={() => shareToPlatform("copy")}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gray-50 text-[#1c1c1a] flex items-center justify-center group-hover:bg-[#1c1c1a] group-hover:text-white transition-all shadow-sm border border-gray-200">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--bg-surface)] text-[var(--text-primary)] flex items-center justify-center group-hover:bg-[var(--accent)] group-hover:text-[var(--text-primary)] transition-all shadow-sm border border-[var(--border-subtle)]">
             <Copy className="w-7 h-7" />
           </div>
-          <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">Copy Link</span>
+          <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">Copy Link</span>
         </button>
       </div>
-      <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100 flex items-center justify-between">
-        <span className="text-[10px] font-bold text-gray-400 truncate mr-4 italic">{window.location.href}</span>
-        <Button variant="ghost" size="sm" className="font-black text-[#735c00] uppercase text-[10px] tracking-widest h-8 hover:bg-amber-50" onClick={() => shareToPlatform("copy")}>
+      <div className="bg-[var(--bg-surface)] p-3 rounded-2xl border border-gray-100 flex items-center justify-between">
+        <span className="text-[10px] font-bold text-[var(--text-tertiary)] truncate mr-4 italic">{window.location.href}</span>
+        <Button variant="ghost" size="sm" className="font-black text-[var(--accent-warm)] uppercase text-[10px] tracking-widest h-8 hover:bg-amber-50" onClick={() => shareToPlatform("copy")}>
           Copy
         </Button>
       </div>
@@ -300,11 +300,11 @@ const RawMaterialDetail = () => {
   return (
     <Layout>
       {/* Navigation Header */}
-      <div className="bg-white border-b border-gray-100 py-4 sticky top-0 z-30">
+      <div className="bg-[var(--bg-card)] border-b border-gray-100 py-4 sticky top-0 z-30">
         <div className="container mx-auto px-4">
           <Link
             to="/materials"
-            className="inline-flex items-center text-sm font-bold text-gray-600 hover:text-primary transition-colors group"
+            className="inline-flex items-center text-sm font-bold text-[var(--text-secondary)] hover:text-primary transition-colors group"
           >
             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Raw Materials
@@ -317,7 +317,7 @@ const RawMaterialDetail = () => {
           
           {/* Left Column: Image Gallery (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="relative aspect-square rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 shadow-sm group">
+            <div className="relative aspect-square rounded-3xl overflow-hidden bg-[var(--bg-surface)] border border-gray-100 shadow-sm group">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={currentImageIndex}
@@ -335,13 +335,13 @@ const RawMaterialDetail = () => {
                 <>
                   <button 
                     onClick={prevImage}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--bg-card)]/80 backdrop-blur shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <ChevronLeft className="w-6 h-6" />
                   </button>
                   <button 
                     onClick={nextImage}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--bg-card)]/80 backdrop-blur shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <ChevronRight className="w-6 h-6" />
                   </button>
@@ -351,7 +351,7 @@ const RawMaterialDetail = () => {
               <div className="absolute top-4 right-4 flex flex-col gap-2">
                 <button 
                   onClick={handleShare}
-                  className="w-12 h-12 rounded-full bg-white shadow-xl flex items-center justify-center hover:text-primary hover:scale-110 active:scale-95 transition-all"
+                  className="w-12 h-12 rounded-full bg-[var(--bg-card)] shadow-xl flex items-center justify-center hover:text-primary hover:scale-110 active:scale-95 transition-all"
                   title="Share product"
                 >
                   <Share2 className="w-5 h-5" />
@@ -366,7 +366,7 @@ const RawMaterialDetail = () => {
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
-                    className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${
+                    className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 shrink-0 transition-all ${
                       idx === currentImageIndex ? "border-primary shadow-md" : "border-transparent opacity-70 hover:opacity-100"
                     }`}
                   >
@@ -388,27 +388,27 @@ const RawMaterialDetail = () => {
                   <div className="flex items-center gap-1 bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded text-xs font-bold">
                     <Star className="w-3 h-3 fill-current" />
                     {product.rating}
-                    <span className="text-gray-400 font-medium ml-1">({product.reviews} reviews)</span>
+                    <span className="text-[var(--text-tertiary)] font-medium ml-1">({product.reviews} reviews)</span>
                   </div>
                 </div>
                 
-                <h1 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight">
+                <h1 className="text-3xl md:text-4xl font-black text-[var(--text-primary)] leading-tight">
                   {product.name}
                 </h1>
                 
-                <p className="text-gray-500 font-medium text-lg italic">
+                <p className="text-[var(--text-secondary)] font-medium text-lg italic">
                   {product.specs}
                 </p>
               </div>
             </Reveal>
 
             <Reveal width="100%" direction="up" delay={0.1}>
-              <div className="bg-gray-50 rounded-3xl p-4 md:p-8 space-y-6">
+              <div className="bg-[var(--bg-surface)] rounded-3xl p-4 md:p-8 space-y-6">
                 <div className="flex items-baseline gap-4">
-                  <span className="text-4xl font-black text-gray-900">₹{product.price?.toLocaleString()}</span>
+                  <span className="text-4xl font-black text-[var(--text-primary)] price-display">₹{product.price?.toLocaleString()}</span>
                   {product.original_price && product.original_price > (product.price ?? 0) && (
                     <>
-                      <span className="text-xl text-gray-400 line-through font-bold">₹{product.original_price.toLocaleString()}</span>
+                      <span className="text-xl text-[var(--text-tertiary)] line-through font-bold price-display">₹{product.original_price.toLocaleString()}</span>
                       <span className="text-green-600 font-black text-sm uppercase tracking-wider bg-green-100 px-3 py-1 rounded-full">
                         {Math.round(((product.original_price - (product.price ?? 0)) / product.original_price) * 100)}% OFF
                       </span>
@@ -417,22 +417,22 @@ const RawMaterialDetail = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 md:gap-4">
-                  <div className="flex items-center gap-2 md:gap-3 text-sm font-bold text-gray-600">
+                  <div className="flex items-center gap-2 md:gap-3 text-sm font-bold text-[var(--text-secondary)]">
                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
                       <Truck className="w-5 h-5" />
                     </div>
                     <div>
                       <p>Express Delivery</p>
-                      <p className="text-[10px] uppercase text-gray-400 tracking-tighter">In 2-4 business days</p>
+                      <p className="text-[10px] uppercase text-[var(--text-tertiary)] tracking-tighter">In 2-4 business days</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 md:gap-3 text-sm font-bold text-gray-600">
+                  <div className="flex items-center gap-2 md:gap-3 text-sm font-bold text-[var(--text-secondary)]">
                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
                       <RotateCcw className="w-5 h-5" />
                     </div>
                     <div>
                       <p>{product.return_policy || "7 Days Replacement"}</p>
-                      <p className="text-[10px] uppercase text-gray-400 tracking-tighter">
+                      <p className="text-[10px] uppercase text-[var(--text-tertiary)] tracking-tighter">
                         {product.return_policy === "No Returns" ? "Final Sale" : "Hassle-free returns"}
                       </p>
                     </div>
@@ -443,17 +443,17 @@ const RawMaterialDetail = () => {
 
                 <div className="flex items-center gap-2 md:gap-4 w-full">
                   {isInCart ? (
-                    <div className="flex items-center bg-white border border-gray-200 rounded-xl md:rounded-2xl p-0.5 md:p-1 shadow-sm shrink-0">
+                    <div className="flex items-center bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg md:rounded-2xl p-0.5 md:p-1 shadow-sm shrink-0">
                       <button 
                         onClick={() => updateQuantity(product.id, cartItem.quantity - 1)}
-                        className="w-8 h-10 md:h-[54px] md:w-12 flex items-center justify-center hover:bg-gray-50 rounded-lg md:rounded-xl transition-colors"
+                        className="w-8 h-10 md:h-[54px] md:w-12 flex items-center justify-center hover:bg-[var(--bg-surface)] rounded-lg md:rounded-lg transition-colors"
                       >
                         <Minus className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </button>
                       <span className="w-6 md:w-8 text-center font-black text-sm md:text-lg">{cartItem.quantity}</span>
                       <button 
                         onClick={() => updateQuantity(product.id, cartItem.quantity + 1)}
-                        className="w-8 h-10 md:h-[54px] md:w-12 flex items-center justify-center hover:bg-gray-50 rounded-lg md:rounded-xl transition-colors"
+                        className="w-8 h-10 md:h-[54px] md:w-12 flex items-center justify-center hover:bg-[var(--bg-surface)] rounded-lg md:rounded-lg transition-colors"
                       >
                         <Plus className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </button>
@@ -462,7 +462,7 @@ const RawMaterialDetail = () => {
 
                   <Button 
                     onClick={handleCartAction}
-                    className={`flex-1 h-11 md:h-16 rounded-xl md:rounded-2xl text-[13px] sm:text-base md:text-lg px-2 sm:px-8 font-black transition-all shadow-lg overflow-hidden ${
+                    className={`flex-1 h-11 md:h-16 rounded-lg md:rounded-2xl text-[13px] sm:text-base md:text-lg px-2 sm:px-8 font-black transition-all shadow-[var(--shadow-md)] overflow-hidden ${
                       isInCart ? "bg-green-600 hover:bg-green-700" : "bg-gray-900 hover:bg-gray-800"
                     }`}
                   >
@@ -480,19 +480,19 @@ const RawMaterialDetail = () => {
                   <h3 className="text-xs font-black uppercase tracking-[0.3em] text-primary">Technical Excellence</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {product.quality_details ? product.quality_details.map((detail, idx) => (
-                      <div key={idx} className="flex items-center gap-3 p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                      <div key={idx} className="flex items-center gap-3 p-4 bg-[var(--bg-card)] border border-gray-100 rounded-2xl shadow-sm">
                         <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                        <span className="text-sm font-bold text-gray-700">{detail}</span>
+                        <span className="text-sm font-bold text-[var(--text-primary)]">{detail}</span>
                       </div>
                     )) : (
                       <>
-                        <div className="flex items-center gap-3 p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                        <div className="flex items-center gap-3 p-4 bg-[var(--bg-card)] border border-gray-100 rounded-2xl shadow-sm">
                           <BadgeCheck className="w-5 h-5 text-primary shrink-0" />
-                          <span className="text-sm font-bold text-gray-700">Verified Quality</span>
+                          <span className="text-sm font-bold text-[var(--text-primary)]">Verified Quality</span>
                         </div>
-                        <div className="flex items-center gap-3 p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                        <div className="flex items-center gap-3 p-4 bg-[var(--bg-card)] border border-gray-100 rounded-2xl shadow-sm">
                           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
-                          <span className="text-sm font-bold text-gray-700">Manufacturer Warranty</span>
+                          <span className="text-sm font-bold text-[var(--text-primary)]">Manufacturer Warranty</span>
                         </div>
                       </>
                     )}
@@ -503,7 +503,7 @@ const RawMaterialDetail = () => {
               <Reveal width="100%" direction="up" delay={0.3}>
                 <div className="space-y-4">
                   <h3 className="text-xs font-black uppercase tracking-[0.3em] text-primary">About this Product</h3>
-                  <p className="text-gray-600 leading-relaxed font-medium">
+                  <p className="text-[var(--text-secondary)] leading-relaxed font-medium">
                     {product.description || `This high-quality ${product.name} from ${product.brand} is specifically chosen for its durability and performance in modern construction projects. Meeting all industry standards, it ensures a premium finish and long-lasting results for your build.`}
                   </p>
                 </div>
@@ -517,7 +517,7 @@ const RawMaterialDetail = () => {
           <div className="flex items-end justify-between">
             <div>
               <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-2">Build Better</h2>
-              <h3 className="text-3xl font-black text-gray-900 tracking-tight">Similar Materials</h3>
+              <h3 className="text-3xl font-black text-[var(--text-primary)] tracking-tight">Similar Materials</h3>
             </div>
             <Button variant="ghost" asChild className="font-black text-primary hover:bg-primary/5">
               <Link to="/materials">View All <ChevronRight className="ml-1 w-4 h-4" /></Link>
@@ -530,15 +530,15 @@ const RawMaterialDetail = () => {
               .slice(0, 4)
               .map(p => (
                 <Link key={p.id} to={`/materials/${p.id}`} className="group">
-                  <div className="bg-gray-50 rounded-2xl aspect-square mb-4 overflow-hidden border border-gray-100 p-6 flex items-center justify-center transition-all group-hover:shadow-md">
+                  <div className="bg-[var(--bg-surface)] rounded-2xl aspect-square mb-4 overflow-hidden border border-gray-100 p-6 flex items-center justify-center transition-all group-hover:shadow-md">
                     <img 
                       src={getProductImage(p)} 
                       alt={p.name ?? ""} 
-                      className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform" 
+                      className="w-full h-full object-contain group-hover:scale-110 transition-transform" 
                     loading="lazy" decoding="async" />
                   </div>
-                  <h4 className="font-bold text-gray-900 line-clamp-1">{p.name}</h4>
-                  <p className="text-sm text-gray-500 font-bold">₹{p.price?.toLocaleString()}</p>
+                  <h4 className="font-bold text-[var(--text-primary)] line-clamp-1">{p.name}</h4>
+                  <p className="text-sm text-[var(--text-secondary)] font-bold price-display">₹{p.price?.toLocaleString()}</p>
                 </Link>
               ))}
           </div>

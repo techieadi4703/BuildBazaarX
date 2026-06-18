@@ -92,7 +92,7 @@ export const ExecutionCostBreakdown = () => {
   return (
     <section className="py-12 md:py-16 bg-secondary/30">
       <div className="container mx-auto px-4">
-        <Card className="shadow-lg border-0">
+        <Card className="shadow-[var(--shadow-md)] border-0">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg md:text-xl flex items-center gap-2">
               <Users className="h-5 w-5 text-primary" />
@@ -156,9 +156,8 @@ export const ExecutionCostBreakdown = () => {
                         <TableCell className="text-muted-foreground text-sm hidden md:table-cell">
                           {item.included}
                         </TableCell>
-                        <TableCell className="text-right font-semibold">₹{item.rate}</TableCell>
-                        <TableCell className="text-right font-semibold text-primary">
-                          ₹{cost.toLocaleString("en-IN")}
+                        <TableCell className="text-right font-semibold price-display">₹{item.rate}</TableCell>
+                        <TableCell className="text-right font-semibold text-primary price-display">₹{cost.toLocaleString("en-IN")}
                         </TableCell>
                       </TableRow>
                     );
@@ -172,11 +171,9 @@ export const ExecutionCostBreakdown = () => {
                     <TableCell colSpan={2} className="text-foreground md:hidden">
                       Total Execution Rate
                     </TableCell>
-                    <TableCell className="text-right text-primary text-lg hidden md:table-cell">
-                      ₹{totalRate} / sq.ft
+                    <TableCell className="text-right text-primary text-lg hidden md:table-cell price-display">₹{totalRate} / sq.ft
                     </TableCell>
-                    <TableCell className="text-right text-primary text-lg md:hidden">
-                      ₹{totalRate}/sq.ft
+                    <TableCell className="text-right text-primary text-lg md:hidden price-display">₹{totalRate}/sq.ft
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -191,8 +188,7 @@ export const ExecutionCostBreakdown = () => {
                   Overall Execution Cost ({area} sq.ft)
                 </span>
               </div>
-              <span className="text-xl md:text-2xl font-bold">
-                ₹{totalCost.toLocaleString("en-IN")}
+              <span className="text-xl md:text-2xl font-bold price-display">₹{totalCost.toLocaleString("en-IN")}
               </span>
             </div>
           </CardContent>

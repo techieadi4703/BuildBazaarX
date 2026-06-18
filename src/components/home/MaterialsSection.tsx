@@ -45,14 +45,14 @@ const products = [
 
 export const MaterialsSection = () => {
   return (
-    <section className="py-12 bg-[#F4F0EA] relative overflow-hidden">
+    <section className="py-12 bg-[var(--bg-surface)] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <Reveal width="100%" direction="up">
           <div className="text-center mb-8 px-4">
-            <h2 className="text-xl md:text-2xl font-black text-[#0B132B] tracking-widest uppercase mb-3">
+            <h2 className="text-xl md:text-2xl font-black text-[var(--text-primary)] tracking-widest uppercase mb-3">
               Top Materials Collection
             </h2>
-            <p className="text-[#0B132B]/60 text-sm font-medium">
+            <p className="text-[var(--text-secondary)] text-sm font-medium">
               Explore our handpicked selection of premium materials for your project.
             </p>
           </div>
@@ -64,13 +64,13 @@ export const MaterialsSection = () => {
               <RevealItem key={index}>
                 <Link to="/materials">
                   <motion.div whileHover={{ y: -5 }} className="h-full">
-                    <div className="bg-[#F8F6F1] border border-[#0B132B]/5 rounded-sm p-4 h-full flex flex-col hover:border-[#C5A572]/30 transition-colors shadow-sm hover:shadow-md">
+                    <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-sm p-4 h-full flex flex-col hover:border-[var(--accent-warm)]/30 transition-colors shadow-sm hover:shadow-md">
                       {/* Brand Header */}
                       <div className="flex justify-between items-start mb-4">
-                        <span className="font-bold text-[#0B132B] text-xs uppercase tracking-wider">
+                        <span className="font-bold text-[var(--text-primary)] text-xs uppercase tracking-wider">
                           {product.brand}
                         </span>
-                        <div className="bg-[#E6D5B8] text-[#0B132B] text-[8px] font-black p-1.5 leading-none text-center rounded-sm">
+                        <div className="bg-[var(--accent-warm)] text-[var(--text-primary)] text-[8px] font-black p-1.5 leading-none text-center rounded-sm">
                           {product.discount.split("\n").map((line, i) => (
                             <div key={i}>{line}</div>
                           ))}
@@ -78,7 +78,7 @@ export const MaterialsSection = () => {
                       </div>
 
                       {/* Image */}
-                      <div className="bg-white border border-[#0B132B]/5 rounded p-4 mb-6 flex-grow flex items-center justify-center">
+                      <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-4 mb-6 flex-grow flex items-center justify-center">
                         <img
                           src={cdnImg(product.image, 200)}
                           alt={product.brand}
@@ -86,16 +86,16 @@ export const MaterialsSection = () => {
                           decoding="async"
                           width={200}
                           height={128}
-                          className="w-full h-auto object-contain mix-blend-multiply max-h-32"
+                          className="w-full h-auto object-contain max-h-32"
                         />
                       </div>
 
                       {/* Specs */}
                       <div>
-                        <h4 className="font-bold text-[#0B132B] text-sm mb-2">
+                        <h4 className="font-bold text-[var(--text-primary)] text-sm mb-2">
                           {product.name}
                         </h4>
-                        <ul className="text-[#0B132B]/70 text-[10px] space-y-1 ml-3 list-disc">
+                        <ul className="text-[var(--text-secondary)] text-[10px] space-y-1 ml-3 list-disc">
                           {product.specs.map((spec, i) => (
                             <li
                               key={i}
@@ -120,7 +120,7 @@ export const MaterialsSection = () => {
             <Button
               asChild
               size="sm"
-              className="bg-[#E6D5B8] hover:bg-[#DBC49D] text-[#0B132B] border-none px-6 py-2 text-[10px] uppercase font-bold tracking-wider rounded-sm shadow-sm transition-colors"
+              className="bg-[var(--accent-warm)] hover:bg-[var(--accent-warm-hover)] text-[var(--text-primary)] border-none px-6 py-2 text-[10px] uppercase font-bold tracking-wider rounded-sm shadow-sm transition-colors"
             >
               <Link to="/materials">View Material Catalog</Link>
             </Button>

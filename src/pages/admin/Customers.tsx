@@ -182,7 +182,7 @@ export default function AdminCustomers() {
                       <TableCell>
                         <div className="flex flex-col">
                           <span>{customer.orders.length} total</span>
-                          <span className="text-xs text-muted-foreground">₹{customer.orders.reduce((sum: number, order: any) => sum + Number(order.total || 0), 0).toLocaleString('en-IN')}</span>
+                          <span className="text-xs text-muted-foreground price-display">₹{customer.orders.reduce((sum: number, order: any) => sum + Number(order.total || 0), 0).toLocaleString('en-IN')}</span>
                         </div>
                       </TableCell>
                       <TableCell>{calculateOrderFrequency(customer.orders)}</TableCell>
@@ -236,8 +236,8 @@ export default function AdminCustomers() {
                                       </CardHeader>
                                       <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                                         <div className="rounded-lg border p-4"><p className="text-sm text-muted-foreground">Total Orders</p><p className="text-2xl font-bold">{selectedOrders.length}</p></div>
-                                        <div className="rounded-lg border p-4"><p className="text-sm text-muted-foreground">Total Spend</p><p className="text-2xl font-bold">₹{totalSpent.toLocaleString('en-IN')}</p></div>
-                                        <div className="rounded-lg border p-4"><p className="text-sm text-muted-foreground">Average Order</p><p className="text-2xl font-bold">₹{Math.round(avgOrderValue).toLocaleString('en-IN')}</p></div>
+                                        <div className="rounded-lg border p-4"><p className="text-sm text-muted-foreground">Total Spend</p><p className="text-2xl font-bold price-display">₹{totalSpent.toLocaleString('en-IN')}</p></div>
+                                        <div className="rounded-lg border p-4"><p className="text-sm text-muted-foreground">Average Order</p><p className="text-2xl font-bold price-display">₹{Math.round(avgOrderValue).toLocaleString('en-IN')}</p></div>
                                         <div className="rounded-lg border p-4"><p className="text-sm text-muted-foreground">Order Frequency</p><p className="text-lg font-semibold">{calculateOrderFrequency(selectedOrders)}</p></div>
                                       </CardContent>
                                     </Card>
@@ -266,7 +266,7 @@ export default function AdminCustomers() {
                                       <CardContent className="space-y-4">
                                         <div className="grid gap-4 md:grid-cols-3">
                                           <div className="rounded-lg border p-4"><div className="flex items-center gap-2 text-sm text-muted-foreground"><ShoppingCart className="h-4 w-4" /> Items in Cart</div><p className="text-2xl font-bold">{cartItemCount}</p></div>
-                                          <div className="rounded-lg border p-4"><p className="text-sm text-muted-foreground">Cart Value</p><p className="text-2xl font-bold">₹{cartValue.toLocaleString('en-IN')}</p></div>
+                                          <div className="rounded-lg border p-4"><p className="text-sm text-muted-foreground">Cart Value</p><p className="text-2xl font-bold price-display">₹{cartValue.toLocaleString('en-IN')}</p></div>
                                           <div className="rounded-lg border p-4"><p className="text-sm text-muted-foreground">Last Updated</p><p className="text-base font-semibold">{safeDate(selectedCustomer.profile?.last_cart_updated_at, 'MMM d, yyyy, p')}</p></div>
                                         </div>
 
@@ -280,7 +280,7 @@ export default function AdminCustomers() {
                                                 </div>
                                                 <div className="text-right">
                                                   <p>Qty: {item.quantity || 1}</p>
-                                                  <p className="text-muted-foreground">₹{Number(item.price || 0).toLocaleString('en-IN')}</p>
+                                                  <p className="text-muted-foreground price-display">₹{Number(item.price || 0).toLocaleString('en-IN')}</p>
                                                 </div>
                                               </div>
                                             ))}

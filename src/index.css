@@ -1,286 +1,212 @@
-/* Google Fonts loaded via non-blocking <link> in index.html */
+/* === GOOGLE FONTS IMPORT === */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
+  /* === CSS CUSTOM PROPERTIES === */
   :root {
-    /* Base Material Layering */
-    --surface: 210 33% 98%; /* #f7f9fb */
-    --surface-container-low: 210 20% 96%; /* #f2f4f6 */
-    --surface-container: 210 17% 93%; /* #eceef0 */
-    --surface-container-highest: 204 8% 89%; /* #e0e3e5 */
-    --surface-container-lowest: 0 0% 100%; /* #ffffff */
+    /* Backgrounds */
+    --bg-base: #F7F5F1;
+    --bg-surface: #F0EDE7;
+    --bg-card: #FFFFFF;
+    --border-subtle: #E4DDD4;
+    --border-default: #D0C8BE;
+
+    /* Text */
+    --text-primary: #1D1B17;
+    --text-secondary: #746D65;
+    --text-tertiary: #A49D97;
+
+    /* Blueprint accent */
+    --accent: #1A3D7C;
+    --accent-hover: #15326A;
+    --accent-mid: #4B84D8;
+    --accent-faint: #EBF0FA;
+
+    /* Brass accent (CTAs, prices, highlights) */
+    --accent-warm: #BF7930;
+    --accent-warm-hover: #A8671F;
+    --accent-warm-mid: #D4893A;
+    --accent-warm-faint: #FEF3E2;
+
+    /* Semantic */
+    --success: #2D7A4F;
+    --success-bg: #E8F5EE;
+    --warning: #C47D1A;
+    --warning-bg: #FFF4E0;
+    --error: #C1292E;
+    --error-bg: #FDEAEA;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(29,27,23,0.08);
+    --shadow-md: 0 4px 16px rgba(29,27,23,0.10);
+    --shadow-lg: 0 8px 32px rgba(29,27,23,0.12);
     
-    /* Semantic Colors */
-    --primary: 0 0% 0%; /* #000000 */
-    --on-primary: 0 0% 100%; /* #ffffff */
-    --primary-container: 222 41% 13%; /* #131b2e */
-    --on-primary-container: 0 0% 100%;
-    
-    --secondary: 38 100% 26%; /* #855300 */
-    --secondary-container: 37 99% 55%; /* #fea619 */
-    
-    --tertiary-container: 212 63% 12%; /* #0b1c30 */
-    --tertiary-fixed: 216 96% 91%; /* #d3e4fe */
-    
-    --outline-variant: 240 6% 79%; /* #c6c6cd */
-    --on-surface: 222 41% 13%; /* #131b2e (structural headers) */
-    --on-surface-variant: 232 5% 29%; /* #45464d (body test) */
-
-    /* Tailwind Standard Mappings */
-    --background: var(--surface);
-    --foreground: var(--on-surface-variant);
-
-    --card: var(--surface-container-lowest);
-    --card-foreground: var(--on-surface-variant);
-
-    --popover: var(--surface-container-lowest);
-    --popover-foreground: var(--on-surface-variant);
-
-    --primary-foreground: var(--on-primary);
-
+    /* Fallbacks for existing shadcn classes to prevent layout breaks during refactor */
+    --background: 44 26% 96%; /* F7F5F1 */
+    --foreground: 40 12% 10%; /* 1D1B17 */
+    --card: 0 0% 100%;
+    --card-foreground: 40 12% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 40 12% 10%;
+    --primary: 219 65% 29%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 32 60% 47%;
     --secondary-foreground: 0 0% 100%;
-
-    --muted: var(--surface-container);
-    --muted-foreground: var(--outline-variant);
-
-    --accent: var(--secondary-container);
-    --accent-foreground: var(--primary-container);
-
-    --destructive: 0 72% 50%;
-    --destructive-foreground: 0 85% 97%;
-
-    --border: var(--surface-container-low); /* No rigid borders per spec */
-    --input: var(--surface-container-lowest);
-    --ring: var(--outline-variant);
-
-    --radius: 0.375rem;
-
-    --sidebar-background: var(--surface);
-    --sidebar-foreground: var(--on-surface);
-    --sidebar-primary: var(--primary);
-    --sidebar-primary-foreground: var(--on-primary);
-    --sidebar-accent: var(--surface-container);
-    --sidebar-accent-foreground: var(--on-surface);
-    --sidebar-border: var(--surface-container-low);
-    --sidebar-ring: var(--outline-variant);
-
-    --chart-1: 198 93% 59%;
-    --chart-2: 213 93% 67%;
-    --chart-3: 215 20% 65%;
-    --chart-4: 215 16% 46%;
-    --chart-5: 215 19% 34%;
-
-    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'sans-serif';
-    --font-serif: 'Lora', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-
-    /* Shadow scale */
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0px 12px 32px rgba(15, 23, 42, 0.06); /* Ambient shadow */
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
-
-    --tracking-normal: 0em;
-    --spacing: 0.25rem;
+    --muted: 42 22% 93%;
+    --muted-foreground: 32 6% 45%;
+    --accent-fallback: 219 65% 29%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 358 65% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 35 24% 87%;
+    --input: 35 24% 87%;
+    --ring: 219 65% 29%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    /* Forcing light/white-space dominance, but mapping dark if system forces it */
-    --surface: 220 20% 10%;
-    --surface-container-low: 220 18% 14%;
-    --surface-container: 220 15% 18%;
-    --surface-container-highest: 220 14% 22%;
-    --surface-container-lowest: 220 22% 8%;
+    /* Backgrounds */
+    --bg-base: #0C1119;
+    --bg-surface: #131C27;
+    --bg-card: #1A2535;
+    --border-subtle: #1F2E40;
+    --border-default: #263547;
+
+    /* Text */
+    --text-primary: #EDE8DF;
+    --text-secondary: #8A8680;
+    --text-tertiary: #5C5854;
+
+    /* Blueprint accent */
+    --accent: #4B84D8;
+    --accent-hover: #5A92E8;
+    --accent-mid: #7AA8EC;
+    --accent-faint: #1A2D4A;
+
+    /* Brass accent */
+    --accent-warm: #D4893A;
+    --accent-warm-hover: #E09848;
+    --accent-warm-mid: #E8A660;
+    --accent-warm-faint: #2C1E0A;
+
+    /* Semantic */
+    --success: #4CAF80;
+    --success-bg: #0D2A1A;
+    --warning: #E09A30;
+    --warning-bg: #2A1C00;
+    --error: #E05555;
+    --error-bg: #2A0A0A;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.25);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.45);
     
-    --primary: 0 0% 100%;
-    --on-primary: 0 0% 0%;
-    --primary-container: 212 63% 12%;
-    --on-primary-container: 0 0% 100%;
-    
-    --secondary: 37 99% 55%;
-    --secondary-container: 38 100% 26%;
-    
-    --tertiary-container: 216 96% 91%;
-    --tertiary-fixed: 212 63% 12%;
-    
-    --outline-variant: 240 6% 30%;
-    --on-surface: 0 0% 100%;
-    --on-surface-variant: 220 10% 75%;
-
-    --background: var(--surface);
-    --foreground: var(--on-surface-variant);
-
-    --card: var(--surface-container-lowest);
-    --card-foreground: var(--on-surface-variant);
-
-    --popover: var(--surface-container-lowest);
-    --popover-foreground: var(--on-surface-variant);
-
-    --primary-foreground: var(--on-primary);
-
+    /* Fallbacks for existing shadcn classes */
+    --background: 217 35% 7%;
+    --foreground: 39 30% 90%;
+    --card: 215 34% 15%;
+    --card-foreground: 39 30% 90%;
+    --popover: 215 34% 15%;
+    --popover-foreground: 39 30% 90%;
+    --primary: 216 64% 57%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 31 66% 53%;
     --secondary-foreground: 0 0% 100%;
-
-    --muted: var(--surface-container);
-    --muted-foreground: var(--outline-variant);
-
-    --accent: var(--secondary-container);
-    --accent-foreground: var(--primary-container);
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 85% 97%;
-
-    --border: var(--surface-container-low);
-    --input: var(--surface-container-lowest);
-    --ring: var(--outline-variant);
-    
-    --sidebar-background: var(--surface);
-    --sidebar-foreground: var(--on-surface);
-    --sidebar-primary: var(--primary);
-    --sidebar-primary-foreground: var(--on-primary);
-    --sidebar-accent: var(--surface-container);
-    --sidebar-accent-foreground: var(--on-surface);
-    --sidebar-border: var(--surface-container-low);
-    --sidebar-ring: var(--outline-variant);
-
-    --shadow-xl: 0px 12px 32px rgba(0, 0, 0, 0.4);
+    --muted: 213 34% 11%;
+    --muted-foreground: 36 6% 52%;
+    --accent-fallback: 216 64% 57%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 212 34% 18%;
+    --input: 212 34% 18%;
+    --ring: 216 64% 57%;
   }
-}
 
-@layer base {
+  /* === BASE STYLES === */
   * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground overflow-x-hidden;
-    max-width: 100vw;
+    box-sizing: border-box;
   }
 
   html {
-    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* === TYPOGRAPHY SCALE === */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .font-mono, code, pre {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* === GLOBAL FORM STYLES === */
+  input, textarea, select {
+    @apply text-[var(--text-primary)] border border-[#b8ae9e] dark:border-[var(--border-default)];
+  }
+  
+  /* Fallback for autocomplete backgrounds in webkit */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px var(--bg-surface) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+    transition: background-color 5000s ease-in-out 0s;
   }
 }
 
-/* ──── Form Autofill Fixes ──── */
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active {
-  transition: background-color 5000s ease-in-out 0s !important;
-  -webkit-text-fill-color: hsl(var(--on-surface-variant)) !important;
-}
+@layer utilities {
+  /* Price/Amount styling — always Mono + Brass */
+  .price-display {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent-warm);
+    font-weight: 500;
+  }
 
-/* ──── Animation Utilities ──── */
+  /* === SIGNATURE ELEMENT — Blueprint grid === */
+  .blueprint-section {
+    background-color: var(--bg-base);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='%231A3D7C' stroke-width='0.6' opacity='0.06'/%3E%3C/svg%3E");
+  }
 
-/* Animated underline that grows from center on hover */
-.nav-link-underline {
-  position: relative;
-}
-.nav-link-underline::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: hsl(var(--primary));
-  transition: width 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), left 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border-radius: 1px;
-}
-.nav-link-underline:hover::after,
-.nav-link-underline.active::after {
-  width: 100%;
-  left: 0;
-}
+  .dark .blueprint-section {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='%234B84D8' stroke-width='0.6' opacity='0.09'/%3E%3C/svg%3E");
+  }
 
-/* Card lift on hover */
-.card-hover-lift {
-  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.card-hover-lift:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 32px -8px hsl(var(--primary) / 0.12);
-}
+  /* === SCROLLBAR (subtle branding) === */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
 
-/* Gradient text shimmer */
-.text-shimmer {
-  background: linear-gradient(
-    90deg,
-    hsl(var(--primary)) 0%,
-    hsl(var(--accent)) 50%,
-    hsl(var(--primary)) 100%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer 3s linear infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% center; }
-  100% { background-position: -200% center; }
-}
-
-/* ──── Blueprint & Technical Utilities ──── */
-
-.bg-blueprint {
-  background-image: 
-    linear-gradient(hsl(var(--on-surface) / 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--on-surface) / 0.05) 1px, transparent 1px),
-    linear-gradient(hsl(var(--on-surface) / 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--on-surface) / 0.02) 1px, transparent 1px);
-  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
-  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
-}
-
-.bg-dot-grid {
-  background-image: radial-gradient(hsl(var(--on-surface) / 0.2) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.glow-secondary {
-  box-shadow: 0 0 20px -5px hsl(var(--secondary) / 0.3);
-}
-
-.glow-primary {
-  box-shadow: 0 0 30px -10px hsl(var(--primary) / 0.2);
-}
-
-.glass-morphism {
-  @apply bg-surface-container-lowest/40 backdrop-blur-xl border border-white/20;
-}
-
-.glass-morphism-dark {
-  @apply bg-surface-container/60 backdrop-blur-xl border border-white/5;
-}
-
-.text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-br from-on-surface to-on-surface/60;
-}
-
-.secondary-gradient {
-  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--secondary-container)) 100%);
-}
-
-/* Respect reduced motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  /* === SELECTION === */
+  ::selection {
+    background-color: var(--accent-faint);
+    color: var(--accent);
+  }
+  .dark ::selection {
+    background-color: var(--accent-faint);
+    color: var(--accent-mid);
   }
 }

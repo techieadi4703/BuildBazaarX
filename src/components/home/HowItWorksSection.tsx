@@ -19,13 +19,13 @@ const phases = [
 
 export const HowItWorksSection = () => {
   return (
-    <section className="py-12 bg-[#F4F0EA] relative overflow-hidden">
+    <section className="py-12 bg-[var(--bg-surface)] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         
         {/* Section Header */}
         <Reveal width="100%" direction="up">
           <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-black text-[#0B132B] tracking-widest uppercase">
+            <h2 className="text-2xl md:text-3xl font-black text-[var(--text-primary)] tracking-widest uppercase">
               How IT WORKS: OPERATIONAL FRAMEWORK
             </h2>
           </div>
@@ -46,27 +46,27 @@ export const HowItWorksSection = () => {
                     {/* Radar Node Visualization */}
                     <div className="relative mb-12">
                       <motion.div 
-                        className="w-20 h-20 rounded-full border border-[#C5A572]/30 flex items-center justify-center relative z-10 bg-[#F4F0EA]"
+                        className="w-20 h-20 rounded-full border border-[var(--accent-warm)]/30 flex items-center justify-center relative z-10 bg-[var(--bg-surface)]"
                         whileHover={{ rotate: 180 }}
                         transition={{ duration: 1, ease: "easeInOut" }}
                       >
                         {/* Inner Dot */}
-                        <div className="w-2 h-2 rounded-full bg-[#C5A572] shadow-[0_0_10px_rgba(197,165,114,0.8)]" />
+                        <div className="w-2 h-2 rounded-full bg-[var(--accent-warm)] shadow-[0_0_10px_rgba(197,165,114,0.8)]" />
                         
                         {/* Radar Arcs (simulated with borders) */}
-                        <div className="absolute inset-2 border-r-2 border-t-2 border-[#C5A572]/40 rounded-full animate-spin-slow" />
-                        <div className="absolute inset-4 border-l-2 border-b-2 border-[#C5A572]/20 rounded-full animate-spin-slow direction-reverse" />
+                        <div className="absolute inset-2 border-r-2 border-t-2 border-[var(--accent-warm)]/40 rounded-full animate-spin-slow" />
+                        <div className="absolute inset-4 border-l-2 border-b-2 border-[var(--accent-warm)]/20 rounded-full animate-spin-slow direction-reverse" />
                       </motion.div>
                       
                       {/* Glow Behind Node */}
-                      <div className="absolute inset-0 bg-[#C5A572]/10 blur-xl rounded-full" />
+                      <div className="absolute inset-0 bg-[var(--accent-warm)]/10 blur-xl rounded-full" />
                     </div>
 
                     {/* Phase Copy */}
-                    <h3 className="text-sm font-black text-[#0B132B] uppercase tracking-widest mb-4">
+                    <h3 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest mb-4">
                       {phase.phase}
                     </h3>
-                    <p className="text-[#0B132B]/60 text-sm font-medium leading-relaxed max-w-[280px]">
+                    <p className="text-[var(--text-secondary)] text-sm font-medium leading-relaxed max-w-[280px]">
                       {phase.description}
                     </p>
                   </div>

@@ -373,7 +373,7 @@ const Profile = () => {
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 bg-background">
           <Loader2 className="w-10 h-10 text-[#855300] animate-spin" />
-          <p className="font-semibold text-sm text-gray-500 tracking-wide">Loading secure profile...</p>
+          <p className="font-semibold text-sm text-[var(--text-secondary)] tracking-wide">Loading secure profile...</p>
         </div>
       </Layout>
     );
@@ -381,7 +381,7 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className="bg-background text-[#131b2e] min-h-screen font-sans w-full py-8">
+      <div className="bg-background text-[var(--text-primary)] min-h-screen font-sans w-full py-8">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-6 items-start">
 
@@ -389,20 +389,20 @@ const Profile = () => {
             <div className="w-full md:w-1/3 shrink-0 flex flex-col gap-4">
 
               {/* Hello Card Header */}
-              <div className="bg-white p-4 flex items-center gap-4 rounded-sm shadow-sm border border-border">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#855300] to-[#fea619] flex items-center justify-center text-white font-bold text-lg shadow-inner">
+              <div className="bg-[var(--bg-card)] p-4 flex items-center gap-4 rounded-sm shadow-sm border border-border">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#855300] to-[#fea619] flex items-center justify-center text-[var(--text-primary)] font-bold text-lg shadow-inner">
                   {firstName ? firstName.charAt(0).toUpperCase() : <User className="w-6 h-6" />}
                 </div>
                 <div>
-                  <span className="text-xs text-gray-500 block">Hello,</span>
-                  <span className="text-base font-bold text-[#131b2e] tracking-wide truncate max-w-[180px] block">
+                  <span className="text-xs text-[var(--text-secondary)] block">Hello,</span>
+                  <span className="text-base font-bold text-[var(--text-primary)] tracking-wide truncate max-w-[180px] block">
                     {profile.full_name || "BuildBazaarX User"}
                   </span>
                 </div>
               </div>
 
               {/* Navigation Menu Links */}
-              <div className="bg-white rounded-sm shadow-sm border border-border overflow-hidden">
+              <div className="bg-[var(--bg-card)] rounded-sm shadow-sm border border-border overflow-hidden">
 
                 {/* Orders Category */}
                 <Link
@@ -411,23 +411,23 @@ const Profile = () => {
                 >
                   <div className="flex items-center gap-4">
                     <Package className="w-5 h-5 text-[#855300]" />
-                    <span className="font-bold text-sm tracking-wide text-gray-600 group-hover:text-[#855300] transition-colors">MY ORDERS</span>
+                    <span className="font-bold text-sm tracking-wide text-[var(--text-secondary)] group-hover:text-[#855300] transition-colors">MY ORDERS</span>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#855300] group-hover:translate-x-0.5 transition-all" />
+                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-[#855300] group-hover:translate-x-0.5 transition-all" />
                 </Link>
 
                 {/* Account Settings Category */}
                 <div className="border-b border-border">
                   <div className="flex items-center gap-4 p-4 pb-2">
                     <User className="w-5 h-5 text-[#855300]" />
-                    <span className="font-bold text-xs tracking-wider text-gray-400 uppercase">ACCOUNT SETTINGS</span>
+                    <span className="font-bold text-xs tracking-wider text-muted-foreground uppercase">ACCOUNT SETTINGS</span>
                   </div>
                   <div className="flex flex-col">
                     <button
                       onClick={() => setActiveTab("profile")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "profile"
                         ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[#855300]"
                         }`}
                     >
                       Profile Information
@@ -436,7 +436,7 @@ const Profile = () => {
                       onClick={() => setActiveTab("addresses")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "addresses"
                         ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[#855300]"
                         }`}
                     >
                       Manage Addresses
@@ -448,14 +448,14 @@ const Profile = () => {
                 <div className="border-b border-border">
                   <div className="flex items-center gap-4 p-4 pb-2">
                     <CreditCard className="w-5 h-5 text-[#855300]" />
-                    <span className="font-bold text-xs tracking-wider text-gray-400 uppercase">PAYMENTS</span>
+                    <span className="font-bold text-xs tracking-wider text-muted-foreground uppercase">PAYMENTS</span>
                   </div>
                   <div className="flex flex-col">
                     <button
                       onClick={() => setActiveTab("saved-upi")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "saved-upi"
                         ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[#855300]"
                         }`}
                     >
                       Saved UPI
@@ -464,7 +464,7 @@ const Profile = () => {
                       onClick={() => setActiveTab("saved-cards")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "saved-cards"
                         ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[#855300]"
                         }`}
                     >
                       Saved Cards
@@ -476,14 +476,14 @@ const Profile = () => {
                 <div className="border-b border-border">
                   <div className="flex items-center gap-4 p-4 pb-2">
                     <Heart className="w-5 h-5 text-[#855300]" />
-                    <span className="font-bold text-xs tracking-wider text-gray-400 uppercase">MY STUFF</span>
+                    <span className="font-bold text-xs tracking-wider text-muted-foreground uppercase">MY STUFF</span>
                   </div>
                   <div className="flex flex-col">
                     <button
                       onClick={() => setActiveTab("reviews")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "reviews"
                         ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[#855300]"
                         }`}
                     >
                       My Reviews & Ratings
@@ -492,14 +492,14 @@ const Profile = () => {
                       onClick={() => setActiveTab("notifications")}
                       className={`text-left pl-14 py-2.5 text-sm transition-all ${activeTab === "notifications"
                         ? "bg-[#fea619]/10 text-[#855300] font-bold border-r-4 border-[#855300]"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-[#855300]"
+                        : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[#855300]"
                         }`}
                     >
                       All Notifications
                     </button>
                     <Link
                       to="/wishlist"
-                      className="text-left pl-14 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#855300] block transition-all"
+                      className="text-left pl-14 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[#855300] block transition-all"
                     >
                       My Wishlist
                     </Link>
@@ -510,16 +510,16 @@ const Profile = () => {
                 <button
                   onClick={handleLogout}
                   disabled={isSaving}
-                  className="w-full text-left p-4 hover:bg-red-50 text-gray-700 hover:text-red-600 transition-colors flex items-center gap-4 cursor-pointer font-bold text-sm tracking-wide"
+                  className="w-full text-left p-4 hover:bg-red-500/10 text-[var(--text-secondary)] hover:text-red-600 transition-colors flex items-center gap-4 cursor-pointer font-bold text-sm tracking-wide"
                 >
-                  <Power className="w-5 h-5 text-gray-400 group-hover:text-red-500" />
+                  <Power className="w-5 h-5 text-muted-foreground group-hover:text-red-500" />
                   <span>Logout</span>
                 </button>
               </div>
 
               {/* Frequently Visited Footer Links */}
-              <div className="px-4 py-2 text-xs text-gray-500">
-                <span className="font-semibold text-gray-400 block mb-1">Frequently Visited:</span>
+              <div className="px-4 py-2 text-xs text-[var(--text-secondary)]">
+                <span className="font-semibold text-muted-foreground block mb-1">Frequently Visited:</span>
                 <div className="flex gap-3">
                   <Link to="/orders" className="hover:text-[#855300] hover:underline">Track Order</Link>
                   <span>•</span>
@@ -530,7 +530,7 @@ const Profile = () => {
             </div>
 
             {/* Main Content Area Right Column */}
-            <div className="w-full md:w-2/3 bg-white rounded-sm shadow-sm border border-border p-6 md:p-8 relative min-h-[600px] overflow-hidden">
+            <div className="w-full md:w-2/3 bg-[var(--bg-card)] rounded-sm shadow-sm border border-border p-6 md:p-8 relative min-h-[600px] overflow-hidden">
 
               <AnimatePresence mode="wait">
 
@@ -547,7 +547,7 @@ const Profile = () => {
                     {/* Personal Info Section */}
                     <div className="space-y-4">
                       <div className="flex items-center gap-4">
-                        <h2 className="text-lg font-bold text-[#131b2e]">Personal Information</h2>
+                        <h2 className="text-lg font-bold text-[var(--text-primary)]">Personal Information</h2>
                         <button
                           onClick={() => {
                             if (isEditingPersonal) {
@@ -578,8 +578,8 @@ const Profile = () => {
                           disabled={!isEditingPersonal}
                           placeholder="First Name"
                           className={`px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingPersonal
-                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-[var(--bg-card)] border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[var(--bg-surface)] border border-border text-[var(--text-secondary)] cursor-not-allowed"
                             }`}
                         />
                         <input
@@ -589,15 +589,15 @@ const Profile = () => {
                           disabled={!isEditingPersonal}
                           placeholder="Last Name"
                           className={`px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingPersonal
-                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-[var(--bg-card)] border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[var(--bg-surface)] border border-border text-[var(--text-secondary)] cursor-not-allowed"
                             }`}
                         />
                       </div>
 
                       {/* Gender Selector */}
                       <div className="space-y-2 pt-2">
-                        <span className="text-xs font-bold text-gray-500 block">Your Gender</span>
+                        <span className="text-xs font-bold text-[var(--text-secondary)] block">Your Gender</span>
                         <div className="flex items-center gap-6">
                           <label className={`flex items-center gap-2 text-sm select-none cursor-pointer ${!isEditingPersonal && "opacity-60 cursor-not-allowed"}`}>
                             <input
@@ -631,7 +631,7 @@ const Profile = () => {
                           <Button
                             onClick={() => handleSaveSection("personal")}
                             disabled={isSaving}
-                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
+                            className="bg-[var(--accent)] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
                           >
                             {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                             Save Personal Details
@@ -643,7 +643,7 @@ const Profile = () => {
                     {/* Email Address Section */}
                     <div className="space-y-4 pt-4 border-t border-border">
                       <div className="flex items-center gap-4">
-                        <h2 className="text-lg font-bold text-[#131b2e]">Email Address</h2>
+                        <h2 className="text-lg font-bold text-[var(--text-primary)]">Email Address</h2>
                         <button
                           onClick={() => {
                             if (isEditingEmail) {
@@ -674,8 +674,8 @@ const Profile = () => {
                           disabled={!isEditingEmail}
                           placeholder="name@example.com"
                           className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingEmail
-                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-[var(--bg-card)] border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[var(--bg-surface)] border border-border text-[var(--text-secondary)] cursor-not-allowed"
                             }`}
                         />
                       </div>
@@ -685,7 +685,7 @@ const Profile = () => {
                           <Button
                             onClick={() => handleSaveSection("email")}
                             disabled={isSaving}
-                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
+                            className="bg-[var(--accent)] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
                           >
                             {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                             Save Email
@@ -697,7 +697,7 @@ const Profile = () => {
                     {/* Mobile Number Section */}
                     <div className="space-y-4 pt-4 border-t border-border">
                       <div className="flex items-center gap-4">
-                        <h2 className="text-lg font-bold text-[#131b2e]">Mobile Number</h2>
+                        <h2 className="text-lg font-bold text-[var(--text-primary)]">Mobile Number</h2>
                         <button
                           onClick={() => {
                             if (isEditingMobile) {
@@ -728,8 +728,8 @@ const Profile = () => {
                           disabled={!isEditingMobile}
                           placeholder="+91 XXXXX XXXXX"
                           className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingMobile
-                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-[var(--bg-card)] border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[var(--bg-surface)] border border-border text-[var(--text-secondary)] cursor-not-allowed"
                             }`}
                         />
                       </div>
@@ -739,7 +739,7 @@ const Profile = () => {
                           <Button
                             onClick={() => handleSaveSection("mobile")}
                             disabled={isSaving}
-                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
+                            className="bg-[var(--accent)] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
                           >
                             {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                             Save Mobile Number
@@ -750,29 +750,29 @@ const Profile = () => {
 
                     {/* FAQ Help Accordion Section */}
                     <div className="pt-8 border-t border-border space-y-4">
-                      <h3 className="text-base font-bold text-[#131b2e]">FAQs</h3>
+                      <h3 className="text-base font-bold text-[var(--text-primary)]">FAQs</h3>
                       <div className="space-y-4">
                         <div className="space-y-1">
-                          <p className="text-sm font-bold text-gray-700">What happens when I update my email address (or mobile number)?</p>
-                          <p className="text-xs text-[#45464d] leading-relaxed">
+                          <p className="text-sm font-bold text-[var(--text-secondary)]">What happens when I update my email address (or mobile number)?</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
                             Your login email id (or mobile number) changes, likewise. You'll receive all your account related communication on your updated email address (or mobile number).
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-sm font-bold text-gray-700">When will my Flipkart account be updated with the new email address (or mobile number)?</p>
-                          <p className="text-xs text-[#45464d] leading-relaxed">
+                          <p className="text-sm font-bold text-[var(--text-secondary)]">When will my Flipkart account be updated with the new email address (or mobile number)?</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
                             It happens as soon as you confirm the verification code sent to your email (or mobile) and save the changes.
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-sm font-bold text-gray-700">What happens to my existing Flipkart account when I update my email address (or mobile number)?</p>
-                          <p className="text-xs text-[#45464d] leading-relaxed">
+                          <p className="text-sm font-bold text-[var(--text-secondary)]">What happens to my existing Flipkart account when I update my email address (or mobile number)?</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
                             Updating your email address (or mobile number) doesn't invalidate your account. Your account remains fully functional. You'll continue seeing your Order history, saved information and personal details.
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-sm font-bold text-gray-700">Does my Seller account get affected when I update my email address?</p>
-                          <p className="text-xs text-[#45464d] leading-relaxed">
+                          <p className="text-sm font-bold text-[var(--text-secondary)]">Does my Seller account get affected when I update my email address?</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
                             Flipkart has a 'single sign-on' policy. Any changes will reflect in your Seller account also.
                           </p>
                         </div>
@@ -808,7 +808,7 @@ const Profile = () => {
                     className="space-y-6"
                   >
                     <div className="flex items-center justify-between border-b border-border pb-4">
-                      <h2 className="text-lg font-bold text-[#131b2e]">Manage Addresses</h2>
+                      <h2 className="text-lg font-bold text-[var(--text-primary)]">Manage Addresses</h2>
                       <button
                         onClick={() => {
                           if (isEditingAddress) {
@@ -833,7 +833,7 @@ const Profile = () => {
 
                     <div className="space-y-4 max-w-lg">
                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-500 block">Structural Address</label>
+                        <label className="text-xs font-bold text-[var(--text-secondary)] block">Structural Address</label>
                         <textarea
                           rows={3}
                           value={addressInput}
@@ -841,15 +841,15 @@ const Profile = () => {
                           disabled={!isEditingAddress}
                           placeholder="House No, Building, Street, Area..."
                           className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all min-h-[80px] resize-none ${isEditingAddress
-                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-[var(--bg-card)] border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[var(--bg-surface)] border border-border text-[var(--text-secondary)] cursor-not-allowed"
                             }`}
                         />
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <label className="text-xs font-bold text-gray-500 block">City</label>
+                          <label className="text-xs font-bold text-[var(--text-secondary)] block">City</label>
                           <input
                             type="text"
                             value={cityInput}
@@ -857,13 +857,13 @@ const Profile = () => {
                             disabled={!isEditingAddress}
                             placeholder="Your City"
                             className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingAddress
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                              ? "bg-[var(--bg-card)] border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                              : "bg-[var(--bg-surface)] border border-border text-[var(--text-secondary)] cursor-not-allowed"
                               }`}
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-xs font-bold text-gray-500 block">State</label>
+                          <label className="text-xs font-bold text-[var(--text-secondary)] block">State</label>
                           <input
                             type="text"
                             value={stateInput}
@@ -871,15 +871,15 @@ const Profile = () => {
                             disabled={!isEditingAddress}
                             placeholder="State"
                             className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingAddress
-                              ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                              : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                              ? "bg-[var(--bg-card)] border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                              : "bg-[var(--bg-surface)] border border-border text-[var(--text-secondary)] cursor-not-allowed"
                               }`}
                           />
                         </div>
                       </div>
 
                       <div className="space-y-2 max-w-[200px]">
-                        <label className="text-xs font-bold text-gray-500 block">Pincode</label>
+                        <label className="text-xs font-bold text-[var(--text-secondary)] block">Pincode</label>
                         <input
                           type="text"
                           maxLength={6}
@@ -888,8 +888,8 @@ const Profile = () => {
                           disabled={!isEditingAddress}
                           placeholder="6-digit pincode"
                           className={`w-full px-4 py-2.5 text-sm rounded-sm outline-none transition-all ${isEditingAddress
-                            ? "bg-white border border-[#855300] focus:ring-1 focus:ring-[#855300]"
-                            : "bg-[#fafafa] border border-border text-gray-500 cursor-not-allowed"
+                            ? "bg-[var(--bg-card)] border border-[#855300] focus:ring-1 focus:ring-[#855300]"
+                            : "bg-[var(--bg-surface)] border border-border text-[var(--text-secondary)] cursor-not-allowed"
                             }`}
                         />
                       </div>
@@ -899,7 +899,7 @@ const Profile = () => {
                           <Button
                             onClick={() => handleSaveSection("address")}
                             disabled={isSaving}
-                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
+                            className="bg-[var(--accent)] text-white hover:bg-[#855300] font-semibold text-xs py-2 px-6 rounded-sm shadow-sm flex items-center gap-2"
                           >
                             {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                             Update Address Registry
@@ -921,7 +921,7 @@ const Profile = () => {
                     className="space-y-6"
                   >
                     <div className="border-b border-border pb-4">
-                      <h2 className="text-lg font-bold text-[#131b2e] flex items-center gap-2">
+                      <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
                         <Landmark className="w-5 h-5 text-[#855300]" /> Saved UPI Accounts
                       </h2>
                     </div>
@@ -929,14 +929,13 @@ const Profile = () => {
                     <div className="max-w-lg space-y-4">
 
                       {upiList.map((upi, idx) => (
-                        <div key={idx} className="p-4 border border-border rounded-sm flex items-center justify-between hover:bg-gray-50/50 transition-colors">
+                        <div key={idx} className="p-4 border border-border rounded-sm flex items-center justify-between hover:bg-[var(--bg-surface)]/50 transition-colors">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 bg-yellow-50 text-[#855300] rounded-full flex items-center justify-center font-bold text-sm">
-                              ₹
+                            <div className="w-9 h-9 bg-yellow-50 text-[#855300] rounded-full flex items-center justify-center font-bold text-sm price-display">₹
                             </div>
                             <div>
-                              <span className="text-sm font-bold text-[#131b2e] block">{upi.name}</span>
-                              <span className="text-xs text-gray-500">{upi.id}</span>
+                              <span className="text-sm font-bold text-[var(--text-primary)] block">{upi.name}</span>
+                              <span className="text-xs text-[var(--text-secondary)]">{upi.id}</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
@@ -956,7 +955,7 @@ const Profile = () => {
                       ))}
 
                       <div className="p-6 border border-dashed border-gray-300 rounded-sm flex flex-col gap-3 items-center justify-center py-10">
-                        <span className="text-sm text-gray-600 font-bold">Link a new UPI Virtual Address</span>
+                        <span className="text-sm text-[var(--text-secondary)] font-bold">Link a new UPI Virtual Address</span>
                         <div className="flex gap-3 w-full max-w-sm pt-2">
                           <input
                             type="text"
@@ -968,7 +967,7 @@ const Profile = () => {
                           <button
                             onClick={handleLinkVpa}
                             disabled={isVerifyingUpi}
-                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] px-6 py-2.5 text-sm rounded-sm shrink-0 font-bold shadow-sm transition-colors flex items-center gap-2"
+                            className="bg-[var(--accent)] text-white hover:bg-[#855300] px-6 py-2.5 text-sm rounded-sm shrink-0 font-bold shadow-sm transition-colors flex items-center gap-2"
                           >
                             {isVerifyingUpi && <Loader2 className="w-4 h-4 animate-spin" />}
                             {isVerifyingUpi ? "Verifying..." : "Link VPA"}
@@ -991,7 +990,7 @@ const Profile = () => {
                     className="space-y-6"
                   >
                     <div className="border-b border-border pb-4">
-                      <h2 className="text-lg font-bold text-[#131b2e] flex items-center gap-2">
+                      <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
                         <CreditCard className="w-5 h-5 text-[#855300]" /> Saved Credit & Debit Cards
                       </h2>
                     </div>
@@ -1004,7 +1003,7 @@ const Profile = () => {
                           {cardList.map((card) => (
                             <div
                               key={card.id}
-                              className={`p-6 text-white rounded-md shadow-md space-y-6 relative overflow-hidden border border-slate-700/80 transition-transform hover:scale-[1.01] ${card.type === "Mastercard"
+                              className={`p-6 text-[var(--text-primary)] rounded-md shadow-md space-y-6 relative overflow-hidden border border-slate-700/80 transition-transform hover:scale-[1.01] ${card.type === "Mastercard"
                                 ? "bg-gradient-to-tr from-slate-900 via-[#2d1500] to-[#b15802]/80"
                                 : card.type === "Visa"
                                   ? "bg-gradient-to-tr from-gray-900 via-[#1c1c1a] to-[#855300]/80"
@@ -1040,14 +1039,14 @@ const Profile = () => {
                               </div>
 
                               {/* Decorative chip/reflection */}
-                              <div className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/5 rounded-full pointer-events-none blur-md" />
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-[var(--bg-card)]/5 rounded-full pointer-events-none blur-md" />
                             </div>
                           ))}
                         </div>
                       )}
 
                       <div className="p-6 border border-dashed border-gray-300 rounded-sm flex flex-col gap-3 items-center justify-center py-10">
-                        <span className="text-sm text-gray-600 font-bold">Link a new Debit / Credit Card</span>
+                        <span className="text-sm text-[var(--text-secondary)] font-bold">Link a new Debit / Credit Card</span>
                         <div className="flex gap-3 w-full max-w-sm pt-2">
                           <input
                             type="text"
@@ -1060,7 +1059,7 @@ const Profile = () => {
                           <button
                             onClick={handleAddCard}
                             disabled={isVerifyingCard}
-                            className="bg-[#1c1c1a] text-white hover:bg-[#855300] px-6 py-2.5 text-sm rounded-sm shrink-0 font-bold shadow-sm transition-colors flex items-center gap-2"
+                            className="bg-[var(--accent)] text-white hover:bg-[#855300] px-6 py-2.5 text-sm rounded-sm shrink-0 font-bold shadow-sm transition-colors flex items-center gap-2"
                           >
                             {isVerifyingCard && <Loader2 className="w-4 h-4 animate-spin" />}
                             {isVerifyingCard ? "Verifying..." : "Add Card"}
@@ -1083,7 +1082,7 @@ const Profile = () => {
                     className="space-y-6"
                   >
                     <div className="border-b border-border pb-4">
-                      <h2 className="text-lg font-bold text-[#131b2e] flex items-center gap-2">
+                      <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
                         <Star className="w-5 h-5 text-[#fea619] fill-[#fea619]" /> My Reviews & Ratings
                       </h2>
                     </div>
@@ -1093,12 +1092,12 @@ const Profile = () => {
                         <Star className="w-8 h-8 fill-[#fea619]/25" />
                       </div>
                       <div className="space-y-1">
-                        <h3 className="text-sm font-bold text-[#131b2e]">No Reviews Published</h3>
-                        <p className="text-xs text-gray-500 leading-relaxed">
+                        <h3 className="text-sm font-bold text-[var(--text-primary)]">No Reviews Published</h3>
+                        <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                           You haven't reviewed any architectural designs or raw material products yet. Rate your active purchases from the Orders catalog!
                         </p>
                       </div>
-                      <Link to="/orders" className="bg-[#1c1c1a] text-white hover:bg-[#855300] font-bold text-xs py-2.5 px-6 rounded-sm shadow-sm transition-colors">
+                      <Link to="/orders" className="bg-[var(--accent)] text-white hover:bg-[#855300] font-bold text-xs py-2.5 px-6 rounded-sm shadow-sm transition-colors">
                         View Active Orders
                       </Link>
                     </div>
@@ -1116,37 +1115,37 @@ const Profile = () => {
                     className="space-y-6"
                   >
                     <div className="border-b border-border pb-4 flex justify-between items-center">
-                      <h2 className="text-lg font-bold text-[#131b2e] flex items-center gap-2">
+                      <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
                         <Bell className="w-5 h-5 text-[#855300]" /> Notifications
                       </h2>
-                      <button className="text-xs text-gray-400 hover:text-gray-600 font-semibold cursor-pointer">Mark all as read</button>
+                      <button className="text-xs text-muted-foreground hover:text-[var(--text-secondary)] font-semibold cursor-pointer">Mark all as read</button>
                     </div>
 
                     <div className="space-y-4 max-w-2xl">
 
                       {/* Notification 1 */}
-                      <div className="p-4 border border-border bg-[#fea619]/5 rounded-sm flex items-start gap-4 hover:bg-gray-50/50 transition-colors">
+                      <div className="p-4 border border-border bg-[#fea619]/5 rounded-sm flex items-start gap-4 hover:bg-[var(--bg-surface)]/50 transition-colors">
                         <Package className="w-5 h-5 text-[#855300] shrink-0 mt-0.5" />
                         <div className="space-y-1 flex-1">
                           <div className="flex justify-between items-center">
-                            <span className="text-xs font-bold text-[#131b2e]">Order Dispatched</span>
-                            <span className="text-[10px] text-gray-400 font-semibold">Today, 2:45 PM</span>
+                            <span className="text-xs font-bold text-[var(--text-primary)]">Order Dispatched</span>
+                            <span className="text-[10px] text-muted-foreground font-semibold">Today, 2:45 PM</span>
                           </div>
-                          <p className="text-xs text-[#45464d] leading-relaxed">
+                          <p className="text-xs text-muted-foreground leading-relaxed">
                             Good news! Your architectural blueprint order #BBAX-99482 has been verified and dispatched to your registered address.
                           </p>
                         </div>
                       </div>
 
                       {/* Notification 2 */}
-                      <div className="p-4 border border-border rounded-sm flex items-start gap-4 hover:bg-gray-50/50 transition-colors">
+                      <div className="p-4 border border-border rounded-sm flex items-start gap-4 hover:bg-[var(--bg-surface)]/50 transition-colors">
                         <ShieldCheck className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                         <div className="space-y-1 flex-1">
                           <div className="flex justify-between items-center">
-                            <span className="text-xs font-bold text-[#131b2e]">Identity Synchronized</span>
-                            <span className="text-[10px] text-gray-400 font-semibold">Yesterday</span>
+                            <span className="text-xs font-bold text-[var(--text-primary)]">Identity Synchronized</span>
+                            <span className="text-[10px] text-muted-foreground font-semibold">Yesterday</span>
                           </div>
-                          <p className="text-xs text-[#45464d] leading-relaxed">
+                          <p className="text-xs text-muted-foreground leading-relaxed">
                             Your core profile registration credentials have been synchronized with the Supabase distributed database ledger.
                           </p>
                         </div>

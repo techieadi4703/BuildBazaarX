@@ -430,11 +430,11 @@ export default function AdminUsers() {
                                           </div>
                                           <div className="rounded-lg border p-4">
                                             <p className="text-sm text-muted-foreground">Total Spend</p>
-                                            <p className="text-2xl font-bold">₹{totalSpent.toLocaleString('en-IN')}</p>
+                                            <p className="text-2xl font-bold price-display">₹{totalSpent.toLocaleString('en-IN')}</p>
                                           </div>
                                           <div className="rounded-lg border p-4">
                                             <p className="text-sm text-muted-foreground">Average Order</p>
-                                            <p className="text-2xl font-bold">₹{Math.round(avgOrderValue).toLocaleString('en-IN')}</p>
+                                            <p className="text-2xl font-bold price-display">₹{Math.round(avgOrderValue).toLocaleString('en-IN')}</p>
                                           </div>
                                           <div className="rounded-lg border p-4">
                                             <p className="text-sm text-muted-foreground">Order Frequency</p>
@@ -474,7 +474,7 @@ export default function AdminUsers() {
                                             </div>
                                             <div className="rounded-lg border p-4">
                                               <p className="text-sm text-muted-foreground">Cart Value</p>
-                                              <p className="text-2xl font-bold">₹{cartValue.toLocaleString('en-IN')}</p>
+                                              <p className="text-2xl font-bold price-display">₹{cartValue.toLocaleString('en-IN')}</p>
                                             </div>
                                             <div className="rounded-lg border p-4">
                                               <p className="text-sm text-muted-foreground">Last Updated</p>
@@ -492,7 +492,7 @@ export default function AdminUsers() {
                                                   </div>
                                                   <div className="text-right">
                                                     <p>Qty: {item.quantity || 1}</p>
-                                                    <p className="text-muted-foreground">₹{Number(item.price || 0).toLocaleString('en-IN')}</p>
+                                                    <p className="text-muted-foreground price-display">₹{Number(item.price || 0).toLocaleString('en-IN')}</p>
                                                   </div>
                                                 </div>
                                               ))}

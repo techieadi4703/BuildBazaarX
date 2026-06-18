@@ -39,7 +39,7 @@ export const BeforeAfterSlider = ({ beforeImage, afterImage, className = '', lab
 
       {/* Horizontal scan line effect */}
       <motion.div 
-        className="absolute left-0 right-0 h-[2px] bg-[#C5A572] z-20 shadow-[0_0_15px_rgba(197,165,114,0.8)] pointer-events-none"
+        className="absolute left-0 right-0 h-[2px] bg-[var(--accent-warm)] z-20 shadow-[0_0_15px_rgba(197,165,114,0.8)] pointer-events-none"
         animate={{ top: ["0%", "100%", "0%"] }}
         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
       />

@@ -210,7 +210,7 @@ export default function AdminProducts() {
                       <TableCell>{product.suppliers?.profiles?.full_name || '—'}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-medium">₹{product.price}</span>
+                          <span className="font-medium price-display">₹{product.price}</span>
                           {product.discount_percent > 0 && (
                             <span className="text-xs text-green-600">{product.discount_percent}% OFF</span>
                           )}

@@ -53,23 +53,23 @@ const Wishlist = () => {
         <title>Your Wishlist | BuildBazaarX</title>
       </Helmet>
       
-      <div className="bg-[#fcf9f6] min-h-screen py-12 px-4 md:px-8 font-body">
+      <div className="bg-[var(--bg-base)] min-h-screen py-12 px-4 md:px-8 font-body">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-3 mb-8">
-            <Heart className="w-8 h-8 text-[#735c00] fill-current" />
-            <h1 className="text-4xl font-headline font-bold text-[#1c1c1a]">Your Wishlist</h1>
+            <Heart className="w-8 h-8 text-[var(--accent-warm)] fill-current" />
+            <h1 className="text-4xl font-headline font-bold text-[var(--text-primary)]">Your Wishlist</h1>
           </div>
           
           {items.length === 0 ? (
             <motion.div 
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl p-12 text-center shadow-sm border border-[#e5e2df] max-w-2xl mx-auto"
+              className="bg-[var(--bg-card)] rounded-2xl p-12 text-center shadow-sm border border-[var(--border-subtle)] max-w-2xl mx-auto"
             >
               <Heart className="w-16 h-16 text-[#c4c6cc] mx-auto mb-6" />
               <h2 className="text-2xl font-headline font-bold mb-4">Your wishlist is empty</h2>
-              <p className="text-[#74777d] mb-8">Save your favorite designs here to easily find them later when you're ready to start building your dream space.</p>
-              <Button asChild className="bg-[#735c00] hover:bg-[#5a4800] rounded-full px-8 py-6 text-base">
+              <p className="text-[var(--text-tertiary)] mb-8">Save your favorite designs here to easily find them later when you're ready to start building your dream space.</p>
+              <Button asChild className="bg-[var(--accent-warm)] hover:bg-[#5a4800] rounded-full px-8 py-6 text-base">
                 <Link to="/designs">
                   Browse Designs <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
@@ -90,9 +90,9 @@ const Wishlist = () => {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#e5e2df] group relative flex flex-col"
+                  className="bg-[var(--bg-card)] rounded-2xl overflow-hidden shadow-sm border border-[var(--border-subtle)] group relative flex flex-col"
                 >
-                  <Link to={linkTo} className="block relative aspect-[4/3] overflow-hidden bg-[#f6f3f0]">
+                  <Link to={linkTo} className="block relative aspect-[4/3] overflow-hidden bg-[var(--bg-card)]">
                     <img 
                       src={design?.image || fullhomeImage} 
                       alt={design?.name || "Design"} 
@@ -107,26 +107,26 @@ const Wishlist = () => {
                   </Link>
                   <div className="p-5 flex flex-col flex-grow">
                     <div className="flex justify-between items-start mb-2">
-                      <Link to={linkTo} className="hover:text-[#735c00] transition-colors">
+                      <Link to={linkTo} className="hover:text-[var(--accent-warm)] transition-colors">
                         <h3 className="font-headline font-bold text-xl line-clamp-1">{design?.name || "Unknown"}</h3>
                       </Link>
                     </div>
                     <div className="flex items-center gap-2 mb-4">
-                      <span className="bg-[#f6f3f0] px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-[#74777d]">
+                      <span className="bg-[var(--bg-card)] px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
                         {typeof design?.category === "string" ? design.category.replace("-", " ") : "Unknown"}
                       </span>
-                      <span className="bg-[#f6f3f0] px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-[#74777d]">
+                      <span className="bg-[var(--bg-card)] px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
                         {design?.style || "Unknown"}
                       </span>
                     </div>
                     
-                    <div className="mt-auto pt-4 border-t border-[#e5e2df] flex justify-between items-center">
+                    <div className="mt-auto pt-4 border-t border-[var(--border-subtle)] flex justify-between items-center">
                       <Button asChild variant="outline" size="sm" className="rounded-full">
                         <Link to={linkTo}>View Details</Link>
                       </Button>
                       <button 
                         onClick={(e) => { e.preventDefault(); if (design?.id) removeFromWishlist(design.id); }}
-                        className="text-[#74777d] hover:text-[#ba1a1a] transition-colors p-2 rounded-full hover:bg-[#ba1a1a]/10"
+                        className="text-[var(--text-tertiary)] hover:text-[#ba1a1a] transition-colors p-2 rounded-full hover:bg-[#ba1a1a]/10"
                         title="Remove from wishlist"
                       >
                         <Trash2 className="w-4 h-4" />

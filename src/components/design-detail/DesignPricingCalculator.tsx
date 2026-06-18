@@ -123,7 +123,7 @@ export const DesignPricingCalculator = () => {
   return (
     <section className="py-12 md:py-16 bg-secondary/30">
       <div className="container mx-auto px-4">
-        <Card className="shadow-lg border-0 relative">
+        <Card className="shadow-[var(--shadow-md)] border-0 relative">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg md:text-xl flex items-center gap-2">
               <Package className="h-5 w-5 text-primary" />

@@ -218,15 +218,15 @@ const RawMaterials = () => {
         <meta property="og:image:height" content="630" />
       </Helmet>
 
-      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative">
+      <div className="bg-[var(--bg-base)] text-[var(--text-primary)] min-h-screen font-body w-full pb-20 relative">
         <main className="max-w-[1920px] mx-auto flex flex-col md:flex-row min-h-screen relative">
           {/* Mobile Top Navigation (Search + Button) */}
-          <div className="md:hidden flex flex-col px-4 pt-4 pb-2 bg-[#fcf9f6] space-y-4 sticky top-0 z-20 shadow-sm border-b border-[#e5e2df]">
+          <div className="md:hidden flex flex-col px-4 pt-4 pb-2 bg-[var(--bg-base)] space-y-4 sticky top-0 z-20 shadow-sm border-b border-[var(--border-subtle)]">
           <div className="flex items-center gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] w-4 h-4" />
               <input
-                className="w-full pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded-xl text-sm outline-none shadow-sm font-body"
+                className="w-full px-4 h-11 sm:h-14 rounded-2xl bg-background border border-border/50 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-[var(--text-tertiary)] outline-none"
                 placeholder="Search materials..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -235,7 +235,7 @@ const RawMaterials = () => {
             </div>
             <button
               onClick={openFilterSheet}
-              className="flex items-center justify-center gap-2 px-5 py-3 bg-[#f6f3f0] border border-[#e5e2df] rounded-xl text-sm font-medium whitespace-nowrap hover:bg-[#eae8e5] transition-colors shadow-sm font-body"
+              className="flex items-center justify-center gap-2 px-5 py-3 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg text-sm font-medium whitespace-nowrap hover:bg-[var(--bg-surface)] transition-colors shadow-sm font-body"
             >
               <SlidersHorizontal className="w-4 h-4" />
               Filter
@@ -245,7 +245,7 @@ const RawMaterials = () => {
           {/* Active filter pills */}
           {selectedCategory && (
             <div className="flex flex-wrap gap-2 pt-1 pb-1">
-              <span className="bg-[#f6f3f0] border border-[#e5e2df] text-[#1c1c1a] px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 font-body">
+              <span className="bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-primary)] px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 font-body">
                 {categories.find((c) => c.id === selectedCategory)?.name ||
                   selectedCategory}
                 <X
@@ -260,13 +260,13 @@ const RawMaterials = () => {
         {/* Floating Action Button for Mobile */}
         <button
           onClick={openFilterSheet}
-          className="md:hidden fixed bottom-24 right-6 z-30 bg-[#735c00] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform"
+          className="md:hidden fixed bottom-24 right-6 z-30 bg-[var(--accent-warm)] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform"
         >
           <Sliders className="w-6 h-6" />
         </button>
 
         {/* Desktop Sidebar Filter */}
-        <aside className="hidden w-80 px-4 py-8 pt-6 md:px-5 md:flex flex-col gap-4 bg-[#f6f3f0] border-r border-[#e5e2df] shrink-0 sticky top-0 h-auto">
+        <aside className="hidden w-80 px-4 py-8 pt-6 md:px-5 md:flex flex-col gap-4 bg-[var(--bg-card)] border-r border-[var(--border-subtle)] shrink-0 sticky top-0 h-auto">
           <div className="flex flex-col gap-6 md:gap-4">
             <div className="flex items-center justify-between">
               <h2 className="font-headline italic text-2xl">Filters</h2>
@@ -276,7 +276,7 @@ const RawMaterials = () => {
                     setSelectedCategory(null);
                     setSearchQuery("");
                   }}
-                  className="font-body text-[10px] font-bold uppercase tracking-widest text-[#74777d] hover:text-[#735c00]"
+                  className="font-body text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] hover:text-[var(--accent-warm)]"
                 >
                   Clear All
                 </button>
@@ -284,9 +284,9 @@ const RawMaterials = () => {
             </div>
 
             <div className="relative w-full md:w-[85%]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74777d] w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] w-4 h-4" />
               <input
-                className="pl-10 pr-4 py-3 bg-white border border-[#e5e2df] focus:border-[#735c00] rounded text-sm w-full outline-none font-body shadow-sm"
+                className="w-full px-4 h-11 sm:h-14 rounded-2xl bg-background border border-border/50 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-[var(--text-tertiary)] outline-none"
                 placeholder="Search materials..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -295,8 +295,8 @@ const RawMaterials = () => {
             </div>
           </div>
 
-          <div className="space-y-4 md:space-y-3 pt-4 border-t border-[#e5e2df]">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1a] opacity-60">Categories</h3>
+          <div className="space-y-4 md:space-y-3 pt-4 border-t border-[var(--border-subtle)]">
+            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-primary)] opacity-60">Categories</h3>
             <div className="flex flex-col gap-3 md:gap-2">
               <label className="flex items-center gap-3 cursor-pointer group">
                 <input
@@ -304,9 +304,9 @@ const RawMaterials = () => {
                   name="desktopCategory"
                   checked={selectedCategory === null}
                   onChange={() => setSelectedCategory(null)}
-                  className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                  className="w-4 h-4 text-[var(--accent-warm)] border-[var(--border-default)] focus:ring-[#735c00] bg-transparent"
                 />
-                <span className={`text-sm font-medium transition-colors ${selectedCategory === null ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
+                <span className={`text-sm font-medium transition-colors ${selectedCategory === null ? 'text-[var(--accent-warm)]' : 'group-hover:text-[var(--accent-warm)]'}`}>
                   All Materials
                 </span>
               </label>
@@ -319,10 +319,10 @@ const RawMaterials = () => {
                       name="desktopCategory"
                       checked={selectedCategory === cat.id}
                       onChange={() => setSelectedCategory(cat.id)}
-                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                      className="w-4 h-4 text-[var(--accent-warm)] border-[var(--border-default)] focus:ring-[#735c00] bg-transparent"
                     />
-                    <Icon className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'text-[#74777d] group-hover:text-[#735c00]'}`} />
-                    <span className={`text-sm font-medium transition-colors ${selectedCategory === cat.id ? 'text-[#735c00]' : 'group-hover:text-[#735c00]'}`}>
+                    <Icon className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? 'text-[var(--accent-warm)]' : 'text-[var(--text-tertiary)] group-hover:text-[var(--accent-warm)]'}`} />
+                    <span className={`text-sm font-medium transition-colors ${selectedCategory === cat.id ? 'text-[var(--accent-warm)]' : 'group-hover:text-[var(--accent-warm)]'}`}>
                       {cat.name}
                     </span>
                   </label>
@@ -332,7 +332,7 @@ const RawMaterials = () => {
           </div>
 
           {/* Featured Ad inside Sidebar */}
-          <div className="mt-8 p-6 bg-white border border-[#e5e2df] rounded-lg">
+          <div className="mt-8 p-6 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg">
             <h5 className="font-bold mb-3 font-headline italic text-lg">
               Featured Material
             </h5>
@@ -343,15 +343,15 @@ const RawMaterials = () => {
               width={400}
               height={400}
               decoding="async"
-              className="w-full aspect-square object-cover rounded mb-4 mix-blend-multiply"
+              className="w-full aspect-square object-cover rounded mb-4"
             />
-            <p className="text-xs text-[#44474c] mb-4 leading-relaxed font-body">
+            <p className="text-xs text-[var(--text-secondary)] mb-4 leading-relaxed font-body">
               Discover the 2024 Architectural Digest choice for
               sustainable veneers.
             </p>
             <a
               href="#"
-              className="font-body text-[10px] font-bold uppercase text-[#735c00] flex items-center gap-1 hover:underline"
+              className="font-body text-[10px] font-bold uppercase text-[var(--accent-warm)] flex items-center gap-1 hover:underline"
             >
               Read Monograph <ArrowUpRight className="w-3 h-3" />
             </a>
@@ -359,7 +359,7 @@ const RawMaterials = () => {
         </aside>
 
         {/* Content Canvas */}
-        <section className="flex-1 p-0 md:p-8 lg:px-8 xl:px-16 md:pt-8 md:pb-4 bg-[#fcf9f6]">
+        <section className="flex-1 p-0 md:p-8 lg:px-8 xl:px-16 md:pt-8 md:pb-4 bg-[var(--bg-base)]">
           {/* Header - Hidden on mobile, handled by mobile top bar */}
           <header className="hidden md:block mb-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
@@ -369,8 +369,8 @@ const RawMaterials = () => {
                 </h1>
               </div>
               <div className="flex shrink-0">
-                <span className="px-5 py-2.5 bg-[#eae8e5] rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#735c00]"></span>
+                <span className="px-5 py-2.5 bg-[var(--bg-surface)] rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent-warm)]"></span>
                   {totalCount} MATERIALS AVAILABLE
                 </span>
               </div>
@@ -384,8 +384,8 @@ const RawMaterials = () => {
                     exit={{ opacity: 0 }}
                     className="flex flex-col items-center justify-center p-24 text-center"
                   >
-                    <div className="w-10 h-10 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent mb-4"></div>
-                    <p className="font-body text-sm text-[#74777d]">
+                    <div className="w-10 h-10 animate-spin rounded-full border-4 border-[var(--accent-warm)] border-t-transparent mb-4"></div>
+                    <p className="font-body text-sm text-[var(--text-tertiary)]">
                       Loading materials inventory...
                     </p>
                   </motion.div>
@@ -393,12 +393,12 @@ const RawMaterials = () => {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex flex-col items-center justify-center p-20 text-center border border-[#e5e2df] rounded-lg bg-[#f6f3f0]"
+                    className="flex flex-col items-center justify-center p-20 text-center border border-[var(--border-subtle)] rounded-lg bg-[var(--bg-card)]"
                   >
-                    <span className="font-headline text-2xl italic mb-2 text-[#1c1c1a]">
+                    <span className="font-headline text-2xl italic mb-2 text-[var(--text-primary)]">
                       No Elements Active
                     </span>
-                    <p className="font-body text-sm text-[#74777d]">
+                    <p className="font-body text-sm text-[var(--text-tertiary)]">
                       Shift curation filters to uncover available components.
                     </p>
                   </motion.div>
@@ -409,11 +409,11 @@ const RawMaterials = () => {
                         key={product.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="group flex flex-col h-full bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-sm border border-[#e5e2df] hover:shadow-md transition-all relative"
+                        className="group flex flex-col h-full bg-[var(--bg-card)] rounded-lg md:rounded-2xl overflow-hidden shadow-sm border border-[var(--border-subtle)] hover:shadow-md transition-all relative"
                       >
                         <Link to={`/materials/${product.id}`} className="flex flex-col h-full">
                         {/* Image Box */}
-                        <div className="relative aspect-[4/5] overflow-hidden bg-[#f6f3f0]">
+                        <div className="relative aspect-[4/5] overflow-hidden bg-[var(--bg-card)]">
                           <img
                             src={cdnImg(getProductImage(product), 400)}
                             alt={product.brand || "Material"}
@@ -424,9 +424,9 @@ const RawMaterials = () => {
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                           <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
-                            <span className="bg-white/95 backdrop-blur-md px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm border border-[#e5e2df] text-[#1c1c1a]">
+                            <span className="bg-[var(--bg-surface)] backdrop-blur-md px-2 py-1 shadow-md border-[var(--border-default)] rounded-full text-[8px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm border border-[var(--border-subtle)] text-[var(--text-primary)]">
                               <BadgeCheck
-                                className={`w-3 h-3 ${product.in_stock ? "text-[#735c00]" : "text-orange-500"} shrink-0`}
+                                className={`w-3 h-3 ${product.in_stock ? "text-[var(--accent-warm)]" : "text-orange-500"} shrink-0`}
                               />
                               <span>
                                 {product.in_stock ? "Verified" : "Limited"}
@@ -434,7 +434,7 @@ const RawMaterials = () => {
                             </span>
                           </div>
                           <div className="absolute bottom-2 left-2 md:bottom-3 md:left-3 z-10">
-                            <span className="bg-[#735c00] text-white px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded-sm shadow-md">
+                            <span className="bg-[var(--accent-warm)] text-white px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded-sm shadow-md">
                               {product.category?.toUpperCase() || "MATERIAL"}
                             </span>
                           </div>
@@ -449,7 +449,7 @@ const RawMaterials = () => {
                                 return (
                                   <motion.div
                                     layout
-                                    className="bg-[#1c1c1a] text-white rounded-full flex items-center gap-1 py-[2px] shadow-lg border border-white/10"
+                                    className="bg-[var(--accent)] text-white rounded-full flex items-center gap-1 py-[2px] shadow-[var(--shadow-md)] border border-[var(--border-subtle)]"
                                   >
                                     <button
                                       onClick={(e) => {
@@ -460,7 +460,7 @@ const RawMaterials = () => {
                                           cartItem.quantity - 1,
                                         );
                                       }}
-                                      className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
+                                      className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[var(--accent-hover)] transition-all"
                                     >
                                       <Minus className="w-3 h-3" />
                                     </button>
@@ -476,7 +476,7 @@ const RawMaterials = () => {
                                           cartItem.quantity + 1,
                                         );
                                       }}
-                                      className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#735c00] transition-all"
+                                      className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-[var(--accent-hover)] transition-all"
                                     >
                                       <Plus className="w-3 h-3" />
                                     </button>
@@ -486,7 +486,7 @@ const RawMaterials = () => {
                               return (
                                 <button
                                   onClick={(e) => handleAddToCart(e, product)}
-                                  className="w-8 h-8 bg-[#1c1c1a] text-white rounded-full flex items-center justify-center hover:bg-[#735c00] hover:scale-110 transition-all shadow-lg"
+                                  className="w-8 h-8 bg-[var(--accent)] text-white rounded-full flex items-center justify-center hover:bg-[var(--accent-hover)] hover:scale-110 transition-all shadow-[var(--shadow-md)]"
                                 >
                                   <Plus className="w-4 h-4" />
                                 </button>
@@ -497,15 +497,14 @@ const RawMaterials = () => {
 
                         {/* Content Area */}
                         <div className="p-3 md:p-4 flex flex-col flex-grow">
-                          <h3 className="text-sm md:text-base font-headline font-bold leading-tight text-[#1c1c1a] mb-1 line-clamp-1">
+                          <h3 className="text-sm md:text-base font-headline font-bold leading-tight text-[var(--text-primary)] mb-1 line-clamp-1">
                             {product.name}
                           </h3>
                           <div className="flex justify-between items-end mt-auto pt-2">
-                            <span className="text-[10px] text-[#74777d] font-body lowercase line-clamp-1 mr-2">
+                            <span className="text-[10px] text-[var(--text-tertiary)] font-body lowercase line-clamp-1 mr-2">
                               {product.category?.replace("-", " ")}
                             </span>
-                            <span className="font-body font-bold text-[#1c1c1a] text-sm whitespace-nowrap">
-                              ₹{product.price?.toLocaleString() || "0"}
+                            <span className="font-body font-bold text-[var(--text-primary)] text-sm whitespace-nowrap price-display">₹{product.price?.toLocaleString() || "0"}
                             </span>
                           </div>
                           </div>
@@ -520,15 +519,15 @@ const RawMaterials = () => {
               {totalPages > 1 && (
                 <div className="mt-8 flex flex-col items-center gap-3">
                   {/* Flipkart Info Label */}
-                  <div className="text-xs text-[#74777d] font-body">
-                    Showing page <span className="font-bold text-[#1c1c1a]">{page}</span> of <span className="font-bold text-[#1c1c1a]">{totalPages}</span> ({totalCount} total items)
+                  <div className="text-xs text-[var(--text-tertiary)] font-body">
+                    Showing page <span className="font-bold text-[var(--text-primary)]">{page}</span> of <span className="font-bold text-[var(--text-primary)]">{totalPages}</span> ({totalCount} total items)
                   </div>
                   
                   <div className="flex justify-center items-center gap-2">
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="px-4 py-2 border border-[#e5e2df] rounded-lg disabled:opacity-40 hover:bg-[#f6f3f0] text-sm font-semibold transition-colors disabled:cursor-not-allowed text-[#1c1c1a]"
+                      className="px-4 py-2 border border-[var(--border-subtle)] rounded-lg disabled:opacity-40 hover:bg-[var(--bg-card)] text-sm font-semibold transition-colors disabled:cursor-not-allowed text-[var(--text-primary)]"
                     >
                       Previous
                     </button>
@@ -537,7 +536,7 @@ const RawMaterials = () => {
                       {getPaginationRange(page, totalPages).map((p, idx) => {
                         if (p === "...") {
                           return (
-                            <span key={`ell-${idx}`} className="px-2 text-[#74777d] text-sm font-bold">
+                            <span key={`ell-${idx}`} className="px-2 text-[var(--text-tertiary)] text-sm font-bold">
                               ...
                             </span>
                           );
@@ -548,8 +547,8 @@ const RawMaterials = () => {
                             onClick={() => setPage(Number(p))}
                             className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold border transition-all ${
                               page === p
-                                ? "bg-[#735c00] text-white border-[#735c00] shadow-sm font-bold"
-                                : "bg-white text-[#1c1c1a] border-[#e5e2df] hover:bg-[#f6f3f0]"
+                                ? "bg-[var(--accent-warm)] text-white border-[var(--accent-warm)] shadow-sm font-bold"
+                                : "bg-[var(--bg-card)] text-[var(--text-primary)] border-[var(--border-subtle)] hover:bg-[var(--bg-card)]"
                             }`}
                           >
                             {p}
@@ -561,7 +560,7 @@ const RawMaterials = () => {
                     <button
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page === totalPages}
-                      className="px-4 py-2 border border-[#e5e2df] rounded-lg disabled:opacity-40 hover:bg-[#f6f3f0] text-sm font-semibold transition-colors disabled:cursor-not-allowed text-[#1c1c1a]"
+                      className="px-4 py-2 border border-[var(--border-subtle)] rounded-lg disabled:opacity-40 hover:bg-[var(--bg-card)] text-sm font-semibold transition-colors disabled:cursor-not-allowed text-[var(--text-primary)]"
                     >
                       Next
                     </button>
@@ -574,7 +573,7 @@ const RawMaterials = () => {
         {/* Mobile Bottom Sheet for Filters */}
           <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
             <SheetContent
-              className="overflow-y-auto w-full md:hidden bg-[#fcf9f6] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl"
+              className="overflow-y-auto w-full md:hidden bg-[var(--bg-base)] z-[100] px-6 rounded-t-3xl border-0 shadow-2xl"
               side="bottom"
             >
               <SheetHeader className="mb-6 pb-2 block">
@@ -588,16 +587,16 @@ const RawMaterials = () => {
 
               <div className="space-y-4 md:space-y-3 pb-32">
                 <div className="flex flex-col gap-4">
-                  <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors">
+                  <label className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-[var(--bg-card)] rounded-lg transition-colors">
                     <input
                       type="radio"
                       name="draftCategory"
                       checked={draftCategory === null}
                       onChange={() => setDraftCategory(null)}
-                      className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                      className="w-4 h-4 text-[var(--accent-warm)] border-[var(--border-default)] focus:ring-[#735c00] bg-transparent"
                     />
                     <span
-                      className={`text-sm font-medium transition-colors ${draftCategory === null ? "text-[#735c00]" : "text-[#44474c]"}`}
+                      className={`text-sm font-medium transition-colors ${draftCategory === null ? "text-[var(--accent-warm)]" : "text-[var(--text-secondary)]"}`}
                     >
                       All Materials
                     </span>
@@ -607,20 +606,20 @@ const RawMaterials = () => {
                     return (
                       <label
                         key={cat.id}
-                        className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-white rounded-lg transition-colors"
+                        className="flex items-center gap-3 cursor-pointer group p-2 hover:bg-[var(--bg-card)] rounded-lg transition-colors"
                       >
                         <input
                           type="radio"
                           name="draftCategory"
                           checked={draftCategory === cat.id}
                           onChange={() => setDraftCategory(cat.id)}
-                          className="w-4 h-4 text-[#735c00] border-[#c4c6cc] focus:ring-[#735c00] bg-transparent"
+                          className="w-4 h-4 text-[var(--accent-warm)] border-[var(--border-default)] focus:ring-[#735c00] bg-transparent"
                         />
                         <Icon
-                          className={`w-4 h-4 ${draftCategory === cat.id ? "text-[#735c00]" : "text-[#74777d]"}`}
+                          className={`w-4 h-4 ${draftCategory === cat.id ? "text-[var(--accent-warm)]" : "text-[var(--text-tertiary)]"}`}
                         />
                         <span
-                          className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? "text-[#735c00]" : "text-[#44474c]"}`}
+                          className={`text-sm font-medium transition-colors ${draftCategory === cat.id ? "text-[var(--accent-warm)]" : "text-[var(--text-secondary)]"}`}
                         >
                           {cat.name}
                         </span>
@@ -630,16 +629,16 @@ const RawMaterials = () => {
                 </div>
               </div>
 
-              <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-md border-t border-[#e5e2df] flex gap-4 pb-12">
+              <div className="fixed bottom-0 left-0 right-0 p-6 bg-background backdrop-blur-md border-t border-[var(--border-subtle)] flex gap-4 pb-12">
                 <button
                   onClick={resetFilters}
-                  className="w-1/3 py-4 border border-[#e5e2df] rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#fcf9f6] bg-white transition-colors font-body"
+                  className="w-1/3 py-4 border border-[var(--border-subtle)] rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-[var(--bg-base)] bg-[var(--bg-card)] transition-colors font-body"
                 >
                   Reset
                 </button>
                 <button
                   onClick={applyFilters}
-                  className="flex-1 py-4 bg-[#1c1c1a] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#735c00] transition-colors shadow-xl font-body"
+                  className="flex-1 py-4 bg-[var(--accent)] text-white rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-[var(--accent-hover)] transition-colors shadow-xl font-body"
                 >
                   Apply Filters
                 </button>

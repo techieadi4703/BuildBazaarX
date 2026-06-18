@@ -44,12 +44,12 @@ export const PopularDesignsSection = () => {
   const isMobile = useIsMobile();
 
   return (
-    <section className="py-12 bg-[#0B132B] relative overflow-hidden">
+    <section className="py-12 bg-[var(--bg-base)] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         
         <Reveal width="100%" direction="up">
           <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest uppercase">
+            <h2 className="text-2xl md:text-3xl font-black text-[var(--text-primary)] tracking-widest uppercase">
               POPULAR DESIGNS: CATEGORY_INDEX
             </h2>
           </div>
@@ -65,10 +65,10 @@ export const PopularDesignsSection = () => {
                     whileHover={{ scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
-                    <Card className="bg-[#131B2E] border border-white/10 rounded-xl overflow-hidden hover:border-[#C5A572]/50 transition-colors duration-500 shadow-2xl">
+                    <Card className="bg-[#131B2E] border border-[var(--border-subtle)] rounded-lg overflow-hidden hover:border-[var(--accent-warm)]/50 transition-colors duration-500 shadow-2xl">
                       {/* Image Container with Tech Overlays */}
                       <div className="relative h-64 md:h-72 overflow-hidden bg-[#0A1128] p-2">
-                         <div className="absolute top-4 right-4 z-20 bg-white/10 backdrop-blur-md px-3 py-1 rounded text-[10px] font-mono text-white/80 border border-white/10">
+                         <div className="absolute top-4 right-4 z-20 bg-[var(--bg-card)]/10 backdrop-blur-md px-3 py-1 rounded text-[10px] font-mono text-white/80 border border-[var(--border-subtle)]">
                            {category.categoryId}
                          </div>
                          <motion.img
@@ -93,20 +93,20 @@ export const PopularDesignsSection = () => {
                            className="w-full h-full object-cover rounded transition-transform duration-700 md:group-hover:scale-105"
                          />
                          {/* Scan line decoration */}
-                         <div className="absolute bottom-2 left-2 right-2 h-[2px] bg-[#C5A572]/40" />
+                         <div className="absolute bottom-2 left-2 right-2 h-[2px] bg-[var(--accent-warm)]/40" />
                       </div>
 
                       {/* Card Footer */}
                       <div className="p-5 flex justify-between items-end border-t border-white/5">
                         <div>
-                          <h3 className="font-black text-lg text-white mb-2 uppercase tracking-wide">
+                          <h3 className="font-black text-lg text-[var(--text-primary)] mb-2 uppercase tracking-wide">
                             {category.title}
                           </h3>
                           <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">
                             {category.categoryId.split(':')[0]}: {category.categoryId.split(':')[1]}
                           </p>
                         </div>
-                        <div className="text-[10px] font-mono text-[#C5A572] uppercase text-right">
+                        <div className="text-[10px] font-mono text-[var(--accent-warm)] uppercase text-right">
                           {category.techSpec}
                         </div>
                       </div>
@@ -120,7 +120,7 @@ export const PopularDesignsSection = () => {
 
         <Reveal width="100%" direction="up" delay={0.3}>
           <div className="text-center mt-8">
-            <Button asChild size="sm" className="bg-[#C5A572]/10 hover:bg-[#C5A572] border border-[#C5A572]/50 text-[#C5A572] hover:text-[#0B132B] px-8 uppercase tracking-widest text-xs font-bold transition-all">
+            <Button asChild size="sm" className="bg-[var(--accent-warm)]/10 hover:bg-[var(--accent-warm)] border border-[var(--accent-warm)]/50 text-[var(--accent-warm)] hover:text-[var(--text-primary)] px-8 uppercase tracking-widest text-xs font-bold transition-all">
               <Link to="/designs">
                 View All Designs
               </Link>

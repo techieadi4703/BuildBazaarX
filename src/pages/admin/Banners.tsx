@@ -225,7 +225,7 @@ export default function AdminBanners() {
                 {/* Live Preview */}
                 <div className="space-y-4">
                   <h3 className="font-semibold text-sm">Live Preview</h3>
-                  <div className="relative rounded-xl overflow-hidden shadow-md group aspect-[16/9] border flex items-center justify-center bg-muted">
+                  <div className="relative rounded-lg overflow-hidden shadow-md group aspect-[16/9] border flex items-center justify-center bg-muted">
                     {formData.image_url ? (
                       <>
                         <img 
@@ -236,8 +236,8 @@ export default function AdminBanners() {
                           className="absolute inset-0 w-full h-full object-cover"
                           onError={(e) => (e.currentTarget.src = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80')}
                         />
-                        <div className="absolute inset-0 bg-black/40 p-6 flex flex-col justify-end">
-                          <h2 className="text-white text-2xl font-bold mb-1">{formData.title || 'Banner Title'}</h2>
+                        <div className="absolute inset-0 bg-[var(--accent)]/40 p-6 flex flex-col justify-end">
+                          <h2 className="text-[var(--text-primary)] text-2xl font-bold mb-1">{formData.title || 'Banner Title'}</h2>
                           {formData.subtitle && <p className="text-white/90 text-sm">{formData.subtitle}</p>}
                         </div>
                       </>

@@ -46,7 +46,7 @@ const NotFound = () => {
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             className="mb-12 inline-block"
           >
-            <div className="w-32 h-32 bg-secondary/50 backdrop-blur-xl rounded-[2.5rem] flex items-center justify-center shadow-2xl border border-white/10 mx-auto">
+            <div className="w-32 h-32 bg-secondary/50 backdrop-blur-xl rounded-[2.5rem] flex items-center justify-center shadow-2xl border border-[var(--border-subtle)] mx-auto">
               <Ghost className="w-16 h-16 text-primary" />
             </div>
           </motion.div>

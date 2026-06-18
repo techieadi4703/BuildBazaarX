@@ -1,207 +1,113 @@
 import type { Config } from "tailwindcss";
 
-export default {
-  darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
-  prefix: "",
+const config: Config = {
+  darkMode: "class", // REQUIRED for class-based dark mode
+  content: [
+    "./src/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./pages/**/*.{ts,tsx}",
+  ],
   theme: {
-  	container: {
-  		center: true,
-  		padding: '2rem',
-  		screens: {
-  			'2xl': '1400px'
-  		}
-  	},
-  	extend: {
-  		colors: {
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			sidebar: {
-  				DEFAULT: 'hsl(var(--sidebar-background))',
-  				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: 'hsl(var(--sidebar-primary))',
-  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-  				accent: 'hsl(var(--sidebar-accent))',
-  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-  				border: 'hsl(var(--sidebar-border))',
-  				ring: 'hsl(var(--sidebar-ring))'
-  			},
-  			'primary-container': 'hsl(var(--primary-container))',
-  			'on-primary-container': 'hsl(var(--on-primary-container))',
-  			'secondary-container': 'hsl(var(--secondary-container))',
-  			'tertiary-container': 'hsl(var(--tertiary-container))',
-  			'tertiary-fixed': 'hsl(var(--tertiary-fixed))',
-  			surface: 'hsl(var(--surface))',
-  			'surface-container-low': 'hsl(var(--surface-container-low))',
-  			'surface-container': 'hsl(var(--surface-container))',
-  			'surface-container-highest': 'hsl(var(--surface-container-highest))',
-  			'surface-container-lowest': 'hsl(var(--surface-container-lowest))',
-  			'outline-variant': 'hsl(var(--outline-variant))',
-  			'on-surface': 'hsl(var(--on-surface))',
-  			'on-surface-variant': 'hsl(var(--on-surface-variant))'
-  		},
-  		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
-  		},
-  		fontSize: {
-  			'display-lg': ['3.5rem', { letterSpacing: '-0.02em', fontWeight: '700' }],
-  			'headline-lg': ['2rem', { fontWeight: '700' }],
-  			'title-lg': ['1.375rem', { fontWeight: '600' }],
-  			'body-lg': ['1rem', { fontWeight: '400' }],
-  			'label-md': ['0.75rem', { fontWeight: '500' }],
-  		},
-  		keyframes: {
-  			'accordion-down': {
-  				from: { height: '0' },
-  				to: { height: 'var(--radix-accordion-content-height)' }
-  			},
-  			'accordion-up': {
-  				from: { height: 'var(--radix-accordion-content-height)' },
-  				to: { height: '0' }
-  			},
-  			'float': {
-  				'0%, 100%': { transform: 'translateY(0px)' },
-  				'50%': { transform: 'translateY(-12px)' }
-  			},
-  			'float-delayed': {
-  				'0%, 100%': { transform: 'translateY(0px)' },
-  				'50%': { transform: 'translateY(-8px)' }
-  			},
-  			'bubble-rise': {
-  				'0%': { transform: 'translateY(0) scale(1)', opacity: '0' },
-  				'10%': { opacity: '1' },
-  				'90%': { opacity: '1' },
-  				'100%': { transform: 'translateY(-100vh) scale(1.2)', opacity: '0' }
-  			},
-  			'fade-in-up': {
-  				'0%': { opacity: '0', transform: 'translateY(30px)' },
-  				'100%': { opacity: '1', transform: 'translateY(0)' }
-  			},
-  			'fade-in-left': {
-  				'0%': { opacity: '0', transform: 'translateX(-30px)' },
-  				'100%': { opacity: '1', transform: 'translateX(0)' }
-  			},
-  			'fade-in-right': {
-  				'0%': { opacity: '0', transform: 'translateX(30px)' },
-  				'100%': { opacity: '1', transform: 'translateX(0)' }
-  			},
-  			'scale-in': {
-  				'0%': { opacity: '0', transform: 'scale(0.85)' },
-  				'100%': { opacity: '1', transform: 'scale(1)' }
-  			},
-  			'pulse-soft': {
-  				'0%, 100%': { opacity: '1' },
-  				'50%': { opacity: '0.7' }
-  			},
-  			'shimmer': {
-  				'0%': { backgroundPosition: '-200% 0' },
-  				'100%': { backgroundPosition: '200% 0' }
-  			},
-  			'draw-line': {
-  				'0%': { width: '0%' },
-  				'100%': { width: '100%' }
-  			},
-  			'spin-slow': {
-  				'0%': { transform: 'rotate(0deg)' },
-  				'100%': { transform: 'rotate(360deg)' }
-  			},
-  			'bounce-subtle': {
-  				'0%, 100%': { transform: 'translateY(0)' },
-  				'50%': { transform: 'translateY(-4px)' }
-  			}
-  		},
-  		animation: {
-  			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out',
-  			'float': 'float 4s ease-in-out infinite',
-  			'float-delayed': 'float-delayed 5s ease-in-out 1s infinite',
-  			'bubble-rise': 'bubble-rise 15s ease-in-out infinite',
-  			'fade-in-up': 'fade-in-up 0.7s ease-out forwards',
-  			'fade-in-left': 'fade-in-left 0.7s ease-out forwards',
-  			'fade-in-right': 'fade-in-right 0.7s ease-out forwards',
-  			'scale-in': 'scale-in 0.5s ease-out forwards',
-  			'pulse-soft': 'pulse-soft 3s ease-in-out infinite',
-  			'shimmer': 'shimmer 2.5s linear infinite',
-  			'draw-line': 'draw-line 1.5s ease-out forwards',
-  			'spin-slow': 'spin-slow 12s linear infinite',
-  			'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite'
-  		},
-  		fontFamily: {
-  			sans: [
-  				'Inter',
-  				'ui-sans-serif',
-  				'system-ui',
-  				'sans-serif',
-  				'Apple Color Emoji',
-  				'Segoe UI Emoji',
-  				'Segoe UI Symbol',
-  				'Noto Color Emoji'
-  			],
-  			serif: [
-  				'Lora',
-  				'ui-serif',
-  				'Georgia',
-  				'Cambria',
-  				'Times New Roman',
-  				'Times',
-  				'serif'
-  			],
-  			mono: [
-  				'Space Mono',
-  				'ui-monospace',
-  				'SFMono-Regular',
-  				'Menlo',
-  				'Monaco',
-  				'Consolas',
-  				'Liberation Mono',
-  				'Courier New',
-  				'monospace'
-  			]
-  		},
-  		boxShadow: {
-  			'2xs': 'var(--shadow-2xs)',
-  			xs: 'var(--shadow-xs)',
-  			sm: 'var(--shadow-sm)',
-  			md: 'var(--shadow-md)',
-  			lg: 'var(--shadow-lg)',
-  			xl: 'var(--shadow-xl)',
-  			'2xl': 'var(--shadow-2xl)',
-  			ambient: 'var(--shadow-xl)'
-  		}
-  	}
+    extend: {
+      colors: {
+        // === BBX BRAND TOKENS ===
+        bbx: {
+          // Background layers
+          "base": "#F7F5F1",
+          "surface": "#F0EDE7",
+          "card": "#FFFFFF",
+          "mortar": "#E4DDD4",
+          "plaster": "#D0C8BE",
+
+          // Text
+          "carbon": "#1D1B17",
+          "dust": "#746D65",
+          "chalk": "#A49D97",
+
+          // Blueprint Navy (primary accent)
+          "navy": "#1A3D7C",
+          "navy-hover": "#15326A",
+          "navy-mid": "#4B84D8",
+          "navy-faint": "#EBF0FA",
+
+          // Brass (warm accent / CTA)
+          "brass": "#BF7930",
+          "brass-hover": "#A8671F",
+          "brass-mid": "#D4893A",
+          "brass-faint": "#FEF3E2",
+
+          // Semantic
+          "success": "#2D7A4F",
+          "success-faint": "#E8F5EE",
+          "warning": "#C47D1A",
+          "warning-faint": "#FFF4E0",
+          "error": "#C1292E",
+          "error-faint": "#FDEAEA",
+
+          // === DARK MODE SURFACES ===
+          "dark-base": "#0C1119",
+          "dark-surface": "#131C27",
+          "dark-card": "#1A2535",
+          "dark-border": "#1F2E40",
+          "dark-border-strong": "#263547",
+          "dark-text": "#EDE8DF",
+          "dark-muted": "#8A8680",
+          "dark-faint": "#5C5854",
+          "dark-navy": "#4B84D8",
+          "dark-navy-faint": "#1A2D4A",
+          "dark-brass": "#D4893A",
+          "dark-brass-faint": "#2C1E0A",
+        },
+      },
+      fontFamily: {
+        display: ["Sora", "system-ui", "sans-serif"],
+        body: ["Inter", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "Fira Code", "monospace"],
+      },
+      fontSize: {
+        "display-xl": ["3.5rem", { lineHeight: "1.1", letterSpacing: "-0.03em", fontWeight: "600" }],
+        "display-lg": ["2.5rem", { lineHeight: "1.15", letterSpacing: "-0.025em", fontWeight: "600" }],
+        "display-md": ["2rem", { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "600" }],
+        "display-sm": ["1.5rem", { lineHeight: "1.25", letterSpacing: "-0.015em", fontWeight: "600" }],
+        "label-lg": ["0.75rem", { lineHeight: "1", letterSpacing: "0.08em", fontWeight: "600" }],
+        "label-md": ["0.6875rem", { lineHeight: "1", letterSpacing: "0.07em", fontWeight: "600" }],
+      },
+      backgroundImage: {
+        // THE SIGNATURE ELEMENT — Blueprint grid texture
+        "blueprint-grid": `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='%231A3D7C' stroke-width='0.6' opacity='0.06'/%3E%3C/svg%3E")`,
+        "blueprint-grid-dark": `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='%234B84D8' stroke-width='0.6' opacity='0.09'/%3E%3C/svg%3E")`,
+      },
+      boxShadow: {
+        "bbx-sm": "0 1px 3px rgba(29,27,23,0.08), 0 1px 2px rgba(29,27,23,0.04)",
+        "bbx-md": "0 4px 16px rgba(29,27,23,0.10), 0 2px 6px rgba(29,27,23,0.05)",
+        "bbx-lg": "0 8px 32px rgba(29,27,23,0.12), 0 4px 12px rgba(29,27,23,0.06)",
+        "bbx-navy": "0 4px 16px rgba(26,61,124,0.22)",
+        "bbx-brass": "0 4px 16px rgba(191,121,48,0.25)",
+        // Dark mode shadows
+        "bbx-dark-sm": "0 1px 3px rgba(0,0,0,0.25)",
+        "bbx-dark-md": "0 4px 16px rgba(0,0,0,0.35)",
+        "bbx-dark-lg": "0 8px 32px rgba(0,0,0,0.45)",
+      },
+      borderRadius: {
+        "xs": "2px",
+        "sm": "4px",
+        "md": "6px",
+        "lg": "10px",
+        "xl": "14px",
+        "2xl": "20px",
+      },
+      animation: {
+        "fade-in": "fadeIn 0.2s ease-out",
+        "slide-up": "slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+      },
+      keyframes: {
+        fadeIn: { "0%": { opacity: "0" }, "100%": { opacity: "1" } },
+        slideUp: { "0%": { transform: "translateY(8px)", opacity: "0" }, "100%": { transform: "translateY(0)", opacity: "1" } },
+      },
+    },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+};
+
+export default config;

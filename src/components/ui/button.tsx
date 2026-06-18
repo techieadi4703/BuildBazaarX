@@ -9,18 +9,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary-container text-on-primary-container hover:bg-primary-container/90",
-        action: "bg-gradient-to-br from-secondary to-secondary-container text-white hover:opacity-90 shadow-ambient",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-outline-variant/20 bg-transparent hover:bg-surface-container hover:text-on-surface",
-        secondary: "bg-tertiary-container text-white hover:bg-tertiary-container/80",
-        ghost: "bg-transparent border border-outline-variant/20 hover:bg-surface-container",
-        link: "text-secondary underline-offset-4 hover:underline",
+        default: "bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white",
+        action: "bg-[var(--accent-warm)] hover:bg-[var(--accent-warm-hover)] text-white",
+        cta: "bg-[var(--accent-warm)] hover:bg-[var(--accent-warm-hover)] text-white", // alias for action
+        destructive: "bg-[var(--error)] hover:opacity-90 text-white",
+        outline: "border border-[var(--border-subtle)] bg-[var(--bg-card)] hover:bg-[var(--bg-surface)] text-[var(--text-primary)]",
+        secondary: "bg-transparent border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent-faint)]",
+        ghost: "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]",
+        link: "text-[var(--accent)] underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-11 px-8 py-2 rounded-md",
-        sm: "h-9 rounded-sm px-4",
-        lg: "h-12 rounded-md px-10",
+        default: "h-11 px-5 py-2.5 rounded-md text-sm font-medium",
+        sm: "h-9 px-4 rounded-sm text-sm font-medium",
+        lg: "h-12 px-8 rounded-md text-base font-medium",
         icon: "h-11 w-11",
       },
     },

@@ -594,20 +594,21 @@ const DesignDetail = () => {
               whileHover={{ y: -5 }}
               transition={{ duration: 0.5 }}
             >
-              <Card className="shadow-[0_40px_100px_rgba(0,0,0,0.15)] border-none rounded-[4rem] overflow-hidden bg-background">
-                <div className="bg-primary px-8 py-6 flex flex-col items-center text-center text-white relative overflow-hidden">
+              <Card className="shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-[var(--border-subtle)] rounded-[3rem] overflow-hidden bg-[var(--bg-card)]">
+                <div className="bg-[var(--bg-card)] border-b border-[var(--border-subtle)] px-8 py-6 flex flex-col items-center text-center text-[var(--text-primary)] relative overflow-hidden">
                   <div className="relative z-10">
                     <h3 className="text-2xl font-black tracking-tight mb-1">Technical Feasibility Brief</h3>
-                    <p className="text-white/60 font-bold uppercase tracking-widest text-[10px]">No commitment consultation call</p>
+                    <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-[10px]">No commitment consultation call</p>
                   </div>
-                  <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/5 rounded-full" />
-                  <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-white/5 rounded-full" />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-surface)]/50 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-[var(--border-subtle)]/10">
+                    <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-[var(--text-primary)] uppercase">Form_Asset</span>
+                  </div>
                 </div>
                 <CardContent className="p-8 space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-name" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Full Name</Label>
+                        <Label htmlFor="consult-name" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Full Name</Label>
                         <Input
                           id="consult-name"
                           name="name"
@@ -621,7 +622,7 @@ const DesignDetail = () => {
                     </RevealItem>
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-phone" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Mobile Access</Label>
+                        <Label htmlFor="consult-phone" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Mobile Access</Label>
                         <Input
                           id="consult-phone"
                           name="phone"
@@ -639,7 +640,7 @@ const DesignDetail = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-city" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Site Location</Label>
+                        <Label htmlFor="consult-city" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Site Location</Label>
                         <Input
                           id="consult-city"
                           name="city"
@@ -653,7 +654,7 @@ const DesignDetail = () => {
                     </RevealItem>
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-project" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Configuration</Label>
+                        <Label htmlFor="consult-project" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Configuration</Label>
                         <select
                           id="consult-project"
                           value={formData.projectType}
@@ -673,7 +674,7 @@ const DesignDetail = () => {
 
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="consult-message" className="text-sm font-bold uppercase tracking-widest text-[#44474c] ml-1">Design Aspirations</Label>
+                      <Label htmlFor="consult-message" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Design Aspirations</Label>
                       <Textarea
                         id="consult-message"
                         value={formData.message}
@@ -688,7 +689,7 @@ const DesignDetail = () => {
                   <RevealItem>
                     <Button
                       size="lg"
-                      className="w-full h-14 rounded-[2rem] font-black text-base shadow-[0_20px_50px_rgba(0,0,0,0.15)] group relative overflow-hidden"
+                      className="w-full sm:w-auto rounded-full px-12 h-16 text-lg font-bold shadow-[0_20px_40px_rgba(0,0,0,0.3)] bg-[var(--accent)] text-white hover:bg-[var(--accent)]/80 group relative overflow-hidden transition-all duration-500"
                       onClick={handleSubmit}
                     >
                       <span className="relative z-10 flex items-center justify-center gap-3">

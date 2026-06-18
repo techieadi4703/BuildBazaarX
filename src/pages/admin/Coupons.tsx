@@ -210,7 +210,7 @@ export default function AdminCoupons() {
                   <div className="space-y-2">
                     <Label>Value <span className="text-destructive">*</span></Label>
                     <div className="relative">
-                      {formData.discount_type === 'flat' && <span className="absolute left-3 top-2.5 text-muted-foreground text-sm">₹</span>}
+                      {formData.discount_type === 'flat' && <span className="absolute left-3 top-2.5 text-muted-foreground text-sm price-display">₹</span>}
                       <Input 
                         type="number" 
                         className={formData.discount_type === 'flat' ? "pl-7" : "pr-7"}

@@ -140,80 +140,84 @@ export const LeadCaptureForm = ({
           <Reveal width="100%" direction="up" delay={0.2}>
             <motion.form
               onSubmit={handleSubmit}
-              className={`${isHero ? "bg-[#C5A572] p-8 md:p-12 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.2)]" : "bg-[#C5A572] p-8 md:p-12 rounded-3xl shadow-xl"} border border-white/20`}
+              className={`${isHero ? "bg-[var(--bg-card)] p-5 md:p-12 rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)]" : "bg-[var(--bg-card)] p-5 md:p-12 rounded-[3rem] shadow-xl"} border border-[var(--border-subtle)] relative overflow-hidden`}
               whileHover={{ y: -5 }}
               transition={{ duration: 0.5 }}
             >
-              <div className={`grid ${isCompact ? "sm:grid-cols-2 lg:grid-cols-5" : "sm:grid-cols-2"} gap-6 mb-8`}>
+              {/* Visual Blueprint accents */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-surface)]/50 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-[var(--border-subtle)]/10">
+                <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-[var(--text-primary)] uppercase">Form_Asset</span>
+              </div>
+              <div className={`grid ${isCompact ? "sm:grid-cols-2 lg:grid-cols-5" : "sm:grid-cols-2"} gap-4 md:gap-8 relative z-10 mb-8`}>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="name" className="text-sm font-bold uppercase tracking-wider text-black/60">Full Name</Label>
+                    <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Full Name</Label>
                     <Input
                       id="name"
                       placeholder="Enter your name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black placeholder:text-black/60 shadow-sm"
+                      className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="phone" className="text-sm font-bold uppercase tracking-wider text-black/60">Phone Number</Label>
+                    <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Phone Number</Label>
                     <Input
                       id="phone"
                       type="tel"
-                      placeholder="+91 XXXXX XXXXX"
+                      placeholder="+91 XXXX"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black placeholder:text-black/60 shadow-sm"
+                      className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="email" className="text-sm font-bold uppercase tracking-wider text-black/60">Email Address (Optional)</Label>
+                    <Label htmlFor="email" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Email Address (Optional)</Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder="you@email.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black placeholder:text-black/60 shadow-sm"
+                      className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="city" className="text-sm font-bold uppercase tracking-wider text-black/60">City</Label>
+                    <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">City</Label>
                     <Input
                       id="city"
                       placeholder="Your city"
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                       required
-                      className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black placeholder:text-black/60 shadow-sm"
+                      className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="budget" className="text-sm font-bold uppercase tracking-wider text-black/60">Budget Range</Label>
+                    <Label htmlFor="budget" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Budget Range</Label>
                     <Select
                       value={formData.budget}
                       onValueChange={(value) => setFormData({ ...formData, budget: value })}
                     >
-                      <SelectTrigger id="budget" className="rounded-xl h-12 bg-white/90 border-black/10 focus:bg-white focus:border-primary transition-all duration-300 text-black shadow-sm">
+                      <SelectTrigger id="budget" className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4">
                         <SelectValue placeholder="Select budget" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="under-2l">Under ₹2 Lakh</SelectItem>
-                        <SelectItem value="2-5l">₹2 - 5 Lakh</SelectItem>
-                        <SelectItem value="5-10l">₹5 - 10 Lakh</SelectItem>
-                        <SelectItem value="10-20l">₹10 - 20 Lakh</SelectItem>
-                        <SelectItem value="above-20l">Above ₹20 Lakh</SelectItem>
+                      <SelectContent className="rounded-lg bg-secondary/30 text-[var(--text-primary)] border-transparent shadow-xl">
+                        <SelectItem value="under-2l" className="rounded-lg hover:bg-secondary/30/50 cursor-pointer">Under ₹2 Lakh</SelectItem>
+                        <SelectItem value="2-5l" className="rounded-lg hover:bg-secondary/30/50 cursor-pointer price-display">₹2 - 5 Lakh</SelectItem>
+                        <SelectItem value="5-10l" className="rounded-lg hover:bg-secondary/30/50 cursor-pointer price-display">₹5 - 10 Lakh</SelectItem>
+                        <SelectItem value="10-20l" className="rounded-lg hover:bg-secondary/30/50 cursor-pointer price-display">₹10 - 20 Lakh</SelectItem>
+                        <SelectItem value="above-20l" className="rounded-lg hover:bg-secondary/30/50 cursor-pointer">Above ₹20 Lakh</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -221,12 +225,13 @@ export const LeadCaptureForm = ({
               </div>
               
               <RevealItem>
-                <Button 
-                  type="submit" 
-                  size="lg" 
-                  className="w-full sm:w-auto rounded-full px-12 h-14 text-lg font-bold shadow-2xl bg-black text-white hover:bg-black/80 group relative overflow-hidden transition-all duration-500"
-                  disabled={isSubmitting}
-                >
+                <div className="relative z-10">
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    className="w-full sm:w-auto rounded-full px-12 h-16 text-lg font-bold shadow-[0_20px_40px_rgba(0,0,0,0.3)] bg-[var(--accent)] text-white hover:bg-[var(--accent)]/80 group relative overflow-hidden transition-all duration-500"
+                    disabled={isSubmitting}
+                  >
                   <span className="relative z-10 flex items-center gap-2">
                     {isSubmitting ? "Submitting..." : "Get Free Consultation"}
                   </span>
@@ -237,6 +242,7 @@ export const LeadCaptureForm = ({
                     transition={{ duration: 0.5 }}
                   />
                 </Button>
+                </div>
               </RevealItem>
             </motion.form>
           </Reveal>

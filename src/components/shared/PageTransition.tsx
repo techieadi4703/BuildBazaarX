@@ -7,7 +7,7 @@ interface PageTransitionProps {
 
 const Fallback = () => (
   <div className="h-screen w-full flex items-center justify-center">
-    <div className="w-8 h-8 animate-spin rounded-full border-4 border-[#735c00] border-t-transparent"></div>
+    <div className="w-8 h-8 animate-spin rounded-full border-4 border-[var(--accent-warm)] border-t-transparent"></div>
   </div>
 );
 
