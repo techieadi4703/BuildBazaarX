@@ -140,31 +140,31 @@ export const LeadCaptureForm = ({
           <Reveal width="100%" direction="up" delay={0.2}>
             <motion.form
               onSubmit={handleSubmit}
-              className={`${isHero ? "bg-[var(--bg-card)] p-5 md:p-12 rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)]" : "bg-[var(--bg-card)] p-5 md:p-12 rounded-[3rem] shadow-xl"} border border-[var(--border-subtle)] relative overflow-hidden`}
+              className={`bg-[#C5A572] dark:bg-[#1C2333] p-5 md:p-12 rounded-[3rem] ${isHero ? "shadow-[0_40px_100px_rgba(0,0,0,0.3)]" : "shadow-xl"} border border-white/20 relative overflow-hidden`}
               whileHover={{ y: -5 }}
               transition={{ duration: 0.5 }}
             >
               {/* Visual Blueprint accents */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-surface)]/50 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-[var(--border-subtle)]/10">
-                <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-[var(--text-primary)] uppercase">Form_Asset</span>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 dark:bg-white/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10 dark:border-white/10">
+                <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black dark:text-white uppercase">Form_Asset</span>
               </div>
               <div className={`grid ${isCompact ? "sm:grid-cols-2 lg:grid-cols-5" : "sm:grid-cols-2"} gap-4 md:gap-8 relative z-10 mb-8`}>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Full Name</Label>
+                    <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Full Name</Label>
                     <Input
                       id="name"
                       placeholder="Enter your name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
-                      className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4"
+                      className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Phone Number</Label>
+                    <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Phone Number</Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -172,52 +172,52 @@ export const LeadCaptureForm = ({
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       required
-                      className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4"
+                      className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="email" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Email Address (Optional)</Label>
+                    <Label htmlFor="email" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Email Address (Optional)</Label>
                     <Input
                       id="email"
                       type="email"
                       placeholder="you@email.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4"
+                      className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">City</Label>
+                    <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">City</Label>
                     <Input
                       id="city"
                       placeholder="Your city"
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                       required
-                      className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4"
+                      className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5"
                     />
                   </div>
                 </RevealItem>
                 <RevealItem>
                   <div className="space-y-3">
-                    <Label htmlFor="budget" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Budget Range</Label>
+                    <Label htmlFor="budget" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Budget Range</Label>
                     <Select
                       value={formData.budget}
                       onValueChange={(value) => setFormData({ ...formData, budget: value })}
                     >
-                      <SelectTrigger id="budget" className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4">
+                      <SelectTrigger id="budget" className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white shadow-sm px-5">
                         <SelectValue placeholder="Select budget" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-lg bg-secondary/30 text-[var(--text-primary)] border-transparent shadow-xl">
-                        <SelectItem value="under-2l" className="rounded-lg hover:bg-secondary/30/50 cursor-pointer">Under ₹2 Lakh</SelectItem>
-                        <SelectItem value="2-5l" className="rounded-lg hover:bg-secondary/30/50 cursor-pointer price-display">₹2 - 5 Lakh</SelectItem>
-                        <SelectItem value="5-10l" className="rounded-lg hover:bg-secondary/30/50 cursor-pointer price-display">₹5 - 10 Lakh</SelectItem>
-                        <SelectItem value="10-20l" className="rounded-lg hover:bg-secondary/30/50 cursor-pointer price-display">₹10 - 20 Lakh</SelectItem>
-                        <SelectItem value="above-20l" className="rounded-lg hover:bg-secondary/30/50 cursor-pointer">Above ₹20 Lakh</SelectItem>
+                      <SelectContent className="rounded-xl bg-white dark:bg-[#20293A] text-black dark:text-white border-transparent shadow-xl">
+                        <SelectItem value="under-2l" className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 cursor-pointer">Under ₹2 Lakh</SelectItem>
+                        <SelectItem value="2-5l" className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 cursor-pointer price-display">₹2 - 5 Lakh</SelectItem>
+                        <SelectItem value="5-10l" className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 cursor-pointer price-display">₹5 - 10 Lakh</SelectItem>
+                        <SelectItem value="10-20l" className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 cursor-pointer price-display">₹10 - 20 Lakh</SelectItem>
+                        <SelectItem value="above-20l" className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 cursor-pointer">Above ₹20 Lakh</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -229,14 +229,14 @@ export const LeadCaptureForm = ({
                   <Button 
                     type="submit" 
                     size="lg" 
-                    className="w-full sm:w-auto rounded-full px-12 h-16 text-lg font-bold shadow-[0_20px_40px_rgba(0,0,0,0.3)] bg-[var(--accent)] text-white hover:bg-[var(--accent)]/80 group relative overflow-hidden transition-all duration-500"
+                    className="w-full sm:w-auto rounded-full px-12 h-16 text-lg font-bold shadow-[0_20px_40px_rgba(0,0,0,0.3)] bg-black dark:bg-[#4A7DE3] text-white hover:bg-black/80 dark:hover:bg-[#4A7DE3]/80 group relative overflow-hidden transition-all duration-500"
                     disabled={isSubmitting}
                   >
                   <span className="relative z-10 flex items-center gap-2">
                     {isSubmitting ? "Submitting..." : "Get Free Consultation"}
                   </span>
                   <motion.div 
-                    className="absolute inset-0 bg-white/10"
+                    className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100"
                     initial={{ x: "-100%" }}
                     whileHover={{ x: "100%" }}
                     transition={{ duration: 0.5 }}

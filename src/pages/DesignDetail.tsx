@@ -594,21 +594,21 @@ const DesignDetail = () => {
               whileHover={{ y: -5 }}
               transition={{ duration: 0.5 }}
             >
-              <Card className="shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-[var(--border-subtle)] rounded-[3rem] overflow-hidden bg-[var(--bg-card)]">
-                <div className="bg-[var(--bg-card)] border-b border-[var(--border-subtle)] px-8 py-6 flex flex-col items-center text-center text-[var(--text-primary)] relative overflow-hidden">
+              <Card className="shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-white/20 rounded-[3rem] overflow-hidden bg-[#C5A572] dark:bg-[#1C2333]">
+                <div className="bg-[#C5A572] dark:bg-[#1C2333] border-b border-black/10 dark:border-white/10 px-8 py-6 flex flex-col items-center text-center text-black dark:text-white relative overflow-hidden">
                   <div className="relative z-10">
                     <h3 className="text-2xl font-black tracking-tight mb-1">Technical Feasibility Brief</h3>
-                    <p className="text-[var(--text-secondary)] font-bold uppercase tracking-widest text-[10px]">No commitment consultation call</p>
+                    <p className="text-black/60 dark:text-white/60 font-bold uppercase tracking-widest text-[10px]">No commitment consultation call</p>
                   </div>
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-surface)]/50 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-[var(--border-subtle)]/10">
-                    <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-[var(--text-primary)] uppercase">Form_Asset</span>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 dark:bg-white/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10 dark:border-white/10">
+                    <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black dark:text-white uppercase">Form_Asset</span>
                   </div>
                 </div>
                 <CardContent className="p-8 space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-name" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Full Name</Label>
+                        <Label htmlFor="consult-name" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Full Name</Label>
                         <Input
                           id="consult-name"
                           name="name"
@@ -616,13 +616,13 @@ const DesignDetail = () => {
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           placeholder="Your preferred name"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-[#74777d]/70 text-[#1c1c1a]"
+                          className="h-14 rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all font-bold placeholder:text-black/40 dark:placeholder:text-white/40 text-black dark:text-white px-5"
                         />
                       </div>
                     </RevealItem>
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-phone" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Mobile Access</Label>
+                        <Label htmlFor="consult-phone" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Mobile Access</Label>
                         <Input
                           id="consult-phone"
                           name="phone"
@@ -631,7 +631,7 @@ const DesignDetail = () => {
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           placeholder="+91"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-[#74777d]/70 text-[#1c1c1a]"
+                          className="h-14 rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all font-bold placeholder:text-black/40 dark:placeholder:text-white/40 text-black dark:text-white px-5"
                         />
                       </div>
                     </RevealItem>
@@ -640,7 +640,7 @@ const DesignDetail = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-city" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Site Location</Label>
+                        <Label htmlFor="consult-city" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Site Location</Label>
                         <Input
                           id="consult-city"
                           name="city"
@@ -648,25 +648,25 @@ const DesignDetail = () => {
                           value={formData.city}
                           onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                           placeholder="Project city"
-                          className="h-14 rounded-2xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-[#74777d]/70 text-[#1c1c1a]"
+                          className="h-14 rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all font-bold placeholder:text-black/40 dark:placeholder:text-white/40 text-black dark:text-white px-5"
                         />
                       </div>
                     </RevealItem>
                     <RevealItem>
                       <div className="space-y-3">
-                        <Label htmlFor="consult-project" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Configuration</Label>
+                        <Label htmlFor="consult-project" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Configuration</Label>
                         <select
                           id="consult-project"
                           value={formData.projectType}
                           onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                          className={`flex h-14 w-full rounded-2xl bg-secondary/30 border-transparent px-4 py-2 text-sm font-bold focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all outline-none appearance-none cursor-pointer ${formData.projectType === "" ? "text-[#74777d]/70" : "text-[#1c1c1a]"}`}
+                          className={`flex h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent px-5 py-2 text-sm font-bold focus:bg-white dark:focus:bg-[#2a364a] transition-all outline-none appearance-none cursor-pointer ${formData.projectType === "" ? "text-black/40 dark:text-white/40" : "text-black dark:text-white"}`}
                         >
                           <option value="" disabled hidden>Specific Category</option>
-                          <option value="Kitchen" className="text-[#1c1c1a]">Modern Kitchen</option>
-                          <option value="Bedroom" className="text-[#1c1c1a]">Bespoke Bedroom</option>
-                          <option value="Living Room" className="text-[#1c1c1a]">Premium Living Lounge</option>
-                          <option value="Full Home" className="text-[#1c1c1a]">End-to-End Home</option>
-                          <option value="Other" className="text-[#1c1c1a]">Custom Project</option>
+                          <option value="Kitchen" className="text-black dark:text-white bg-white dark:bg-[#20293A]">Modern Kitchen</option>
+                          <option value="Bedroom" className="text-black dark:text-white bg-white dark:bg-[#20293A]">Bespoke Bedroom</option>
+                          <option value="Living Room" className="text-black dark:text-white bg-white dark:bg-[#20293A]">Premium Living Lounge</option>
+                          <option value="Full Home" className="text-black dark:text-white bg-white dark:bg-[#20293A]">End-to-End Home</option>
+                          <option value="Other" className="text-black dark:text-white bg-white dark:bg-[#20293A]">Custom Project</option>
                         </select>
                       </div>
                     </RevealItem>
@@ -674,14 +674,14 @@ const DesignDetail = () => {
 
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="consult-message" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Design Aspirations</Label>
+                      <Label htmlFor="consult-message" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Design Aspirations</Label>
                       <Textarea
                         id="consult-message"
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                         placeholder="Tell us everything — materials preferences, timeline constraints, or aesthetic inspiration..."
                         rows={4}
-                        className="rounded-3xl bg-secondary/30 border-transparent focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all font-bold pt-4 px-4 placeholder:text-[#74777d]/70 text-[#1c1c1a]"
+                        className="rounded-3xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all font-bold p-5 placeholder:text-black/40 dark:placeholder:text-white/40 text-black dark:text-white"
                       />
                     </div>
                   </RevealItem>
@@ -689,7 +689,7 @@ const DesignDetail = () => {
                   <RevealItem>
                     <Button
                       size="lg"
-                      className="w-full sm:w-auto rounded-full px-12 h-16 text-lg font-bold shadow-[0_20px_40px_rgba(0,0,0,0.3)] bg-[var(--accent)] text-white hover:bg-[var(--accent)]/80 group relative overflow-hidden transition-all duration-500"
+                      className="w-full sm:w-auto rounded-full px-12 h-16 text-lg font-bold shadow-[0_20px_40px_rgba(0,0,0,0.3)] bg-black dark:bg-[#4A7DE3] text-white hover:bg-black/80 dark:hover:bg-[#4A7DE3]/80 group relative overflow-hidden transition-all duration-500"
                       onClick={handleSubmit}
                     >
                       <span className="relative z-10 flex items-center justify-center gap-3">
@@ -697,13 +697,13 @@ const DesignDetail = () => {
                         Initiate Free Consultation
                       </span>
                       <motion.div 
-                        className="absolute inset-0 bg-primary-foreground/10"
+                        className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
                         initial={{ x: "-100%" }}
                         whileHover={{ x: "100%" }}
                         transition={{ duration: 0.5 }}
                       />
                     </Button>
-                    <p className="text-[10px] text-muted-foreground font-black text-center mt-6 uppercase tracking-widest opacity-50">
+                    <p className="text-[10px] text-black/50 dark:text-white/50 font-black text-center mt-6 uppercase tracking-widest opacity-50">
                       Standard response time: &lt; 4 business hours
                     </p>
                   </RevealItem>

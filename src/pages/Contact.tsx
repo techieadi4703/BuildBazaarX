@@ -223,32 +223,32 @@ const Contact = () => {
 
               <motion.form 
                 onSubmit={handleSubmit} 
-                className="space-y-4 md:space-y-8 bg-[#C5A572] p-5 md:p-12 rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden"
+                className="space-y-4 md:space-y-8 bg-[#C5A572] dark:bg-[#1C2333] p-5 md:p-12 rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden"
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.5 }}
               >
                 {/* Visual Blueprint accents */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10">
-                  <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black uppercase">Form_Asset</span>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 dark:bg-white/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10 dark:border-white/10">
+                  <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black dark:text-white uppercase">Form_Asset</span>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4 md:gap-8 relative z-10">
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Full Name</Label>
+                      <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Full Name</Label>
                       <Input
                         id="name"
                         placeholder="Aditya Srivastava"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
+                        className="rounded-2xl h-14 bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all duration-300 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Phone Number</Label>
+                      <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Phone Number</Label>
                       <Input
                         id="phone"
                         type="tel"
@@ -256,7 +256,7 @@ const Contact = () => {
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
+                        className="rounded-2xl h-14 bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all duration-300 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
@@ -265,27 +265,27 @@ const Contact = () => {
                 <div className="grid sm:grid-cols-2 gap-4 md:gap-8 relative z-10">
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="email" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Email Address</Label>
+                      <Label htmlFor="email" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Email Address</Label>
                       <Input
                         id="email"
                         type="email"
                         placeholder="you@email.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
+                        className="rounded-2xl h-14 bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all duration-300 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Operational City</Label>
+                      <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Operational City</Label>
                       <Input
                         id="city"
                         placeholder="Jaipur, RJ"
                         value={formData.city}
                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                         required
-                        className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm px-5"
+                        className="rounded-2xl h-14 bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all duration-300 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 text-sm px-5"
                       />
                     </div>
                   </RevealItem>
@@ -294,17 +294,17 @@ const Contact = () => {
                 <div className="grid sm:grid-cols-2 gap-4 md:gap-8 relative z-10">
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="service" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Service</Label>
+                      <Label htmlFor="service" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Service</Label>
                       <Select
                         value={formData.service}
                         onValueChange={(value) => setFormData({ ...formData, service: value })}
                       >
-                        <SelectTrigger id="service" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-sm px-5">
+                        <SelectTrigger id="service" className="rounded-2xl h-14 bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all duration-300 text-black dark:text-white text-sm px-5">
                           <SelectValue placeholder="Select service" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl bg-white text-black border-transparent shadow-xl">
+                        <SelectContent className="rounded-xl bg-white dark:bg-[#20293A] text-black dark:text-white border-transparent shadow-xl">
                           {services.map((service) => (
-                            <SelectItem key={service} value={service.toLowerCase()} className="rounded-lg hover:bg-black/5 focus:bg-black/5 focus:text-black cursor-pointer">
+                            <SelectItem key={service} value={service.toLowerCase()} className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 focus:text-black dark:focus:text-white cursor-pointer">
                               {service}
                             </SelectItem>
                           ))}
@@ -314,20 +314,20 @@ const Contact = () => {
                   </RevealItem>
                   <RevealItem>
                     <div className="space-y-3">
-                      <Label htmlFor="budget" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Budget</Label>
+                      <Label htmlFor="budget" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Budget</Label>
                       <Select
                         value={formData.budget}
                         onValueChange={(value) => setFormData({ ...formData, budget: value })}
                       >
-                        <SelectTrigger id="budget" className="rounded-2xl h-14 bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black text-sm px-5">
+                        <SelectTrigger id="budget" className="rounded-2xl h-14 bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all duration-300 text-black dark:text-white text-sm px-5">
                           <SelectValue placeholder="Select budget" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl bg-white text-black border-transparent shadow-xl">
-                          <SelectItem value="under-2l" className="rounded-lg hover:bg-black/5 cursor-pointer">Under ₹2 Lakh</SelectItem>
-                          <SelectItem value="2-5l" className="rounded-lg hover:bg-black/5 cursor-pointer">₹2 - 5 Lakh</SelectItem>
-                          <SelectItem value="5-10l" className="rounded-lg hover:bg-black/5 cursor-pointer">₹5 - 10 Lakh</SelectItem>
-                          <SelectItem value="10-20l" className="rounded-lg hover:bg-black/5 cursor-pointer">₹10 - 20 Lakh</SelectItem>
-                          <SelectItem value="above-20l" className="rounded-lg hover:bg-black/5 cursor-pointer">Above ₹20 Lakh</SelectItem>
+                        <SelectContent className="rounded-xl bg-white dark:bg-[#20293A] text-black dark:text-white border-transparent shadow-xl">
+                          <SelectItem value="under-2l" className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 cursor-pointer">Under ₹2 Lakh</SelectItem>
+                          <SelectItem value="2-5l" className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 cursor-pointer price-display">₹2 - 5 Lakh</SelectItem>
+                          <SelectItem value="5-10l" className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 cursor-pointer price-display">₹5 - 10 Lakh</SelectItem>
+                          <SelectItem value="10-20l" className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 cursor-pointer price-display">₹10 - 20 Lakh</SelectItem>
+                          <SelectItem value="above-20l" className="rounded-lg hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5 cursor-pointer">Above ₹20 Lakh</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -336,26 +336,26 @@ const Contact = () => {
 
                 <RevealItem>
                   <div className="space-y-3 relative z-10">
-                    <Label htmlFor="message" className="text-[10px] uppercase font-mono tracking-widest text-black/60 ml-1">Message</Label>
+                    <Label htmlFor="message" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Message</Label>
                     <Textarea
                       id="message"
                       placeholder="Tell us about your project..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       rows={5}
-                      className="rounded-2xl bg-[#E5DACE] border-transparent focus:bg-white transition-all duration-300 text-black placeholder:text-black/40 text-sm p-5 resize-none"
+                      className="rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all duration-300 text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 text-sm p-5 resize-none"
                     />
                   </div>
                 </RevealItem>
 
                 <RevealItem>
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-6 border-t border-black/10 relative z-10">
-                    <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/50 max-w-[240px]">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-6 border-t border-black/10 dark:border-white/10 relative z-10">
+                    <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/50 dark:text-white/50 max-w-[240px]">
                       By submitting this request, you agree to our terms.
                     </p>
                     <Button 
                       type="submit" 
-                      className="w-full sm:w-auto rounded-full px-12 h-16 text-lg font-bold shadow-[0_20px_40px_rgba(0,0,0,0.3)] bg-black text-white hover:bg-black/80 transition-all duration-300 group relative overflow-hidden"
+                      className="w-full sm:w-auto rounded-full px-12 h-16 text-lg font-bold shadow-[0_20px_40px_rgba(0,0,0,0.3)] bg-black dark:bg-[#4A7DE3] text-white hover:bg-black/80 dark:hover:bg-[#4A7DE3]/80 transition-all duration-300 group relative overflow-hidden"
                       disabled={isSubmitting}
                     >
                       <span className="relative z-10 flex items-center gap-2">

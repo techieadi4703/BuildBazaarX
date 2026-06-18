@@ -381,58 +381,58 @@ const Checkout = () => {
               <div className="lg:col-span-7 space-y-6 sm:space-y-10">
                 {/* 1. Shipping Details */}
                 <Reveal width="100%" direction="up" delay={0.1}>
-                  <Card className="bg-[var(--bg-card)] p-5 md:p-12 rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-[var(--border-subtle)] relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--bg-surface)]/50 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-[var(--border-subtle)]/10">
-                      <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-[var(--text-primary)] uppercase">Form_Asset</span>
+                  <Card className="bg-[#C5A572] dark:bg-[#1C2333] p-5 md:p-12 rounded-[3rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 dark:bg-white/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10 dark:border-white/10">
+                      <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black dark:text-white uppercase">Form_Asset</span>
                     </div>
-                    <div className="flex items-center gap-4 mb-8 relative z-10 border-b border-[var(--border-subtle)] pb-6">
-                      <div className="w-10 h-10 bg-[var(--bg-surface)] rounded-xl flex items-center justify-center text-[var(--text-primary)] border border-[var(--border-subtle)] shrink-0">
+                    <div className="flex items-center gap-4 mb-8 relative z-10 border-b border-black/10 dark:border-white/10 pb-6">
+                      <div className="w-10 h-10 bg-white/20 dark:bg-black/20 rounded-xl flex items-center justify-center text-black dark:text-white shrink-0">
                         <MapPin className="w-5 h-5" />
                       </div>
-                      <h2 className="text-xl font-bold tracking-tight text-[var(--text-primary)]">Shipping Details</h2>
+                      <h2 className="text-xl font-bold tracking-tight text-black dark:text-white">Shipping Details</h2>
                     </div>
                     <CardContent className="p-0 relative z-10">
                       <form className="grid sm:grid-cols-2 gap-4 sm:gap-8" onSubmit={handleOrder}>
                         <RevealItem>
                           <div className="space-y-2 sm:space-y-3">
-                            <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Full Name</Label>
-                            <Input id="name" name="name" value={form.name} onChange={handleChange} placeholder="Required" required className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4" />
+                            <Label htmlFor="name" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Full Name</Label>
+                            <Input id="name" name="name" value={form.name} onChange={handleChange} placeholder="Required" required className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5" />
                           </div>
                         </RevealItem>
                         <RevealItem>
                           <div className="space-y-2 sm:space-y-3">
-                            <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Phone Number</Label>
-                            <Input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 XXXX" required className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4" />
+                            <Label htmlFor="phone" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Phone Number</Label>
+                            <Input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 XXXX" required className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5" />
                           </div>
                         </RevealItem>
                         <RevealItem>
                           <div className="space-y-2 sm:space-y-3">
-                            <Label htmlFor="email" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Email Address</Label>
-                            <Input id="email" name="email" type="email" value={form.email} onChange={handleChange} placeholder="your@email.com" className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4" />
+                            <Label htmlFor="email" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Email Address</Label>
+                            <Input id="email" name="email" type="email" value={form.email} onChange={handleChange} placeholder="your@email.com" className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5" />
                           </div>
                         </RevealItem>
                         <RevealItem>
                           <div className="space-y-2 sm:space-y-3">
-                            <Label htmlFor="pincode" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Pincode</Label>
-                            <Input id="pincode" name="pincode" value={form.pincode} onChange={handleChange} placeholder="6-digit" required className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4" />
+                            <Label htmlFor="pincode" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Pincode</Label>
+                            <Input id="pincode" name="pincode" value={form.pincode} onChange={handleChange} placeholder="6-digit" required className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5" />
                           </div>
                         </RevealItem>
                         <RevealItem className="sm:col-span-2">
                           <div className="space-y-2 sm:space-y-3">
-                            <Label htmlFor="address" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">Complete Address</Label>
-                            <Input id="address" name="address" value={form.address} onChange={handleChange} placeholder="House/Flat No., Street, Landmark..." required className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4" />
+                            <Label htmlFor="address" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Complete Address</Label>
+                            <Input id="address" name="address" value={form.address} onChange={handleChange} placeholder="House/Flat No., Street, Landmark..." required className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5" />
                           </div>
                         </RevealItem>
                         <RevealItem>
                           <div className="space-y-2 sm:space-y-3">
-                            <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">City</Label>
-                            <Input id="city" name="city" value={form.city} onChange={handleChange} placeholder="City name" required className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4" />
+                            <Label htmlFor="city" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">City</Label>
+                            <Input id="city" name="city" value={form.city} onChange={handleChange} placeholder="City name" required className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5" />
                           </div>
                         </RevealItem>
                         <RevealItem>
                           <div className="space-y-2 sm:space-y-3">
-                            <Label htmlFor="state" className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)] ml-1">State</Label>
-                            <Input id="state" name="state" value={form.state} onChange={handleChange} placeholder="State name" className="h-11 sm:h-14 w-full rounded-2xl bg-black/5 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/10 focus:bg-black/10 dark:focus:bg-black/30 focus:ring-2 focus:ring-[var(--accent)]/20 transition-all font-medium text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] shadow-sm px-4" />
+                            <Label htmlFor="state" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">State</Label>
+                            <Input id="state" name="state" value={form.state} onChange={handleChange} placeholder="State name" className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5" />
                           </div>
                         </RevealItem>
                       </form>
