@@ -96,49 +96,49 @@ export default function Auth() {
         .font-body { font-family: 'Manrope', sans-serif; }
       `}</style>
       
-      <div className="bg-[#fcf9f6] text-[#1c1c1a] min-h-screen font-body w-full pb-20 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e5e2df 1px, transparent 1px), linear-gradient(90deg, #e5e2df 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.3 }} />
+      <div className="bg-[var(--bg-base)] text-[var(--text-primary)] min-h-screen font-body w-full pb-20 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-30" style={{ backgroundImage: 'linear-gradient(var(--border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         
-        <main className="max-w-[1440px] mx-auto px-6 md:px-12 py-4 md:py-6 relative z-10">
-          <div className="flex flex-col md:flex-row gap-8 md:gap-24 items-start">
+        <main className="max-w-[1440px] w-full mx-auto px-6 md:px-12 py-12 md:py-0 relative z-10 min-h-[calc(100vh-120px)] flex items-center justify-center">
+          <div className="flex flex-col md:flex-row gap-8 md:gap-24 items-center justify-center w-full max-w-5xl">
             
-            <div className="w-full md:w-1/3 shrink-0 md:sticky md:top-32">
-               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[#735c00] mb-4 block font-bold">Account</span>
-               <h1 className="text-6xl md:text-7xl font-headline tracking-tight leading-none mb-6">
-                Customer <br/><span className="italic">{isLogin ? "Login." : "Signup."}</span>
+            <div className="w-full md:w-1/2 shrink-0">
+               <span className="font-body uppercase tracking-[0.2em] text-[10px] text-[var(--accent-warm)] mb-4 block font-bold">Account</span>
+               <h1 className="font-display font-semibold text-4xl md:text-5xl leading-[1.1] tracking-tight text-[var(--text-primary)] mb-6">
+                Customer {isLogin ? "Login." : "Signup."}
               </h1>
-               <div className="w-12 h-[1px] bg-[#c4c6cc] mb-6"></div>
-              <p className="text-lg font-body text-[#44474c] leading-relaxed max-w-sm">
+               <div className="w-12 h-[1px] bg-[var(--border-subtle)] mb-6"></div>
+              <p className="text-lg font-body text-[var(--text-secondary)] leading-relaxed max-w-sm">
                 {isLogin 
                   ? "Log in to your account to access our platform." 
                   : "Create an account to join our platform."}
               </p>
               
               <div className="mt-12 space-y-4">
-                <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-[#74777d]">
-                  <ShieldCheck className="w-4 h-4 text-[#735c00]" /> Secure Session
+                <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)]">
+                  <ShieldCheck className="w-4 h-4 text-[var(--accent-warm)]" /> Secure Session
                 </div>
               </div>
             </div>
 
-            <div className="w-full md:w-2/3 max-w-xl">
+            <div className="w-full md:w-1/2 max-w-xl">
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white border border-[#e5e2df] p-5 md:p-12 rounded-sm shadow-sm overflow-hidden"
+                className="bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 md:p-12 rounded-sm shadow-sm overflow-hidden"
               >
                 <form onSubmit={handleAuth} className="space-y-5 md:space-y-8">
                   {!isLogin && (
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)]">Full Name</label>
                       <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
                         <input 
                           required
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
                           placeholder="John Doe"
-                          className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                          className="w-full pl-12 pr-4 py-4 bg-[var(--bg-surface)] border border-[var(--border-subtle)] focus:border-[var(--accent-warm)] rounded-sm text-sm outline-none font-body transition-colors text-[var(--text-primary)]"
                         />
                       </div>
                     </div>
@@ -147,14 +147,14 @@ export default function Auth() {
                   <div className="space-y-2">
                     <label className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)]">Email Address</label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
                       <input 
                         type="email"
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@example.com"
-                        className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                        className="w-full pl-12 pr-4 py-4 bg-[var(--bg-surface)] border border-[var(--border-subtle)] focus:border-[var(--accent-warm)] rounded-sm text-sm outline-none font-body transition-colors text-[var(--text-primary)]"
                       />
                     </div>
                   </div>
@@ -162,14 +162,14 @@ export default function Auth() {
                   <div className="space-y-2">
                     <label className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)]">Password</label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c4c6cc]" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
                       <input 
                         type="password"
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••••••"
-                        className="w-full pl-12 pr-4 py-4 bg-[#f6f3f0] border border-transparent focus:border-[#735c00] rounded-sm text-sm outline-none font-body transition-colors"
+                        className="w-full pl-12 pr-4 py-4 bg-[var(--bg-surface)] border border-[var(--border-subtle)] focus:border-[var(--accent-warm)] rounded-sm text-sm outline-none font-body transition-colors text-[var(--text-primary)]"
                       />
                     </div>
                   </div>
@@ -177,20 +177,20 @@ export default function Auth() {
                   <button 
                     type="submit"
                     disabled={isLoading}
-                    className="w-full h-14 bg-[#1c1c1a] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#735c00] transition-all flex items-center justify-center gap-3 group"
+                    className="w-full h-14 bg-[var(--accent)] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[var(--accent-hover)] transition-all flex items-center justify-center gap-3 group"
                   >
                     {isLoading ? "Loading..." : isLogin ? "Log In" : "Sign Up"}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </form>
 
-                <div className="mt-6 md:mt-12 pt-6 md:pt-8 border-t border-[#e5e2df] flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#74777d]">
+                <div className="mt-6 md:mt-12 pt-6 md:pt-8 border-t border-[var(--border-subtle)] flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-tertiary)]">
                     {isLogin ? "Don't have an account?" : "Already have an account?"}
                   </span>
                   <button 
                     onClick={() => setIsLogin(!isLogin)}
-                    className="text-[10px] uppercase font-bold tracking-widest text-[#735c00] hover:underline underline-offset-4"
+                    className="text-[10px] uppercase font-bold tracking-widest text-[var(--accent-warm)] hover:underline underline-offset-4"
                   >
                     {isLogin ? "Sign Up" : "Log In"}
                   </button>

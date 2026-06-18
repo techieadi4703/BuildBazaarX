@@ -237,7 +237,7 @@ const RawMaterialDetail = () => {
           onClick={() => shareToPlatform("whatsapp")}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-green-50 text-[#25D366] flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-[var(--text-primary)] transition-all shadow-sm border border-green-100">
+          <div className="w-14 h-14 rounded-2xl bg-[#25D366]/10 text-[#25D366] flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-all shadow-sm border border-[#25D366]/20">
             <MessageCircle className="w-7 h-7" />
           </div>
           <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">WhatsApp</span>
@@ -246,7 +246,7 @@ const RawMaterialDetail = () => {
           onClick={() => shareToPlatform("facebook")}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#1877F2] flex items-center justify-center group-hover:bg-[#1877F2] group-hover:text-[var(--text-primary)] transition-all shadow-sm border border-blue-100">
+          <div className="w-14 h-14 rounded-2xl bg-[#1877F2]/10 text-[#1877F2] flex items-center justify-center group-hover:bg-[#1877F2] group-hover:text-white transition-all shadow-sm border border-[#1877F2]/20">
             <Facebook className="w-7 h-7" />
           </div>
           <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">Facebook</span>
@@ -264,7 +264,7 @@ const RawMaterialDetail = () => {
           onClick={() => shareToPlatform("linkedin")}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#0A66C2] flex items-center justify-center group-hover:bg-[#0A66C2] group-hover:text-[var(--text-primary)] transition-all shadow-sm border border-blue-100">
+          <div className="w-14 h-14 rounded-2xl bg-[#0A66C2]/10 text-[#0A66C2] flex items-center justify-center group-hover:bg-[#0A66C2] group-hover:text-white transition-all shadow-sm border border-[#0A66C2]/20">
             <Linkedin className="w-7 h-7" />
           </div>
           <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">LinkedIn</span>
@@ -273,7 +273,7 @@ const RawMaterialDetail = () => {
           onClick={() => shareToPlatform("native")}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-amber-50 text-[var(--accent-warm)] flex items-center justify-center group-hover:bg-[var(--accent-hover)] group-hover:text-[var(--text-primary)] transition-all shadow-sm border border-amber-100">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--accent-warm)]/10 text-[var(--accent-warm)] flex items-center justify-center group-hover:bg-[var(--accent-hover)] group-hover:text-white transition-all shadow-sm border border-[var(--accent-warm)]/20">
             <MoreHorizontal className="w-7 h-7" />
           </div>
           <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">More</span>
@@ -288,9 +288,9 @@ const RawMaterialDetail = () => {
           <span className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-tighter">Copy Link</span>
         </button>
       </div>
-      <div className="bg-[var(--bg-surface)] p-3 rounded-2xl border border-gray-100 flex items-center justify-between">
+      <div className="bg-[var(--bg-surface)] p-3 rounded-2xl border border-[var(--border-subtle)] flex items-center justify-between">
         <span className="text-[10px] font-bold text-[var(--text-tertiary)] truncate mr-4 italic">{window.location.href}</span>
-        <Button variant="ghost" size="sm" className="font-black text-[var(--accent-warm)] uppercase text-[10px] tracking-widest h-8 hover:bg-amber-50" onClick={() => shareToPlatform("copy")}>
+        <Button variant="ghost" size="sm" className="font-black text-[var(--accent-warm)] uppercase text-[10px] tracking-widest h-8 hover:bg-[var(--accent-warm)]/10" onClick={() => shareToPlatform("copy")}>
           Copy
         </Button>
       </div>
@@ -300,7 +300,7 @@ const RawMaterialDetail = () => {
   return (
     <Layout>
       {/* Navigation Header */}
-      <div className="bg-[var(--bg-card)] border-b border-gray-100 py-4 sticky top-0 z-30">
+      <div className="bg-[var(--bg-card)] border-b border-[var(--border-subtle)] py-4 sticky top-0 z-30">
         <div className="container mx-auto px-4">
           <Link
             to="/materials"
@@ -317,7 +317,7 @@ const RawMaterialDetail = () => {
           
           {/* Left Column: Image Gallery (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="relative aspect-square rounded-3xl overflow-hidden bg-[var(--bg-surface)] border border-gray-100 shadow-sm group">
+            <div className="relative aspect-square rounded-3xl overflow-hidden bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-sm group">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={currentImageIndex}
@@ -385,7 +385,7 @@ const RawMaterialDetail = () => {
                   <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 border-none px-3 py-1 text-[10px] font-black uppercase tracking-widest">
                     {product.brand}
                   </Badge>
-                  <div className="flex items-center gap-1 bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded text-xs font-bold">
+                  <div className="flex items-center gap-1 bg-[var(--accent-warm)]/10 text-[var(--accent-warm)] px-2 py-0.5 rounded text-xs font-bold">
                     <Star className="w-3 h-3 fill-current" />
                     {product.rating}
                     <span className="text-[var(--text-tertiary)] font-medium ml-1">({product.reviews} reviews)</span>
@@ -409,7 +409,7 @@ const RawMaterialDetail = () => {
                   {product.original_price && product.original_price > (product.price ?? 0) && (
                     <>
                       <span className="text-xl text-[var(--text-tertiary)] line-through font-bold price-display">₹{product.original_price.toLocaleString()}</span>
-                      <span className="text-green-600 font-black text-sm uppercase tracking-wider bg-green-100 px-3 py-1 rounded-full">
+                      <span className="text-green-500 font-black text-sm uppercase tracking-wider bg-green-500/10 px-3 py-1 rounded-full">
                         {Math.round(((product.original_price - (product.price ?? 0)) / product.original_price) * 100)}% OFF
                       </span>
                     </>
@@ -418,7 +418,7 @@ const RawMaterialDetail = () => {
 
                 <div className="grid grid-cols-2 gap-2 md:gap-4">
                   <div className="flex items-center gap-2 md:gap-3 text-sm font-bold text-[var(--text-secondary)]">
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0">
                       <Truck className="w-5 h-5" />
                     </div>
                     <div>
@@ -427,7 +427,7 @@ const RawMaterialDetail = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 md:gap-3 text-sm font-bold text-[var(--text-secondary)]">
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500 shrink-0">
                       <RotateCcw className="w-5 h-5" />
                     </div>
                     <div>
@@ -439,7 +439,7 @@ const RawMaterialDetail = () => {
                   </div>
                 </div>
 
-                <Separator className="bg-gray-200" />
+                <Separator className="bg-[var(--border-subtle)]" />
 
                 <div className="flex items-center gap-2 md:gap-4 w-full">
                   {isInCart ? (
@@ -463,7 +463,7 @@ const RawMaterialDetail = () => {
                   <Button 
                     onClick={handleCartAction}
                     className={`flex-1 h-11 md:h-16 rounded-lg md:rounded-2xl text-[13px] sm:text-base md:text-lg px-2 sm:px-8 font-black transition-all shadow-[var(--shadow-md)] overflow-hidden ${
-                      isInCart ? "bg-green-600 hover:bg-green-700" : "bg-gray-900 hover:bg-gray-800"
+                      isInCart ? "bg-green-600 hover:bg-green-700 text-white" : "bg-[var(--text-primary)] hover:bg-[var(--text-secondary)] text-[var(--bg-base)]"
                     }`}
                   >
                     <ShoppingBag className="w-4 h-4 md:w-5 md:h-5 mr-1.5 md:mr-2 shrink-0" />
@@ -480,17 +480,17 @@ const RawMaterialDetail = () => {
                   <h3 className="text-xs font-black uppercase tracking-[0.3em] text-primary">Technical Excellence</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {product.quality_details ? product.quality_details.map((detail, idx) => (
-                      <div key={idx} className="flex items-center gap-3 p-4 bg-[var(--bg-card)] border border-gray-100 rounded-2xl shadow-sm">
+                      <div key={idx} className="flex items-center gap-3 p-4 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl shadow-sm">
                         <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
                         <span className="text-sm font-bold text-[var(--text-primary)]">{detail}</span>
                       </div>
                     )) : (
                       <>
-                        <div className="flex items-center gap-3 p-4 bg-[var(--bg-card)] border border-gray-100 rounded-2xl shadow-sm">
+                        <div className="flex items-center gap-3 p-4 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl shadow-sm">
                           <BadgeCheck className="w-5 h-5 text-primary shrink-0" />
                           <span className="text-sm font-bold text-[var(--text-primary)]">Verified Quality</span>
                         </div>
-                        <div className="flex items-center gap-3 p-4 bg-[var(--bg-card)] border border-gray-100 rounded-2xl shadow-sm">
+                        <div className="flex items-center gap-3 p-4 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl shadow-sm">
                           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
                           <span className="text-sm font-bold text-[var(--text-primary)]">Manufacturer Warranty</span>
                         </div>
@@ -530,7 +530,7 @@ const RawMaterialDetail = () => {
               .slice(0, 4)
               .map(p => (
                 <Link key={p.id} to={`/materials/${p.id}`} className="group">
-                  <div className="bg-[var(--bg-surface)] rounded-2xl aspect-square mb-4 overflow-hidden border border-gray-100 p-6 flex items-center justify-center transition-all group-hover:shadow-md">
+                  <div className="bg-[var(--bg-surface)] rounded-2xl aspect-square mb-4 overflow-hidden border border-[var(--border-subtle)] p-6 flex items-center justify-center transition-all group-hover:shadow-md">
                     <img 
                       src={getProductImage(p)} 
                       alt={p.name ?? ""} 

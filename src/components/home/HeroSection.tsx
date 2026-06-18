@@ -54,7 +54,7 @@ export const HeroSection = () => {
         <div className="absolute -left-20 top-1/4 text-[8px] font-mono text-[var(--accent-warm)]/50 hidden md:block uppercase tracking-widest whitespace-nowrap -translate-y-1/2">
           LAT: 28.6139° N
         </div>
-        
+
         <div className="absolute -right-12 bottom-1/4 w-8 h-[1px] bg-[var(--accent-warm)]/50 hidden md:block" />
         <div className="absolute -right-20 bottom-1/4 text-[8px] font-mono text-[var(--accent-warm)]/50 hidden md:block uppercase tracking-widest whitespace-nowrap -translate-y-1/2">
           LNG: 77.2090° E
@@ -63,9 +63,9 @@ export const HeroSection = () => {
         <div className="relative rounded-[1rem] p-2 bg-[var(--bg-card)] border border-[var(--border-subtle)] shadow-[0_0_100px_rgba(197,165,114,0.05)] mx-auto overflow-hidden">
           <div className="absolute inset-0 bg-[var(--accent-warm)]/10 mix-blend-overlay z-10 pointer-events-none" />
           <div className="relative w-full h-[400px] md:h-[500px] rounded-lg overflow-hidden group">
-            <BeforeAfterSlider 
-              beforeImage={beforeImage} 
-              afterImage={afterImage} 
+            <BeforeAfterSlider
+              beforeImage={beforeImage}
+              afterImage={afterImage}
               label="Architectural Render"
             />
           </div>
@@ -73,7 +73,7 @@ export const HeroSection = () => {
       </div>
 
       {/* CTA group */}
-      <div className="flex flex-col sm:flex-row items-center gap-3">
+      {/* <div className="flex flex-col sm:flex-row items-center gap-3">
         <Link 
           to="/designs"
           className="
@@ -97,7 +97,7 @@ export const HeroSection = () => {
         >
           Browse Professionals
         </Link>
-      </div>
+      </div> */}
     </section>
   );
 };

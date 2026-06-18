@@ -276,7 +276,7 @@ const DesignDetail = () => {
         <div className="container mx-auto px-4">
           <Link
             to="/designs"
-            className="inline-flex items-center text-sm font-bold text-[#44474c] hover:text-primary transition-colors group"
+            className="inline-flex items-center text-sm font-bold text-[var(--text-secondary)] hover:text-primary transition-colors group"
           >
             <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center mr-3 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
               <ArrowLeft className="w-4 h-4" />
@@ -324,7 +324,7 @@ const DesignDetail = () => {
                   <button 
                     type="button"
                     onClick={handleWishlistToggle}
-                    className={`w-12 h-12 ${isInWishlist(id || design.id.toString()) ? 'bg-[#ba1a1a]/10 text-[#ba1a1a] border-[#ba1a1a]/20' : 'bg-white/90 text-[#1c1c1a] border-[#e5e2df]'} backdrop-blur-md rounded-full flex items-center justify-center hover:text-[#ba1a1a] transition-all shadow-xl cursor-pointer border`}
+                    className={`w-12 h-12 ${isInWishlist(id || design.id.toString()) ? 'bg-[#ba1a1a]/10 text-[#ba1a1a] border-[#ba1a1a]/20' : 'bg-[var(--bg-surface)]/90 text-[var(--text-primary)] border-[var(--border-subtle)]'} backdrop-blur-md rounded-full flex items-center justify-center hover:text-[#ba1a1a] transition-all shadow-xl cursor-pointer border`}
                   >
                     <Heart className={`w-5 h-5 ${isInWishlist(id || design.id.toString()) ? 'fill-current' : ''}`} />
                   </button>
@@ -337,7 +337,7 @@ const DesignDetail = () => {
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={prevImage}
-                      className="w-12 h-12 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center shadow-xl text-foreground hover:bg-primary hover:text-white transition-all"
+                      className="w-12 h-12 rounded-2xl bg-[var(--bg-surface)]/90 backdrop-blur-md flex items-center justify-center shadow-xl text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-white transition-all border border-[var(--border-subtle)]"
                     >
                       <ChevronLeft className="w-6 h-6" />
                     </motion.button>
@@ -345,7 +345,7 @@ const DesignDetail = () => {
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={nextImage}
-                      className="w-12 h-12 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center shadow-xl text-foreground hover:bg-primary hover:text-white transition-all"
+                      className="w-12 h-12 rounded-2xl bg-[var(--bg-surface)]/90 backdrop-blur-md flex items-center justify-center shadow-xl text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-white transition-all border border-[var(--border-subtle)]"
                     >
                       <ChevronRight className="w-6 h-6" />
                     </motion.button>
@@ -358,7 +358,7 @@ const DesignDetail = () => {
                     <button
                       key={i}
                       onClick={() => setCurrentImageIndex(i)}
-                      className={`h-2.5 rounded-full transition-all duration-500 bg-white shadow-lg ${
+                      className={`h-2.5 rounded-full transition-all duration-500 bg-[var(--text-primary)] shadow-lg ${
                         i === currentImageIndex ? "w-8 opacity-100" : "w-2.5 opacity-40 hover:opacity-100"
                       }`}
                     />
@@ -453,7 +453,7 @@ const DesignDetail = () => {
                   <div className="flex items-center gap-2 bg-accent/5 px-4 py-2 rounded-2xl border border-accent/10">
                     <Star className="w-5 h-5 fill-accent text-accent" />
                     <span className="text-foreground text-lg">{design.rating}</span>
-                    <span className="text-[#44474c] font-medium">({design.reviews} Reviews)</span>
+                    <span className="text-[var(--text-secondary)] font-medium">({design.reviews} Reviews)</span>
                   </div>
                   <div className="flex items-center gap-2 bg-secondary/30 px-4 py-2 rounded-2xl border border-border/50">
                     <Ruler className="w-5 h-5 text-primary" />
@@ -464,7 +464,7 @@ const DesignDetail = () => {
             </Reveal>
 
             <Reveal width="100%" direction="up" delay={0.1}>
-              <p className="text-[#44474c] text-lg leading-relaxed font-medium">
+              <p className="text-[var(--text-secondary)] text-lg leading-relaxed font-medium">
                 {design.description}
               </p>
             </Reveal>
@@ -482,7 +482,7 @@ const DesignDetail = () => {
                       <div className="w-12 h-12 bg-background rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                         <item.icon className="w-6 h-6 text-primary" />
                       </div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#44474c] mb-1">{item.label}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] mb-1">{item.label}</p>
                       <p className="font-black text-foreground text-sm">{item.value}</p>
                     </div>
                   </RevealItem>
@@ -505,7 +505,7 @@ const DesignDetail = () => {
                     <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all">
                       <Check className="w-4 h-4" />
                     </div>
-                    <span className="text-sm font-bold text-[#44474c] group-hover:text-foreground transition-colors">{feat}</span>
+                    <span className="text-sm font-bold text-[var(--text-secondary)] group-hover:text-foreground transition-colors">{feat}</span>
                   </motion.div>
                 ))}
               </div>
@@ -584,7 +584,7 @@ const DesignDetail = () => {
               <div className="text-center mb-6">
                 <h2 className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4">Final Step</h2>
                 <h3 className="text-4xl md:text-6xl font-black text-foreground mb-6 tracking-tight">Your Dream, Crafted.</h3>
-                <p className="text-[#44474c] text-xl font-medium max-w-2xl mx-auto">
+                <p className="text-[var(--text-secondary)] text-xl font-medium max-w-2xl mx-auto">
                   Share your vision with us and let our expert team bring it to life with precision and luxury.
                 </p>
               </div>

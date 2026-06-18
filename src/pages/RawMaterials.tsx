@@ -364,8 +364,8 @@ const RawMaterials = () => {
           <header className="hidden md:block mb-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
               <div>
-                <h1 className="text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-headline tracking-tight leading-none mb-6 whitespace-nowrap">
-                  Raw <span className="italic">Materials</span>
+                <h1 className="font-display font-semibold text-4xl md:text-5xl lg:text-[3.5rem] leading-[1.1] tracking-tight text-[var(--text-primary)] mb-6 whitespace-nowrap">
+                  Raw Materials
                 </h1>
               </div>
               <div className="flex shrink-0">
