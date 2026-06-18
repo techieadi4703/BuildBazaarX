@@ -182,13 +182,22 @@ const Contact = () => {
         <div className="container mx-auto px-4 relative z-10">
           <Reveal width="100%" direction="up">
             <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
-              <span className="font-mono text-[10px] md:text-xs text-[#C5A572] uppercase tracking-[0.5em] mb-6 block border border-[#C5A572]/30 px-4 py-1.5 rounded-full bg-[#C5A572]/10 backdrop-blur-sm">
+              <span className="font-mono text-[10px] md:text-xs text-[var(--accent-warm)] uppercase tracking-[0.5em] mb-6 block border border-[var(--accent-warm)]/30 px-4 py-1.5 rounded-full bg-[var(--accent-warm)]/10 backdrop-blur-sm">
                 Contact Us
               </span>
-              <h1 className="text-5xl md:text-8xl font-black text-white mb-6 tracking-tighter leading-[1.1]">
-                Share Your <span className="font-serif italic text-transparent bg-clip-text bg-gradient-to-r from-white to-[#C5A572]">Ideas.</span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-[var(--text-primary)] mb-8 tracking-tighter leading-[1.1]">
+                Share Your{" "}
+                <span className="font-serif italic text-[var(--accent-warm)] relative inline-block">
+                  Ideas.
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 1, delay: 0.5 }}
+                    className="absolute -bottom-2 left-0 w-full h-[2px] bg-[var(--accent-warm)]/50 origin-left"
+                  />
+                </span>
               </h1>
-              <p className="text-white/60 max-w-2xl mx-auto text-lg md:text-2xl font-medium leading-relaxed">
+              <p className="text-[var(--text-secondary)] max-w-2xl mx-auto text-lg md:text-2xl font-medium leading-relaxed">
                 Connect with our experts. Share your project details for a personalized plan.
               </p>
             </div>
@@ -197,7 +206,7 @@ const Contact = () => {
       </section>
 
       {/* Main Command Center Form */}
-      <section className="py-8 md:py-12 bg-[#F4F0EA] relative">
+      <section className="py-8 md:py-12 bg-[var(--bg-surface)] relative">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-12 gap-8 md:gap-12 max-w-7xl mx-auto">
             
@@ -205,8 +214,8 @@ const Contact = () => {
             <div className="lg:col-span-6">
               <Reveal width="100%" direction="up">
                 <div className="mb-5 md:mb-10">
-                  <h2 className="text-4xl font-black text-black mb-4 tracking-tighter">Submit Request</h2>
-                  <p className="text-black/60 text-lg font-medium">
+                  <h2 className="font-display font-semibold text-4xl md:text-5xl leading-[1.1] tracking-tight text-[var(--text-primary)] mb-4">Submit Request</h2>
+                  <p className="text-[var(--text-secondary)] text-lg font-medium">
                     Enter your details below. We will get back to you within 24 hours.
                   </p>
                 </div>
@@ -382,24 +391,24 @@ const Contact = () => {
                 <div className="grid sm:grid-cols-2 gap-4">
                   {contactInfo.map((info, index) => (
                     <RevealItem key={index}>
-                      <Card className="border-black/5 shadow-none bg-white rounded-3xl h-full group hover:shadow-xl transition-all duration-400">
+                      <Card className="border-[var(--border-subtle)]/5 shadow-none bg-[var(--bg-card)] rounded-3xl h-full group hover:shadow-xl transition-all duration-400">
                         <CardContent className="p-6">
-                          <div className={`w-12 h-12 bg-primary-container rounded-2xl flex items-center justify-center mb-6 border border-black/10 group-hover:scale-110 transition-transform ${info.color}`}>
-                            <info.icon className="w-5 h-5 text-white" />
+                          <div className={`w-12 h-12 bg-[var(--bg-base)] rounded-2xl flex items-center justify-center mb-6 border border-[var(--border-subtle)]/10 group-hover:scale-110 transition-transform ${info.color}`}>
+                            <info.icon className="w-5 h-5 text-[var(--accent-warm)]" />
                           </div>
-                          <h3 className="font-bold text-black mb-2 text-sm uppercase tracking-widest">{info.title}</h3>
+                          <h3 className="font-bold text-[var(--text-primary)] mb-2 text-sm uppercase tracking-widest">{info.title}</h3>
                           <div className="flex flex-col gap-2">
                             {info.values.map((v, i) => (
                               v.link ? (
                                 <a
                                   key={i}
                                   href={v.link}
-                                  className="text-black/60 font-medium hover:text-[#C5A572] transition-colors text-sm break-all"
+                                  className="text-[var(--text-secondary)] font-medium hover:text-[#C5A572] transition-colors text-sm break-all"
                                 >
                                   {v.text}
                                 </a>
                               ) : (
-                                <p key={i} className="text-black/60 font-medium text-sm">{v.text}</p>
+                                <p key={i} className="text-[var(--text-secondary)] font-medium text-sm">{v.text}</p>
                               )
                             ))}
                           </div>
