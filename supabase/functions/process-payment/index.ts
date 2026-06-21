@@ -36,7 +36,9 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get("authorization");
-    if (!authHeader) throw new Error("Missing authorization header");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Missing authorization header" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
     const token = authHeader.replace("Bearer ", "");
     
@@ -46,12 +48,14 @@ serve(async (req) => {
     );
 
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-    if (authError || !user) throw new Error("Invalid session");
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Invalid session" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_db_id } = await req.json();
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      throw new Error("Missing payment fields");
+      return new Response(JSON.stringify({ error: "Missing payment fields" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
