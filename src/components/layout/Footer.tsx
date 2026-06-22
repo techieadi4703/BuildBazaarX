@@ -182,13 +182,15 @@ export const Footer = () => {
             ))}
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#44474c]">
-            <div className="flex gap-8">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em] text-[#44474c] text-center lg:text-left">
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4 lg:gap-8">
               <Link to="/privacy-policy" className="hover:text-[#735c00] transition-colors">Privacy Policy</Link>
               <Link to="/terms-of-service" className="hover:text-[#735c00] transition-colors">Terms of Service</Link>
+              <Link to="/cancellation-and-refund" className="hover:text-[#735c00] transition-colors">Cancellation & Refund</Link>
+              <Link to="/shipping-and-exchange" className="hover:text-[#735c00] transition-colors">Shipping & Exchange</Link>
               <Link to="/contact" className="hover:text-[#735c00] transition-colors">Support</Link>
             </div>
-            <p className="opacity-40">© 2026 BuildBazaarX Network. All Rights Reserved.</p>
+            <p className="opacity-40 mt-2 lg:mt-0">© 2026 BuildBazaarX Network. All Rights Reserved.</p>
           </div>
         </div>
       </div>

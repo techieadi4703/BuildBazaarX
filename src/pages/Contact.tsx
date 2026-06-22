@@ -448,7 +448,7 @@ const Contact = () => {
                 <div className="p-8 pb-4">
                   <div className="flex items-center gap-3 mb-6">
                     <ShieldAlert className="w-5 h-5 text-[#C5A572]" />
-                    <h3 className="font-mono text-[10px] tracking-[0.2em] text-black/40 uppercase">Our Guarantees</h3>
+                    <h3 className="font-mono text-[10px] tracking-[0.2em] text-[var(--text-secondary)] uppercase">Our Guarantees</h3>
                   </div>
                   <div className="space-y-4">
                     {trustPoints.map((point, index) => (
@@ -460,7 +460,7 @@ const Contact = () => {
                         className="flex items-center gap-4"
                       >
                         <CheckCircle className="w-4 h-4 text-[#C5A572]" />
-                        <span className="text-black/80 font-bold text-sm">{point}</span>
+                        <span className="text-[var(--text-primary)] font-bold text-sm">{point}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -482,12 +482,12 @@ const Contact = () => {
               <div className="w-16 h-16 mx-auto bg-[#C5A572]/10 border border-[#C5A572]/30 rounded-2xl flex items-center justify-center mb-8">
                 <Fingerprint className="w-8 h-8 text-[#C5A572]" />
               </div>
-              <p className="text-3xl md:text-5xl font-serif text-white leading-snug tracking-tight italic mb-10">
+              <p className="text-3xl md:text-5xl font-serif text-[var(--text-primary)] leading-snug tracking-tight italic mb-10">
                 “Transparency is the foundation of <span className="text-[#C5A572]">BuildBazaarX</span>.”
               </p>
               <div className="flex flex-col items-center">
-                <p className="font-black text-white uppercase tracking-widest text-sm mb-1">Leadership</p>
-                <p className="text-xs text-white/50 font-medium font-mono uppercase">Jaipur Office</p>
+                <p className="font-black text-[var(--text-primary)] uppercase tracking-widest text-sm mb-1">Leadership</p>
+                <p className="text-xs text-[var(--text-secondary)] font-medium font-mono uppercase">Jaipur Office</p>
               </div>
             </div>
           </Reveal>

@@ -57,7 +57,7 @@ export const PopularDesignsSection = () => {
 
         {/* 2x2 Grid Visualization */}
         <Reveal width="100%" staggerChildren={0.1}>
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {designCategories.map((category, index) => (
               <RevealItem key={category.id}>
                 <Link to="/designs">
@@ -65,10 +65,10 @@ export const PopularDesignsSection = () => {
                     whileHover={{ scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
-                    <Card className="bg-[#131B2E] border border-[var(--border-subtle)] rounded-lg overflow-hidden hover:border-[var(--accent-warm)]/50 transition-colors duration-500 shadow-2xl">
+                    <Card className="bg-[#E5DACE] dark:bg-[#20293A] border border-[var(--border-subtle)] rounded-lg overflow-hidden hover:border-[var(--accent-warm)]/50 transition-colors duration-500 shadow-2xl">
                       {/* Image Container with Tech Overlays */}
-                      <div className="relative h-64 md:h-72 overflow-hidden bg-[#0A1128] p-2">
-                         <div className="absolute top-4 right-4 z-20 bg-[var(--bg-card)]/10 backdrop-blur-md px-3 py-1 rounded text-[10px] font-mono text-white/80 border border-[var(--border-subtle)]">
+                      <div className="relative h-64 md:h-72 overflow-hidden bg-[var(--bg-card)] p-2">
+                         <div className="absolute top-4 right-4 z-20 bg-[var(--bg-card)]/10 backdrop-blur-md px-3 py-1 rounded text-[10px] font-mono text-[var(--text-primary)] border border-[var(--border-subtle)]">
                            {category.categoryId}
                          </div>
                          <motion.img
@@ -97,12 +97,12 @@ export const PopularDesignsSection = () => {
                       </div>
 
                       {/* Card Footer */}
-                      <div className="p-5 flex justify-between items-end border-t border-white/5">
+                      <div className="p-5 flex justify-between items-end border-t border-[var(--border-subtle)]">
                         <div>
                           <h3 className="font-black text-lg text-[var(--text-primary)] mb-2 uppercase tracking-wide">
                             {category.title}
                           </h3>
-                          <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">
+                          <p className="text-[10px] font-mono text-[var(--text-secondary)] uppercase tracking-widest">
                             {category.categoryId.split(':')[0]}: {category.categoryId.split(':')[1]}
                           </p>
                         </div>

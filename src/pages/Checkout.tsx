@@ -19,8 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
-import { validateUpiFormat, UpiValidationResult } from "@/lib/upi/validateFormat";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
 import { useRazorpayCheckout } from "@/hooks/useRazorpayCheckout";
 
 // Razorpay handled by hook
@@ -30,26 +29,13 @@ const Checkout = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { initiatePayment } = useRazorpayCheckout();
-  const [paymentMethod, setPaymentMethod] = useState("upi");
+  const [paymentMethod, setPaymentMethod] = useState("online");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState("");
   const [form, setForm] = useState({
     name: "", phone: "", email: "", address: "", city: "", state: "", pincode: "",
   });
-
-  const [upiId, setUpiId] = useState("");
-  const [upiValidation, setUpiValidation] = useState<UpiValidationResult | null>(null);
-  const [showUpiConfirmModal, setShowUpiConfirmModal] = useState(false);
-  const [verifiedUpiName, setVerifiedUpiName] = useState("");
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      if (upiId) setUpiValidation(validateUpiFormat(upiId));
-      else setUpiValidation(null);
-    }, 300);
-    return () => clearTimeout(handler);
-  }, [upiId]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -179,40 +165,12 @@ const Checkout = () => {
       });
       return;
     }
-    
-    if (paymentMethod === "upi" && (!upiValidation || !upiValidation.valid)) {
-      toast({
-        title: "Invalid UPI ID",
-        description: upiValidation?.reason || "Please enter a valid UPI ID.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     setIsSubmitting(true);
 
     try {
       if (paymentMethod === "cod") {
         await handleCOD();
-        setIsSubmitting(false);
-      } else if (paymentMethod === "upi") {
-        const { data, error } = await supabase.functions.invoke("upi-verify", {
-          body: { upi: upiId }
-        });
-        
-        if (error) throw new Error("Verification service unavailable.");
-        if (!data.valid) {
-          toast({
-            title: "Verification Failed",
-            description: data.reason || "This UPI ID does not exist or could not be verified.",
-            variant: "destructive",
-          });
-          setIsSubmitting(false);
-          return;
-        }
-
-        setVerifiedUpiName(data.name || "Verified User");
-        setShowUpiConfirmModal(true);
         setIsSubmitting(false);
       } else {
         const result = await handleRazorpayPayment();
@@ -231,24 +189,7 @@ const Checkout = () => {
     }
   };
 
-  const handleConfirmUpiAndPay = async () => {
-    setShowUpiConfirmModal(false);
-    setIsSubmitting(true);
-    try {
-      const result = await handleRazorpayPayment();
-      clearCart();
-      navigate(`/payment/success?payment_id=${result?.paymentId}`);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "An unexpected error occurred.";
-      if (message.includes("cancelled")) {
-        toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
-      } else {
-        navigate(`/payment/failed?reason=${encodeURIComponent(message)}`);
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+
 
   if (items.length === 0) {
     return (
@@ -360,16 +301,15 @@ const Checkout = () => {
                 <Reveal width="100%" direction="up" delay={0.2}>
                   <Card className="border-border/50 shadow-[0_10px_40px_rgba(0,0,0,0.05)] bg-background/80 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
                     <div className="bg-primary/5 px-4 sm:px-10 py-3 sm:py-6 border-b border-border/50 flex items-center gap-3">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground shrink-0">
                         <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
                       <h2 className="text-base sm:text-xl font-black uppercase tracking-widest text-primary/80">Secure Payment</h2>
                     </div>
                     <CardContent className="p-4 sm:p-10">
-                      <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="grid grid-cols-3 gap-2 sm:gap-6">
+                      <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="grid grid-cols-2 gap-2 sm:gap-6">
                         {[
-                          { value: "upi", label: "Instant UPI", sub: "GPay, PhonePe", icon: Smartphone },
-                          { value: "card", label: "Debit/Credit", sub: "Visa / Master", icon: CreditCard },
+                          { value: "online", label: "Pay Online", sub: "UPI / Cards / Netbanking", icon: CreditCard },
                           { value: "cod", label: "Pay on Arrival", sub: "Cash / UPI", icon: Banknote },
                         ].map((method) => (
                           <label
@@ -380,12 +320,12 @@ const Checkout = () => {
                                 : "border-border/50 hover:border-primary/20 hover:bg-secondary/20"
                             }`}
                           >
-                            <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center ${paymentMethod === method.value ? "bg-primary text-white" : "bg-secondary text-muted-foreground"}`}>
+                            <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center ${paymentMethod === method.value ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
                               <method.icon className="w-5 h-5 sm:w-7 sm:h-7" />
                             </div>
                             <div className="space-y-0.5 sm:space-y-1">
                               <span className="block text-xs sm:text-base font-black text-foreground leading-tight">{method.label}</span>
-                              <span className="hidden sm:block text-xs font-bold text-[#0B132B]/60 uppercase tracking-widest">{method.sub}</span>
+                              <span className="hidden sm:block text-xs font-bold text-muted-foreground uppercase tracking-widest">{method.sub}</span>
                             </div>
                             <RadioGroupItem value={method.value} className="sr-only" />
                           </label>
@@ -393,46 +333,12 @@ const Checkout = () => {
                       </RadioGroup>
 
                       <AnimatePresence mode="wait">
-                        {paymentMethod === "upi" && (
+                        {paymentMethod === "online" && (
                           <motion.div 
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="mt-8 space-y-3"
-                          >
-                            <Label htmlFor="upi-id" className="text-sm font-bold uppercase tracking-widest text-[#0B132B]/70 ml-1">Verify UPI ID</Label>
-                            <div className="relative">
-                              <Input 
-                                id="upi-id" 
-                                value={upiId} 
-                                onChange={(e) => setUpiId(e.target.value)} 
-                                placeholder="e.g. username@bank" 
-                                className={`h-14 rounded-2xl bg-white/90 border-black/5 focus:bg-background focus:ring-2 transition-all font-medium placeholder:text-black/40 ${upiId && upiValidation?.valid ? 'focus:ring-green-500/50 border-green-200' : upiId && !upiValidation?.valid ? 'focus:ring-red-500/50 border-red-200' : 'focus:ring-primary/20'}`} 
-                              />
-                            </div>
-                            <AnimatePresence>
-                              {upiId && upiValidation && (
-                                <motion.p 
-                                  initial={{ opacity: 0, y: -5 }} 
-                                  animate={{ opacity: 1, y: 0 }} 
-                                  className={`text-sm flex items-center gap-1.5 ml-1 ${upiValidation.valid ? 'text-green-600 font-semibold' : 'text-red-500'}`}
-                                >
-                                  {upiValidation.valid ? (
-                                    <><CheckCircle2 className="w-4 h-4" /> Looks good, we'll verify on payment</>
-                                  ) : (
-                                    upiValidation.reason
-                                  )}
-                                </motion.p>
-                              )}
-                            </AnimatePresence>
-                          </motion.div>
-                        )}
-                        {!isCOD && paymentMethod !== "upi" && (
-                          <motion.div 
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="flex items-center gap-3 text-sm text-[#0B132B]/80 bg-secondary/40 rounded-2xl p-3 sm:p-4 mt-4 sm:mt-8 border border-border/30"
+                            className="flex items-center gap-3 text-sm text-muted-foreground bg-secondary/40 rounded-2xl p-3 sm:p-4 mt-4 sm:mt-8 border border-border/30"
                           >
                             <div className="w-10 h-10 bg-background rounded-xl flex items-center justify-center shrink-0">
                               <ShieldCheck className="w-6 h-6 text-green-600" />
@@ -471,7 +377,7 @@ const Checkout = () => {
                                 <div>
                                   <p className="text-[10px] font-black uppercase text-primary tracking-widest mb-1">{item.brand}</p>
                                   <p className="text-sm font-bold text-foreground line-clamp-1 leading-tight">{item.name}</p>
-                                  <p className="text-[10px] font-medium text-[#0B132B]/60 mt-1">{item.specs}</p>
+                                  <p className="text-[10px] font-medium text-muted-foreground mt-1">{item.specs}</p>
                                 </div>
                                 <div className="flex items-center justify-between gap-2 mt-1">
                                   <div className="flex items-center gap-2 sm:gap-3 bg-secondary/50 rounded-full px-2 py-1 border border-border/30 shrink-0">
@@ -485,7 +391,7 @@ const Checkout = () => {
                                   </div>
                                   <div className="flex flex-col items-end shrink-0">
                                     <span className="text-base sm:text-lg font-black text-foreground">₹{(item.price * item.quantity).toLocaleString()}</span>
-                                    <button onClick={() => removeFromCart(item.id)} className="text-[10px] font-black uppercase tracking-tighter text-[#0B132B]/70 hover:text-destructive flex items-center gap-1 transition-colors">
+                                    <button onClick={() => removeFromCart(item.id)} className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors">
                                       <Trash2 className="w-3 h-3" /> Remove
                                     </button>
                                   </div>
@@ -499,11 +405,11 @@ const Checkout = () => {
                       <div className="p-4 sm:p-10 space-y-4 sm:space-y-8">
                         <div className="space-y-4">
                           <div className="flex justify-between items-center text-sm font-bold">
-                            <span className="text-[#0B132B]/70 uppercase tracking-widest">Bag Total</span>
+                            <span className="text-muted-foreground uppercase tracking-widest">Bag Total</span>
                             <span className="text-foreground">₹{totalPrice.toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between items-center text-sm font-bold">
-                            <span className="text-[#0B132B]/70 uppercase tracking-widest">Delivery Charge</span>
+                            <span className="text-muted-foreground uppercase tracking-widest">Delivery Charge</span>
                             <div className="flex items-center gap-2">
                               <span className="text-muted-foreground line-through">₹499</span>
                               <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none rounded-full">FREE</Badge>
@@ -571,28 +477,7 @@ const Checkout = () => {
         </div>
       </div>
 
-      <Dialog open={showUpiConfirmModal} onOpenChange={setShowUpiConfirmModal}>
-        <DialogContent className="sm:max-w-md border-0 bg-white shadow-2xl rounded-3xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-black text-center tracking-tight">Confirm Payment</DialogTitle>
-            <DialogDescription className="text-center text-base pt-2">
-              Sending payment to:
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col items-center justify-center py-6 space-y-2 bg-secondary/30 rounded-2xl border border-border/50">
-            <span className="text-xl font-black text-primary">{verifiedUpiName}</span>
-            <span className="text-sm font-semibold text-muted-foreground">{upiId}</span>
-          </div>
-          <DialogFooter className="sm:justify-between flex-row gap-3 pt-4">
-            <Button type="button" variant="outline" className="flex-1 rounded-2xl h-12 font-bold" onClick={() => setShowUpiConfirmModal(false)}>
-              Edit
-            </Button>
-            <Button type="button" className="flex-1 rounded-2xl h-12 font-bold bg-primary text-white hover:bg-primary/90" onClick={handleConfirmUpiAndPay}>
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
     </Layout>
   );
 };

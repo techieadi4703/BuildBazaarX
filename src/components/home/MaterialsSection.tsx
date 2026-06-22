@@ -9,6 +9,10 @@ import {
   luxuryPaintImg,
   italianMarbleImg,
   smartSwitchImg,
+  asianPaintsImg,
+  godrejLockImg,
+  jaquarFaucetImg,
+  rrKabelImg,
   cdnImg,
 } from "@/lib/cdnImages";
 
@@ -41,6 +45,20 @@ const products = [
     name: "Burmese Teak Wood Planks",
     specs: ["100% Solid Wood", "Kiln Dried", "Termite Resistant"],
   },
+  {
+    brand: "Asian Paints",
+    discount: "15%\nOFF",
+    image: asianPaintsImg,
+    name: "Royale Play Texture",
+    specs: ["20 Liters", "Washable", "Rich Finish"],
+  },
+  {
+    brand: "Godrej",
+    discount: "10%\nOFF",
+    image: godrejLockImg,
+    name: "Digital Smart Locker",
+    specs: ["Biometric Access", "Anti-theft Alarm", "1 Yr Warranty"],
+  },
 ];
 
 export const MaterialsSection = () => {
@@ -59,7 +77,7 @@ export const MaterialsSection = () => {
         </Reveal>
 
         <Reveal width="100%" staggerChildren={0.1}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6 max-w-[1400px] px-4 mx-auto mb-8">
             {products.map((product, index) => (
               <RevealItem key={index}>
                 <Link to="/materials">
