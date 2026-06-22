@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import {
   ShoppingBag, CreditCard, Smartphone, Banknote,
@@ -221,8 +222,8 @@ const Checkout = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-secondary/10 py-5 md:py-8">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
+        <div className="w-full px-2 sm:px-4 md:px-6">
+          <div className="w-full">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 md:mb-8">
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
@@ -302,7 +303,7 @@ const Checkout = () => {
                         <RevealItem className="sm:col-span-2">
                           <div className="space-y-2 sm:space-y-3">
                             <Label htmlFor="address" className="text-[10px] uppercase font-mono tracking-widest text-black/60 dark:text-white/60 ml-1">Complete Address</Label>
-                            <Input id="address" name="address" value={form.address} onChange={handleChange} placeholder="House/Flat No., Street, Landmark..." required className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5" />
+                            <Textarea id="address" name="address" value={form.address} onChange={handleChange} placeholder="House/Flat No., Street, Landmark..." required className="min-h-[80px] sm:min-h-[120px] py-3 sm:py-4 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5 resize-y" />
                           </div>
                         </RevealItem>
                         <RevealItem>
@@ -317,58 +318,146 @@ const Checkout = () => {
                             <Input id="state" name="state" value={form.state} onChange={handleChange} placeholder="State name" className="h-11 sm:h-14 w-full rounded-2xl bg-[#E5DACE] dark:bg-[#20293A] border-transparent focus:bg-white dark:focus:bg-[#2a364a] transition-all text-black dark:text-white placeholder:text-black/40 dark:placeholder:text-white/40 shadow-sm px-5" />
                           </div>
                         </RevealItem>
+                        <RevealItem className="sm:col-span-2 pt-2">
+                          <Button 
+                            type="button" 
+                            className="w-full sm:w-auto h-12 px-8 rounded-2xl bg-black text-white hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-white/80 font-bold transition-colors shadow-sm"
+                            onClick={() => {
+                              if(form.name && form.phone && form.address && form.city && form.pincode) {
+                                setIsEditingAddress(false);
+                              } else {
+                                toast({ title: "Incomplete Address", description: "Please fill all required fields.", variant: "destructive" });
+                              }
+                            }}
+                          >
+                            Save Address
+                          </Button>
+                        </RevealItem>
                       </form>
                       )}
                     </CardContent>
                   </Card>
                 </Reveal>
 
-                {/* 2. Payment Selector */}
+                {/* 2. Cart Items Summary Box */}
                 <Reveal width="100%" direction="up" delay={0.2}>
+                  <Card className="bg-[#C5A572] dark:bg-[#1C2333] p-5 md:p-8 rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 dark:bg-white/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10 dark:border-white/10">
+                      <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black dark:text-white uppercase">Cart_Asset</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-4 relative z-10">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-white/20 dark:bg-black/20 rounded-xl flex items-center justify-center text-black dark:text-white shrink-0">
+                          <ShoppingBag className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-bold tracking-tight text-black dark:text-white">Your Cart</h2>
+                          <p className="text-sm font-medium text-black/60 dark:text-white/60 mt-1">{items.reduce((acc, item) => acc + item.quantity, 0)} Items • ₹{totalPrice.toLocaleString()}</p>
+                        </div>
+                      </div>
+                      
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" className="border-black/20 dark:border-white/20 hover:bg-black/10 dark:hover:bg-white/10 text-xs font-bold rounded-xl h-10 px-4 text-black dark:text-white backdrop-blur-sm shadow-sm">
+                            View / Edit
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[500px] bg-[#C5A572] dark:bg-[#1C2333] border border-white/20 rounded-[2.5rem] p-6 shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
+                          <DialogHeader>
+                            <DialogTitle className="text-2xl font-black text-black dark:text-white flex items-center gap-2 mb-4">
+                              <ShoppingBag className="w-6 h-6" /> Your Items
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                            {items.map((item) => (
+                              <motion.div 
+                                key={item.id} 
+                                layout
+                                className="flex gap-3 sm:gap-5 group bg-white/40 dark:bg-black/40 backdrop-blur-sm p-3 sm:p-4 rounded-[1.5rem] border border-white/30 dark:border-white/10"
+                                whileHover={{ x: 5 }}
+                              >
+                                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-[1rem] sm:rounded-[1.25rem] bg-white overflow-hidden shrink-0 border border-black/10 dark:border-white/10">
+                                  <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" decoding="async" />
+                                  <div className="absolute inset-0 bg-black/5" />
+                                </div>
+                                <div className="flex-1 py-1 flex flex-col justify-between min-w-0">
+                                  <div>
+                                    <p className="text-[10px] font-black uppercase text-black/60 dark:text-white/60 tracking-widest mb-1">{item.brand}</p>
+                                    <p className="text-sm font-bold text-black dark:text-white line-clamp-1 leading-tight">{item.name}</p>
+                                    <p className="text-[10px] font-medium text-black/60 dark:text-white/60 mt-1">{item.specs}</p>
+                                  </div>
+                                  <div className="flex items-center justify-between gap-2 mt-1">
+                                    <div className="flex items-center gap-2 sm:gap-3 bg-white dark:bg-black rounded-full px-2 py-1 border border-black/10 dark:border-white/10 shrink-0">
+                                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors text-black dark:text-white">
+                                        <Minus className="w-3 h-3" />
+                                      </button>
+                                      <span className="w-4 text-center text-xs font-black text-black dark:text-white">{item.quantity}</span>
+                                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors text-black dark:text-white">
+                                        <Plus className="w-3 h-3" />
+                                      </button>
+                                    </div>
+                                    <div className="flex flex-col items-end shrink-0">
+                                      <span className="text-base sm:text-lg font-black text-black dark:text-white">₹{(item.price * item.quantity).toLocaleString()}</span>
+                                      <button onClick={() => removeFromCart(item.id)} className="text-[10px] font-black uppercase tracking-tighter text-black/40 hover:text-red-500 dark:text-white/40 dark:hover:text-red-400 flex items-center gap-1 transition-colors">
+                                        <Trash2 className="w-3 h-3" /> Remove
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            ))}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </Card>
+                </Reveal>
+
+                {/* 3. Payment Selector */}
+                <Reveal width="100%" direction="up" delay={0.3}>
                   <Card className="bg-[#C5A572] dark:bg-[#1C2333] p-5 md:p-8 rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 dark:bg-white/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10 dark:border-white/10">
                       <span className="font-mono text-[10px] rotate-90 tracking-[0.5em] opacity-20 text-black dark:text-white uppercase">Pay_Asset</span>
                     </div>
-                    <div className="flex items-center gap-4 mb-8 relative z-10 border-b border-black/10 dark:border-white/10 pb-6">
-                      <div className="w-10 h-10 bg-white/20 dark:bg-black/20 rounded-xl flex items-center justify-center text-black dark:text-white shrink-0">
-                        <CreditCard className="w-5 h-5" />
+                    <div className="flex flex-col gap-6 relative z-10">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-white/20 dark:bg-black/20 rounded-xl flex items-center justify-center text-black dark:text-white shrink-0">
+                          <CreditCard className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-xl font-bold tracking-tight text-black dark:text-white">Payment Method</h2>
                       </div>
-                      <h2 className="text-xl font-bold tracking-tight text-black dark:text-white">Secure Payment</h2>
+                      
+                      <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {[
+                          { value: "online", label: "Pay Online", sub: "UPI / Cards / Netbanking", icon: CreditCard },
+                          { value: "cod", label: "Pay on Arrival", sub: "Cash / UPI", icon: Banknote },
+                        ].map((method) => (
+                          <label
+                            key={method.value}
+                            className={`flex items-center gap-4 p-4 sm:p-5 rounded-2xl border-2 cursor-pointer transition-all ${
+                              paymentMethod === method.value
+                                ? "border-black/50 dark:border-white/50 bg-white/50 dark:bg-black/40 shadow-sm"
+                                : "border-transparent hover:bg-white/20 dark:hover:bg-black/20"
+                            }`}
+                          >
+                            <RadioGroupItem value={method.value} className="border-black/50 dark:border-white/50" />
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${paymentMethod === method.value ? "bg-black dark:bg-white text-white dark:text-black" : "bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60"}`}>
+                              <method.icon className="w-5 h-5" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-bold text-black dark:text-white text-sm sm:text-base">{method.label}</span>
+                              <span className="text-xs font-medium text-black/60 dark:text-white/60">{method.sub}</span>
+                            </div>
+                          </label>
+                        ))}
+                      </RadioGroup>
                     </div>
-                    <CardContent className="p-0 relative z-10">
-                      <div className="bg-[#E5DACE] dark:bg-[#20293A] rounded-2xl p-4 sm:p-6 relative border border-transparent dark:border-white/10 shadow-sm">
-                        <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
-                          {[
-                            { value: "online", label: "Pay Online", sub: "UPI / Cards / Netbanking", icon: CreditCard },
-                            { value: "cod", label: "Pay on Arrival", sub: "Cash / UPI", icon: Banknote },
-                          ].map((method) => (
-                            <label
-                              key={method.value}
-                              className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                                paymentMethod === method.value
-                                  ? "border-black/50 dark:border-white/50 bg-white/50 dark:bg-black/40 shadow-sm"
-                                  : "border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover:bg-white/20 dark:hover:bg-black/20"
-                              }`}
-                            >
-                              <RadioGroupItem value={method.value} className="border-black/50 dark:border-white/50" />
-                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === method.value ? "bg-black dark:bg-white text-white dark:text-black" : "bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60"}`}>
-                                <method.icon className="w-5 h-5" />
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="font-bold text-black dark:text-white text-sm">{method.label}</span>
-                                <span className="text-xs font-medium text-black/60 dark:text-white/60">{method.sub}</span>
-                              </div>
-                            </label>
-                          ))}
-                        </RadioGroup>
-                      </div>
-                    </CardContent>
                   </Card>
                 </Reveal>
               </div>
 
-              {/* Right Column: Summary */}
-              <div className="lg:col-span-5">
+              {/* Right Column: Order Summary */}
+              <div className="lg:col-span-5 space-y-6 sm:space-y-10">
                 <Reveal width="100%" direction="left" distance={30} delay={0.3}>
                   <Card className="bg-[#C5A572] dark:bg-[#1C2333] p-5 md:p-8 rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden sticky top-24">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 dark:bg-white/5 rounded-bl-[4rem] flex items-center justify-center border-l border-b border-black/10 dark:border-white/10">
@@ -383,7 +472,16 @@ const Checkout = () => {
 
                     <CardContent className="p-0 relative z-10 space-y-4 sm:space-y-6">
                       
-                      {/* Subtotals Block */}
+                      {/* Coupon Box */}
+                      <div className="bg-white/40 dark:bg-black/40 backdrop-blur-sm rounded-2xl p-4 border border-white/30 dark:border-white/10">
+                        <p className="text-xs font-bold text-black/60 dark:text-white/60 uppercase tracking-widest mb-3">Have a Coupon?</p>
+                        <div className="flex gap-2">
+                          <Input placeholder="Enter Code" className="bg-white/50 dark:bg-black/50 border-white/20 dark:border-white/10 text-black dark:text-white placeholder:text-black/50 dark:placeholder:text-white/50 h-12 rounded-xl focus-visible:ring-black/20 dark:focus-visible:ring-white/20" />
+                          <Button className="h-12 px-5 rounded-xl bg-black text-white hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-white/80 font-bold transition-colors">Apply</Button>
+                        </div>
+                      </div>
+
+                      {/* Subtotals & Total Block */}
                       <div className="bg-white/40 dark:bg-black/40 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/30 dark:border-white/10 text-black dark:text-white space-y-4">
                         <div className="flex justify-between items-center text-sm font-bold">
                           <span className="text-black/60 dark:text-white/60 uppercase tracking-widest">Bag Total</span>
@@ -396,60 +494,16 @@ const Checkout = () => {
                             <Badge className="bg-green-600 text-white hover:bg-green-700 border-none rounded-full">FREE</Badge>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Items Block */}
-                      <div className="bg-[#E5DACE] dark:bg-[#20293A] rounded-2xl p-4 sm:p-6 relative border border-transparent dark:border-white/10 shadow-sm">
-                        <div className="space-y-4 sm:space-y-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                          {items.map((item) => (
-                            <motion.div 
-                              key={item.id} 
-                              layout
-                              className="flex gap-3 sm:gap-5 group"
-                              whileHover={{ x: 5 }}
-                            >
-                              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-[1.25rem] sm:rounded-[1.5rem] bg-white overflow-hidden shrink-0 border border-black/10 dark:border-white/10">
-                                <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" decoding="async" />
-                                <div className="absolute inset-0 bg-black/5" />
-                              </div>
-                              <div className="flex-1 py-1 flex flex-col justify-between min-w-0">
-                                <div>
-                                  <p className="text-[10px] font-black uppercase text-black/60 dark:text-white/60 tracking-widest mb-1">{item.brand}</p>
-                                  <p className="text-sm font-bold text-black dark:text-white line-clamp-1 leading-tight">{item.name}</p>
-                                  <p className="text-[10px] font-medium text-black/60 dark:text-white/60 mt-1">{item.specs}</p>
-                                </div>
-                                <div className="flex items-center justify-between gap-2 mt-1">
-                                  <div className="flex items-center gap-2 sm:gap-3 bg-black/5 dark:bg-white/5 rounded-full px-2 py-1 border border-black/10 dark:border-white/10 shrink-0">
-                                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center hover:bg-white dark:hover:bg-black rounded-full transition-colors text-black dark:text-white">
-                                      <Minus className="w-3 h-3" />
-                                    </button>
-                                    <span className="w-4 text-center text-xs font-black text-black dark:text-white">{item.quantity}</span>
-                                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center hover:bg-white dark:hover:bg-black rounded-full transition-colors text-black dark:text-white">
-                                      <Plus className="w-3 h-3" />
-                                    </button>
-                                  </div>
-                                  <div className="flex flex-col items-end shrink-0">
-                                    <span className="text-base sm:text-lg font-black text-black dark:text-white">₹{(item.price * item.quantity).toLocaleString()}</span>
-                                    <button onClick={() => removeFromCart(item.id)} className="text-[10px] font-black uppercase tracking-tighter text-black/40 hover:text-red-500 dark:text-white/40 dark:hover:text-red-400 flex items-center gap-1 transition-colors">
-                                      <Trash2 className="w-3 h-3" /> Remove
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Total Payable Block */}
-                      <div className="bg-white/40 dark:bg-black/40 backdrop-blur-sm rounded-2xl p-5 border border-white/30 dark:border-white/10">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="text-xs font-black text-black/60 dark:text-white/60 uppercase tracking-[0.2em] mb-1">Total Payable</p>
-                            <p className="text-3xl font-black text-black dark:text-white tracking-tighter">₹{totalPrice.toLocaleString()}</p>
-                          </div>
-                          <div className="bg-white dark:bg-black p-3 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm">
-                            <Sparkles className="w-6 h-6 text-black dark:text-white animate-pulse" />
+                        <div className="pt-4 mt-4 border-t border-black/10 dark:border-white/10">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="text-xs font-black text-black/60 dark:text-white/60 uppercase tracking-[0.2em] mb-1">Total Payable</p>
+                              <p className="text-3xl font-black text-black dark:text-white tracking-tighter">₹{totalPrice.toLocaleString()}</p>
+                            </div>
+                            <div className="bg-white dark:bg-black p-3 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm">
+                              <Sparkles className="w-6 h-6 text-black dark:text-white animate-pulse" />
+                            </div>
                           </div>
                         </div>
                       </div>
