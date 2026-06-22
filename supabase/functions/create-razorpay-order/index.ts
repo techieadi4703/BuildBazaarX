@@ -99,12 +99,12 @@ serve(async (req) => {
 
     const rzpOrder = await rzpResponse.json();
 
-    const { error: insertError } = await supabaseAdmin.from("payments").insert({
+    const { error: insertError } = await supabaseAdmin.from("orders").insert({
       order_id: rzpOrder.id,
       razorpay_order_id: rzpOrder.id,
       user_id: user.id,
       cart_snapshot: cartSnapshot,
-      amount: totalPaise,
+      total: totalPaise,
       currency: "INR",
       status: "created",
     });
