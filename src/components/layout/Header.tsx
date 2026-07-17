@@ -24,6 +24,7 @@ const navLinks = [
   { name: "Raw Materials", path: "/materials" },
   { name: "About", path: "/about" },
   { name: "Contact", path: "/contact" },
+  { name: "New Project", path: "/new-project" },
 ];
 
 export const Header = () => {
