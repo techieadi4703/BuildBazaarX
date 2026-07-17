@@ -32,6 +32,7 @@ const TermsOfService = React.lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
 const CancellationRefund = React.lazy(() => import("./pages/CancellationRefund"));
 const ShippingExchange = React.lazy(() => import("./pages/ShippingExchange"));
+const NewProject = React.lazy(() => import("./pages/NewProject"));
 
 const AdminDashboard = React.lazy(() => import("./pages/admin/Dashboard"));
 const AdminUsers = React.lazy(() => import("./pages/admin/Users"));
@@ -79,6 +80,7 @@ const AnimatedRoutes = () => {
         <Route path="/privacy-policy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
         <Route path="/cancellation-and-refund" element={<PageTransition><CancellationRefund /></PageTransition>} />
         <Route path="/shipping-and-exchange" element={<PageTransition><ShippingExchange /></PageTransition>} />
+        <Route path="/new-project" element={<PageTransition><NewProject /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
         <Route path="/profile" element={
           <ProtectedRoute>
