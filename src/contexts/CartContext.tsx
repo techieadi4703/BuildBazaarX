@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode,
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./AuthContext";
 import { allProducts, getProductImage } from "@/lib/rawMaterialsData";
+import { trackEvent } from "@/lib/umami";
 
 export interface CartItem {
   id: number | string;
@@ -115,6 +116,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (existing) {
         return prev.map((i) => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
       }
+      
+      trackEvent("add-to-cart", { productId: item.id, price: item.price, qty: 1 });
       return [...prev, { ...item, quantity: 1 }];
     });
     return true;

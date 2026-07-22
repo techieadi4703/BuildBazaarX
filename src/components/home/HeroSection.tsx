@@ -73,9 +73,10 @@ export const HeroSection = () => {
       </div>
 
       {/* CTA group */}
-      {/* <div className="flex flex-col sm:flex-row items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-center gap-3">
         <Link 
           to="/designs"
+          data-umami-event="cta-browse-designs"
           className="
             inline-flex items-center justify-center gap-2 
             bg-[var(--accent-warm)] hover:bg-[var(--accent-warm-hover)] 
@@ -87,6 +88,7 @@ export const HeroSection = () => {
         </Link>
         <Link 
           to="/about"
+          data-umami-event="cta-hire-professional"
           className="
             inline-flex items-center justify-center gap-2 
             text-[var(--text-secondary)] hover:text-[var(--text-primary)] 
@@ -97,7 +99,7 @@ export const HeroSection = () => {
         >
           Browse Professionals
         </Link>
-      </div> */}
+      </div>
     </section>
   );
 };

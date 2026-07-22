@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
 import { logger } from "@/lib/logger";
+import { trackEvent } from "@/lib/umami";
 
 interface AuthContextType {
   session: Session | null;
@@ -100,6 +101,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           if (session?.user) {
             const role = await fetchUserRole(session.user);
             if (mounted) setUserRole(role);
+            
+            if (_event === 'SIGNED_IN') {
+              const isSignup = new Date(session.user.created_at).getTime() > Date.now() - 10000;
+              trackEvent(isSignup ? "signup" : "login", { role });
+            }
           } else {
             if (mounted) setUserRole(null);
           }

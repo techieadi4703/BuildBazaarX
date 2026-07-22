@@ -4,11 +4,16 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { trackEvent } from "@/lib/umami";
 
 export default function PaymentFailed() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const reason = searchParams.get("reason") ?? "Payment was not completed";
+
+  React.useEffect(() => {
+    trackEvent("payment-failed", { orderId: "unknown", reason });
+  }, [reason]);
 
   return (
     <Layout>

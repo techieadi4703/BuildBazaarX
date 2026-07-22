@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "./components/shared/PageTransition";
+import { useUmamiPageviews } from "./hooks/useUmamiPageviews";
 
 const Index = React.lazy(() => import("./pages/Index"));
 const DesignsCatalog = React.lazy(() => import("./pages/DesignsCatalog"));
@@ -60,6 +61,7 @@ const queryClient = new QueryClient({
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  useUmamiPageviews();
   
   React.useEffect(() => {
     window.scrollTo(0, 0);

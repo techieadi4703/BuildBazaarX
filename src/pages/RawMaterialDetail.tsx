@@ -44,6 +44,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { trackEvent } from "@/lib/umami";
 import { motion, AnimatePresence } from "framer-motion";
 import { allProducts, getProductImage, Product } from "@/lib/rawMaterialsData";
 import { Reveal } from "@/components/shared/Reveal";
@@ -66,6 +67,8 @@ const RawMaterialDetail = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const hasTrackedView = React.useRef(false);
+
   useEffect(() => {
     const fetchProduct = async () => {
       setIsLoading(true);
@@ -73,6 +76,10 @@ const RawMaterialDetail = () => {
       const foundProduct = allProducts.find(p => p.id === id);
       if (foundProduct) {
         setProduct(foundProduct);
+        if (!hasTrackedView.current) {
+          trackEvent("material-view", { id: foundProduct.id, title: foundProduct.name });
+          hasTrackedView.current = true;
+        }
         setIsLoading(false);
         return;
       }
@@ -107,6 +114,11 @@ const RawMaterialDetail = () => {
             quality_details: typedData.quality_details,
             description: typedData.description
           });
+          
+          if (!hasTrackedView.current) {
+            trackEvent("material-view", { id: typedData.id, title: typedData.name });
+            hasTrackedView.current = true;
+          }
         }
       } catch (err) {
         console.error("Error fetching supplier product:", err);

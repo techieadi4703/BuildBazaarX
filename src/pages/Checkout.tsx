@@ -20,6 +20,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
+import { trackEvent } from "@/lib/umami";
 
 import { useRazorpayCheckout } from "@/hooks/useRazorpayCheckout";
 
@@ -170,6 +171,8 @@ const Checkout = () => {
       });
       return;
     }
+
+    trackEvent("checkout-start", { total: totalPrice, items: items.length });
 
     setIsSubmitting(true);
 

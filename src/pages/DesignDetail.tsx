@@ -24,6 +24,7 @@ import { Layout } from "@/components/layout/Layout";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/umami";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -58,6 +59,15 @@ const DesignDetail = () => {
     projectType: "",
     message: "",
   });
+
+  const hasTrackedView = React.useRef(false);
+
+  useEffect(() => {
+    if (dbDesign && !hasTrackedView.current) {
+      trackEvent("design-view", { id: dbDesign.id, title: dbDesign.name });
+      hasTrackedView.current = true;
+    }
+  }, [dbDesign]);
 
   useEffect(() => {
     const prefillData = async () => {
