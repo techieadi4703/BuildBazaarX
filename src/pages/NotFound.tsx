@@ -1,15 +1,17 @@
 import React from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/shared/Reveal";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft, Ghost, Construction } from "lucide-react";
+import { trackEvent } from "@/lib/umami";
 
 const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
+    trackEvent("not-found", { path: window.location.pathname });
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
   }, [location.pathname]);
 

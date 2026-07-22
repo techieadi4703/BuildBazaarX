@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
+import { trackEvent } from "@/lib/umami";
 
 interface Props {
   children?: ReactNode;
@@ -21,6 +22,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    trackEvent("error-boundary", { message: error.message.substring(0, 100) });
     console.error("Uncaught error:", error, errorInfo);
   }
 

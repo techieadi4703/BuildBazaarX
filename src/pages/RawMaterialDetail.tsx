@@ -44,7 +44,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { trackEvent } from "@/lib/umami";
+import { trackEvent, throttle } from "@/lib/umami";
+import { useScrollDepth } from "@/hooks/useScrollDepth";
 import { motion, AnimatePresence } from "framer-motion";
 import { allProducts, getProductImage, Product } from "@/lib/rawMaterialsData";
 import { Reveal } from "@/components/shared/Reveal";
@@ -68,6 +69,8 @@ const RawMaterialDetail = () => {
   }, []);
 
   const hasTrackedView = React.useRef(false);
+
+  useScrollDepth({ scope: "material", id: id });
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -191,14 +194,25 @@ const RawMaterialDetail = () => {
     }
   };
 
-  const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  const trackGalleryInteraction = throttle(() => {
+    trackEvent("gallery-interaction", { type: "carousel", scope: "material", id: product?.id });
+  }, 2000);
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    trackGalleryInteraction();
+  };
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+    trackGalleryInteraction();
+  };
 
   const handleShare = () => {
     setIsShareModalOpen(true);
   };
 
   const shareToPlatform = async (platform: string) => {
+    trackEvent("share-click", { platform: platform, scope: "material", id: product.id });
     const url = window.location.href;
     const text = `Check out this ${product.name} from ${product.brand} on BuildBazaarX!`;
     let shareUrl = "";
@@ -377,7 +391,10 @@ const RawMaterialDetail = () => {
                 {images.map((img, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setCurrentImageIndex(idx)}
+                    onClick={() => {
+                      setCurrentImageIndex(idx);
+                      trackGalleryInteraction();
+                    }}
                     className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 shrink-0 transition-all ${
                       idx === currentImageIndex ? "border-primary shadow-md" : "border-transparent opacity-70 hover:opacity-100"
                     }`}

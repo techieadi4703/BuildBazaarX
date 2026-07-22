@@ -124,15 +124,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const removeFromCart = (id: number | string) => {
+    const item = items.find((i) => i.id === id);
+    if (item) {
+      trackEvent("remove-from-cart", { productId: id, price: item.price });
+    }
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
   const updateQuantity = (id: number | string, quantity: number) => {
     if (quantity < 1) { removeFromCart(id); return; }
+    const item = items.find((i) => i.id === id);
+    if (item) {
+      trackEvent("update-cart-qty", { productId: id, from: item.quantity, to: quantity });
+    }
     setItems((prev) => prev.map((i) => i.id === id ? { ...i, quantity } : i));
   };
 
   const clearCart = () => {
+    trackEvent("clear-cart", { items: items.length });
     setItems([]);
     if (userId) saveCartToDb(userId, []);
   };

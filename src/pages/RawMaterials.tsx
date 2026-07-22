@@ -29,6 +29,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { premiumProducts, otherProducts, allProducts as rawMaterialsData, Product, categories, getProductImage, woodPlanksImg } from "@/lib/rawMaterialsData";
 import { cdnImg } from "@/lib/cdnImages";
 import { Link } from "react-router-dom";
+import { trackEvent } from "@/lib/umami";
 
 const allProductsList: Product[] = [...rawMaterialsData].sort(() => Math.random() - 0.5);
 
@@ -77,6 +78,27 @@ const RawMaterials = () => {
   useEffect(() => {
     setPage(1);
   }, [selectedCategory, searchQuery]);
+
+  useEffect(() => {
+    if (!searchQuery) return;
+    const timer = setTimeout(() => {
+      const results = filteredProducts.length;
+      if (results === 0) {
+        trackEvent("search-zero-results", { q: searchQuery.substring(0, 100), scope: "materials" });
+      } else {
+        trackEvent("search", { q: searchQuery.substring(0, 100), results, scope: "materials" });
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery, filteredProducts.length]);
+
+  useEffect(() => {
+    if (selectedCategory) trackEvent("filter-applied", { type: "category", value: selectedCategory, scope: "materials" });
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    if (page > 1) trackEvent("load-more", { page, scope: "materials" });
+  }, [page]);
 
   const { data: regularProducts = [], isLoading: isLoadingReq } = useQuery({
     queryKey: ["products"],

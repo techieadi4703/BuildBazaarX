@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { livingroomImage } from "@/lib/cdnImages"; // Re-using as bathroom/garden placeholder if needed
 import { kitchenImage, bedroomImage, fullhomeImage, cdnImg } from "@/lib/cdnImages";
+import { trackEvent } from "@/lib/umami";
 
 const designCategories = [
   {
@@ -60,7 +61,7 @@ export const PopularDesignsSection = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {designCategories.map((category, index) => (
               <RevealItem key={category.id}>
-                <Link to="/designs">
+                <Link to="/designs" onClick={() => trackEvent("category-click", { category: category.title })}>
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}

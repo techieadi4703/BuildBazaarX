@@ -12,6 +12,7 @@ import {
   ShieldAlert,
   Fingerprint
 } from "lucide-react";
+import { trackEvent } from "@/lib/umami";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -143,6 +144,7 @@ const Contact = () => {
         title: "Protocol Initiated",
         description: "Your requisition is logged. An authority will contact you shortly.",
       });
+      trackEvent("contact-submit", { service: formData.service, city: formData.city });
       
       setFormData({
         name: "",

@@ -11,6 +11,7 @@ import { useWishlist } from "@/contexts/WishlistContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { kitchenImage, bedroomImage, livingroomImage, wardrobeImage, fullhomeImage, cdnImg } from "@/lib/cdnImages";
+import { trackEvent } from "@/lib/umami";
 
 // Images
 
@@ -123,6 +124,31 @@ const DesignsCatalog = () => {
   React.useEffect(() => {
     setPage(1);
   }, [selectedCategory, selectedStyle, searchQuery]);
+
+  React.useEffect(() => {
+    if (!searchQuery) return;
+    const timer = setTimeout(() => {
+      const results = filteredDesigns.length;
+      if (results === 0) {
+        trackEvent("search-zero-results", { q: searchQuery.substring(0, 100), scope: "designs" });
+      } else {
+        trackEvent("search", { q: searchQuery.substring(0, 100), results, scope: "designs" });
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery, filteredDesigns.length]);
+
+  React.useEffect(() => {
+    if (selectedCategory !== "all") trackEvent("filter-applied", { type: "category", value: selectedCategory, scope: "designs" });
+  }, [selectedCategory]);
+
+  React.useEffect(() => {
+    if (selectedStyle !== "all") trackEvent("filter-applied", { type: "style", value: selectedStyle, scope: "designs" });
+  }, [selectedStyle]);
+
+  React.useEffect(() => {
+    if (page > 1) trackEvent("load-more", { page, scope: "designs" });
+  }, [page]);
 
   const { data: dbDesignsData = { designs: [], totalCount: 0 }, isLoading } = useQuery({
     queryKey: ['designs', selectedCategory, selectedStyle, searchQuery, page],

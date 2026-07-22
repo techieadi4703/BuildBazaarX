@@ -24,7 +24,8 @@ import { Layout } from "@/components/layout/Layout";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
-import { trackEvent } from "@/lib/umami";
+import { trackEvent, throttle } from "@/lib/umami";
+import { useScrollDepth } from "@/hooks/useScrollDepth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -61,6 +62,8 @@ const DesignDetail = () => {
   });
 
   const hasTrackedView = React.useRef(false);
+
+  useScrollDepth({ scope: "design", id: id });
 
   useEffect(() => {
     if (dbDesign && !hasTrackedView.current) {
@@ -267,13 +270,26 @@ const DesignDetail = () => {
       title: "Consultation Request Sent! ✨",
       description: "Our high-end experts will reach out within 24 hours.",
     });
+    trackEvent("consultation-request", { 
+      projectType: formData.projectType, 
+      scope: "design", 
+      id: design.id 
+    });
     setFormData({ name: "", phone: "", city: "", projectType: "", message: "" });
   };
 
-  const nextImage = () =>
+  const trackGalleryInteraction = throttle(() => {
+    trackEvent("gallery-interaction", { type: "carousel", scope: "design", id: design?.id });
+  }, 2000);
+
+  const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % design.images.length);
-  const prevImage = () =>
+    trackGalleryInteraction();
+  };
+  const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + design.images.length) % design.images.length);
+    trackGalleryInteraction();
+  };
 
   return (
     <Layout>
@@ -383,7 +399,10 @@ const DesignDetail = () => {
                     key={index}
                     whileHover={{ y: -5 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => setCurrentImageIndex(index)}
+                    onClick={() => {
+                      setCurrentImageIndex(index);
+                      trackGalleryInteraction();
+                    }}
                     className={`relative aspect-square rounded-2xl overflow-hidden border-4 transition-all ${
                       index === currentImageIndex
                         ? "border-primary shadow-xl ring-4 ring-primary/20"
