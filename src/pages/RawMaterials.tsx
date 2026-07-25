@@ -80,19 +80,6 @@ const RawMaterials = () => {
   }, [selectedCategory, searchQuery]);
 
   useEffect(() => {
-    if (!searchQuery) return;
-    const timer = setTimeout(() => {
-      const results = filteredProducts.length;
-      if (results === 0) {
-        trackEvent("search-zero-results", { q: searchQuery.substring(0, 100), scope: "materials" });
-      } else {
-        trackEvent("search", { q: searchQuery.substring(0, 100), results, scope: "materials" });
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchQuery, filteredProducts.length]);
-
-  useEffect(() => {
     if (selectedCategory) trackEvent("filter-applied", { type: "category", value: selectedCategory, scope: "materials" });
   }, [selectedCategory]);
 
@@ -159,6 +146,22 @@ const RawMaterials = () => {
       return matchCat && matchSearch;
     });
   }, [allProducts, selectedCategory, searchQuery]);
+
+  // Track search results. Declared AFTER `filteredProducts` — reading the const in a
+  // dependency array before its declaration throws "Cannot access '…' before
+  // initialization" (temporal dead zone).
+  useEffect(() => {
+    if (!searchQuery) return;
+    const timer = setTimeout(() => {
+      const results = filteredProducts.length;
+      if (results === 0) {
+        trackEvent("search-zero-results", { q: searchQuery.substring(0, 100), scope: "materials" });
+      } else {
+        trackEvent("search", { q: searchQuery.substring(0, 100), results, scope: "materials" });
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery, filteredProducts.length]);
 
   const totalCount = filteredProducts.length;
   const totalPages = Math.max(1, Math.ceil(totalCount / 16));

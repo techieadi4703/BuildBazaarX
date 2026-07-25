@@ -72,29 +72,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initializeAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
+      (_event, session) => {
+        if (!mounted) return;
+        setSession(session);
+        setUser(session?.user ?? null);
+        // Resolve loading right away — never block it on the role fetch below.
+        setIsLoading(false);
+
+        // CRITICAL: do NOT `await` any Supabase call directly inside this callback.
+        // supabase-js invokes it while holding its internal auth lock, and my_roles()
+        // needs that same lock to attach the access token → deadlock, leaving the app
+        // hung on a blank screen for every logged-in user. Defer with setTimeout(0) so
+        // this callback returns and releases the lock before we call the RPC.
+        setTimeout(async () => {
+          if (!mounted) return;
           if (session?.user) {
             const userRoles = await fetchRoles();
-            if (mounted) {
-              setRoles(userRoles);
-              identifyUser({ userId: session.user.id, roles: userRoles });
-            }
-            
+            if (!mounted) return;
+            setRoles(userRoles);
+            identifyUser({ userId: session.user.id, roles: userRoles });
+
             if (_event === 'SIGNED_IN') {
               const isSignup = new Date(session.user.created_at).getTime() > Date.now() - 10000;
               trackEvent(isSignup ? "signup" : "login", { roles: userRoles });
             }
           } else {
-            if (mounted) {
-              setRoles([]);
-              identifyUser({});
-            }
+            setRoles([]);
+            identifyUser({});
           }
-          setIsLoading(false);
-        }
+        }, 0);
       }
     );
 
