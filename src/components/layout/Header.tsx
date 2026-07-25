@@ -27,7 +27,7 @@ const navLinks = [
 ];
 
 export const Header = () => {
-  const { user, userRole } = useAuth();
+  const { user } = useAuth();
   const { totalItems: wishlistCount } = useWishlist();
   const location = useLocation();
   const navigate = useNavigate();

@@ -8,7 +8,9 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   userId: string | null;
-  userRole: string | null;
+  roles: string[];
+  hasRole: (role: string) => boolean;
+  refreshRoles: () => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -18,53 +20,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const [roles, setRoles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchUserRole = async (user: User) => {
+  const fetchRoles = async (): Promise<string[]> => {
     try {
-      // 0. Check user metadata first (instant, no DB call)
-      if (user.user_metadata?.role) {
-        console.log("Role found in metadata:", user.user_metadata.role);
-        return user.user_metadata.role;
-      }
-
-      const userId = user.id;
-      // Add a timeout to ensure auth doesn't hang forever
-      const timeoutPromise = new Promise<null>((_, reject) => 
-        setTimeout(() => reject(new Error("Role fetch timeout")), 5000)
-      );
-
-      const fetchPromise = (async () => {
-        // 1. Check profiles table first (it's the source of truth for most)
-        const { data: profileData } = await supabase.from('profiles').select('role').eq('id', userId).maybeSingle();
-        
-        if (profileData?.role) {
-          console.log("Role found in profile:", profileData.role);
-          return profileData.role;
-        }
-
-        // 2. Fallback to checking other tables in parallel only if profile role is missing
-        console.log("Role missing in profile, checking specialized tables...");
-        const [designerRes, professionalRes, supplierRes] = await Promise.all([
-          supabase.from('designers').select('id').eq('id', userId).maybeSingle(),
-          supabase.from('professionals').select('id').eq('id', userId).maybeSingle(),
-          supabase.from('suppliers').select('id').eq('id', userId).maybeSingle()
-        ]);
-
-        if (designerRes.data) return 'designer';
-        if (professionalRes.data) return 'professional';
-        if (supplierRes.data) return 'supplier';
-        
-        return 'customer';
-      })();
-
-      return await Promise.race([fetchPromise, timeoutPromise]) as string;
+      const { data, error } = await supabase.rpc('my_roles');
+      if (error) throw error;
+      return (data as string[]) ?? [];
     } catch (err) {
-      console.error("fetchUserRole failed or timed out:", err);
-      return 'customer'; // Safe fallback to allow app to load
+      logger.error('fetchRoles failed:', err);
+      return [];
     }
   };
+
+  const hasRole = (role: string) => roles.includes(role);
+
+  const refreshRoles = async () => setRoles(await fetchRoles());
 
   useEffect(() => {
     let mounted = true;
@@ -76,14 +48,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setSession(session);
           setUser(session?.user ?? null);
           if (session?.user) {
-             const role = await fetchUserRole(session.user);
+             const userRoles = await fetchRoles();
              if (mounted) {
-               setUserRole(role);
-               identifyUser({ userId: session.user.id, role });
+               setRoles(userRoles);
+               identifyUser({ userId: session.user.id, roles: userRoles });
              }
           } else {
              if (mounted) {
-               setUserRole(null);
+               setRoles([]);
                identifyUser({});
              }
           }
@@ -105,19 +77,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setSession(session);
           setUser(session?.user ?? null);
           if (session?.user) {
-            const role = await fetchUserRole(session.user);
+            const userRoles = await fetchRoles();
             if (mounted) {
-              setUserRole(role);
-              identifyUser({ userId: session.user.id, role });
+              setRoles(userRoles);
+              identifyUser({ userId: session.user.id, roles: userRoles });
             }
             
             if (_event === 'SIGNED_IN') {
               const isSignup = new Date(session.user.created_at).getTime() > Date.now() - 10000;
-              trackEvent(isSignup ? "signup" : "login", { role });
+              trackEvent(isSignup ? "signup" : "login", { roles: userRoles });
             }
           } else {
             if (mounted) {
-              setUserRole(null);
+              setRoles([]);
               identifyUser({});
             }
           }
@@ -136,7 +108,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     session,
     user,
     userId: user?.id ?? null,
-    userRole,
+    roles,
+    hasRole,
+    refreshRoles,
     isAuthenticated: !!user,
     isLoading,
   };
