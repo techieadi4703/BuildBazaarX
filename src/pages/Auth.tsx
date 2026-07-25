@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, PORTAL_ROLE } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { Layout } from "@/components/layout/Layout";
 import { ArrowRight, Mail, Lock, User, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,13 +12,17 @@ export default function Auth() {
   const [searchParams] = useSearchParams();
   const isLoginParam = searchParams.get("mode") === "login";
   const [isLogin, setIsLogin] = useState(isLoginParam);
+  // link-existing mode: the email already has a BuildBazaarX account, so instead of
+  // signing up we sign in and attach the customer role via grant_self_role.
+  const [isLinking, setIsLinking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  
+
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { refreshRoles } = useAuth();
 
   useEffect(() => {
     setIsLogin(isLoginParam);
@@ -33,29 +38,41 @@ export default function Auth() {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  // Links the customer role onto an ALREADY-existing BuildBazaarX account: signs in
+  // with the entered credentials, attaches 'customer' via grant_self_role (which never
+  // overwrites the account's other roles), refreshes context, then continues.
+  const linkExistingAccount = async () => {
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError) {
+      toast({
+        variant: "destructive",
+        title: "That email already has a BuildBazaarX account",
+        description: "Enter its password to add a customer profile.",
+      });
+      return;
+    }
+
+    const { error: roleError } = await supabase.rpc("grant_self_role", { p_role: PORTAL_ROLE });
+    if (roleError) throw roleError;
+
+    await refreshRoles();
+    toast({ title: "Customer profile added ✨", description: "You're all set." });
+    navigate("/");
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      if (isLogin) {
+      if (isLinking) {
+        await linkExistingAccount();
+      } else if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        // Role-based redirect
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .maybeSingle();
-          if (profile?.role === 'admin') {
-            navigate("/admin");
-          } else {
-            navigate("/");
-          }
-        } else {
-          navigate("/");
-        }
+        // Admin-aware redirect. Admin status comes from user_roles via has_role(),
+        // never from profiles.role.
+        const { data: isAdmin } = await supabase.rpc("has_role", { p_role: "admin" });
+        navigate(isAdmin ? "/admin" : "/");
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -67,14 +84,22 @@ export default function Auth() {
             },
           },
         });
-        if (error) throw error;
+        if (error) {
+          // Already have a BuildBazaarX account? Don't dead-end — link a customer
+          // profile onto the existing account instead.
+          if (/already registered/i.test(error.message) || (error as any).code === "user_already_exists") {
+            setIsLinking(true);
+            await linkExistingAccount();
+            return;
+          }
+          throw error;
+        }
         if (data.user) {
+          // Attach the name WITHOUT touching role. Role assignment now happens in the
+          // DB trigger (fresh signup) and grant_self_role (linking).
           await supabase
             .from("profiles")
-            .update({
-              role: "customer",
-              full_name: fullName,
-            })
+            .update({ full_name: fullName })
             .eq("id", data.user.id);
 
           toast({ title: "Account Created", description: "Verification email sent." });
@@ -128,7 +153,16 @@ export default function Auth() {
                 className="bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 md:p-12 rounded-sm shadow-sm overflow-hidden"
               >
                 <form onSubmit={handleAuth} className="space-y-5 md:space-y-8">
-                  {!isLogin && (
+                  {isLinking && (
+                    <div className="border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4 rounded-sm">
+                      <p className="text-[11px] uppercase font-bold tracking-widest text-[var(--text-secondary)] leading-relaxed">
+                        You already have a BuildBazaarX account. Sign in below to add a{" "}
+                        <span className="text-[var(--text-primary)]">customer</span> profile — your existing roles stay intact.
+                      </p>
+                    </div>
+                  )}
+
+                  {!isLogin && !isLinking && (
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-secondary)]">Full Name</label>
                       <div className="relative">
@@ -179,21 +213,43 @@ export default function Auth() {
                     disabled={isLoading}
                     className="w-full h-14 bg-[var(--accent)] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[var(--accent-hover)] transition-all flex items-center justify-center gap-3 group"
                   >
-                    {isLoading ? "Loading..." : isLogin ? "Log In" : "Sign Up"}
+                    {isLoading ? "Loading..." : isLinking ? "Add customer profile" : isLogin ? "Log In" : "Sign Up"}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </form>
 
-                <div className="mt-6 md:mt-12 pt-6 md:pt-8 border-t border-[var(--border-subtle)] flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-tertiary)]">
-                    {isLogin ? "Don't have an account?" : "Already have an account?"}
-                  </span>
-                  <button 
-                    onClick={() => setIsLogin(!isLogin)}
-                    className="text-[10px] uppercase font-bold tracking-widest text-[var(--accent-warm)] hover:underline underline-offset-4"
-                  >
-                    {isLogin ? "Sign Up" : "Log In"}
-                  </button>
+                <div className="mt-6 md:mt-12 pt-6 md:pt-8 border-t border-[var(--border-subtle)] flex flex-col gap-4">
+                  {isLinking ? (
+                    <button
+                      type="button"
+                      onClick={() => setIsLinking(false)}
+                      className="text-[10px] uppercase font-bold tracking-widest text-[var(--accent-warm)] hover:underline underline-offset-4 self-start"
+                    >
+                      ← Back to sign up
+                    </button>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-tertiary)]">
+                          {isLogin ? "Don't have an account?" : "Already have an account?"}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setIsLogin(!isLogin)}
+                          className="text-[10px] uppercase font-bold tracking-widest text-[var(--accent-warm)] hover:underline underline-offset-4"
+                        >
+                          {isLogin ? "Sign Up" : "Log In"}
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => { setIsLinking(true); setIsLogin(false); }}
+                        className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:underline underline-offset-4 text-left"
+                      >
+                        Already use BuildBazaarX? Add a customer profile →
+                      </button>
+                    </>
+                  )}
                 </div>
               </motion.div>
             </div>
