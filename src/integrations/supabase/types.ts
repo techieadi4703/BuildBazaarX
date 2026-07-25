@@ -25,6 +25,14 @@ export type Database = {
         Args: { p_role: string };
         Returns: undefined;
       };
+      admin_grant_role: {
+        Args: { p_user_id: string; p_role: string };
+        Returns: undefined;
+      };
+      admin_revoke_role: {
+        Args: { p_user_id: string; p_role: string };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

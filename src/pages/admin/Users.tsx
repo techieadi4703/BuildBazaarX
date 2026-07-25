@@ -16,14 +16,13 @@ import { format } from 'date-fns';
 
 type AdminUser = {
   id: string;
-  role: string;
+  roles: string[];
   displayName: string;
   email: string | null;
   phone: string | null;
   isBlocked: boolean;
   createdAt: string;
   profile: any;
-  customer: any;
   professional: any;
   designer: any;
   supplier: any;
@@ -38,14 +37,6 @@ const safeDate = (value?: string | null) => {
   if (!value) return '—';
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? '—' : format(parsed, 'MMM d, yyyy');
-};
-
-const getRoleFromSources = (profile: any, professional: any, designer: any, supplier: any) => {
-  if (profile?.role === 'admin') return 'admin';
-  if (professional) return 'professional';
-  if (designer) return 'designer';
-  if (supplier) return 'supplier';
-  return 'customer';
 };
 
 const getDisplayName = ({ profile, customer, professional, designer, supplier }: any) => {
@@ -116,14 +107,14 @@ export default function AdminUsers() {
     queryFn: async () => {
       const [
         profilesRes,
-        customersRes,
+        rolesRes,
         professionalsRes,
         designersRes,
         suppliersRes,
         ordersRes,
       ] = await Promise.all([
         supabase.from('profiles').select('*'),
-        supabase.from('customers').select('*'),
+        supabase.from('user_roles').select('user_id, role'),
         supabase.from('professionals').select('*'),
         supabase.from('designers').select('*'),
         supabase.from('suppliers').select('*'),
@@ -131,21 +122,28 @@ export default function AdminUsers() {
       ]);
 
       if (profilesRes.error) throw profilesRes.error;
-      if (customersRes.error) throw customersRes.error;
+      if (rolesRes.error) throw rolesRes.error;
       if (professionalsRes.error) throw professionalsRes.error;
       if (designersRes.error) throw designersRes.error;
       if (suppliersRes.error) throw suppliersRes.error;
       if (ordersRes.error && ordersRes.error.code !== '42P01') throw ordersRes.error;
 
       const profiles = safeArray(profilesRes.data);
-      const customers = safeArray(customersRes.data);
       const professionals = safeArray(professionalsRes.data);
       const designers = safeArray(designersRes.data);
       const suppliers = safeArray(suppliersRes.data);
       const orders = safeArray(ordersRes.data);
 
+      // Roles are the single source of truth now (user_roles) — not profiles.role
+      // and not the presence of a specialised row.
+      const rolesByUserId = new Map<string, string[]>();
+      safeArray(rolesRes.data).forEach((row: any) => {
+        const list = rolesByUserId.get(row.user_id) ?? [];
+        list.push(row.role);
+        rolesByUserId.set(row.user_id, list);
+      });
+
       const profilesById = new Map(profiles.map((item: any) => [item.id, item]));
-      const customersById = new Map(customers.map((item: any) => [item.id, item]));
       const professionalsById = new Map(professionals.map((item: any) => [item.id, item]));
       const designersById = new Map(designers.map((item: any) => [item.id, item]));
       const suppliersById = new Map(suppliers.map((item: any) => [item.id, item]));
@@ -159,7 +157,7 @@ export default function AdminUsers() {
 
       const ids = new Set<string>([
         ...profiles.map((item: any) => item.id),
-        ...customers.map((item: any) => item.id),
+        ...Array.from(rolesByUserId.keys()),
         ...professionals.map((item: any) => item.id),
         ...designers.map((item: any) => item.id),
         ...suppliers.map((item: any) => item.id),
@@ -167,21 +165,19 @@ export default function AdminUsers() {
 
       const users: AdminUser[] = Array.from(ids).map((id) => {
         const profile = profilesById.get(id) ?? null;
-        const customer = customersById.get(id) ?? null;
         const professional = professionalsById.get(id) ?? null;
         const designer = designersById.get(id) ?? null;
         const supplier = suppliersById.get(id) ?? null;
 
         return {
           id,
-          role: getRoleFromSources(profile, professional, designer, supplier),
-          displayName: getDisplayName({ profile, customer, professional, designer, supplier }),
+          roles: (rolesByUserId.get(id) ?? []).slice().sort(),
+          displayName: getDisplayName({ profile, professional, designer, supplier }),
           email: getEmail({ profile, professional, designer, supplier }),
-          phone: getPhone({ profile, customer, professional, designer, supplier }),
+          phone: getPhone({ profile, professional, designer, supplier }),
           isBlocked: Boolean(profile?.is_blocked),
-          createdAt: getJoinedAt({ profile, customer, professional, designer, supplier }),
+          createdAt: getJoinedAt({ profile, professional, designer, supplier }),
           profile,
-          customer,
           professional,
           designer,
           supplier,
@@ -220,27 +216,31 @@ export default function AdminUsers() {
     },
   });
 
-  const roleMutation = useMutation({
-    mutationFn: async ({ id, role }: { id: string; role: string }) => {
-      const { error } = await supabase.from('profiles').update({ role }).eq('id', id);
+  // Admin access is a role in user_roles like any other; grant/revoke via the
+  // admin-only RPCs. This never disturbs the user's other roles.
+  const adminMutation = useMutation({
+    mutationFn: async ({ id, makeAdmin }: { id: string; makeAdmin: boolean }) => {
+      const { error } = makeAdmin
+        ? await supabase.rpc('admin_grant_role', { p_user_id: id, p_role: 'admin' })
+        : await supabase.rpc('admin_revoke_role', { p_user_id: id, p_role: 'admin' });
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({ title: 'User role updated' });
+      toast({ title: 'Admin access updated' });
       queryClient.invalidateQueries({ queryKey: ['admin-users-unified'] });
     },
     onError: (error: any) => {
-      toast({ title: 'Failed to change role', description: error.message, variant: 'destructive' });
+      toast({ title: 'Failed to update admin access', description: error.message, variant: 'destructive' });
     },
   });
 
   const filteredUsers = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     return safeArray(data).filter((user) => {
-      if (roleFilter !== 'all' && `${user.role}s` !== roleFilter) return false;
+      if (roleFilter !== 'all' && !user.roles.includes(roleFilter.replace(/s$/, ''))) return false;
       if (!term) return true;
 
-      return [user.displayName, user.email, user.phone, user.role]
+      return [user.displayName, user.email, user.phone, user.roles.join(' ')]
         .filter(Boolean)
         .some((value) => String(value).toLowerCase().includes(term));
     });
@@ -333,9 +333,17 @@ export default function AdminUsers() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={user.role === 'admin' ? 'default' : 'secondary'} className="capitalize">
-                        {user.role}
-                      </Badge>
+                      <div className="flex flex-wrap gap-1">
+                        {user.roles.length === 0 ? (
+                          <Badge variant="outline">none</Badge>
+                        ) : (
+                          user.roles.map((r) => (
+                            <Badge key={r} variant={r === 'admin' ? 'default' : 'secondary'} className="capitalize">
+                              {r}
+                            </Badge>
+                          ))
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       {user.isBlocked ? (
@@ -376,8 +384,8 @@ export default function AdminUsers() {
                                         <p className="font-medium">{selectedUser.displayName}</p>
                                       </div>
                                       <div>
-                                        <p className="text-sm text-muted-foreground">Role</p>
-                                        <p className="font-medium capitalize">{selectedUser.role}</p>
+                                        <p className="text-sm text-muted-foreground">Roles</p>
+                                        <p className="font-medium capitalize">{selectedUser.roles.join(', ') || 'none'}</p>
                                       </div>
                                       <div>
                                         <p className="text-sm text-muted-foreground">Joined</p>
@@ -417,7 +425,7 @@ export default function AdminUsers() {
                                     </CardContent>
                                   </Card>
 
-                                  {selectedUser.role === 'customer' && (
+                                  {selectedUser.roles.includes('customer') && (
                                     <>
                                       <Card>
                                         <CardHeader>
@@ -505,7 +513,7 @@ export default function AdminUsers() {
                                     </>
                                   )}
 
-                                  {selectedUser.role === 'professional' && selectedUser.professional && (
+                                  {selectedUser.roles.includes('professional') && selectedUser.professional && (
                                     <Card>
                                       <CardHeader>
                                         <CardTitle className="text-lg">Professional Details</CardTitle>
@@ -519,7 +527,7 @@ export default function AdminUsers() {
                                     </Card>
                                   )}
 
-                                  {selectedUser.role === 'designer' && selectedUser.designer && (
+                                  {selectedUser.roles.includes('designer') && selectedUser.designer && (
                                     <Card>
                                       <CardHeader>
                                         <CardTitle className="text-lg">Designer Details</CardTitle>
@@ -533,7 +541,7 @@ export default function AdminUsers() {
                                     </Card>
                                   )}
 
-                                  {selectedUser.role === 'supplier' && selectedUser.supplier && (
+                                  {selectedUser.roles.includes('supplier') && selectedUser.supplier && (
                                     <Card>
                                       <CardHeader>
                                         <CardTitle className="text-lg">Supplier Details</CardTitle>
@@ -552,11 +560,10 @@ export default function AdminUsers() {
                           </Sheet>
 
                           <DropdownMenuItem
-                            onClick={() => roleMutation.mutate({ id: user.id, role: user.role === 'admin' ? 'customer' : 'admin' })}
-                            disabled={user.role !== 'admin' && user.role !== 'customer'}
+                            onClick={() => adminMutation.mutate({ id: user.id, makeAdmin: !user.roles.includes('admin') })}
                           >
                             <Settings className="mr-2 h-4 w-4" />
-                            {user.role === 'admin' ? 'Make Customer' : 'Make Admin'}
+                            {user.roles.includes('admin') ? 'Revoke admin' : 'Grant admin'}
                           </DropdownMenuItem>
 
                           <DropdownMenuItem

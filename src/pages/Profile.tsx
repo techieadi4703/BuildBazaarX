@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -30,7 +31,6 @@ const Profile = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [currentRole, setCurrentRole] = useState("customer");
 
   // Tab states: 'profile' | 'addresses' | 'saved-upi' | 'saved-cards' | 'reviews' | 'notifications'
   const [activeTab, setActiveTab] = useState<string>("profile");
@@ -239,7 +239,6 @@ const Profile = () => {
         console.error("Error fetching profile:", error);
       } else if (data) {
         const profileData = data as any;
-        setCurrentRole(profileData.role || "customer");
         const userGender = session.user.user_metadata?.gender || "";
         const loadedProfile = {
           full_name: profileData.full_name || "",
@@ -324,7 +323,6 @@ const Profile = () => {
         .from("profiles")
         .upsert({
           id: session.user?.id,
-          role: currentRole || "customer",
           ...updatedFields,
         });
 

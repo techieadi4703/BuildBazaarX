@@ -63,12 +63,17 @@ export default function AdminDashboard() {
     queryKey: ['admin-chart-data'],
     queryFn: async () => {
       const sevenDaysAgo = startOfDay(subDays(new Date(), 6)).toISOString();
-      const [profiles, pros, designers, suppliers] = await Promise.all([
-        supabase.from('profiles').select('created_at').eq('role', 'customer').gte('created_at', sevenDaysAgo),
+      const [customerRoles, allProfiles, pros, designers, suppliers] = await Promise.all([
+        supabase.from('user_roles').select('user_id').eq('role', 'customer'),
+        supabase.from('profiles').select('id, created_at').gte('created_at', sevenDaysAgo),
         supabase.from('professionals').select('created_at').gte('created_at', sevenDaysAgo),
         supabase.from('designers').select('created_at').gte('created_at', sevenDaysAgo),
         supabase.from('suppliers').select('created_at').gte('created_at', sevenDaysAgo),
       ]);
+
+      // Customers = accounts holding the 'customer' role, bucketed by signup day.
+      const customerIds = new Set((customerRoles.data ?? []).map((r: any) => r.user_id));
+      const profiles = { data: (allProfiles.data ?? []).filter((p: any) => customerIds.has(p.id)) };
 
       const days = Array.from({ length: 7 }, (_, i) => {
         const d = startOfDay(subDays(new Date(), 6 - i));
