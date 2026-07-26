@@ -58,3 +58,37 @@ export function exportRoomSvg(
   link.click();
   URL.revokeObjectURL(url);
 }
+
+/**
+ * Export the full stitched house plan SVG to a downloadable file.
+ *
+ * @param svgElement  The stitched plan SVGSVGElement
+ * @param projectName Used as the filename base
+ */
+export function exportHousePlanSvg(
+  svgElement: SVGSVGElement,
+  projectName: string,
+): void {
+  const clone = svgElement.cloneNode(true) as SVGSVGElement;
+  clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+
+  const serializer = new XMLSerializer();
+  const rawSvg = serializer.serializeToString(clone);
+  const resolvedSvg = inlineVars(rawSvg);
+
+  const filename = projectName.replace(/[^a-zA-Z0-9_-]/g, "_").replace(/__+/g, "_");
+
+  const blob = new Blob(
+    [`<?xml version="1.0" encoding="UTF-8"?>\n`, resolvedSvg],
+    { type: "image/svg+xml;charset=utf-8" },
+  );
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${filename}_floor_plan.svg`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+

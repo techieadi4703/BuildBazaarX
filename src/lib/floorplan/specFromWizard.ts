@@ -374,12 +374,33 @@ export function buildSpecFromWizard(state: WizardState): FloorPlanSpec {
     });
   }
 
+  // Determine entrance wall from orientation
+  // For south-facing home → main door on south wall of living room
+  const orientationWallMap: Record<string, Opening["wall"]> = {
+    south: "south",
+    north: "north",
+    east: "east",
+    west: "west",
+  };
+  const entranceWall: Opening["wall"] =
+    orientationWallMap[state.orientation ?? "south"] ?? "south";
+
+  // Apply entrance wall to living room's main door opening
+  const livingRoom = rooms.find((r) => r.type === "living");
+  if (livingRoom) {
+    const mainDoor = livingRoom.openings.find((o) => o.id === "door-main-default");
+    if (mainDoor) {
+      mainDoor.wall = entranceWall;
+    }
+  }
+
   const spec: FloorPlanSpec = {
     schemaVersion: 1,
     projectName: `${state.propertyType} — ${state.carpetArea} sq.ft.`,
     source: "wizard",
     createdAt: new Date().toISOString(),
     units: "inches",
+    orientationNote: `${state.orientation ?? "south"}-facing · ${state.plotShape ?? "rectangular"} plot · bedrooms ${state.bedroomPosition ?? "clustered"}`,
     rooms,
     wizardSnapshot: state as Record<string, unknown>,
   };

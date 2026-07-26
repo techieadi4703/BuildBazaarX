@@ -38,6 +38,9 @@ import type {
   Material,
   RoomType,
   WizardState,
+  PlotShape,
+  Orientation,
+  BedroomPosition,
 } from "@/lib/floorplan/wizardTypes";
 import { buildSpecFromWizard } from "@/lib/floorplan/specFromWizard";
 
@@ -70,11 +73,14 @@ const initialState: WizardState = {
   colorTheme: "White",
   budget: 12,
   materials: ["Laminate", "Veneer", "Tiles"],
+  plotShape: "rectangular",
+  orientation: "south",
+  bedroomPosition: "clustered",
 };
 
 // ─── Step Progress Bar ───────────────────────────────────────────────────────
 
-const TOTAL_STEPS = 12;
+const TOTAL_STEPS = 15;
 
 const StepProgress = ({ current }: { current: number }) => (
   <div className="flex items-center gap-1 flex-wrap justify-center mb-8">
@@ -856,8 +862,165 @@ const NewProject: React.FC = () => {
                   </div>
                 )}
 
-                {/* ── Step 10: Upload ────────────────────────────────── */}
+                {/* ── Step 10: Plot Shape ─────────────────────────────── */}
                 {step === 10 && (
+                  <div>
+                    <BotBubble text="What is the shape of your plot or unit?" />
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      {([
+                        { value: "rectangular" as PlotShape, label: "Rectangular", icon: (
+                          <svg viewBox="0 0 48 32" className="w-10 h-7">
+                            <rect x="2" y="2" width="44" height="28" rx="2" fill="none" stroke="currentColor" strokeWidth="3"/>
+                          </svg>
+                        )},
+                        { value: "square" as PlotShape, label: "Square", icon: (
+                          <svg viewBox="0 0 36 36" className="w-8 h-8">
+                            <rect x="2" y="2" width="32" height="32" rx="2" fill="none" stroke="currentColor" strokeWidth="3"/>
+                          </svg>
+                        )},
+                        { value: "l-shaped" as PlotShape, label: "L-Shaped", icon: (
+                          <svg viewBox="0 0 36 48" className="w-7 h-9">
+                            <path d="M2 2 h20 v20 h14 v24 h-34 z" fill="none" stroke="currentColor" strokeWidth="3"/>
+                          </svg>
+                        )},
+                      ]).map(({ value, label, icon }) => (
+                        <button
+                          key={value}
+                          type="button"
+                          id={`plot-shape-${value}`}
+                          onClick={() => update("plotShape", value)}
+                          className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer ${
+                            state.plotShape === value
+                              ? "border-[var(--success)] bg-[var(--success-bg)] text-[var(--success)]"
+                              : "border-[var(--border-default)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--accent-warm)] hover:bg-[var(--accent-warm-faint)]"
+                          }`}
+                        >
+                          <span className="text-[var(--text-secondary)]">{icon}</span>
+                          <span className="text-sm font-semibold">{label}</span>
+                          {state.plotShape === value && (
+                            <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[var(--success)] flex items-center justify-center">
+                              <Check className="w-2.5 h-2.5 text-white" />
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                    <NavButtons step={step} onNext={next} onBack={back} />
+                  </div>
+                )}
+
+                {/* ── Step 11: Orientation ───────────────────────────── */}
+                {step === 11 && (
+                  <div>
+                    <BotBubble text="Which direction does your main entrance face?" />
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      {([
+                        { value: "north" as Orientation, label: "North Facing", emoji: "⬆️", desc: "Morning light enters from south windows" },
+                        { value: "south" as Orientation, label: "South Facing", emoji: "⬇️", desc: "Best sunlight — most preferred in India" },
+                        { value: "east" as Orientation, label: "East Facing", emoji: "➡️", desc: "Morning sun in the main rooms" },
+                        { value: "west" as Orientation, label: "West Facing", emoji: "⬅️", desc: "Evening light, sunset views" },
+                      ]).map(({ value, label, emoji, desc }) => (
+                        <button
+                          key={value}
+                          type="button"
+                          id={`orientation-${value}`}
+                          onClick={() => update("orientation", value)}
+                          className={`relative flex flex-col items-start gap-1.5 p-4 rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer ${
+                            state.orientation === value
+                              ? "border-[var(--success)] bg-[var(--success-bg)]"
+                              : "border-[var(--border-default)] bg-[var(--bg-card)] hover:border-[var(--accent-warm)] hover:bg-[var(--accent-warm-faint)]"
+                          }`}
+                        >
+                          {state.orientation === value && (
+                            <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-[var(--success)] flex items-center justify-center">
+                              <Check className="w-2.5 h-2.5 text-white" />
+                            </span>
+                          )}
+                          <span className="text-2xl">{emoji}</span>
+                          <span className={`text-sm font-semibold ${
+                            state.orientation === value ? "text-[var(--success)]" : "text-[var(--text-primary)]"
+                          }`}>{label}</span>
+                          <span className="text-xs text-[var(--text-tertiary)] leading-tight">{desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <NavButtons step={step} onNext={next} onBack={back} />
+                  </div>
+                )}
+
+                {/* ── Step 12: Bedroom Position ──────────────────────── */}
+                {step === 12 && (
+                  <div>
+                    <BotBubble text="How would you like the bedrooms arranged in your floor plan?" />
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      {([
+                        {
+                          value: "clustered" as BedroomPosition,
+                          label: "Clustered",
+                          desc: "All bedrooms grouped together on one side — ideal for privacy and a shared bathroom",
+                          icon: (
+                            <svg viewBox="0 0 80 60" className="w-full h-16">
+                              <rect x="2" y="2" width="76" height="56" rx="3" fill="#f0ede8" stroke="#1a1a2e" strokeWidth="2"/>
+                              <rect x="8" y="8" width="28" height="20" rx="2" fill="#c8d4e8" stroke="#374151" strokeWidth="1.5"/>
+                              <rect x="8" y="32" width="28" height="20" rx="2" fill="#c8d4e8" stroke="#374151" strokeWidth="1.5"/>
+                              <rect x="44" y="8" width="28" height="20" rx="2" fill="#c8d4e8" stroke="#374151" strokeWidth="1.5"/>
+                              <rect x="44" y="32" width="28" height="20" rx="2" fill="#e8c8c8" stroke="#9ca3af" strokeWidth="1"/>
+                              <text x="22" y="20" textAnchor="middle" fontSize="5" fill="#374151">Bed 1</text>
+                              <text x="22" y="44" textAnchor="middle" fontSize="5" fill="#374151">Bed 2</text>
+                              <text x="58" y="20" textAnchor="middle" fontSize="5" fill="#374151">Master</text>
+                              <text x="58" y="44" textAnchor="middle" fontSize="5" fill="#9ca3af">Bath</text>
+                            </svg>
+                          ),
+                        },
+                        {
+                          value: "spread" as BedroomPosition,
+                          label: "Spread Out",
+                          desc: "Bedrooms distributed across the plan — each with more privacy and natural light",
+                          icon: (
+                            <svg viewBox="0 0 80 60" className="w-full h-16">
+                              <rect x="2" y="2" width="76" height="56" rx="3" fill="#f0ede8" stroke="#1a1a2e" strokeWidth="2"/>
+                              <rect x="8" y="8" width="28" height="20" rx="2" fill="#c8d4e8" stroke="#374151" strokeWidth="1.5"/>
+                              <rect x="44" y="32" width="28" height="20" rx="2" fill="#c8d4e8" stroke="#374151" strokeWidth="1.5"/>
+                              <rect x="8" y="32" width="28" height="20" rx="2" fill="#e8efd8" stroke="#9ca3af" strokeWidth="1"/>
+                              <rect x="44" y="8" width="28" height="20" rx="2" fill="#c8d4e8" stroke="#374151" strokeWidth="1.5"/>
+                              <text x="22" y="20" textAnchor="middle" fontSize="5" fill="#374151">Master</text>
+                              <text x="58" y="44" textAnchor="middle" fontSize="5" fill="#374151">Bed 2</text>
+                              <text x="22" y="44" textAnchor="middle" fontSize="5" fill="#9ca3af">Living</text>
+                              <text x="58" y="20" textAnchor="middle" fontSize="5" fill="#374151">Bed 3</text>
+                            </svg>
+                          ),
+                        },
+                      ]).map(({ value, label, desc, icon }) => (
+                        <button
+                          key={value}
+                          type="button"
+                          id={`bedroom-pos-${value}`}
+                          onClick={() => update("bedroomPosition", value)}
+                          className={`relative flex flex-col gap-2 p-4 rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer ${
+                            state.bedroomPosition === value
+                              ? "border-[var(--success)] bg-[var(--success-bg)]"
+                              : "border-[var(--border-default)] bg-[var(--bg-card)] hover:border-[var(--accent-warm)] hover:bg-[var(--accent-warm-faint)]"
+                          }`}
+                        >
+                          {state.bedroomPosition === value && (
+                            <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-[var(--success)] flex items-center justify-center">
+                              <Check className="w-2.5 h-2.5 text-white" />
+                            </span>
+                          )}
+                          {icon}
+                          <span className={`text-sm font-semibold ${
+                            state.bedroomPosition === value ? "text-[var(--success)]" : "text-[var(--text-primary)]"
+                          }`}>{label}</span>
+                          <span className="text-xs text-[var(--text-tertiary)] leading-snug">{desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <NavButtons step={step} onNext={next} onBack={back} />
+                  </div>
+                )}
+
+                {/* ── Step 13: Upload ────────────────────────────────── */}
+                {step === 13 && (
                   <div>
                     <BotBubble text="Upload your floor plan, photos or videos (optional)." />
                     <div className="space-y-5 mb-4">
@@ -908,9 +1071,8 @@ const NewProject: React.FC = () => {
                     <NavButtons step={step} onNext={next} onBack={back} />
                   </div>
                 )}
-
-                {/* ── Step 11: AI Summary ────────────────────────────── */}
-                {step === 11 && (
+                {/* ── Step 14: AI Summary ────────────────────────────── */}
+                {step === 14 && (
                   <div>
                     <BotBubble text="Here is your project summary." />
                     <div className="space-y-2 mb-4">
@@ -943,6 +1105,9 @@ const NewProject: React.FC = () => {
                             ? "Extra storage needed"
                             : "Standard storage",
                         },
+                        { label: "Plot Shape", value: state.plotShape },
+                        { label: "Orientation", value: `${state.orientation}-facing` },
+                        { label: "Bedrooms", value: state.bedroomPosition === "clustered" ? "Clustered together" : "Spread across plan" },
                         { label: "WFH", value: state.workFromHome ? "Yes" : "No" },
                       ].map(({ label, value }) => (
                         <div
@@ -967,8 +1132,8 @@ const NewProject: React.FC = () => {
                   </div>
                 )}
 
-                {/* ── Step 12: Generate Design ───────────────────────── */}
-                {step === 12 && (
+                {/* ── Step 15: Generate Design ───────────────────────── */}
+                {step === 15 && (
                   <div className="text-center">
                     <BotBubble text="Ready to generate your AI Interior design?" />
 

@@ -52,6 +52,10 @@ export type RoomType =
   | "Study Room"
   | "Office";
 
+export type PlotShape = "rectangular" | "l-shaped" | "square";
+export type Orientation = "north" | "south" | "east" | "west";
+export type BedroomPosition = "clustered" | "spread";
+
 export interface WizardState {
   propertyType: PropertyType;
   carpetArea: number;
@@ -73,4 +77,10 @@ export interface WizardState {
   colorTheme: ColorTheme;
   budget: number;
   materials: Material[];
+  /** Plot/unit shape — affects layout aspect ratio */
+  plotShape: PlotShape;
+  /** Which direction the main entrance faces */
+  orientation: Orientation;
+  /** Whether bedrooms are grouped together or spread across the plan */
+  bedroomPosition: BedroomPosition;
 }

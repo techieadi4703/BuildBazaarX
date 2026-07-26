@@ -7,6 +7,9 @@
  *  3. ?example=1 query param → loads customerExample fixture
  *
  * Falls back to /new-project on invalid/missing data.
+ *
+ * Now renders a STITCHED 2D house plan (HousePlanCanvas) instead
+ * of the old individual room-card gallery.
  */
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
@@ -17,10 +20,9 @@ import { useToast } from "@/hooks/use-toast";
 import { customerExample } from "@/lib/floorplan/fixtures/customerExample";
 import { FloorPlanSpecSchema, type FloorPlanSpec } from "@/lib/floorplan/schema";
 import { localRepository } from "@/lib/floorplan/planRepository";
-import { exportRoomSvg } from "@/lib/floorplan/exportSvg";
-import FloorPlanCanvas from "@/components/floorplan/FloorPlanCanvas";
+import { exportHousePlanSvg } from "@/lib/floorplan/exportSvg";
+import HousePlanCanvas from "@/components/floorplan/HousePlanCanvas";
 import RoomEditorPanel from "@/components/floorplan/RoomEditorPanel";
-import RoomPlan from "@/components/floorplan/RoomPlan";
 import { ArrowLeft, Download, Box, Check } from "lucide-react";
 
 // ─── Autosave hook ────────────────────────────────────────────────────────────
@@ -38,7 +40,6 @@ function useAutosave(spec: FloorPlanSpec | null, delay = 800) {
     timerRef.current = setTimeout(async () => {
       await localRepository.save(spec);
       setSavedState("saved");
-      // Reset to idle after 2s
       setTimeout(() => setSavedState("idle"), 2000);
     }, delay);
 
@@ -60,7 +61,9 @@ const SpacePlanning: React.FC = () => {
   const [spec, setSpec] = useState<FloorPlanSpec | null>(null);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const svgRef = useRef<SVGSVGElement | null>(null);
+
+  // Ref to the stitched plan SVG for export
+  const housePlanSvgRef = useRef<SVGSVGElement | null>(null);
 
   const savedState = useAutosave(spec);
 
@@ -127,14 +130,12 @@ const SpacePlanning: React.FC = () => {
     setSpec(newSpec);
   }, []);
 
-  // ── Export SVG ────────────────────────────────────────────────────────────
+  // ── Export full plan SVG ──────────────────────────────────────────────────
 
   function handleExportSvg() {
-    if (!svgRef.current || !selectedRoom) return;
-    exportRoomSvg(svgRef.current, selectedRoom.label.replace(/\s+/g, "_"));
+    if (!housePlanSvgRef.current || !spec) return;
+    exportHousePlanSvg(housePlanSvgRef.current, spec.projectName);
   }
-
-  const selectedRoom = spec?.rooms.find((r) => r.id === selectedRoomId) ?? null;
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -144,7 +145,7 @@ const SpacePlanning: React.FC = () => {
         <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center">
           <div className="text-center">
             <div className="w-10 h-10 border-4 border-[var(--accent-warm)] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-sm text-[var(--text-secondary)]">Loading your space plan…</p>
+            <p className="text-sm text-[var(--text-secondary)]">Loading your floor plan…</p>
           </div>
         </div>
       </Layout>
@@ -171,10 +172,10 @@ const SpacePlanning: React.FC = () => {
               <div className="h-4 w-px bg-[var(--border-default)]" />
               <div className="min-w-0">
                 <h1 className="text-base font-bold text-[var(--text-primary)] truncate">
-                  Space Planning
+                  2D Floor Plan
                 </h1>
                 <p className="text-xs text-[var(--text-tertiary)]">
-                  Step 2 of 5 — Review your rooms
+                  Step 2 of 5 — Review your floor plan
                 </p>
               </div>
             </div>
@@ -196,18 +197,17 @@ const SpacePlanning: React.FC = () => {
                 </span>
               )}
 
-              {/* Export SVG */}
+              {/* Export Plan SVG */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleExportSvg}
-                disabled={!selectedRoom}
                 className="rounded-full gap-1.5 text-xs"
-                id="export-svg-btn"
-                title={selectedRoom ? `Export ${selectedRoom.label} as SVG` : "Select a room first"}
+                id="export-plan-svg-btn"
+                title="Download full floor plan as SVG"
               >
                 <Download className="w-3.5 h-3.5" />
-                Export SVG
+                Export Plan
               </Button>
 
               {/* Generate 3D — coming soon */}
@@ -230,13 +230,13 @@ const SpacePlanning: React.FC = () => {
         {/* ── Main content ── */}
         <div className="max-w-screen-xl mx-auto px-4 py-6">
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Canvas (left) */}
+            {/* Stitched house plan (left / main) */}
             <div className="flex-1 min-w-0">
-              <FloorPlanCanvas
+              <HousePlanCanvas
                 spec={spec}
                 selectedRoomId={selectedRoomId}
                 onSelectRoom={setSelectedRoomId}
-                pxPerInch={2.2}
+                svgRef={housePlanSvgRef}
               />
             </div>
 
@@ -245,17 +245,6 @@ const SpacePlanning: React.FC = () => {
               <div className="lg:sticky lg:top-24">
                 <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-2xl overflow-hidden shadow-[var(--shadow-md)] max-h-[calc(100vh-8rem)] overflow-y-auto">
                   <div className="p-4">
-                    {/* Hidden SVG for export — rendered outside visible area */}
-                    {selectedRoom && (
-                      <div className="sr-only" aria-hidden="true">
-                        <RoomPlan
-                          room={selectedRoom}
-                          pxPerInch={2.2}
-                          svgRef={svgRef}
-                        />
-                      </div>
-                    )}
-
                     <RoomEditorPanel
                       spec={spec}
                       selectedRoomId={selectedRoomId}
@@ -275,6 +264,7 @@ const SpacePlanning: React.FC = () => {
               <p className="text-sm font-semibold text-[var(--text-primary)]">{spec.projectName}</p>
               <p className="text-xs text-[var(--text-tertiary)]">
                 {spec.rooms.length} room{spec.rooms.length !== 1 ? "s" : ""} · {spec.source} spec · v{spec.schemaVersion}
+                {spec.orientationNote ? ` · ${spec.orientationNote}` : ""}
               </p>
             </div>
             <div className="flex gap-2">
