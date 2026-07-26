@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
@@ -26,57 +27,19 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import { Layout } from "@/components/layout/Layout";
 
-// ─── Types ──────────────────────────────────────────────────────────────────
+// ─── Types (imported from shared module) ────────────────────────────────────
 
-type PropertyType = "Apartment" | "Villa" | "Independent House" | "Office" | "Shop";
-type DesignStyle =
-  | "Modern"
-  | "Luxury"
-  | "Minimal"
-  | "Scandinavian"
-  | "Contemporary"
-  | "Traditional"
-  | "Industrial"
-  | "Bohemian";
-type ColorTheme = "White" | "Grey" | "Beige" | "Wooden" | "Black" | "Blue" | "Green";
-type Material = "Laminate" | "Veneer" | "Acrylic" | "Glass" | "Marble" | "Granite" | "Tiles";
-type RoomType =
-  | "Living Room"
-  | "Dining Room"
-  | "Kitchen"
-  | "Master Bedroom"
-  | "Bedroom 2"
-  | "Bedroom 3"
-  | "Bathroom"
-  | "Balcony"
-  | "Study Room"
-  | "Office";
-
-interface WizardState {
-  propertyType: PropertyType;
-  carpetArea: number;
-  builtUpArea: number;
-  floors: number;
-  rooms: RoomType[];
-  adults: number;
-  children: number;
-  seniors: number;
-  pets: number;
-  workFromHome: boolean;
-  cookDaily: boolean;
-  extraStorage: boolean;
-  kidsRoom: boolean;
-  homeOffice: boolean;
-  pujaRoom: boolean;
-  shoeStorage: boolean;
-  designStyle: DesignStyle;
-  colorTheme: ColorTheme;
-  budget: number;
-  materials: Material[];
-}
+import type {
+  PropertyType,
+  DesignStyle,
+  ColorTheme,
+  Material,
+  RoomType,
+  WizardState,
+} from "@/lib/floorplan/wizardTypes";
+import { buildSpecFromWizard } from "@/lib/floorplan/specFromWizard";
 
 const initialState: WizardState = {
   propertyType: "Apartment",
@@ -490,9 +453,9 @@ const StyleTile = ({
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 const NewProject: React.FC = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [state, setState] = useState<WizardState>(initialState);
-  const { toast } = useToast();
 
   const next = () => setStep((s) => Math.min(TOTAL_STEPS, s + 1));
   const back = () => setStep((s) => Math.max(1, s - 1));
@@ -519,11 +482,8 @@ const NewProject: React.FC = () => {
   };
 
   const handleGenerate = () => {
-    toast({
-      title: "🚀 AI generation coming soon",
-      description: "We're building the AI engine. Stay tuned!",
-    });
-    console.log("AI generation requested", state);
+    const spec = buildSpecFromWizard(state);
+    navigate("/new-project/plan", { state: { spec } });
   };
 
   const propertyTypes: { type: PropertyType; icon: React.ReactNode }[] = [
@@ -1050,7 +1010,7 @@ const NewProject: React.FC = () => {
                       className="rounded-full px-8 py-6 gap-2 text-base w-full bg-[var(--success)] hover:bg-[#255f3d] text-white shadow-[var(--shadow-lg)] hover:scale-105 transition-all duration-200 mb-4"
                     >
                       <Sparkles className="w-5 h-5" />
-                      Generate AI Interior Design
+                      Generate Space Plan
                     </Button>
 
                     <p className="text-xs text-[var(--text-tertiary)] leading-relaxed">
