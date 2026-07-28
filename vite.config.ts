@@ -11,6 +11,13 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    proxy: {
+      '/stats': {
+        target: 'https://cloud.umami.is',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/stats/, '')
+      }
+    },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
+import { trackEvent } from "@/lib/umami";
 
 export const CartSheet = () => {
   const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -16,8 +17,15 @@ export const CartSheet = () => {
     navigate("/checkout");
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      trackEvent("cart-view", { items: totalItems, total: totalPrice });
+    }
+  };
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         <button className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors group">
           <div className="relative">

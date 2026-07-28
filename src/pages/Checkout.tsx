@@ -20,6 +20,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, RevealItem } from "@/components/shared/Reveal";
+import { trackEvent } from "@/lib/umami";
 
 import { useRazorpayCheckout } from "@/hooks/useRazorpayCheckout";
 
@@ -170,6 +171,8 @@ const Checkout = () => {
       });
       return;
     }
+
+    trackEvent("checkout-start", { total: totalPrice, items: items.length });
 
     setIsSubmitting(true);
 
@@ -427,7 +430,14 @@ const Checkout = () => {
                         <h2 className="text-xl font-bold tracking-tight text-black dark:text-white">Payment Method</h2>
                       </div>
                       
-                      <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <RadioGroup 
+                        value={paymentMethod} 
+                        onValueChange={(val) => {
+                          setPaymentMethod(val);
+                          trackEvent("payment-method-selected", { method: val });
+                        }} 
+                        className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                      >
                         {[
                           { value: "online", label: "Pay Online", sub: "UPI / Cards / Netbanking", icon: CreditCard },
                           { value: "cod", label: "Pay on Arrival", sub: "Cash / UPI", icon: Banknote },

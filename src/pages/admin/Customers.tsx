@@ -68,44 +68,40 @@ export default function AdminCustomers() {
   const { data: customers, isLoading } = useQuery({
     queryKey: ['admin-customers'],
     queryFn: async () => {
-      const [profilesRes, customersRes, ordersRes] = await Promise.all([
-        supabase.from('profiles').select('*').eq('role', 'customer'),
-        supabase.from('customers').select('*'),
+      const [rolesRes, profilesRes, ordersRes] = await Promise.all([
+        supabase.from('user_roles').select('user_id').eq('role', 'customer'),
+        supabase.from('profiles').select('*'),
         supabase.from('orders').select('id, user_id, total, status, items, created_at').order('created_at', { ascending: false }),
       ]);
 
+      if (rolesRes.error) throw rolesRes.error;
       if (profilesRes.error) throw profilesRes.error;
-      if (customersRes.error) throw customersRes.error;
       if (ordersRes.error && ordersRes.error.code !== '42P01') throw ordersRes.error;
 
-      const profiles = safeArray(profilesRes.data);
-      const customerRows = safeArray(customersRes.data);
+      // Customers = accounts holding the 'customer' role in user_roles. The legacy
+      // `customers` table is dead and profiles.role is no longer maintained.
+      const customerIds = new Set(safeArray(rolesRes.data).map((r: any) => r.user_id));
+      const profiles = safeArray(profilesRes.data).filter((p: any) => customerIds.has(p.id));
       const orders = safeArray(ordersRes.data);
 
-      const customersById = new Map(customerRows.map((item: any) => [item.id, item]));
       const ordersByUserId = new Map<string, any[]>();
-
       orders.forEach((order: any) => {
         const existing = ordersByUserId.get(order.user_id) ?? [];
         existing.push(order);
         ordersByUserId.set(order.user_id, existing);
       });
 
-      return profiles.map((profile: any) => {
-        const customer = customersById.get(profile.id) ?? null;
-
-        return {
-          id: profile.id,
-          fullName: profile.full_name || customer?.full_name || 'N/A',
-          email: profile.email || customer?.email || null,
-          phone: profile.phone || customer?.phone || null,
-          isBlocked: Boolean(profile.is_blocked),
-          createdAt: profile.created_at || customer?.created_at || new Date().toISOString(),
-          profile,
-          customer,
-          orders: ordersByUserId.get(profile.id) ?? [],
-        };
-      }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) as CustomerRecord[];
+      return profiles.map((profile: any) => ({
+        id: profile.id,
+        fullName: profile.full_name || 'N/A',
+        email: profile.email || null,
+        phone: profile.phone || null,
+        isBlocked: Boolean(profile.is_blocked),
+        createdAt: profile.created_at || new Date().toISOString(),
+        profile,
+        customer: null,
+        orders: ordersByUserId.get(profile.id) ?? [],
+      })).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) as CustomerRecord[];
     },
   });
 

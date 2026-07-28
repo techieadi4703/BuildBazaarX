@@ -88,6 +88,34 @@ export const HeroSection = () => {
           <ArrowDown className="w-3.5 h-3.5" />
         </motion.span>
       </motion.div>
+      {/* CTA group */}
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <Link 
+          to="/designs"
+          data-umami-event="cta-browse-designs"
+          className="
+            inline-flex items-center justify-center gap-2 
+            bg-[var(--accent-warm)] hover:bg-[var(--accent-warm-hover)] 
+            text-[var(--text-primary)] text-base font-medium 
+            px-7 py-3 rounded-md transition-colors duration-150
+          "
+        >
+          Start Your Project →
+        </Link>
+        <Link 
+          to="/about"
+          data-umami-event="cta-hire-professional"
+          className="
+            inline-flex items-center justify-center gap-2 
+            text-[var(--text-secondary)] hover:text-[var(--text-primary)] 
+            hover:bg-[var(--bg-surface)] 
+            px-7 py-3 text-base font-medium 
+            rounded-md transition-colors duration-150
+          "
+        >
+          Browse Professionals
+        </Link>
+      </div>
     </section>
   );
 };

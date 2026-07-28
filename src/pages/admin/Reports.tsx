@@ -17,12 +17,17 @@ export default function AdminReports() {
     queryFn: async () => {
       const sixMonthsAgo = startOfMonth(subMonths(new Date(), 5)).toISOString();
       
-      const [profiles, pros, designers, suppliers] = await Promise.all([
-        supabase.from('profiles').select('created_at, role').gte('created_at', sixMonthsAgo),
+      const [customerRoles, profiles, pros, designers, suppliers] = await Promise.all([
+        supabase.from('user_roles').select('user_id').eq('role', 'customer'),
+        supabase.from('profiles').select('id, created_at').gte('created_at', sixMonthsAgo),
         supabase.from('professionals').select('created_at').gte('created_at', sixMonthsAgo),
         supabase.from('designers').select('created_at').gte('created_at', sixMonthsAgo),
         supabase.from('suppliers').select('created_at').gte('created_at', sixMonthsAgo),
       ]);
+
+      // Customers = accounts holding the 'customer' role, bucketed by signup month.
+      const customerIds = new Set((customerRoles.data ?? []).map((r: any) => r.user_id));
+      const customerProfiles = (profiles.data ?? []).filter((p: any) => customerIds.has(p.id));
 
       const months = Array.from({ length: 6 }, (_, i) => {
         const d = startOfMonth(subMonths(new Date(), 5 - i));
@@ -33,7 +38,7 @@ export default function AdminReports() {
         const isSameMonth = (isoDate: string) => startOfMonth(new Date(isoDate)).getTime() === month.date.getTime();
         return {
           name: month.formatted,
-          customers: profiles.data?.filter(d => d.role === 'customer' && isSameMonth(d.created_at)).length || 0,
+          customers: customerProfiles.filter((d: any) => isSameMonth(d.created_at)).length || 0,
           professionals: pros.data?.filter(d => isSameMonth(d.created_at)).length || 0,
           designers: designers.data?.filter(d => isSameMonth(d.created_at)).length || 0,
           suppliers: suppliers.data?.filter(d => isSameMonth(d.created_at)).length || 0,
@@ -101,8 +106,20 @@ export default function AdminReports() {
     try {
       let data: any[] | null = [];
       if (type === 'users') {
-        const res = await supabase.from('profiles').select('id, full_name, phone, role, is_blocked, created_at');
-        data = res.data;
+        const [profilesRes, rolesRes] = await Promise.all([
+          supabase.from('profiles').select('id, full_name, phone, is_blocked, created_at'),
+          supabase.from('user_roles').select('user_id, role'),
+        ]);
+        const rolesByUser = new Map<string, string[]>();
+        (rolesRes.data ?? []).forEach((r: any) => {
+          const list = rolesByUser.get(r.user_id) ?? [];
+          list.push(r.role);
+          rolesByUser.set(r.user_id, list);
+        });
+        data = (profilesRes.data ?? []).map((p: any) => ({
+          ...p,
+          roles: (rolesByUser.get(p.id) ?? []).sort().join(', '),
+        }));
       } else if (type === 'professionals') {
         const res = await supabase.from('professionals').select('*');
         data = res.data;

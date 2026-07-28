@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./AuthContext";
+import { trackEvent } from "@/lib/umami";
 
 export interface WishlistItem {
   id: string; // The design ID
@@ -157,12 +158,17 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
     setItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) return prev; // Already in wishlist
+      trackEvent("wishlist-add", { itemId: item.id, type: item.category });
       return [...prev, item];
     });
     return true;
   };
 
   const removeFromWishlist = (id: string) => {
+    const item = items.find((i) => i.id === id);
+    if (item) {
+      trackEvent("wishlist-remove", { itemId: id, type: item.category });
+    }
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 

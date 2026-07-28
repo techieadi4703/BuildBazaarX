@@ -33,6 +33,7 @@ const TermsOfService = React.lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
 const CancellationRefund = React.lazy(() => import("./pages/CancellationRefund"));
 const ShippingExchange = React.lazy(() => import("./pages/ShippingExchange"));
+const Onboarding = React.lazy(() => import("./pages/Onboarding"));
 
 const AdminDashboard = React.lazy(() => import("./pages/admin/Dashboard"));
 const AdminUsers = React.lazy(() => import("./pages/admin/Users"));
@@ -61,6 +62,7 @@ const queryClient = new QueryClient({
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  useUmamiPageviews();
   
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -81,6 +83,7 @@ const AnimatedRoutes = () => {
         <Route path="/cancellation-and-refund" element={<PageTransition><CancellationRefund /></PageTransition>} />
         <Route path="/shipping-and-exchange" element={<PageTransition><ShippingExchange /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/onboarding" element={<PageTransition><Onboarding /></PageTransition>} />
         <Route path="/profile" element={
           <ProtectedRoute>
             <PageTransition><Profile /></PageTransition>

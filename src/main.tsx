@@ -3,6 +3,10 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App";
 import "./index.css";
 
+import { initUmami } from "./lib/umami";
+
+initUmami();
+
 createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
     <App />

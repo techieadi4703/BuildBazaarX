@@ -15,7 +15,7 @@ import { Reveal } from "@/components/shared/Reveal";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { userRole, isAuthenticated, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   if (isLoading) {
      return <div className="min-h-screen bg-background" />;

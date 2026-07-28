@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode,
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./AuthContext";
 import { allProducts, getProductImage } from "@/lib/rawMaterialsData";
+import { trackEvent } from "@/lib/umami";
 
 export interface CartItem {
   id: number | string;
@@ -115,21 +116,32 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (existing) {
         return prev.map((i) => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
       }
+      
+      trackEvent("add-to-cart", { productId: item.id, price: item.price, qty: 1 });
       return [...prev, { ...item, quantity: 1 }];
     });
     return true;
   };
 
   const removeFromCart = (id: number | string) => {
+    const item = items.find((i) => i.id === id);
+    if (item) {
+      trackEvent("remove-from-cart", { productId: id, price: item.price });
+    }
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
   const updateQuantity = (id: number | string, quantity: number) => {
     if (quantity < 1) { removeFromCart(id); return; }
+    const item = items.find((i) => i.id === id);
+    if (item) {
+      trackEvent("update-cart-qty", { productId: id, from: item.quantity, to: quantity });
+    }
     setItems((prev) => prev.map((i) => i.id === id ? { ...i, quantity } : i));
   };
 
   const clearCart = () => {
+    trackEvent("clear-cart", { items: items.length });
     setItems([]);
     if (userId) saveCartToDb(userId, []);
   };

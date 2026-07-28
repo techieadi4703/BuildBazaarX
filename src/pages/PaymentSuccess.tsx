@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { trackEvent } from "@/lib/umami";
 
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
@@ -11,6 +12,7 @@ export default function PaymentSuccess() {
   const paymentId = searchParams.get("payment_id");
 
   useEffect(() => {
+    trackEvent("purchase", { orderId: paymentId, amount: 0, method: 'razorpay' });
     // Auto-redirect to orders page after 5 seconds
     const timer = setTimeout(() => navigate("/orders"), 5000);
     return () => clearTimeout(timer);
