@@ -8,12 +8,13 @@
 @layer base {
   /* === CSS CUSTOM PROPERTIES === */
   :root {
-    /* Backgrounds */
-    --bg-base: #F7F5F1;
-    --bg-surface: #F0EDE7;
+    /* Backgrounds — tinted translucent so the marble backdrop reads through */
+    --bg-base: rgba(247, 245, 241, 0.93);
+    --bg-surface: rgba(240, 237, 231, 0.94);
     --bg-card: #FFFFFF;
     --border-subtle: #E4DDD4;
     --border-default: #D0C8BE;
+    --marble-bg: url('/marble-light.jpg');
 
     /* Text */
     --text-primary: #1D1B17;
@@ -69,12 +70,13 @@
   }
 
   .dark {
-    /* Backgrounds */
-    --bg-base: #0C1119;
-    --bg-surface: #131C27;
+    /* Backgrounds — tinted translucent so the marble backdrop reads through */
+    --bg-base: rgba(12, 17, 25, 0.90);
+    --bg-surface: rgba(19, 28, 39, 0.92);
     --bg-card: #1A2535;
     --border-subtle: #1F2E40;
     --border-default: #263547;
+    --marble-bg: url('/marble-dark.jpg');
 
     /* Text */
     --text-primary: #EDE8DF;
@@ -139,12 +141,27 @@
     text-rendering: optimizeLegibility;
   }
 
+  html {
+    background-color: #F7F5F1;
+  }
+
+  html.dark {
+    background-color: #0C1119;
+  }
+
   body {
     background-color: var(--bg-base);
+    background-image: var(--marble-bg);
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--text-primary);
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.6;
+    transition: background-image 0.4s ease;
+    min-height: 100vh;
   }
 
   /* === TYPOGRAPHY SCALE === */
@@ -208,5 +225,16 @@
   .dark ::selection {
     background-color: var(--accent-faint);
     color: var(--accent-mid);
+  }
+
+  /* === CHATBASE — hide stock bubble launcher, we render our own branded one === */
+  #chatbase-bubble-button,
+  #chatbase-bubble-window-container > div:first-child,
+  iframe[id*="chatbase-bubble-button"],
+  div[id*="chatbase-bubble-button"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 }

@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "./components/shared/PageTransition";
+import { SplashScreen } from "./components/shared/SplashScreen";
 
 const Index = React.lazy(() => import("./pages/Index"));
 const DesignsCatalog = React.lazy(() => import("./pages/DesignsCatalog"));
@@ -147,6 +148,7 @@ const App = () => (
       <CartProvider>
         <WishlistProvider>
           <TooltipProvider>
+            <SplashScreen />
             <Toaster />
             <Sonner />
             <BrowserRouter>

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Search, Heart, BadgeCheck, Clock, Compass, X, ChevronDown, SlidersHorizontal, Sliders, Plus, Minus } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Layout } from "@/components/layout/Layout";
+import { PageHeader } from "@/components/shared/PageHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useCart } from "@/contexts/CartContext";
@@ -209,6 +210,7 @@ const DesignsCatalog = () => {
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
       </Helmet>
+      <PageHeader title="Designs Catalogue" crumb="Designs Catalog" />
       <div className="bg-[var(--bg-base)] text-[var(--text-primary)] min-h-screen font-body w-full">
         <main className="max-w-[1920px] mx-auto flex flex-col md:flex-row min-h-screen relative">
 

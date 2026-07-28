@@ -23,6 +23,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Layout } from "@/components/layout/Layout";
+import { PageHeader } from "@/components/shared/PageHeader";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -218,6 +219,7 @@ const RawMaterials = () => {
         <meta property="og:image:height" content="630" />
       </Helmet>
 
+      <PageHeader title="Raw Materials" crumb="Raw Materials" />
       <div className="bg-[var(--bg-base)] text-[var(--text-primary)] min-h-screen font-body w-full pb-20 relative">
         <main className="max-w-[1920px] mx-auto flex flex-col md:flex-row min-h-screen relative">
           {/* Mobile Top Navigation (Search + Button) */}
