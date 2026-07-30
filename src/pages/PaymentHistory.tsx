@@ -10,8 +10,8 @@ import { motion } from "framer-motion";
 interface Payment {
   id: string;
   razorpay_order_id: string;
-  razorpay_payment_id: string | null;
-  amount: number;
+  payment_id: string | null;
+  total: number;
   status: string;
   created_at: string;
   cart_snapshot: any[];
@@ -36,7 +36,7 @@ export default function PaymentHistory() {
     }
     
     supabase
-      .from("payments")
+      .from("orders")
       .select("*")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
@@ -88,7 +88,7 @@ export default function PaymentHistory() {
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
                   <div>
                     <p className="text-2xl font-black text-primary">
-                      ₹{(p.amount / 100).toLocaleString("en-IN")}
+                      ₹{(p.total / 100).toLocaleString("en-IN")}
                     </p>
                     <p className="text-sm font-semibold text-muted-foreground mt-1">
                       {format(new Date(p.created_at), "dd MMM yyyy, hh:mm a")}
@@ -116,10 +116,10 @@ export default function PaymentHistory() {
                     <span className="font-bold text-foreground/50 uppercase mr-2 tracking-widest">Order ID</span>
                     <span className="bg-secondary px-2 py-1 rounded-md">{p.razorpay_order_id}</span>
                   </div>
-                  {p.razorpay_payment_id && (
+                  {p.payment_id && (
                     <div>
                       <span className="font-bold text-foreground/50 uppercase mr-2 tracking-widest">Payment ID</span>
-                      <span className="bg-secondary px-2 py-1 rounded-md">{p.razorpay_payment_id}</span>
+                      <span className="bg-secondary px-2 py-1 rounded-md">{p.payment_id}</span>
                     </div>
                   )}
                 </div>

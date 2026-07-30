@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -52,11 +53,21 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Invalid session" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_db_id } = await req.json();
+    const rawBody = await req.json();
+    
+    const PaymentSchema = z.object({
+      razorpay_order_id: z.string(),
+      razorpay_payment_id: z.string(),
+      razorpay_signature: z.string(),
+      order_db_id: z.string().optional()
+    });
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      return new Response(JSON.stringify({ error: "Missing payment fields" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const parsed = PaymentSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: "Missing or invalid payment fields", details: parsed.error.format() }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = parsed.data;
 
     const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
     if (!keySecret) throw new Error("RAZORPAY_KEY_SECRET is not configured");
@@ -76,34 +87,29 @@ serve(async (req) => {
     }
 
     // Verify payment belongs to user
-    const { data: payment, error: fetchError } = await supabaseAdmin
-      .from("payments")
+    const { data: order, error: fetchError } = await supabaseAdmin
+      .from("orders")
       .select("id, user_id, status")
       .eq("razorpay_order_id", razorpay_order_id)
       .single();
 
-    if (fetchError || !payment || payment.user_id !== user.id) {
+    if (fetchError || !order || order.user_id !== user.id) {
       throw new Error("Order not found or unauthorized");
     }
 
-    if (payment.status === "paid") {
+    if (order.status === "paid") {
       return new Response(
         JSON.stringify({ success: true, alreadyProcessed: true }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Update payments table
-    await supabaseAdmin.from("payments").update({
-      razorpay_payment_id,
+    // Update orders table
+    await supabaseAdmin.from("orders").update({
+      payment_id: razorpay_payment_id,
       razorpay_signature,
       status: "paid",
     }).eq("razorpay_order_id", razorpay_order_id);
-
-    // Legacy support: if order_db_id is provided, update orders table too
-    if (order_db_id) {
-      await supabaseAdmin.from("orders").update({ status: "paid" }).eq("id", order_db_id);
-    }
 
     return new Response(
       JSON.stringify({ success: true }),

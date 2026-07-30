@@ -1,6 +1,12 @@
 // @ts-nocheck
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts";
+import { Redis } from "https://esm.sh/@upstash/redis@1.28.0";
+
+const redisUrl = Deno.env.get("UPSTASH_REDIS_REST_URL");
+const redisToken = Deno.env.get("UPSTASH_REDIS_REST_TOKEN");
+const redis = redisUrl && redisToken ? new Redis({ url: redisUrl, token: redisToken }) : null;
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -62,20 +68,34 @@ serve(async (req) => {
     // Rate Limiting by IP (fallback to a default if header is missing)
     const ip = req.headers.get("x-forwarded-for") || "unknown-ip";
     const now = Date.now();
-    let rlRecord = rateLimits.get(ip);
     
-    if (!rlRecord || now - rlRecord.windowStart > RATE_LIMIT_WINDOW_MS) {
-      rlRecord = { count: 0, windowStart: now };
+    if (redis) {
+      const rlKey = `rl:upi_verify:${ip}`;
+      const requests = await redis.incr(rlKey);
+      if (requests === 1) {
+        await redis.expire(rlKey, 60); // 1 minute window
+      }
+      if (requests > MAX_CALLS_PER_MIN) {
+        return new Response(JSON.stringify({ error: "Too Many Requests" }), { 
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        });
+      }
+    } else {
+      let rlRecord = rateLimits.get(ip);
+      
+      if (!rlRecord || now - rlRecord.windowStart > RATE_LIMIT_WINDOW_MS) {
+        rlRecord = { count: 0, windowStart: now };
+      }
+      
+      if (rlRecord.count >= MAX_CALLS_PER_MIN) {
+        return new Response(JSON.stringify({ error: "Too Many Requests" }), { 
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        });
+      }
+      
+      rlRecord.count++;
+      rateLimits.set(ip, rlRecord);
     }
-    
-    if (rlRecord.count >= MAX_CALLS_PER_MIN) {
-      return new Response(JSON.stringify({ error: "Too Many Requests" }), { 
-        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } 
-      });
-    }
-    
-    rlRecord.count++;
-    rateLimits.set(ip, rlRecord);
 
     // Parse Body
     const body = await req.json();
@@ -100,12 +120,22 @@ serve(async (req) => {
     }
 
     // Check Cache
-    const cachedResult = cache.get(upi);
-    if (cachedResult && now - cachedResult.timestamp < CACHE_TTL_MS) {
-      console.log(`[UPI Verify] Serving from cache for hash: ${hashedUpi}`);
-      return new Response(JSON.stringify({ valid: cachedResult.valid, name: cachedResult.name }), { 
-        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } 
-      });
+    if (redis) {
+      const cachedResult = await redis.get(`upi_cache:${hashedUpi}`);
+      if (cachedResult) {
+        console.log(`[UPI Verify] Serving from Redis cache for hash: ${hashedUpi}`);
+        return new Response(JSON.stringify(cachedResult), { 
+          status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        });
+      }
+    } else {
+      const cachedResult = cache.get(upi);
+      if (cachedResult && now - cachedResult.timestamp < CACHE_TTL_MS) {
+        console.log(`[UPI Verify] Serving from memory cache for hash: ${hashedUpi}`);
+        return new Response(JSON.stringify({ valid: cachedResult.valid, name: cachedResult.name }), { 
+          status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        });
+      }
     }
 
     // Identify Aggregator from Env
@@ -135,7 +165,11 @@ serve(async (req) => {
     }
 
     // Store in Cache
-    cache.set(upi, { ...result, timestamp: now });
+    if (redis) {
+      await redis.set(`upi_cache:${hashedUpi}`, result, { ex: 600 }); // 10 mins
+    } else {
+      cache.set(upi, { ...result, timestamp: now });
+    }
 
     return new Response(JSON.stringify(result), { 
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } 

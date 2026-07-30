@@ -1,5 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { Redis } from "https://esm.sh/@upstash/redis@1.28.0";
+
+const redisUrl = Deno.env.get("UPSTASH_REDIS_REST_URL");
+const redisToken = Deno.env.get("UPSTASH_REDIS_REST_TOKEN");
+const redis = redisUrl && redisToken ? new Redis({ url: redisUrl, token: redisToken }) : null;
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -29,17 +36,43 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Invalid session" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const { cartItems } = await req.json();
+    const rawBody = await req.json();
 
-    if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
-      throw new Error("Cart is empty");
+    const CartItemSchema = z.object({
+      product_id: z.string().or(z.number()),
+      quantity: z.number().positive(),
+      seller_id: z.string().optional()
+    });
+    
+    const OrderSchema = z.object({
+      cartItems: z.array(CartItemSchema).min(1, "Cart is empty")
+    });
+
+    const parsed = OrderSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: "Invalid cart data", details: parsed.error.format() }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    const { cartItems } = parsed.data;
 
     const keyId = Deno.env.get("RAZORPAY_KEY_ID");
     const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
 
     if (!keyId || !keySecret) {
       throw new Error("Razorpay credentials not configured");
+    }
+
+    // Rate Limiting by User ID
+    if (redis) {
+      const rlKey = `rl:create_order:${user.id}`;
+      const requests = await redis.incr(rlKey);
+      if (requests === 1) {
+        await redis.expire(rlKey, 60); // 1 minute window
+      }
+      if (requests > 10) { // Max 10 order creation attempts per minute
+        return new Response(JSON.stringify({ error: "Too Many Requests. Please wait before creating another order." }), { 
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        });
+      }
     }
 
     const productIds = cartItems.map((item: any) => item.product_id);

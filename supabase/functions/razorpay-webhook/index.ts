@@ -66,8 +66,8 @@ serve(async (req) => {
       const paymentId = payment?.id;
 
       if (orderId && paymentId) {
-        await supabaseAdmin.from("payments").update({
-          razorpay_payment_id: paymentId,
+        await supabaseAdmin.from("orders").update({
+          payment_id: paymentId,
           status: "paid",
           metadata: event.payload,
         })
@@ -81,7 +81,7 @@ serve(async (req) => {
       const orderId = payment?.order_id;
 
       if (orderId) {
-        await supabaseAdmin.from("payments").update({
+        await supabaseAdmin.from("orders").update({
           status: "failed",
           metadata: event.payload,
         })
