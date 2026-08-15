@@ -190,7 +190,10 @@ export const Footer = () => {
               <Link to="/shipping-and-exchange" className="hover:text-[#735c00] transition-colors">Shipping & Exchange</Link>
               <Link to="/contact" className="hover:text-[#735c00] transition-colors">Support</Link>
             </div>
-            <p className="opacity-40 mt-2 lg:mt-0">© 2026 BuildBazaarX Network. All Rights Reserved.</p>
+            <div className="flex flex-col items-center lg:items-end mt-2 lg:mt-0">
+              <p className="opacity-40">© 2026 BuildBazaarX Network. All Rights Reserved.</p>
+              <p className="opacity-30 text-[8px] normal-case tracking-normal mt-1 text-center lg:text-right">Often searched as: Buildbazaar, Buildabazaar, Buildbazarx, Build Bazaar</p>
+            </div>
           </div>
         </div>
       </div>
