@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { ShieldCheck, ArrowDown } from "lucide-react";
 import { motion } from "framer-motion";
 import afterImage from "@/assets/transformations/after.webp";
-
+import beforeImage from "@/assets/transformations/before.webp";
+import { BeforeAfterSlider } from "@/components/shared/BeforeAfterSlider";
 export const HeroSection = () => {
   return (
     <section className="relative -mt-16 md:-mt-20 pt-16 md:pt-20 h-[calc(92vh+4rem)] md:h-[calc(92vh+5rem)] min-h-[620px] w-full overflow-hidden flex items-end">
