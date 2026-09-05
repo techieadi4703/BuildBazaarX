@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Layout } from "@/components/layout/Layout";
 import { ArrowRight, Mail, Lock, User, ShieldCheck } from "lucide-react";
+import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Auth() {
@@ -152,6 +153,20 @@ export default function Auth() {
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-[var(--bg-card)] border border-[var(--border-subtle)] p-5 md:p-12 rounded-sm shadow-sm overflow-hidden"
               >
+                {/* ── Google OAuth ── */}
+                <div className="mb-5 md:mb-8">
+                  <GoogleAuthButton label={isLogin ? "Sign in with Google" : "Sign up with Google"} />
+                </div>
+
+                {/* ── Divider ── */}
+                <div className="flex items-center gap-4 mb-5 md:mb-8">
+                  <div className="flex-1 h-px bg-[var(--border-subtle)]" />
+                  <span className="text-[10px] uppercase font-mono tracking-widest text-[var(--text-tertiary)] shrink-0">
+                    or continue with email
+                  </span>
+                  <div className="flex-1 h-px bg-[var(--border-subtle)]" />
+                </div>
+
                 <form onSubmit={handleAuth} className="space-y-5 md:space-y-8">
                   {isLinking && (
                     <div className="border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4 rounded-sm">
